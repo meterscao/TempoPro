@@ -85,29 +85,11 @@ class MetronomeState: ObservableObject {
     
     // 提供更新方法而不是直接使用 didSet
     func updateTempo(_ newTempo: Double) {
-        let currentTime = Date().timeIntervalSince1970
         tempo = max(30, min(240, newTempo))
         UserDefaults.standard.set(tempo, forKey: UserDefaultsKeys.tempo)
         
         if isPlaying {
-            // 如果是首次开始或已经播放完当前拍，直接开始新的节奏
-            if nextScheduledBeatTime == 0 || currentTime >= nextScheduledBeatTime {
-                currentBeat = 0
-                metronomeTimer?.stop()
-                metronomeTimer?.start(
-                    tempo: tempo,
-                    beatsPerBar: beatStatuses.count,
-                    beatStatuses: beatStatuses
-                )
-                nextScheduledBeatTime = currentTime + (60.0 / tempo)
-            } else {
-                // 否则，让当前拍完成后再更新速度
-                metronomeTimer?.updateTempo(
-                    tempo: tempo,
-                    currentTime: currentTime,
-                    nextBeatTime: nextScheduledBeatTime
-                )
-            }
+            metronomeTimer?.setTempo(tempo: tempo)
         }
     }
     
@@ -137,9 +119,6 @@ class MetronomeState: ObservableObject {
         print("MetronomeState - updateBeatsPerBar: \(beatsPerBar) -> \(newBeatsPerBar)")
         // 保存当前的节拍状态模式
         let wasPlaying = isPlaying
-        if wasPlaying {
-            togglePlayback() // 暂停播放
-        }
         
         // 创建新的 beatStatuses 数组
         var newBeatStatuses = Array(repeating: BeatStatus.normal, count: newBeatsPerBar)
@@ -166,9 +145,19 @@ class MetronomeState: ObservableObject {
         let saved = UserDefaults.standard.integer(forKey: UserDefaultsKeys.beatsPerBar)
         print("MetronomeState - UserDefaults中的beatsPerBar: \(saved)")
         
-        // 如果之前在播放，则恢复播放
+        // 如果正在播放，需要直接更新正在运行的节拍器
         if wasPlaying {
-            togglePlayback()
+            // 保持当前拍位置，但如果新的拍数小于当前拍位置，则需要调整
+            let currentBeatToUse = currentBeat >= newBeatsPerBar ? 0 : currentBeat
+            
+            // 暂停并重新启动节拍器，使用新的拍数设置
+            metronomeTimer?.stop()
+            metronomeTimer?.start(
+                tempo: tempo,
+                beatsPerBar: newBeatsPerBar,
+                beatStatuses: beatStatuses,
+                currentBeat: currentBeatToUse
+            )
         }
     }
     
