@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MetronomeControlView: View {
     private let dialSize: CGFloat = 300  // 表盘大小
-    private let sensitivity: Double = 1.0 // 旋转灵敏度
+    private let sensitivity: Double = 8.0 // 旋转灵敏度
     
     @Binding var tempo: Double
     @Binding var isPlaying: Bool
@@ -61,7 +61,7 @@ struct MetronomeControlView: View {
                 
                 Circle()
                     .stroke(Color.black, lineWidth: 2)
-                    .frame(width: geometry.size.width*0.8, height: geometry.size.width*0.8)
+                    .frame(width: dialSize, height: dialSize)
                     .rotationEffect(.degrees(rotation))
                 
                 createTicks()
@@ -72,11 +72,11 @@ struct MetronomeControlView: View {
                 }) {
                     Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .resizable()
-                        .frame(width: 60, height: 60)
+                        .frame(width: 100, height: 100)
                         .foregroundColor(.black)
                 }
             }
-            .frame(width: geometry.size.width*0.8, height: geometry.size.width*0.8)
+            .frame(width: dialSize, height: dialSize)
             .contentShape(Rectangle())
             .gesture(
                 DragGesture()
@@ -85,14 +85,14 @@ struct MetronomeControlView: View {
                             isDragging = true
                             lastAngle = calculateAngle(
                                 location: value.location,
-                                in: CGRect(x: 0, y: 0, width: geometry.size.width*0.8, height: geometry.size.width*0.8)
+                                in: CGRect(x: 0, y: 0, width: dialSize, height: dialSize)
                             )
                             startTempo = tempo
                         }
                         
                         let currentAngle = calculateAngle(
                             location: value.location,
-                            in: CGRect(x: 0, y: 0, width: geometry.size.width*0.8, height: geometry.size.width*0.8)
+                            in: CGRect(x: 0, y: 0, width: dialSize, height: dialSize)
                         )
                         
                         var angleDiff = currentAngle - lastAngle
