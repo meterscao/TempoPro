@@ -24,6 +24,8 @@ struct TimeSignatureView: View {
         self._beatUnit = beatUnit
         self._tempBeatsPerBar = State(initialValue: beatsPerBar.wrappedValue)
         self._tempBeatUnit = State(initialValue: beatUnit.wrappedValue)
+        
+        print("TimeSignatureView - 初始化 - beatsPerBar: \(beatsPerBar.wrappedValue), beatUnit: \(beatUnit.wrappedValue)")
     }
     
     var body: some View {
@@ -100,8 +102,27 @@ struct TimeSignatureView: View {
             
             // 确认按钮
             Button(action: {
+                print("TimeSignatureView - 确认按钮点击: 从 \(beatsPerBar)/\(beatUnit) 更新为 \(tempBeatsPerBar)/\(tempBeatUnit)")
+                
+                // 详细日志
+                print("TimeSignatureView - 确认前 - beatsPerBar Binding: \(beatsPerBar), tempBeatsPerBar: \(tempBeatsPerBar)")
+                
                 beatsPerBar = tempBeatsPerBar
                 beatUnit = tempBeatUnit
+                
+                // 验证更改
+                print("TimeSignatureView - 确认后 - beatsPerBar Binding: \(beatsPerBar), tempBeatsPerBar: \(tempBeatsPerBar)")
+                
+                // 手动触发 UserDefaults 保存
+                UserDefaults.standard.set(tempBeatsPerBar, forKey: "com.tempopro.beatsPerBar")
+                UserDefaults.standard.set(tempBeatUnit, forKey: "com.tempopro.beatUnit")
+                UserDefaults.standard.synchronize()
+                
+                // 验证 UserDefaults
+                let savedBeatsPerBar = UserDefaults.standard.integer(forKey: "com.tempopro.beatsPerBar")
+                let savedBeatUnit = UserDefaults.standard.integer(forKey: "com.tempopro.beatUnit")
+                print("TimeSignatureView - UserDefaults 保存后 - beatsPerBar: \(savedBeatsPerBar), beatUnit: \(savedBeatUnit)")
+                
                 dismiss()
             }) {
                 Text("确认")

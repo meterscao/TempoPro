@@ -9,23 +9,30 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var metronomeState: MetronomeState
-    @State private var beatsPerBar: Int {
+    @State private var beatsPerBar: Int = 4 {
         didSet {
-            UserDefaults.standard.set(beatsPerBar, forKey: "com.tempopro.beatsPerBar")
+            print("ContentView - beatsPerBar didSet: \(oldValue) -> \(beatsPerBar)")
             metronomeState.updateBeatsPerBar(beatsPerBar)
         }
     }
-    @State private var beatUnit: Int {
+    @State private var beatUnit: Int = 4 {
         didSet {
-            UserDefaults.standard.set(beatUnit, forKey: "com.tempopro.beatUnit")
+            print("ContentView - beatUnit didSet: \(oldValue) -> \(beatUnit)")
+            metronomeState.updateBeatUnit(beatUnit)
         }
     }
     @State private var showingKeypad = false
     
     init() {
+        // 使用与 MetronomeState 相同的键名
+        let beatsPerBarKey = "com.tempopro.beatsPerBar"
+        let beatUnitKey = "com.tempopro.beatUnit"
+        
         // 从 UserDefaults 读取保存的值
-        let savedBeatsPerBar = UserDefaults.standard.integer(forKey: "com.tempopro.beatsPerBar")
-        let savedBeatUnit = UserDefaults.standard.integer(forKey: "com.tempopro.beatUnit")
+        let savedBeatsPerBar = UserDefaults.standard.integer(forKey: beatsPerBarKey)
+        let savedBeatUnit = UserDefaults.standard.integer(forKey: beatUnitKey)
+        
+        print("ContentView - 初始化: 从 UserDefaults 读取值 - beatsPerBar: \(savedBeatsPerBar), beatUnit: \(savedBeatUnit)")
         
         // 如果没有保存的值，使用默认值
         _beatsPerBar = State(initialValue: savedBeatsPerBar != 0 ? savedBeatsPerBar : 3)

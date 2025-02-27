@@ -10,10 +10,19 @@ class MetronomeState: ObservableObject {
         static let beatStatuses = "com.tempopro.beatStatuses"
     }
     
-    // 先声明属性，但不立即设置 didSet
     @Published private(set) var tempo: Double
     @Published var isPlaying: Bool = false
     @Published var currentBeat: Int = 0
+    @Published private(set) var beatsPerBar: Int {
+        didSet {
+            UserDefaults.standard.set(beatsPerBar, forKey: UserDefaultsKeys.beatsPerBar)
+        }
+    }
+    @Published private(set) var beatUnit: Int {
+        didSet {
+            UserDefaults.standard.set(beatUnit, forKey: UserDefaultsKeys.beatUnit)
+        }
+    }
     @Published var beatStatuses: [BeatStatus] {
         didSet {
             // 当 beatStatuses 被修改时，自动保存到 UserDefaults
@@ -37,7 +46,14 @@ class MetronomeState: ObservableObject {
     init(beatsPerBar: Int = 3) {
         // 1. 首先初始化所有存储属性
         let savedTempo = UserDefaults.standard.double(forKey: UserDefaultsKeys.tempo)
+        let savedBeatsPerBar = UserDefaults.standard.integer(forKey: UserDefaultsKeys.beatsPerBar)
+        let savedBeatUnit = UserDefaults.standard.integer(forKey: UserDefaultsKeys.beatUnit)
+        
+        print("MetronomeState - 初始化: 从 UserDefaults 读取值 - tempo: \(savedTempo), beatsPerBar: \(savedBeatsPerBar), beatUnit: \(savedBeatUnit)")
+        
         self.tempo = savedTempo != 0 ? savedTempo : 80
+        self.beatsPerBar = savedBeatsPerBar != 0 ? savedBeatsPerBar : beatsPerBar
+        self.beatUnit = savedBeatUnit != 0 ? savedBeatUnit : 4
         
         if let savedStatusInts = UserDefaults.standard.array(forKey: UserDefaultsKeys.beatStatuses) as? [Int] {
             self.beatStatuses = savedStatusInts.map { statusInt -> BeatStatus in
@@ -63,6 +79,8 @@ class MetronomeState: ObservableObject {
         
         // 3. 保存初始值
         UserDefaults.standard.set(self.tempo, forKey: UserDefaultsKeys.tempo)
+        UserDefaults.standard.set(self.beatsPerBar, forKey: UserDefaultsKeys.beatsPerBar)
+        UserDefaults.standard.set(self.beatUnit, forKey: UserDefaultsKeys.beatUnit)
     }
     
     // 提供更新方法而不是直接使用 didSet
@@ -116,6 +134,7 @@ class MetronomeState: ObservableObject {
     
     // 添加更新拍数的方法
     func updateBeatsPerBar(_ newBeatsPerBar: Int) {
+        print("MetronomeState - updateBeatsPerBar: \(beatsPerBar) -> \(newBeatsPerBar)")
         // 保存当前的节拍状态模式
         let wasPlaying = isPlaying
         if wasPlaying {
@@ -135,12 +154,35 @@ class MetronomeState: ObservableObject {
             newBeatStatuses[0] = .strong
         }
         
-        // 更新 beatStatuses
+        // 更新 beatStatuses 和 beatsPerBar
         beatStatuses = newBeatStatuses
+        beatsPerBar = newBeatsPerBar
+        
+        // 手动保存到 UserDefaults 并强制同步
+        UserDefaults.standard.set(newBeatsPerBar, forKey: UserDefaultsKeys.beatsPerBar)
+        UserDefaults.standard.synchronize()
+        
+        // 验证是否保存到UserDefaults
+        let saved = UserDefaults.standard.integer(forKey: UserDefaultsKeys.beatsPerBar)
+        print("MetronomeState - UserDefaults中的beatsPerBar: \(saved)")
         
         // 如果之前在播放，则恢复播放
         if wasPlaying {
             togglePlayback()
         }
+    }
+    
+    // 添加更新拍号单位的方法
+    func updateBeatUnit(_ newBeatUnit: Int) {
+        print("MetronomeState - updateBeatUnit: \(beatUnit) -> \(newBeatUnit)")
+        beatUnit = newBeatUnit
+        
+        // 手动保存到 UserDefaults 并强制同步
+        UserDefaults.standard.set(newBeatUnit, forKey: UserDefaultsKeys.beatUnit)
+        UserDefaults.standard.synchronize()
+        
+        // 验证是否保存到UserDefaults
+        let saved = UserDefaults.standard.integer(forKey: UserDefaultsKeys.beatUnit)
+        print("MetronomeState - UserDefaults中的beatUnit: \(saved)")
     }
 } 
