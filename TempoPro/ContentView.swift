@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var tempo: Double = 120
+    @State private var tempo: Double = 80
     @State private var beatsPerBar: Int = 3  // 每小节的拍数
     @State private var beatUnit: Int = 4      // 以几分音符为一拍
     @State private var isPlaying = false
@@ -49,7 +49,7 @@ struct ContentView: View {
                 
                 MetronomeToolbarView()
                     .frame(maxWidth: .infinity)
-                    .background(.red)
+                    
             }
         
         .statusBar(hidden: true)

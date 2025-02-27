@@ -21,6 +21,8 @@
 		3AE9EDF72D6FFD6400D5EFC7 /* Metr_fl_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AE9EDF42D6FFD6400D5EFC7 /* Metr_fl_hi.wav */; };
 		3AE9EDF82D6FFD6400D5EFC7 /* Metr_fl_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AE9EDF52D6FFD6400D5EFC7 /* Metr_fl_mid.wav */; };
 		3AE9EDF92D6FFD6400D5EFC7 /* Metr_fl_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AE9EDF62D6FFD6400D5EFC7 /* Metr_fl_low.wav */; };
+		F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */; };
+		F7FF3F162D7073EB00390C16 /* MetronomeTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F132D7073EB00390C16 /* MetronomeTimer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		3AE9EDF42D6FFD6400D5EFC7 /* Metr_fl_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_hi.wav; sourceTree = "<group>"; };
 		3AE9EDF52D6FFD6400D5EFC7 /* Metr_fl_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_mid.wav; sourceTree = "<group>"; };
 		3AE9EDF62D6FFD6400D5EFC7 /* Metr_fl_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_low.wav; sourceTree = "<group>"; };
+		F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeAudioEngine.swift; sourceTree = "<group>"; };
+		F7FF3F132D7073EB00390C16 /* MetronomeTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTimer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +120,8 @@
 				3A9C88A12D6F728A004CFD88 /* ContentView.swift */,
 				3AA1E5502D6F7371002D9615 /* BPMKeypadView.swift */,
 				3AA1E5522D6F7372002D9615 /* MetronomeControlView.swift */,
+				F7FF3F122D7073EB00390C16 /* Audio */,
+				F7FF3F142D7073EB00390C16 /* Timer */,
 				3AA1E5532D6F7372002D9615 /* MetronomeInfoView.swift */,
 				3AA1E5512D6F7372002D9615 /* MetronomeToolbarView.swift */,
 				3A9C88A32D6F728B004CFD88 /* Assets.xcassets */,
@@ -148,6 +154,22 @@
 				3A9C88BD2D6F728B004CFD88 /* TempoProUITestsLaunchTests.swift */,
 			);
 			path = TempoProUITests;
+			sourceTree = "<group>";
+		};
+		F7FF3F122D7073EB00390C16 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		F7FF3F142D7073EB00390C16 /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				F7FF3F132D7073EB00390C16 /* MetronomeTimer.swift */,
+			);
+			path = Timer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -287,6 +309,8 @@
 				3AA1E5572D6F7372002D9615 /* MetronomeInfoView.swift in Sources */,
 				3AA1E5552D6F7372002D9615 /* MetronomeToolbarView.swift in Sources */,
 				3AA1E5562D6F7372002D9615 /* MetronomeControlView.swift in Sources */,
+				F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */,
+				F7FF3F162D7073EB00390C16 /* MetronomeTimer.swift in Sources */,
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
 			);
