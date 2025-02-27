@@ -76,8 +76,11 @@ struct MetronomeInfoView: View {
     let beatUnit: Int
     @Binding var showingKeypad: Bool
     @Binding var beatStatuses: [BeatStatus]
-    let currentBeat: Int  // 添加当前拍子
-    let isPlaying: Bool  // 添加 isPlaying 参数
+    let currentBeat: Int
+    let isPlaying: Bool
+    @State private var showingTimeSignature = false
+    @Binding var beatsPerBarBinding: Int
+    @Binding var beatUnitBinding: Int
     
     // 添加速度术语判断函数
     private func getTempoTerm(_ bpm: Double) -> String {
@@ -119,7 +122,7 @@ struct MetronomeInfoView: View {
     
     var body: some View {
         ZStack {
-            Color.white  // 底色设为白色
+            Color.white
             
             VStack(spacing: 20) {
                 // 顶部工具栏
@@ -132,30 +135,29 @@ struct MetronomeInfoView: View {
                         Image(systemName: "timer")
                     }
                 }
-
                 
                 // 节拍显示区域
-                
-                    HStack(spacing: 4) {
-                        ForEach(0..<beatsPerBar, id: \.self) { beat in
-                            BeatView(
-                                status: beatStatuses[beat],
-                                onStatusChanged: { newStatus in
-                                    beatStatuses[beat] = newStatus
-                                },
-                                isCurrentBeat: beat == currentBeat,
-                                isPlaying: isPlaying  // 传递 isPlaying 状态
-                            )
-                        }
+                HStack(spacing: 4) {
+                    // 确保 beatStatuses 数组长度正确
+                    let safeStatuses = ensureBeatStatusesLength(beatStatuses, count: beatsPerBar)
+                    ForEach(0..<beatsPerBar, id: \.self) { beat in
+                        BeatView(
+                            status: safeStatuses[beat],
+                            onStatusChanged: { newStatus in
+                                var updatedStatuses = safeStatuses
+                                updatedStatuses[beat] = newStatus
+                                beatStatuses = updatedStatuses
+                            },
+                            isCurrentBeat: beat == currentBeat,
+                            isPlaying: isPlaying
+                        )
                     }
-                
-                
+                }
                 .padding(.horizontal)
-                
                 
                 // 速度和拍号显示
                 HStack(spacing: 30) {
-                    // 拍号显示
+                    // 拍号显示 - 添加点击手势
                     HStack(spacing: 2) {
                         Text("\(beatsPerBar)")
                             .font(.system(size: 24, weight: .medium))
@@ -163,6 +165,9 @@ struct MetronomeInfoView: View {
                             .font(.system(size: 24, weight: .medium))
                         Text("\(beatUnit)")
                             .font(.system(size: 24, weight: .medium))
+                    }
+                    .onTapGesture {
+                        showingTimeSignature = true
                     }
                     
                     Spacer()
@@ -189,10 +194,42 @@ struct MetronomeInfoView: View {
             .padding(.top, 10)
         }
         .safeAreaInset(edge: .top) { Color.clear.frame(height: 0) }
-        .ignoresSafeArea(.all, edges: [.horizontal, .bottom])  // 只忽略水平和底部安全区域
+        .ignoresSafeArea(.all, edges: [.horizontal, .bottom])
+        .sheet(isPresented: $showingTimeSignature) {
+            TimeSignatureView(
+                beatsPerBar: $beatsPerBarBinding,
+                beatUnit: $beatUnitBinding
+            )
+            .presentationDetents([.height(400)])
+            .presentationDragIndicator(.visible)
+        }
+    }
+    
+    // 添加一个辅助函数来确保数组长度正确
+    private func ensureBeatStatusesLength(_ statuses: [BeatStatus], count: Int) -> [BeatStatus] {
+        if statuses.count == count {
+            return statuses
+        }
+        
+        var newStatuses = Array(repeating: BeatStatus.normal, count: count)
+        // 复制现有的状态
+        for i in 0..<min(statuses.count, count) {
+            newStatuses[i] = statuses[i]
+        }
+        // 确保第一拍是强拍
+        if newStatuses.count > 0 {
+            newStatuses[0] = .strong
+        }
+        
+        DispatchQueue.main.async {
+            // 异步更新绑定的数组，避免在视图更新过程中修改状态
+            beatStatuses = newStatuses
+        }
+        
+        return newStatuses
     }
 }
 
 #Preview {
-    MetronomeInfoView(tempo: 120, beatsPerBar: 4, beatUnit: 4, showingKeypad: .constant(false), beatStatuses: .constant([.strong, .normal, .normal, .normal]), currentBeat: 0, isPlaying: false)
+    MetronomeInfoView(tempo: 120, beatsPerBar: 4, beatUnit: 4, showingKeypad: .constant(false), beatStatuses: .constant([.strong, .normal, .normal, .normal]), currentBeat: 0, isPlaying: false, beatsPerBarBinding: .constant(4), beatUnitBinding: .constant(4))
 }

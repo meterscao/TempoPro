@@ -97,4 +97,34 @@ class MetronomeState: ObservableObject {
         metronomeTimer?.stop()
         audioEngine.stop()
     }
+    
+    // 添加更新拍数的方法
+    func updateBeatsPerBar(_ newBeatsPerBar: Int) {
+        // 保存当前的节拍状态模式
+        let wasPlaying = isPlaying
+        if wasPlaying {
+            togglePlayback() // 暂停播放
+        }
+        
+        // 创建新的 beatStatuses 数组
+        var newBeatStatuses = Array(repeating: BeatStatus.normal, count: newBeatsPerBar)
+        
+        // 复制现有的节拍状态，确保不会越界
+        for i in 0..<min(beatStatuses.count, newBeatsPerBar) {
+            newBeatStatuses[i] = beatStatuses[i]
+        }
+        
+        // 确保第一拍是强拍
+        if newBeatStatuses.count > 0 {
+            newBeatStatuses[0] = .strong
+        }
+        
+        // 更新 beatStatuses
+        beatStatuses = newBeatStatuses
+        
+        // 如果之前在播放，则恢复播放
+        if wasPlaying {
+            togglePlayback()
+        }
+    }
 } 

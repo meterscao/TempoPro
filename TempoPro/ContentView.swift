@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var beatsPerBar: Int {
         didSet {
             UserDefaults.standard.set(beatsPerBar, forKey: "com.tempopro.beatsPerBar")
+            metronomeState.updateBeatsPerBar(beatsPerBar)
         }
     }
     @State private var beatUnit: Int {
@@ -43,7 +44,9 @@ struct ContentView: View {
                 showingKeypad: $showingKeypad,
                 beatStatuses: $metronomeState.beatStatuses,
                 currentBeat: metronomeState.currentBeat,
-                isPlaying: metronomeState.isPlaying
+                isPlaying: metronomeState.isPlaying,
+                beatsPerBarBinding: $beatsPerBar,
+                beatUnitBinding: $beatUnit
             )
             .frame(maxHeight: .infinity)
             
