@@ -13,8 +13,6 @@ struct MetronomeControlView: View {
     
     @Binding var tempo: Double
     @Binding var isPlaying: Bool
-    @Binding var currentBeat: Int
-    @Binding var beatStatuses: [BeatStatus]
     let beatsPerBar: Int
     
     @State private var rotation: Double = 0
@@ -22,10 +20,6 @@ struct MetronomeControlView: View {
     @State private var totalRotation: Double = 0
     @State private var startTempo: Double = 0
     @State private var isDragging: Bool = false
-    
-    // 使用新的音频引擎和定时器
-    @StateObject private var audioEngine = MetronomeAudioEngine()
-    @State private var metronomeTimer: MetronomeTimer?
     
     private func createTicks() -> some View {
         ZStack {
@@ -59,13 +53,6 @@ struct MetronomeControlView: View {
         return angle
     }
     
-    private func updateMetronome() {
-        if isPlaying {
-            metronomeTimer?.stop()
-            metronomeTimer?.start(tempo: tempo, beatsPerBar: beatsPerBar, beatStatuses: beatStatuses)
-        }
-    }
-    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -82,11 +69,6 @@ struct MetronomeControlView: View {
                 
                 Button(action: {
                     isPlaying.toggle()
-                    if isPlaying {
-                        metronomeTimer?.start(tempo: tempo, beatsPerBar: beatsPerBar, beatStatuses: beatStatuses)
-                    } else {
-                        metronomeTimer?.stop()
-                    }
                 }) {
                     Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .resizable()
@@ -129,8 +111,6 @@ struct MetronomeControlView: View {
                         
                         tempo = targetTempo
                         lastAngle = currentAngle
-                        
-                        updateMetronome()
                     }
                     .onEnded { _ in
                         isDragging = false
@@ -139,23 +119,9 @@ struct MetronomeControlView: View {
             )
             .frame(width: geometry.size.width, height: geometry.size.width)
         }
-        .onAppear {
-            // 初始化音频引擎
-            audioEngine.initialize()
-            // 创建定时器并设置回调
-            let timer = MetronomeTimer(audioEngine: audioEngine)
-            timer.onBeatUpdate = { beat in
-                currentBeat = beat
-            }
-            metronomeTimer = timer
-        }
-        .onDisappear {
-            metronomeTimer?.stop()
-            audioEngine.stop()
-        }
     }
 }
 
 #Preview {
-    MetronomeControlView(tempo: .constant(120), isPlaying: .constant(false), currentBeat: .constant(0), beatStatuses: .constant([.normal, .normal, .normal, .normal]), beatsPerBar: 4)
+    MetronomeControlView(tempo: .constant(120), isPlaying: .constant(false), beatsPerBar: 4)
 } 
