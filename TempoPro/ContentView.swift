@@ -9,13 +9,29 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var metronomeState: MetronomeState
-    @State private var beatsPerBar: Int = 3
-    @State private var beatUnit: Int = 4
+    @State private var beatsPerBar: Int {
+        didSet {
+            UserDefaults.standard.set(beatsPerBar, forKey: "com.tempopro.beatsPerBar")
+        }
+    }
+    @State private var beatUnit: Int {
+        didSet {
+            UserDefaults.standard.set(beatUnit, forKey: "com.tempopro.beatUnit")
+        }
+    }
     @State private var showingKeypad = false
     
     init() {
-        // 使用正确的拍数初始化 MetronomeState
-        _metronomeState = StateObject(wrappedValue: MetronomeState(beatsPerBar: 3))
+        // 从 UserDefaults 读取保存的值
+        let savedBeatsPerBar = UserDefaults.standard.integer(forKey: "com.tempopro.beatsPerBar")
+        let savedBeatUnit = UserDefaults.standard.integer(forKey: "com.tempopro.beatUnit")
+        
+        // 如果没有保存的值，使用默认值
+        _beatsPerBar = State(initialValue: savedBeatsPerBar != 0 ? savedBeatsPerBar : 3)
+        _beatUnit = State(initialValue: savedBeatUnit != 0 ? savedBeatUnit : 4)
+        
+        // 使用保存的拍数初始化 MetronomeState
+        _metronomeState = StateObject(wrappedValue: MetronomeState(beatsPerBar: savedBeatsPerBar != 0 ? savedBeatsPerBar : 3))
     }
     
     var body: some View {
