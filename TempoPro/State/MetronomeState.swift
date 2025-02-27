@@ -24,7 +24,12 @@ class MetronomeState: ObservableObject {
     func togglePlayback() {
         isPlaying.toggle()
         if isPlaying {
-            metronomeTimer?.start(tempo: tempo, beatsPerBar: beatStatuses.count, beatStatuses: beatStatuses)
+            currentBeat = 0
+            metronomeTimer?.start(
+                tempo: tempo,
+                beatsPerBar: beatStatuses.count,
+                beatStatuses: beatStatuses
+            )
         } else {
             metronomeTimer?.stop()
         }
@@ -33,8 +38,13 @@ class MetronomeState: ObservableObject {
     func updateTempo(_ newTempo: Double) {
         tempo = max(30, min(240, newTempo))
         if isPlaying {
+            currentBeat = 0
             metronomeTimer?.stop()
-            metronomeTimer?.start(tempo: tempo, beatsPerBar: beatStatuses.count, beatStatuses: beatStatuses)
+            metronomeTimer?.start(
+                tempo: tempo,
+                beatsPerBar: beatStatuses.count,
+                beatStatuses: beatStatuses
+            )
         }
     }
     
