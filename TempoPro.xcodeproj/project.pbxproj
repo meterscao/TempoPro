@@ -14,6 +14,13 @@
 		3A9C88B22D6F728B004CFD88 /* TempoProTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C88B12D6F728B004CFD88 /* TempoProTests.swift */; };
 		3A9C88BC2D6F728B004CFD88 /* TempoProUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C88BB2D6F728B004CFD88 /* TempoProUITests.swift */; };
 		3A9C88BE2D6F728B004CFD88 /* TempoProUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C88BD2D6F728B004CFD88 /* TempoProUITestsLaunchTests.swift */; };
+		3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA1E5502D6F7371002D9615 /* BPMKeypadView.swift */; };
+		3AA1E5552D6F7372002D9615 /* MetronomeToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA1E5512D6F7372002D9615 /* MetronomeToolbarView.swift */; };
+		3AA1E5562D6F7372002D9615 /* MetronomeControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA1E5522D6F7372002D9615 /* MetronomeControlView.swift */; };
+		3AA1E5572D6F7372002D9615 /* MetronomeInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA1E5532D6F7372002D9615 /* MetronomeInfoView.swift */; };
+		3AE9EDF72D6FFD6400D5EFC7 /* Metr_fl_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AE9EDF42D6FFD6400D5EFC7 /* Metr_fl_hi.wav */; };
+		3AE9EDF82D6FFD6400D5EFC7 /* Metr_fl_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AE9EDF52D6FFD6400D5EFC7 /* Metr_fl_mid.wav */; };
+		3AE9EDF92D6FFD6400D5EFC7 /* Metr_fl_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AE9EDF62D6FFD6400D5EFC7 /* Metr_fl_low.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +52,13 @@
 		3A9C88B72D6F728B004CFD88 /* TempoProUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TempoProUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9C88BB2D6F728B004CFD88 /* TempoProUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempoProUITests.swift; sourceTree = "<group>"; };
 		3A9C88BD2D6F728B004CFD88 /* TempoProUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempoProUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3AA1E5502D6F7371002D9615 /* BPMKeypadView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BPMKeypadView.swift; sourceTree = "<group>"; };
+		3AA1E5512D6F7372002D9615 /* MetronomeToolbarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetronomeToolbarView.swift; sourceTree = "<group>"; };
+		3AA1E5522D6F7372002D9615 /* MetronomeControlView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetronomeControlView.swift; sourceTree = "<group>"; };
+		3AA1E5532D6F7372002D9615 /* MetronomeInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetronomeInfoView.swift; sourceTree = "<group>"; };
+		3AE9EDF42D6FFD6400D5EFC7 /* Metr_fl_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_hi.wav; sourceTree = "<group>"; };
+		3AE9EDF52D6FFD6400D5EFC7 /* Metr_fl_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_mid.wav; sourceTree = "<group>"; };
+		3AE9EDF62D6FFD6400D5EFC7 /* Metr_fl_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_low.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,8 +109,15 @@
 		3A9C889E2D6F728A004CFD88 /* TempoPro */ = {
 			isa = PBXGroup;
 			children = (
+				3AE9EDF42D6FFD6400D5EFC7 /* Metr_fl_hi.wav */,
+				3AE9EDF62D6FFD6400D5EFC7 /* Metr_fl_low.wav */,
+				3AE9EDF52D6FFD6400D5EFC7 /* Metr_fl_mid.wav */,
 				3A9C889F2D6F728A004CFD88 /* TempoProApp.swift */,
 				3A9C88A12D6F728A004CFD88 /* ContentView.swift */,
+				3AA1E5502D6F7371002D9615 /* BPMKeypadView.swift */,
+				3AA1E5522D6F7372002D9615 /* MetronomeControlView.swift */,
+				3AA1E5532D6F7372002D9615 /* MetronomeInfoView.swift */,
+				3AA1E5512D6F7372002D9615 /* MetronomeToolbarView.swift */,
 				3A9C88A32D6F728B004CFD88 /* Assets.xcassets */,
 				3A9C88A52D6F728B004CFD88 /* TempoPro.entitlements */,
 				3A9C88A62D6F728B004CFD88 /* Preview Content */,
@@ -234,7 +255,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A9C88A82D6F728B004CFD88 /* Preview Assets.xcassets in Resources */,
+				3AE9EDF82D6FFD6400D5EFC7 /* Metr_fl_mid.wav in Resources */,
+				3AE9EDF72D6FFD6400D5EFC7 /* Metr_fl_hi.wav in Resources */,
 				3A9C88A42D6F728B004CFD88 /* Assets.xcassets in Resources */,
+				3AE9EDF92D6FFD6400D5EFC7 /* Metr_fl_low.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,7 +284,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A9C88A22D6F728A004CFD88 /* ContentView.swift in Sources */,
+				3AA1E5572D6F7372002D9615 /* MetronomeInfoView.swift in Sources */,
+				3AA1E5552D6F7372002D9615 /* MetronomeToolbarView.swift in Sources */,
+				3AA1E5562D6F7372002D9615 /* MetronomeControlView.swift in Sources */,
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
+				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,12 +462,12 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = us.besttime.tempopro.TempoPro;
+				PRODUCT_BUNDLE_IDENTIFIER = us.besttime.tempopro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -472,12 +500,12 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = us.besttime.tempopro.TempoPro;
+				PRODUCT_BUNDLE_IDENTIFIER = us.besttime.tempopro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
