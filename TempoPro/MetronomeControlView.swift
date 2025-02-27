@@ -9,6 +9,9 @@ import SwiftUI
 import AVFoundation
 
 struct MetronomeControlView: View {
+    private let dialSize: CGFloat = 300  // 表盘大小
+    private let sensitivity: Double = 8 // 旋转灵敏度
+    
     @Binding var tempo: Double
     @Binding var isPlaying: Bool
     @Binding var currentBeat: Int
@@ -16,9 +19,6 @@ struct MetronomeControlView: View {
     let beatsPerBar: Int
     
     @State private var rotation: Double = 0
-    
-    private let sensitivity: Double = 8
-    private let dialSize: CGFloat = 280
     @State private var lastAngle: Double = 0
     @State private var totalRotation: Double = 0
     @State private var startTempo: Double = 0
@@ -29,72 +29,201 @@ struct MetronomeControlView: View {
     @State private var normalBeatPlayer: AVAudioPlayer?
     @State private var timer: Timer?
     
-    init(tempo: Binding<Double>, isPlaying: Binding<Bool>, currentBeat: Binding<Int>, beatStatuses: Binding<[BeatStatus]>, beatsPerBar: Int) {
-        self._tempo = tempo
-        self._isPlaying = isPlaying
-        self._currentBeat = currentBeat
-        self._beatStatuses = beatStatuses
-        self.beatsPerBar = beatsPerBar
+    @State private var isAudioInitialized: Bool = false
+    
+    @State private var audioEngine: AVAudioEngine?
+    @State private var strongBeatBuffer: AVAudioPCMBuffer?
+    @State private var mediumBeatBuffer: AVAudioPCMBuffer?
+    @State private var normalBeatBuffer: AVAudioPCMBuffer?
+    @State private var playerNode: AVAudioPlayerNode?
+    
+    private func configureAudioSession() {
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback)
+            try session.setActive(true)
+            print("音频会话配置完成")
+        } catch {
+            print("音频会话配置失败: \(error)")
+        }
+    }
+    
+    private func initializeAudioPlayers() {
+        guard !isAudioInitialized else { return }
+        
+        let initStartTime = Date().timeIntervalSince1970
+        print("开始初始化音频播放器 - 时间: \(initStartTime)")
+        
+        configureAudioSession()
         
         do {
             if let strongURL = Bundle.main.url(forResource: "Metr_fl_hi", withExtension: "wav") {
-                let player = try AVAudioPlayer(contentsOf: strongURL)
-                _strongBeatPlayer = State(initialValue: player)
-                player.prepareToPlay()
+                print("加载强拍音频文件")
+                let loadStart = Date().timeIntervalSince1970
+                strongBeatPlayer = try AVAudioPlayer(contentsOf: strongURL)
+                strongBeatPlayer?.numberOfLoops = 0
+                strongBeatPlayer?.volume = 1.0
+                strongBeatPlayer?.prepareToPlay()
+                strongBeatPlayer?.play()
+                strongBeatPlayer?.stop()
+                print("强拍音频加载完成 - 耗时: \(Date().timeIntervalSince1970 - loadStart)秒")
             }
             
             if let mediumURL = Bundle.main.url(forResource: "Metr_fl_mid", withExtension: "wav") {
-                let player = try AVAudioPlayer(contentsOf: mediumURL)
-                _mediumBeatPlayer = State(initialValue: player)
-                player.prepareToPlay()
+                print("加载中拍音频文件")
+                let loadStart = Date().timeIntervalSince1970
+                mediumBeatPlayer = try AVAudioPlayer(contentsOf: mediumURL)
+                mediumBeatPlayer?.numberOfLoops = 0
+                mediumBeatPlayer?.volume = 1.0
+                mediumBeatPlayer?.prepareToPlay()
+                mediumBeatPlayer?.play()
+                mediumBeatPlayer?.stop()
+                print("中拍音频加载完成 - 耗时: \(Date().timeIntervalSince1970 - loadStart)秒")
             }
             
             if let normalURL = Bundle.main.url(forResource: "Metr_fl_low", withExtension: "wav") {
-                let player = try AVAudioPlayer(contentsOf: normalURL)
-                _normalBeatPlayer = State(initialValue: player)
-                player.prepareToPlay()
+                print("加载弱拍音频文件")
+                let loadStart = Date().timeIntervalSince1970
+                normalBeatPlayer = try AVAudioPlayer(contentsOf: normalURL)
+                normalBeatPlayer?.numberOfLoops = 0
+                normalBeatPlayer?.volume = 1.0
+                normalBeatPlayer?.prepareToPlay()
+                normalBeatPlayer?.play()
+                normalBeatPlayer?.stop()
+                print("弱拍音频加载完成 - 耗时: \(Date().timeIntervalSince1970 - loadStart)秒")
             }
+            
+            isAudioInitialized = true
+            print("音频初始化完成 - 总耗时: \(Date().timeIntervalSince1970 - initStartTime)秒")
         } catch {
             print("音频文件加载失败: \(error)")
         }
     }
     
+    private func initializeAudioEngine() {
+        guard !isAudioInitialized else { return }
+        
+        let initStartTime = Date().timeIntervalSince1970
+        print("开始初始化音频引擎 - 时间: \(initStartTime)")
+        
+        do {
+            // 配置音频会话
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback)
+            try session.setActive(true)
+            
+            // 创建音频引擎
+            audioEngine = AVAudioEngine()
+            playerNode = AVAudioPlayerNode()
+            
+            if let engine = audioEngine, let player = playerNode {
+                engine.attach(player)
+                
+                // 加载音频文件并获取格式
+                if let strongURL = Bundle.main.url(forResource: "Metr_fl_hi", withExtension: "wav") {
+                    print("加载强拍音频文件")
+                    let file = try AVAudioFile(forReading: strongURL)
+                    let format = file.processingFormat
+                    engine.connect(player, to: engine.mainMixerNode, format: format)
+                    
+                    strongBeatBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(file.length))
+                    try file.read(into: strongBeatBuffer!)
+                    
+                    // 使用相同的格式加载其他音频文件
+                    if let mediumURL = Bundle.main.url(forResource: "Metr_fl_mid", withExtension: "wav") {
+                        print("加载中拍音频文件")
+                        let mediumFile = try AVAudioFile(forReading: mediumURL)
+                        mediumBeatBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(mediumFile.length))
+                        try mediumFile.read(into: mediumBeatBuffer!)
+                    }
+                    
+                    if let normalURL = Bundle.main.url(forResource: "Metr_fl_low", withExtension: "wav") {
+                        print("加载弱拍音频文件")
+                        let normalFile = try AVAudioFile(forReading: normalURL)
+                        normalBeatBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(normalFile.length))
+                        try normalFile.read(into: normalBeatBuffer!)
+                    }
+                }
+                
+                try engine.start()
+                isAudioInitialized = true
+                print("音频引擎初始化完成 - 总耗时: \(Date().timeIntervalSince1970 - initStartTime)秒")
+            }
+        } catch {
+            print("音频引擎初始化失败: \(error)")
+        }
+    }
+    
     private func playBeat(status: BeatStatus) {
+        if !isAudioInitialized {
+            initializeAudioEngine()
+        }
+        
+        let timestamp = Date().timeIntervalSince1970
+        print("开始播放节拍 - 时间戳: \(timestamp), 当前拍号: \(currentBeat), 状态: \(status)")
+        
+        guard let player = playerNode else { return }
+        
+        let beforePlay = Date().timeIntervalSince1970
+        
         switch status {
         case .strong:
-            strongBeatPlayer?.currentTime = 0
-            strongBeatPlayer?.play()
+            if let buffer = strongBeatBuffer {
+                player.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
+                player.play()
+                print("强拍播放延迟: \(Date().timeIntervalSince1970 - beforePlay)秒")
+            }
         case .medium:
-            mediumBeatPlayer?.currentTime = 0
-            mediumBeatPlayer?.play()
+            if let buffer = mediumBeatBuffer {
+                player.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
+                player.play()
+                print("中拍播放延迟: \(Date().timeIntervalSince1970 - beforePlay)秒")
+            }
         case .normal:
-            normalBeatPlayer?.currentTime = 0
-            normalBeatPlayer?.play()
+            if let buffer = normalBeatBuffer {
+                player.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
+                player.play()
+                print("弱拍播放延迟: \(Date().timeIntervalSince1970 - beforePlay)秒")
+            }
         case .muted:
-            break // 不播放声音
+            print("静音拍")
         }
     }
     
     private func startMetronome() {
         let interval = 60.0 / tempo
-        currentBeat = 0  // 重置为第一拍
+        print("开始节拍器 - BPM: \(tempo), 间隔: \(interval)秒")
+        currentBeat = 0
         
-        // 立即播放第一拍
-        playBeat(status: beatStatuses[currentBeat])
+        let startTime = Date().timeIntervalSince1970
+        print("首拍开始时间: \(startTime)")
         
-        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
-            // 先更新当前拍子
-            currentBeat = (currentBeat + 1) % beatsPerBar
-            
-            // 再播放对应节拍的音频
+        DispatchQueue.global(qos: .userInteractive).async {
             playBeat(status: beatStatuses[currentBeat])
+            
+            timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+                DispatchQueue.main.async {
+                    let beatTime = Date().timeIntervalSince1970
+                    let timeSinceStart = beatTime - startTime
+                    
+                    currentBeat = (currentBeat + 1) % beatsPerBar
+                    print("节拍更新 - 时间: \(beatTime), 距离开始: \(timeSinceStart)秒, 当前拍号: \(currentBeat)")
+                    
+                    playBeat(status: beatStatuses[currentBeat])
+                }
+            }
+            
+            RunLoop.current.add(timer!, forMode: .common)
+            RunLoop.current.run()
         }
     }
     
     private func stopMetronome() {
+        print("停止节拍器")
         timer?.invalidate()
         timer = nil
-        currentBeat = 0  // 重置当前拍子
+        currentBeat = 0
+        playerNode?.stop()
     }
     
     private func createTicks() -> some View {
@@ -131,6 +260,7 @@ struct MetronomeControlView: View {
     
     private func updateMetronome() {
         if isPlaying {
+            print("更新节拍器 - 新的速度: \(tempo) BPM")
             stopMetronome()
             startMetronome()
         }
@@ -208,11 +338,15 @@ struct MetronomeControlView: View {
             .frame(width: geometry.size.width, height: geometry.size.width)
             .position(x: geometry.size.width/2, y: geometry.size.height/2)
         }
+        .onAppear {
+            initializeAudioEngine()
+        }
         .onChange(of: tempo) { _ in
             updateMetronome()
         }
         .onDisappear {
             stopMetronome()
+            audioEngine?.stop()
         }
     }
 }
