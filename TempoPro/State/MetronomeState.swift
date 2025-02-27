@@ -32,6 +32,8 @@ class MetronomeState: ObservableObject {
     private let audioEngine = MetronomeAudioEngine()
     private var metronomeTimer: MetronomeTimer?
     
+    private var nextScheduledBeatTime: TimeInterval = 0
+    
     init(beatsPerBar: Int = 3) {
         // 1. 首先初始化所有存储属性
         let savedTempo = UserDefaults.standard.double(forKey: UserDefaultsKeys.tempo)
@@ -65,17 +67,29 @@ class MetronomeState: ObservableObject {
     
     // 提供更新方法而不是直接使用 didSet
     func updateTempo(_ newTempo: Double) {
+        let currentTime = Date().timeIntervalSince1970
         tempo = max(30, min(240, newTempo))
         UserDefaults.standard.set(tempo, forKey: UserDefaultsKeys.tempo)
         
         if isPlaying {
-            currentBeat = 0
-            metronomeTimer?.stop()
-            metronomeTimer?.start(
-                tempo: tempo,
-                beatsPerBar: beatStatuses.count,
-                beatStatuses: beatStatuses
-            )
+            // 如果是首次开始或已经播放完当前拍，直接开始新的节奏
+            if nextScheduledBeatTime == 0 || currentTime >= nextScheduledBeatTime {
+                currentBeat = 0
+                metronomeTimer?.stop()
+                metronomeTimer?.start(
+                    tempo: tempo,
+                    beatsPerBar: beatStatuses.count,
+                    beatStatuses: beatStatuses
+                )
+                nextScheduledBeatTime = currentTime + (60.0 / tempo)
+            } else {
+                // 否则，让当前拍完成后再更新速度
+                metronomeTimer?.updateTempo(
+                    tempo: tempo,
+                    currentTime: currentTime,
+                    nextBeatTime: nextScheduledBeatTime
+                )
+            }
         }
     }
     
@@ -83,6 +97,7 @@ class MetronomeState: ObservableObject {
         isPlaying.toggle()
         if isPlaying {
             currentBeat = 0
+            nextScheduledBeatTime = Date().timeIntervalSince1970 + (60.0 / tempo)
             metronomeTimer?.start(
                 tempo: tempo,
                 beatsPerBar: beatStatuses.count,
@@ -90,6 +105,7 @@ class MetronomeState: ObservableObject {
             )
         } else {
             metronomeTimer?.stop()
+            nextScheduledBeatTime = 0
         }
     }
     

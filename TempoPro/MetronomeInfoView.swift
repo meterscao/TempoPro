@@ -187,9 +187,10 @@ struct MetronomeInfoView: View {
                     
                     Text("切分")
                 }
+                .foregroundStyle(.white)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .background(.yellow)
+            .background(.black)
             .padding(.horizontal, 10)
             .padding(.top, 10)
         }
