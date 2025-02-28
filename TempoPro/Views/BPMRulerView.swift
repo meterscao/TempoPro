@@ -74,13 +74,20 @@ struct BPMRulerView: View {
         
         .clipped() // 裁剪超出边界的内容
         .onChange(of: tempo) { newTempo in
-            // 改进的动画方式
-            if abs(animatedTempo - newTempo) > 20 {
-                // 大幅度变化直接跳转，避免过长的动画
+            // 完全优化的动画处理方式
+            let tempoChange = abs(animatedTempo - newTempo)
+            
+            if tempoChange > 20 {
+                // 大幅度变化直接跳转，不使用动画
                 animatedTempo = newTempo
+            } else if tempoChange > 5 {
+                // 中等幅度变化使用简单动画
+                withAnimation(.easeOut(duration: 0.2)) {
+                    animatedTempo = newTempo
+                }
             } else {
-                // 小幅度变化使用动画
-                withAnimation(.interpolatingSpring(stiffness: 50, damping: 10)) {
+                // 小幅度变化使用更精细的弹簧动画
+                withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.7, blendDuration: 0.1)) {
                     animatedTempo = newTempo
                 }
             }
