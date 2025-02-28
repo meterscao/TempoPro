@@ -46,8 +46,8 @@ struct MetronomeControlView: View {
     }
     
     private func calculateAngle(location: CGPoint, in frame: CGRect) -> Double {
-        let centerX = frame.width / 2
-        let centerY = frame.height / 2
+        let centerX = frame.midX
+        let centerY = frame.midY
         let deltaX = location.x - centerX
         let deltaY = location.y - centerY
         
@@ -100,17 +100,24 @@ struct MetronomeControlView: View {
                     .onChanged { value in
                         if !isDragging {
                             isDragging = true
-                            lastAngle = calculateAngle(
-                                location: value.location,
-                                in: CGRect(x: 0, y: 0, width: wheelSize, height: wheelSize)
+                            let frame = CGRect(
+                                x: (geometry.size.width - wheelSize) / 2,
+                                y: (geometry.size.height - wheelSize) / 2,
+                                width: wheelSize,
+                                height: wheelSize
                             )
+                            lastAngle = calculateAngle(location: value.location, in: frame)
                             startTempo = tempo
+                            print("开始拖动 - 初始角度: \(lastAngle)°, 初始速度: \(startTempo)")
                         }
                         
-                        let currentAngle = calculateAngle(
-                            location: value.location,
-                            in: CGRect(x: 0, y: 0, width: wheelSize, height: wheelSize)
+                        let frame = CGRect(
+                            x: (geometry.size.width - wheelSize) / 2,
+                            y: (geometry.size.height - wheelSize) / 2,
+                            width: wheelSize,
+                            height: wheelSize
                         )
+                        let currentAngle = calculateAngle(location: value.location, in: frame)
                         
                         var angleDiff = currentAngle - lastAngle
                         
@@ -127,10 +134,12 @@ struct MetronomeControlView: View {
                         let targetTempo = max(30, min(320, startTempo + tempoChange))
                         
                         tempo = targetTempo
+                        print("拖动中 - 当前角度: \(currentAngle)°, 角度差: \(angleDiff)°, 总旋转: \(totalRotation)°, 实际旋转: \(rotation)°, 目标速度: \(targetTempo)")
                         lastAngle = currentAngle
                     }
                     .onEnded { _ in
                         isDragging = false
+                        print("结束拖动 - 最终旋转: \(rotation)°, 最终速度: \(tempo)")
                         totalRotation = 0
                     }
             )
