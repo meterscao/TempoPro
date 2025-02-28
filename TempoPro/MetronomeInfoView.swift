@@ -236,7 +236,7 @@ struct MetronomeInfoView: View {
                     }
                 }
             }
-            .frame(height: 100) // 设置合适的高度
+//            .frame(height: 100) // 设置合适的高度
             .contentShape(Rectangle()) // 确保整个区域可以接收手势
             .gesture(
                 DragGesture(minimumDistance: 10)
@@ -323,7 +323,7 @@ struct MetronomeInfoView: View {
             .id(beatsPerBar) // 添加ID确保拍数变化时视图能重新加载
             .animation(.spring(response: 0.3), value: isHorizontalDragging)
         }
-        .frame(height: 100) // 确保GeometryReader有固定高度
+        .frame(maxHeight: .infinity) // 确保GeometryReader有固定高度
     }
     
     // 添加一个辅助函数来确保数组长度正确
