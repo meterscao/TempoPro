@@ -152,11 +152,13 @@ struct MetronomeInfoView: View {
                         showingThemeSettings = true
                     }) {
                         Image("icon-setting")
+                            .renderingMode(.template)
                             .foregroundColor(theme.primaryColor)
                     }
                     Spacer()
                     Button(action: {}) {
                         Image("icon-timer")
+                            .renderingMode(.template) 
                             .foregroundColor(theme.primaryColor)
                     }
                 }

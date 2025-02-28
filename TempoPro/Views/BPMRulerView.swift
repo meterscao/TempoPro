@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BPMRulerView: View {
     @Binding var tempo: Double
+    @Environment(\.metronomeTheme) var theme
     
     // BPM 范围
     private let minBPM: Int = 30
@@ -52,7 +53,7 @@ struct BPMRulerView: View {
                 // 渐变遮罩
                 HStack(spacing: 0) {
                     LinearGradient(
-                        gradient: Gradient(colors: [Color.black, Color.black.opacity(0)]),
+                        gradient: Gradient(colors: [theme.backgroundColor, Color.black.opacity(0)]),
                         startPoint: .leading,
                         endPoint: .trailing
                     )
@@ -61,7 +62,7 @@ struct BPMRulerView: View {
                     Spacer()
                     
                     LinearGradient(
-                        gradient: Gradient(colors: [Color.black.opacity(0), Color.black]),
+                        gradient: Gradient(colors: [Color.black.opacity(0), theme.backgroundColor]),
                         startPoint: .leading,
                         endPoint: .trailing
                     )
@@ -79,7 +80,7 @@ struct BPMRulerView: View {
                 animatedTempo = newTempo
             } else {
                 // 小幅度变化使用动画
-                withAnimation(.interpolatingSpring(stiffness: 300, damping: 15)) {
+                withAnimation(.interpolatingSpring(stiffness: 50, damping: 10)) {
                     animatedTempo = newTempo
                 }
             }
@@ -127,11 +128,7 @@ struct RulerScaleView: View {
                          .fill(bpm % 10 == 0 ? Color.gray : Color.gray.opacity(0.5))
                          .frame(width: bpm % 10 == 0 ? majorTickWidth : tickWidth, 
                                 height: bpm % 10 == 0 ? majorTickHeight : tickHeight)
-
-                    
                  }
-//                 Rectangle().fill(Color.purple)
-//                     .frame(width: 200,height: 30)
 
                  .frame(maxHeight: .infinity,alignment: .bottom)
                  .position(x: CGFloat(bpm - minBPM) * tickSpacing,y:30)
@@ -139,14 +136,9 @@ struct RulerScaleView: View {
                 
              }
             
-//            Rectangle().fill(Color.purple)
-//                .frame(width: 200,height: 30)
-
-            
-//            Text("123")
         }
         .frame(maxHeight: .infinity,alignment: .bottom)
-//        .background(Color.purple)
+
         
     }
 }
