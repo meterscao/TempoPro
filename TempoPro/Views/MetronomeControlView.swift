@@ -67,13 +67,14 @@ struct MetronomeControlView: View {
                 Color.clear
                     .contentShape(Rectangle())
                 
-                Circle()
-                    .stroke(Color.black, lineWidth: 2)
+                Image("bg-knob")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: wheelSize, height: wheelSize)
                     .rotationEffect(.degrees(rotation))
                 
-                createTicks(wheelSize: wheelSize)
-                    .rotationEffect(.degrees(rotation))
+                // createTicks(wheelSize: wheelSize)
+                //     .rotationEffect(.degrees(rotation))
                 
                 Button(action: {
                     isPlaying.toggle()
