@@ -45,16 +45,11 @@ extension BeatStatus {
     }
 }
 
-// 更新 BeatView 组件
+// 简化 BeatView，移除手势处理
 struct BeatView: View {
-    @State var status: BeatStatus
-    var onStatusChanged: (BeatStatus) -> Void
+    var status: BeatStatus  // 不再需要 @State，由父视图控制
     var isCurrentBeat: Bool
-    var isPlaying: Bool  // 添加 isPlaying 参数
-    
-    // 添加滑动状态
-    @State private var dragAmount = CGSize.zero
-    @State private var isDragging = false
+    var isPlaying: Bool
     
     private func barColors() -> [Color] {
         let colors: [Color] = switch status {
@@ -81,47 +76,7 @@ struct BeatView: View {
                     .cornerRadius(2)
             }
         }
-        .contentShape(Rectangle()) // 确保整个区域可点击
-        .onTapGesture {
-            status = status.next()
-            onStatusChanged(status)
-        }
-        // 创建更高优先级的垂直滑动手势
-        .highPriorityGesture(
-            DragGesture(minimumDistance: 10)
-                .onChanged { gesture in
-                    // 只响应明确是垂直方向的滑动
-                    if abs(gesture.translation.height) > abs(gesture.translation.width) * 1.3 {
-                        print("BeatView - 检测到垂直滑动: \(gesture.translation)")
-                        dragAmount = gesture.translation
-                        isDragging = true
-                    }
-                }
-                .onEnded { gesture in
-                    // 只处理明确是垂直方向的滑动
-                    if abs(gesture.translation.height) > abs(gesture.translation.width) * 1.3 {
-                        print("BeatView - 结束垂直滑动: \(gesture.translation)")
-                        // 判断是向上滑还是向下滑
-                        if abs(gesture.translation.height) > 20 { // 设置一个最小阈值
-                            if gesture.translation.height > 0 {
-                                // 向下滑 - 强度减弱
-                                print("BeatView - 向下滑动，强度减弱")
-                                status = status.previous()
-                            } else {
-                                // 向上滑 - 强度增强
-                                print("BeatView - 向上滑动，强度增强")
-                                status = status.next()
-                            }
-                            onStatusChanged(status)
-                        }
-                    }
-                    
-                    // 重置状态
-                    dragAmount = .zero
-                    isDragging = false
-                }
-        )
-        .animation(.spring(response: 0.3), value: isDragging)
+        // 移除所有手势相关代码，由父视图统一处理
     }
 }
 
@@ -140,6 +95,7 @@ struct MetronomeInfoView: View {
     // 添加滑动状态变量
     @State private var horizontalDragAmount = CGSize.zero
     @State private var isHorizontalDragging = false
+    @State private var initialBeatIndex: Int? = nil // 添加初始BeatView索引跟踪
     
     // 添加速度术语判断函数
     private func getTempoTerm(_ bpm: Double) -> String {
@@ -257,73 +213,117 @@ struct MetronomeInfoView: View {
     
     // 将节拍视图和手势提取为计算属性，使代码更清晰
     private var beatsViewWithGestures: some View {
-        // 首先创建基本的节拍视图
-        let beatView = HStack(spacing: 4) {
-            // 确保 beatStatuses 数组长度正确
-            let safeStatuses = ensureBeatStatusesLength(beatStatuses, count: beatsPerBar)
-            ForEach(0..<beatsPerBar, id: \.self) { beat in
-                BeatView(
-                    status: safeStatuses[beat],
-                    onStatusChanged: { newStatus in
-                        var updatedStatuses = safeStatuses
-                        updatedStatuses[beat] = newStatus
-                        beatStatuses = updatedStatuses
-                    },
-                    isCurrentBeat: beat == currentBeat,
-                    isPlaying: isPlaying
-                )
-            }
-        }
-        .frame(height: 100) // 设置合适的高度
-        .contentShape(Rectangle()) // 确保整个区域可以接收手势
-        .onAppear {
-            print("节拍显示区域已加载，区域内拍数: \(beatsPerBar)")
-        }
-        .id(beatsPerBar) // 添加ID确保拍数变化时视图能重新加载
+        // 确保 beatStatuses 数组长度正确
+        let safeStatuses = ensureBeatStatusesLength(beatStatuses, count: beatsPerBar)
         
-        // 创建水平滑动手势识别器
-        let horizontalDragGesture = DragGesture(minimumDistance: 10)
-            .onChanged { gesture in
-                print("横向滑动检测 - onChanged: 位移 = \(gesture.translation)")
-                
-                // 只有当明确是水平方向的滑动时才处理
-                if abs(gesture.translation.width) > abs(gesture.translation.height) * 1.3 {
-                    horizontalDragAmount = gesture.translation
-                    isHorizontalDragging = true
-                    print("横向滑动检测 - 处理中")
+        return GeometryReader { geometry in
+            HStack(spacing: 4) {
+                ForEach(0..<beatsPerBar, id: \.self) { beat in
+                    BeatView(
+                        status: safeStatuses[beat],
+                        isCurrentBeat: beat == currentBeat,
+                        isPlaying: isPlaying
+                    )
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle()) // 确保形状完整，便于计算位置
+                    .id(beat) // 为每个BeatView添加ID
+                    .onTapGesture {
+                        // 保留点击切换功能
+                        var updatedStatuses = safeStatuses
+                        updatedStatuses[beat] = updatedStatuses[beat].next()
+                        beatStatuses = updatedStatuses
+                        print("点击切换BeatView \(beat) 状态为: \(updatedStatuses[beat])")
+                    }
                 }
             }
-            .onEnded { gesture in
-                // 只有当明确是水平方向的滑动时才处理
-                if abs(gesture.translation.width) > abs(gesture.translation.height) * 1.3 {
-                    print("横向滑动检测 - 结束，水平位移 = \(gesture.translation.width)")
-                    
-                    if abs(gesture.translation.width) > 30 {
-                        if gesture.translation.width < 0 {
-                            // 向左滑 - 减少拍数
-                            if beatsPerBarBinding > 1 {
-                                print("横向滑动执行 - 拍数减1")
-                                beatsPerBarBinding -= 1
-                            }
+            .frame(height: 100) // 设置合适的高度
+            .contentShape(Rectangle()) // 确保整个区域可以接收手势
+            .gesture(
+                DragGesture(minimumDistance: 10)
+                    .onChanged { gesture in
+                        // 记录手势位置和方向
+                        let location = gesture.location
+                        let translation = gesture.translation
+                        print("手势检测 - 位置: \(location), 位移: \(translation)")
+                        
+                        // 判断手势方向
+                        let isHorizontal = abs(translation.width) > abs(translation.height) * 1.3
+                        
+                        if isHorizontal {
+                            // 处理横向滑动
+                            horizontalDragAmount = translation
+                            isHorizontalDragging = true
+                            print("检测到横向滑动")
+                            initialBeatIndex = nil // 重置初始索引，因为这是横向滑动
                         } else {
-                            // 向右滑 - 增加拍数
-                            if beatsPerBarBinding < 12 {
-                                print("横向滑动执行 - 拍数加1")
-                                beatsPerBarBinding += 1
+                            // 垂直滑动 - 识别是哪个BeatView
+                            // 如果是第一次移动，记录初始BeatView索引
+                            if initialBeatIndex == nil {
+                                let totalWidth = geometry.size.width
+                                let beatIndex = min(beatsPerBar - 1, max(0, Int(location.x / (totalWidth / CGFloat(beatsPerBar)))))
+                                initialBeatIndex = beatIndex
+                                print("垂直滑动起始BeatView索引: \(beatIndex), x坐标: \(location.x), 总宽度: \(totalWidth)")
                             }
                         }
                     }
-                }
-                
-                // 无论如何，都重置状态
-                horizontalDragAmount = .zero
-                isHorizontalDragging = false
-            }
-        
-        // 将手势应用到视图上，并添加动画效果
-        return beatView
-            .gesture(horizontalDragGesture)
+                    .onEnded { gesture in
+                        let translation = gesture.translation
+                        print("手势结束 - 最终位移: \(translation)")
+                        
+                        // 判断手势方向
+                        let isHorizontal = abs(translation.width) > abs(translation.height) * 1.3
+                        
+                        if isHorizontal {
+                            // 横向滑动结束 - 调整拍数
+                            if abs(translation.width) > 30 {
+                                if translation.width < 0 {
+                                    // 向左滑 - 减少拍数
+                                    if beatsPerBarBinding > 1 {
+                                        print("横向滑动执行 - 拍数减1: \(beatsPerBarBinding) -> \(beatsPerBarBinding - 1)")
+                                        beatsPerBarBinding -= 1
+                                    }
+                                } else {
+                                    // 向右滑 - 增加拍数
+                                    if beatsPerBarBinding < 12 {
+                                        print("横向滑动执行 - 拍数加1: \(beatsPerBarBinding) -> \(beatsPerBarBinding + 1)")
+                                        beatsPerBarBinding += 1
+                                    }
+                                }
+                            }
+                            
+                            // 重置状态
+                            horizontalDragAmount = .zero
+                            isHorizontalDragging = false
+                        } else {
+                            // 垂直滑动结束 - 调整特定BeatView的状态
+                            if abs(translation.height) > 20 && initialBeatIndex != nil { // 最小阈值
+                                // 使用记录的初始BeatView索引
+                                let beatIndex = initialBeatIndex!
+                                print("垂直滑动 - 作用于初始BeatView索引: \(beatIndex)")
+                                
+                                // 更新对应BeatView的状态
+                                var updatedStatuses = safeStatuses
+                                if translation.height > 0 {
+                                    // 向下滑 - 强度减弱
+                                    print("垂直滑动 - BeatView \(beatIndex) 向下滑动，强度减弱")
+                                    updatedStatuses[beatIndex] = updatedStatuses[beatIndex].previous()
+                                } else {
+                                    // 向上滑 - 强度增强
+                                    print("垂直滑动 - BeatView \(beatIndex) 向上滑动，强度增强")
+                                    updatedStatuses[beatIndex] = updatedStatuses[beatIndex].next()
+                                }
+                                beatStatuses = updatedStatuses
+                            }
+                            
+                            // 重置初始索引
+                            initialBeatIndex = nil
+                        }
+                    }
+            )
+            .id(beatsPerBar) // 添加ID确保拍数变化时视图能重新加载
             .animation(.spring(response: 0.3), value: isHorizontalDragging)
+        }
+        .frame(height: 100) // 确保GeometryReader有固定高度
     }
     
     // 添加一个辅助函数来确保数组长度正确

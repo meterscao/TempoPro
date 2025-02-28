@@ -101,7 +101,8 @@ class MetronomeState: ObservableObject {
             metronomeTimer?.start(
                 tempo: tempo,
                 beatsPerBar: beatStatuses.count,
-                beatStatuses: beatStatuses
+                beatStatuses: beatStatuses,
+                beatUnit: beatUnit
             )
         } else {
             metronomeTimer?.stop()

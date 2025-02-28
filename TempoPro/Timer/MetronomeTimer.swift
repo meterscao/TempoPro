@@ -14,6 +14,7 @@ class MetronomeTimer {
     // 新增变量
     private var nextBeatTime: TimeInterval = 0
     private var isTempoChangedBeforeNextBeat: Bool = false
+    private var beatUnit: Int = 4 // 添加拍号单位，默认为4
     
     init(audioEngine: MetronomeAudioEngine) {
         self.audioEngine = audioEngine
@@ -27,10 +28,11 @@ class MetronomeTimer {
         }
     }
     
-    func start(tempo: Double, beatsPerBar: Int, beatStatuses: [BeatStatus], currentBeat: Int = 0) {
+    func start(tempo: Double, beatsPerBar: Int, beatStatuses: [BeatStatus], currentBeat: Int = 0, beatUnit: Int = 4) {
         self.tempo = tempo
         self.beatsPerBar = beatsPerBar
         self.beatStatuses = beatStatuses
+        self.beatUnit = beatUnit
         
         // 仅当明确传入值或未指定时才重置当前拍
         if self.currentBeat != currentBeat {
@@ -39,7 +41,7 @@ class MetronomeTimer {
         
         let startTime = Date().timeIntervalSince1970
         nextBeatTime = startTime
-        print("开始节拍器 - BPM: \(tempo), 间隔: \(60.0 / tempo)秒")
+        print("开始节拍器 - BPM: \(tempo), 拍号: \(beatsPerBar)/\(beatUnit), 间隔: \(60.0 / tempo)秒")
         print("首拍开始时间: \(startTime)")
         
         // 停止已有定时器
@@ -74,10 +76,14 @@ class MetronomeTimer {
             
             DispatchQueue.main.async {
                 let currentTime = Date().timeIntervalSince1970
+                let nextBeatNumber = (self.currentBeat + 1) % self.beatsPerBar
+                let nextBeatStatus = nextBeatNumber < self.beatStatuses.count ? self.beatStatuses[nextBeatNumber] : .normal
+                
+                print("节拍更新 - 拍号: \(self.beatsPerBar)/\(self.beatUnit), 即将播放第 \(nextBeatNumber + 1) 拍, 重音类型: \(nextBeatStatus)")
                 print("节拍更新 - 计划时间: \(self.nextBeatTime), 实际时间: \(currentTime), 误差: \(currentTime - self.nextBeatTime)秒")
                 
                 // 更新当前拍号
-                self.currentBeat = (self.currentBeat + 1) % self.beatsPerBar
+                self.currentBeat = nextBeatNumber
                 
                 // 播放当前拍
                 self.playCurrentBeat()
@@ -99,7 +105,15 @@ class MetronomeTimer {
     
     private func playCurrentBeat() {
         if currentBeat < beatStatuses.count {
-            audioEngine.playBeat(status: beatStatuses[currentBeat])
+            let status = beatStatuses[currentBeat]
+            print("播放节拍 - 拍号: \(beatsPerBar)/\(beatUnit), 当前第 \(currentBeat + 1) 拍, 重音类型: \(status)")
+            
+            // 只有非muted状态才播放
+            if status != .muted {
+                audioEngine.playBeat(status: status)
+            } else {
+                print("静音拍 - 跳过播放")
+            }
         }
     }
 
@@ -110,6 +124,11 @@ class MetronomeTimer {
         
         // 标记 tempo 已变更，但不重新调度已计划的下一拍
         isTempoChangedBeforeNextBeat = true
+    }
+    
+    func setBeatUnit(beatUnit: Int) {
+        self.beatUnit = beatUnit
+        print("更新拍号单位 - 新拍号: \(beatsPerBar)/\(beatUnit)")
     }
     
     func stop() {
