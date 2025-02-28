@@ -30,7 +30,8 @@ class ThemeManager: ObservableObject {
     private var themes: [String: MetronomeTheme] = [
         "default": .defaultTheme,
         "darkBlue": .darkBlueTheme,
-        "warm": .warmTheme
+        "warm": .warmTheme,
+        "green": .greenTheme
     ]
     
     // 可供选择的主题名称

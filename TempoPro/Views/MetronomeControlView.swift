@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct MetronomeControlView: View {
-    private let dialSize: CGFloat = 300  // 表盘大小
+    
     private let sensitivity: Double = 8.0 // 旋转灵敏度
     
     @Binding var tempo: Double
     @Binding var isPlaying: Bool
     let beatsPerBar: Int
+    let wheelSizeRatio:Double = 0.75
     
     @State private var rotation: Double = 0
     @State private var lastAngle: Double = 0
@@ -21,23 +22,27 @@ struct MetronomeControlView: View {
     @State private var startTempo: Double = 0
     @State private var isDragging: Bool = false
     
-    private func createTicks() -> some View {
-        ZStack {
-            ForEach(0..<60) { i in
-                Rectangle()
-                    .fill(Color.gray)
-                    .frame(width: 1, height: 10)
-                    .offset(y: -(dialSize/2 - 10))
-                    .rotationEffect(.degrees(Double(i) * 6))
+    private func createTicks(wheelSize:Double) -> some View {
+        
+        
+            
+            ZStack {
+                ForEach(0..<60) { i in
+                    Rectangle()
+                        .fill(Color.gray)
+                        .frame(width: 1, height: 10)
+                        .offset(y: -(wheelSize/2 - 10))
+                        .rotationEffect(.degrees(Double(i) * 6))
+                }
+                ForEach(0..<12) { i in
+                    Rectangle()
+                        .fill(Color.black)
+                        .frame(width: 2, height: 20)
+                        .offset(y: -(wheelSize/2 - 15))
+                        .rotationEffect(.degrees(Double(i) * 30))
+                }
             }
-            ForEach(0..<12) { i in
-                Rectangle()
-                    .fill(Color.black)
-                    .frame(width: 2, height: 20)
-                    .offset(y: -(dialSize/2 - 15))
-                    .rotationEffect(.degrees(Double(i) * 30))
-            }
-        }
+        
     }
     
     private func calculateAngle(location: CGPoint, in frame: CGRect) -> Double {
@@ -55,16 +60,17 @@ struct MetronomeControlView: View {
     
     var body: some View {
         GeometryReader { geometry in
+            let wheelSize = geometry.size.width * wheelSizeRatio
             ZStack {
                 Color.clear
                     .contentShape(Rectangle())
                 
                 Circle()
                     .stroke(Color.black, lineWidth: 2)
-                    .frame(width: dialSize, height: dialSize)
+                    .frame(width: wheelSize, height: wheelSize)
                     .rotationEffect(.degrees(rotation))
                 
-                createTicks()
+                createTicks(wheelSize: wheelSize)
                     .rotationEffect(.degrees(rotation))
                 
                 Button(action: {
@@ -76,7 +82,7 @@ struct MetronomeControlView: View {
                         .foregroundColor(.black)
                 }
             }
-            .frame(width: dialSize, height: dialSize)
+            .frame(width: wheelSize, height: wheelSize)
             .contentShape(Rectangle())
             .gesture(
                 DragGesture()
@@ -85,14 +91,14 @@ struct MetronomeControlView: View {
                             isDragging = true
                             lastAngle = calculateAngle(
                                 location: value.location,
-                                in: CGRect(x: 0, y: 0, width: dialSize, height: dialSize)
+                                in: CGRect(x: 0, y: 0, width: wheelSize, height: wheelSize)
                             )
                             startTempo = tempo
                         }
                         
                         let currentAngle = calculateAngle(
                             location: value.location,
-                            in: CGRect(x: 0, y: 0, width: dialSize, height: dialSize)
+                            in: CGRect(x: 0, y: 0, width: wheelSize, height: wheelSize)
                         )
                         
                         var angleDiff = currentAngle - lastAngle
@@ -118,6 +124,7 @@ struct MetronomeControlView: View {
                     }
             )
             .frame(width: geometry.size.width, height: geometry.size.width)
+            
         }
     }
 }

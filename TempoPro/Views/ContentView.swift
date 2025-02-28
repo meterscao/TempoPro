@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var themeManager: ThemeManager
+    
     @StateObject private var metronomeState: MetronomeState
     @State private var beatsPerBar: Int = 4 {
         didSet {
@@ -55,7 +58,7 @@ struct ContentView: View {
                 beatsPerBarBinding: $beatsPerBar,
                 beatUnitBinding: $beatUnit
             )
-            .frame(maxHeight: .infinity)
+            
             
             MetronomeControlView(
                 tempo: Binding(
@@ -70,11 +73,12 @@ struct ContentView: View {
             )
             
             MetronomeToolbarView()
-                .frame(maxWidth: .infinity)
+                
         }
+        .ignoresSafeArea(edges: .top)
         .statusBar(hidden: true)
         .preferredColorScheme(.light)
-        .background(Color(UIColor.systemGray6))
+        .background(theme.primaryColor)
         .sheet(isPresented: $showingKeypad) {
             BPMKeypadView(
                 isPresented: $showingKeypad,

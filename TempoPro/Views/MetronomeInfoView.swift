@@ -145,9 +145,7 @@ struct MetronomeInfoView: View {
     
     var body: some View {
         ZStack {
-            
-            
-            VStack(spacing: 0) {
+            VStack(spacing: 10) {
 
                 HStack {
                     Button(action: {
@@ -172,7 +170,7 @@ struct MetronomeInfoView: View {
                     
                     // 移除单独的滑动控制区域
                 }
-                .padding(.top,10)
+                
                 
                 
                 
@@ -211,7 +209,7 @@ struct MetronomeInfoView: View {
                 }
                 .foregroundStyle(.white)
                 
-                Color.yellow.frame(maxWidth:.infinity).frame(height: 60)
+                Color.yellow.frame(maxWidth:.infinity).frame(height: 60).cornerRadius(10)
             }
             .padding(.horizontal,15)
             .padding(.bottom,15)

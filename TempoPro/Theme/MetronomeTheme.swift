@@ -39,6 +39,18 @@ struct MetronomeTheme: Equatable {
         currentBeatHighlightColor: .orange
     )
     
+    static let greenTheme = MetronomeTheme(
+        primaryColor: .green,
+        secondaryColor: .white,
+        backgroundColor: .black,
+        textColor: .white,
+        strongBeatColor: .green,
+        mediumBeatColor: .green,
+        normalBeatColor: .green,
+        mutedBeatColor: Color.gray.opacity(0.2),
+        currentBeatHighlightColor: .red
+    )
+    
     static let warmTheme = MetronomeTheme(
         primaryColor: .orange,
         secondaryColor: .black,
