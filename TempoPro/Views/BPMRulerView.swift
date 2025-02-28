@@ -20,9 +20,9 @@ struct BPMRulerView: View {
     private let tickHeight: CGFloat = 15
     
     private let majorTickWidth: CGFloat = 2
-    private let majorTickHeight: CGFloat = 20
+    private let majorTickHeight: CGFloat = 25
     private let pointerWidth: CGFloat = 2
-    private let pointerHeight: CGFloat = 20
+    private let pointerHeight: CGFloat = 25
     private let tickSpacing: CGFloat = 8  // 刻度线之间的固定间距
     
     // 添加动画状态变量
@@ -115,6 +115,7 @@ struct RulerScaleView: View {
     let majorTickHeight: CGFloat
     let tickWidth: CGFloat
     let majorTickWidth: CGFloat
+    @Environment(\.metronomeTheme) var theme
     
     var body: some View {
         // 使用ZStack和精确定位替代HStack以确保均匀刻度
@@ -127,13 +128,13 @@ struct RulerScaleView: View {
                      if bpm % 10 == 0 {
                          Text("\(bpm)")
                              .font(.system(size: 12, weight: .bold))
-                             .foregroundColor(.gray)
+                             .foregroundColor(theme.primaryColor)
                      }
                     
                      // 刻度线
                      Rectangle()
-                         .fill(bpm % 10 == 0 ? Color.gray : Color.gray.opacity(0.5))
-                         .frame(width: bpm % 10 == 0 ? majorTickWidth : tickWidth, 
+                         .fill(bpm % 10 == 0 ? theme.primaryColor : theme.primaryColor.opacity(0.4))
+                         .frame(width: bpm % 10 == 0 ? majorTickWidth : tickWidth,
                                 height: bpm % 10 == 0 ? majorTickHeight : tickHeight)
                  }
 

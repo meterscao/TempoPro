@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MetronomeControlView: View {
     
-    private let sensitivity: Double = 8.0 // 旋转灵敏度
+    private let sensitivity: Double = 9.0 // 旋转灵敏度
     
     @Binding var tempo: Double
     @Binding var isPlaying: Bool
