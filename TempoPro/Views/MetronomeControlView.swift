@@ -61,24 +61,27 @@ struct MetronomeControlView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let screenWidth = geometry.size.width
-            
             let wheelSize = geometry.size.width * wheelSizeRatio
             ZStack {
                 Color.clear
                     .contentShape(Rectangle())
                 
                 ZStack() {
+                    Image("bg-noise")
+                        .resizable()
+                        .opacity(0.2)
+                        .clipShape(
+                            .circle
+                        )
+                        .frame(width: wheelSize, height: wheelSize)
+                        .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
                     Image("bg-knob")
                         .renderingMode(.template)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .foregroundColor(theme.backgroundColor)
-
-                        
                         .frame(width: wheelSize, height: wheelSize)
                     Image(isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
-                        
                     .offset(x: wheelSize * 0.5 * 0.75, y: 0)
                 }
                 
@@ -99,6 +102,7 @@ struct MetronomeControlView: View {
                
                     
             }
+            
             .ignoresSafeArea()
             .contentShape(Rectangle())
             .gesture(

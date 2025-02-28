@@ -32,7 +32,7 @@ struct ThemeSelectionView: View {
                     }
                 }
             }
-            .navigationTitle("选择主题")
+            .navigationTitle("选择主题").navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(trailing: Button("完成") {
                 dismiss()
             })

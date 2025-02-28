@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct ContentView: View {
     @Environment(\.metronomeTheme) var theme
@@ -84,7 +85,13 @@ struct ContentView: View {
         .ignoresSafeArea(edges: .top)
         .statusBar(hidden: true)
         .preferredColorScheme(.light)
-        .background(theme.primaryColor)
+        .background(
+            Image("bg-noise")
+                .opacity(0.2)
+                .ignoresSafeArea()
+        )
+        .background(theme.primaryColor.ignoresSafeArea())
+        
         .sheet(isPresented: $showingKeypad) {
             BPMKeypadView(
                 isPresented: $showingKeypad,

@@ -8,15 +8,7 @@ struct MetronomeTheme: Equatable {
     let textColor: Color          // 文本颜色
     
     // 节拍器专用颜色
-    let strongBeatColor: Color    // 强拍颜色
-    let mediumBeatColor: Color    // 次强拍颜色
-    let normalBeatColor: Color    // 普通拍颜色
-    let mutedBeatColor: Color     // 静音拍颜色
-    let currentBeatHighlightColor: Color // 当前拍高亮色
-    
-    // 预定义主题
-    
-    
+    let beatHightColor: Color // 当前拍高亮色
     
     
     // 绿色主题 - 原版保留
@@ -25,14 +17,8 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: Color(red: 0.56, green: 0.64, blue: 0.51),
-        mediumBeatColor: Color(red: 0.56, green: 0.64, blue: 0.51),
-        normalBeatColor: Color(red: 0.56, green: 0.64, blue: 0.51),
-        mutedBeatColor: Color(red: 0.56, green: 0.64, blue: 0.51).opacity(0.2),
-        currentBeatHighlightColor: .red
+        beatHightColor: Color(red: 0.9, green: 0.2, blue: 0.7) // 红紫色，绿色的对比色
     )
-    
-    
     
     // 紫色主题
     static let purpleTheme = MetronomeTheme(
@@ -40,11 +26,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: Color(red: 0.58, green: 0.44, blue: 0.86),
-        mediumBeatColor: Color(red: 0.58, green: 0.44, blue: 0.86),
-        normalBeatColor: Color(red: 0.58, green: 0.44, blue: 0.86),
-        mutedBeatColor: Color(red: 0.58, green: 0.44, blue: 0.86).opacity(0.2),
-        currentBeatHighlightColor: .red
+        beatHightColor: Color(red: 0.95, green: 0.95, blue: 0.1) // 亮黄色，紫色的对比色
     )
     
     // 天蓝色主题
@@ -53,24 +35,16 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: Color(red: 0.40, green: 0.69, blue: 0.90),
-        mediumBeatColor: Color(red: 0.40, green: 0.69, blue: 0.90),
-        normalBeatColor: Color(red: 0.40, green: 0.69, blue: 0.90),
-        mutedBeatColor: Color(red: 0.40, green: 0.69, blue: 0.90).opacity(0.2),
-        currentBeatHighlightColor: .red
+        beatHightColor: Color(red: 0.95, green: 0.6, blue: 0.1) // 橙色，蓝色的对比色
     )
-    
+
     // 珊瑚红主题
     static let coralTheme = MetronomeTheme(
         primaryColor: Color(red: 0.96, green: 0.45, blue: 0.45),
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: Color(red: 0.96, green: 0.45, blue: 0.45),
-        mediumBeatColor: Color(red: 0.96, green: 0.45, blue: 0.45),
-        normalBeatColor: Color(red: 0.96, green: 0.45, blue: 0.45),
-        mutedBeatColor: Color(red: 0.96, green: 0.45, blue: 0.45).opacity(0.2),
-        currentBeatHighlightColor: Color(red: 1.0, green: 0.9, blue: 0.2)
+        beatHightColor: Color(red: 0.1, green: 0.8, blue: 0.8) // 青色，红色的对比色
     )
     
     // 琥珀色主题
@@ -78,12 +52,8 @@ struct MetronomeTheme: Equatable {
         primaryColor: Color(red: 0.95, green: 0.69, blue: 0.28),
         secondaryColor: .white,
         backgroundColor: .black,
-        textColor: .white,
-        strongBeatColor: Color(red: 0.95, green: 0.69, blue: 0.28),
-        mediumBeatColor: Color(red: 0.95, green: 0.69, blue: 0.28),
-        normalBeatColor: Color(red: 0.95, green: 0.69, blue: 0.28),
-        mutedBeatColor: Color(red: 0.95, green: 0.69, blue: 0.28).opacity(0.2),
-        currentBeatHighlightColor: .red
+        textColor: .white,  
+        beatHightColor: Color(red: 0.1, green: 0.3, blue: 0.9) // 深蓝色，琥珀色的对比色
     )
     
     // 薰衣草色主题
@@ -92,11 +62,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: Color(red: 0.71, green: 0.52, blue: 0.90),
-        mediumBeatColor: Color(red: 0.71, green: 0.52, blue: 0.90),
-        normalBeatColor: Color(red: 0.71, green: 0.52, blue: 0.90),
-        mutedBeatColor: Color(red: 0.71, green: 0.52, blue: 0.90).opacity(0.2),
-        currentBeatHighlightColor: .red
+        beatHightColor: Color(red: 0.6, green: 0.95, blue: 0.1) // 黄绿色，薰衣草色的对比色
     )
     
     // 青绿色主题
@@ -105,11 +71,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: Color(red: 0.18, green: 0.70, blue: 0.67),
-        mediumBeatColor: Color(red: 0.18, green: 0.70, blue: 0.67),
-        normalBeatColor: Color(red: 0.18, green: 0.70, blue: 0.67),
-        mutedBeatColor: Color(red: 0.18, green: 0.70, blue: 0.67).opacity(0.2),
-        currentBeatHighlightColor: .red
+        beatHightColor: Color(red: 0.95, green: 0.1, blue: 0.3) // 红色，青绿色的对比色
     )
     
     // 玫瑰金主题
@@ -118,11 +80,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: Color(red: 0.93, green: 0.56, blue: 0.54),
-        mediumBeatColor: Color(red: 0.93, green: 0.56, blue: 0.54),
-        normalBeatColor: Color(red: 0.93, green: 0.56, blue: 0.54),
-        mutedBeatColor: Color(red: 0.93, green: 0.56, blue: 0.54).opacity(0.2),
-        currentBeatHighlightColor: .red
+        beatHightColor: Color(red: 0.1, green: 0.6, blue: 0.9) // 青蓝色，玫瑰金的对比色
     )
     
     // 沙漠色主题
@@ -131,10 +89,6 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: Color(red: 0.92, green: 0.87, blue: 0.73),
-        mediumBeatColor: Color(red: 0.92, green: 0.87, blue: 0.73),
-        normalBeatColor: Color(red: 0.92, green: 0.87, blue: 0.73),
-        mutedBeatColor: Color(red: 0.92, green: 0.87, blue: 0.73).opacity(0.2),
-        currentBeatHighlightColor: .red
+        beatHightColor: Color(red: 0.3, green: 0.2, blue: 0.9) // 蓝紫色，沙漠色的对比色
     )
 }

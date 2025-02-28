@@ -53,30 +53,36 @@ struct BeatView: View {
     @Environment(\.metronomeTheme) var theme
     
     private func barColors() -> [Color] {
+        let baseColor = isPlaying && isCurrentBeat ?   .red : theme.beatHightColor 
+        let accentBeatColor = baseColor
+        let mutedBeatColor = baseColor.opacity(0.2)
         let colors: [Color] = switch status {
+            
         case .strong:
-            [theme.strongBeatColor, theme.strongBeatColor, theme.strongBeatColor]
+            [accentBeatColor, accentBeatColor, accentBeatColor]
         case .medium:
-            [theme.mutedBeatColor, theme.mediumBeatColor, theme.mediumBeatColor]
+            [mutedBeatColor, accentBeatColor, accentBeatColor]
         case .normal:
-            [theme.mutedBeatColor, theme.mutedBeatColor, theme.normalBeatColor]
+            [mutedBeatColor, mutedBeatColor, accentBeatColor]
         case .muted:
-            [theme.mutedBeatColor, theme.mutedBeatColor, theme.mutedBeatColor]
+            [mutedBeatColor, mutedBeatColor, mutedBeatColor]
         }
         
         // 只在播放状态下显示高亮
-        return (isPlaying && isCurrentBeat) ? 
-               [theme.currentBeatHighlightColor, theme.currentBeatHighlightColor, theme.currentBeatHighlightColor] : 
-               colors
+        return colors
     }
     
     var body: some View {
         VStack(spacing: 3) {
             ForEach(0..<3, id: \.self) { index in
-                Rectangle()
-                    .fill(barColors()[index])
-                    .frame(maxHeight: .infinity)
+                Image("bg-noise")
+                    .resizable()
+                    .opacity(0.3)
+                    .frame(maxHeight: .infinity)                    
+                    .background(barColors()[index])
                     .cornerRadius(2)
+                
+                    
             }
         }
         // 移除所有手势相关代码，由父视图统一处理
