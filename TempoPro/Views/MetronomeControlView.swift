@@ -67,23 +67,31 @@ struct MetronomeControlView: View {
                 Color.clear
                     .contentShape(Rectangle())
                 
-                Image("bg-knob")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: wheelSize, height: wheelSize)
-                    .rotationEffect(.degrees(rotation))
+                ZStack() {
+                    Image("bg-knob")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: wheelSize, height: wheelSize)
+                        
+                    Circle()
+                    .fill(Color.green)
+                    .frame(width: 10, height: 10)
+                    .offset(x: wheelSize * 0.5 * 0.75, y: 0)
+                }
                 
-                // createTicks(wheelSize: wheelSize)
-                //     .rotationEffect(.degrees(rotation))
+                .rotationEffect(.degrees(rotation))
                 
                 Button(action: {
                     isPlaying.toggle()
                 }) {
                     Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .resizable()
-                        .frame(width: 100, height: 100)
+                        .frame(width: 80, height: 80)
                         .foregroundColor(.black)
                 }
+
+               
+                    
             }
             .ignoresSafeArea()
             .contentShape(Rectangle())
