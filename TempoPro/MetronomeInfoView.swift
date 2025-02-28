@@ -137,9 +137,13 @@ struct MetronomeInfoView: View {
     
     var body: some View {
         ZStack {
-            Color.white
             
-            VStack(spacing: 20) {
+            
+            VStack(spacing: 0) {
+                HStack{}
+                    .frame(maxWidth:.infinity)
+                    .frame(height:0)
+                    .background(.white)
                 // 顶部工具栏
                 HStack {
                     Button(action: {}) {
@@ -194,13 +198,31 @@ struct MetronomeInfoView: View {
                 }
                 .foregroundStyle(.white)
             }
+            
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(.black)
-            .padding(.horizontal, 10)
-            .padding(.top, 10)
+            .cornerRadius(50)
+            .padding(10)
+            
+            
+//                VStack(){
+//                    HStack{}
+//                        .frame(maxWidth:.infinity)
+//                        .frame(height:0)
+//                        .background(.white)
+//                
+//                        
+//                }
+//                
+//                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+//                .background(.black)
+//                .cornerRadius(50)
+//                .padding(10)
+            
         }
-        .safeAreaInset(edge: .top) { Color.clear.frame(height: 0) }
-        .ignoresSafeArea(.all, edges: [.horizontal, .bottom])
+        
+        
+        .ignoresSafeArea() // 忽略所有安全区域
         .sheet(isPresented: $showingTimeSignature) {
             TimeSignatureView(
                 beatsPerBar: $beatsPerBarBinding,
