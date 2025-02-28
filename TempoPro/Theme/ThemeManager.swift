@@ -18,7 +18,7 @@ class ThemeManager: ObservableObject {
     }
     
     // 当前主题名称
-    @Published var currentThemeName: String = "default" {
+    @Published var currentThemeName: String = "green" {
         didSet {
             if let theme = themes[currentThemeName] {
                 currentTheme = theme
@@ -28,10 +28,14 @@ class ThemeManager: ObservableObject {
     
     // 所有可用主题
     private var themes: [String: MetronomeTheme] = [
-        "default": .defaultTheme,
-        "darkBlue": .darkBlueTheme,
-        "warm": .warmTheme,
-        "green": .greenTheme
+        "green": .greenTheme,
+        "purple": .purpleTheme,
+        "skyBlue": .skyBlueTheme,
+        "coral": .coralTheme,
+        "amber": .amberTheme,
+        "lavender": .lavenderTheme,
+        "teal": .tealTheme,
+        "roseGold": .roseGoldTheme
     ]
     
     // 可供选择的主题名称
@@ -41,9 +45,9 @@ class ThemeManager: ObservableObject {
     
     init() {
         // 读取保存的主题
-        let savedThemeName = UserDefaults.standard.string(forKey: "selectedTheme") ?? "default"
+        let savedThemeName = UserDefaults.standard.string(forKey: "selectedTheme") ?? "green"
         self.currentThemeName = savedThemeName
-        self.currentTheme = themes[savedThemeName] ?? .defaultTheme
+        self.currentTheme = themes[savedThemeName] ?? .greenTheme
     }
     
     // 切换主题

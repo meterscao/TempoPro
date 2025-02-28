@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct CircularButtonStyle: ViewModifier {
+    @Environment(\.metronomeTheme) var theme
     func body(content: Content) -> some View {
         content
-            .foregroundStyle(.black)
+            .foregroundStyle(theme.backgroundColor)
             .frame(width: 60, height: 60)
-            .overlay(Circle().stroke(Color.primary, lineWidth: 2))
+            .overlay(Circle().stroke(theme.backgroundColor, lineWidth: 2))
     }
 }
 

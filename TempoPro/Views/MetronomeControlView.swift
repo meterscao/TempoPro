@@ -10,6 +10,7 @@ import SwiftUI
 struct MetronomeControlView: View {
     
     private let sensitivity: Double = 9.0 // 旋转灵敏度
+    @Environment(\.metronomeTheme) var theme
     
     @Binding var tempo: Double
     @Binding var isPlaying: Bool
@@ -69,8 +70,12 @@ struct MetronomeControlView: View {
                 
                 ZStack() {
                     Image("bg-knob")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+                        .renderingMode(.template)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                        .foregroundColor(theme.backgroundColor)
+
+                        
                         .frame(width: wheelSize, height: wheelSize)
                     Image(isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
                         
@@ -83,9 +88,12 @@ struct MetronomeControlView: View {
                     isPlaying.toggle()
                 }) {
                     Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                        .renderingMode(.template)
                         .resizable()
+                        .foregroundColor(theme.backgroundColor)
+                        
                         .frame(width: 80, height: 80)
-                        .foregroundColor(.black)
+                        
                 }
 
                

@@ -204,7 +204,7 @@ struct MetronomeInfoView: View {
                             }
                         Text(getTempoTerm(tempo))
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(theme.primaryColor.opacity(0.7))
                     }
                     Spacer()
                     

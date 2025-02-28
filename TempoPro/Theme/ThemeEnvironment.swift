@@ -10,7 +10,7 @@ import SwiftUI
 
 // 环境键
 struct ThemeKey: EnvironmentKey {
-    static let defaultValue: MetronomeTheme = .defaultTheme
+    static let defaultValue: MetronomeTheme = .greenTheme
 }
 
 // 扩展环境值
