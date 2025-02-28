@@ -124,4 +124,17 @@ struct MetronomeTheme: Equatable {
         mutedBeatColor: Color(red: 0.93, green: 0.56, blue: 0.54).opacity(0.2),
         currentBeatHighlightColor: .red
     )
+    
+    // 沙漠色主题
+    static let desertTheme = MetronomeTheme(
+        primaryColor: Color(red: 0.92, green: 0.87, blue: 0.73),
+        secondaryColor: .white,
+        backgroundColor: .black,
+        textColor: .white,
+        strongBeatColor: Color(red: 0.92, green: 0.87, blue: 0.73),
+        mediumBeatColor: Color(red: 0.92, green: 0.87, blue: 0.73),
+        normalBeatColor: Color(red: 0.92, green: 0.87, blue: 0.73),
+        mutedBeatColor: Color(red: 0.92, green: 0.87, blue: 0.73).opacity(0.2),
+        currentBeatHighlightColor: .red
+    )
 }

@@ -35,7 +35,8 @@ class ThemeManager: ObservableObject {
         "amber": .amberTheme,
         "lavender": .lavenderTheme,
         "teal": .tealTheme,
-        "roseGold": .roseGoldTheme
+        "roseGold": .roseGoldTheme,
+        "desert": .desertTheme
     ]
     
     // 可供选择的主题名称
