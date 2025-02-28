@@ -47,28 +47,31 @@ extension BeatStatus {
 
 // 简化 BeatView，移除手势处理
 struct BeatView: View {
-    var status: BeatStatus  // 不再需要 @State，由父视图控制
+    var status: BeatStatus
     var isCurrentBeat: Bool
     var isPlaying: Bool
+    @Environment(\.metronomeTheme) var theme
     
     private func barColors() -> [Color] {
         let colors: [Color] = switch status {
         case .strong:
-            [Color.blue, Color.blue, Color.blue]
+            [theme.strongBeatColor, theme.strongBeatColor, theme.strongBeatColor]
         case .medium:
-            [Color.gray.opacity(0.2), Color.blue, Color.blue]
+            [theme.mutedBeatColor, theme.mediumBeatColor, theme.mediumBeatColor]
         case .normal:
-            [Color.gray.opacity(0.2), Color.gray.opacity(0.2), Color.blue]
+            [theme.mutedBeatColor, theme.mutedBeatColor, theme.normalBeatColor]
         case .muted:
-            [Color.gray.opacity(0.2), Color.gray.opacity(0.2), Color.gray.opacity(0.2)]
+            [theme.mutedBeatColor, theme.mutedBeatColor, theme.mutedBeatColor]
         }
         
-        // 只在播放状态下显示红色高亮
-        return (isPlaying && isCurrentBeat) ? [Color.red, Color.red, Color.red] : colors
+        // 只在播放状态下显示高亮
+        return (isPlaying && isCurrentBeat) ? 
+               [theme.currentBeatHighlightColor, theme.currentBeatHighlightColor, theme.currentBeatHighlightColor] : 
+               colors
     }
     
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 3) {
             ForEach(0..<3, id: \.self) { index in
                 Rectangle()
                     .fill(barColors()[index])
@@ -96,6 +99,11 @@ struct MetronomeInfoView: View {
     @State private var horizontalDragAmount = CGSize.zero
     @State private var isHorizontalDragging = false
     @State private var initialBeatIndex: Int? = nil // 添加初始BeatView索引跟踪
+    
+    @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var themeManager: ThemeManager
+    
+    @State private var showingThemeSettings = false
     
     // 添加速度术语判断函数
     private func getTempoTerm(_ bpm: Double) -> String {
@@ -140,20 +148,22 @@ struct MetronomeInfoView: View {
             
             
             VStack(spacing: 0) {
-//                HStack{}
-//                    .frame(maxWidth:.infinity)
-//                    .frame(height:0)
-//                    .background(.white)
-                // 顶部工具栏
+
                 HStack {
-                    Button(action: {}) {
+                    Button(action: {
+                        showingThemeSettings = true
+                    }) {
                         Image(systemName: "gearshape")
+                            .foregroundColor(theme.textColor)
                     }
                     Spacer()
                     Button(action: {}) {
                         Image(systemName: "timer")
                     }
                 }
+                .padding(.top,10)
+                .frame(height: 50)
+                .padding(.horizontal,20)
                 
                 // 节拍显示区域和滑动控制区域
                 VStack(spacing: 8) {
@@ -162,7 +172,10 @@ struct MetronomeInfoView: View {
                     
                     // 移除单独的滑动控制区域
                 }
-                .padding(.horizontal)
+                .padding(.top,10)
+                
+                
+                
                 
                 // 速度和拍号显示
                 HStack(spacing: 30) {
@@ -197,10 +210,21 @@ struct MetronomeInfoView: View {
                     Text("切分")
                 }
                 .foregroundStyle(.white)
+                
+                Color.yellow.frame(maxWidth:.infinity).frame(height: 60)
             }
-            
-            .background(.black)
-            .cornerRadius(56)
+            .padding(.horizontal,15)
+            .padding(.bottom,15)
+            .background(theme.backgroundColor)
+            .foregroundColor(theme.textColor)
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 56,
+                    bottomLeadingRadius: 15,
+                    bottomTrailingRadius: 15,
+                    topTrailingRadius: 56
+                )
+            )
             
             
             
@@ -218,6 +242,12 @@ struct MetronomeInfoView: View {
             .presentationDetents([.height(400)])
             .presentationDragIndicator(.visible)
         }
+        
+        .sheet(isPresented: $showingThemeSettings) {
+            ThemeSelectionView()
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+        }
     }
     
     // 将节拍视图和手势提取为计算属性，使代码更清晰
@@ -226,7 +256,7 @@ struct MetronomeInfoView: View {
         let safeStatuses = ensureBeatStatusesLength(beatStatuses, count: beatsPerBar)
         
         return GeometryReader { geometry in
-            HStack(spacing: 4) {
+            HStack(spacing: 3) {
                 ForEach(0..<beatsPerBar, id: \.self) { beat in
                     BeatView(
                         status: safeStatuses[beat],
@@ -235,6 +265,7 @@ struct MetronomeInfoView: View {
                     )
                     .frame(maxWidth: .infinity)
                     .contentShape(Rectangle()) // 确保形状完整，便于计算位置
+                    .cornerRadius(10)
                     .id(beat) // 为每个BeatView添加ID
                     .onTapGesture {
                         // 保留点击切换功能
