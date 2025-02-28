@@ -58,6 +58,9 @@ struct ContentView: View {
                 beatsPerBarBinding: $beatsPerBar,
                 beatUnitBinding: $beatUnit
             )
+            .frame(maxHeight: .infinity)
+//            .background(.red)
+//            .layoutPriority(1) // 提高布局优先级
             
             
             MetronomeControlView(
@@ -71,8 +74,11 @@ struct ContentView: View {
                 ),
                 beatsPerBar: beatsPerBar
             )
+            .aspectRatio(10/9, contentMode: .fit) // 设置宽高比为5:4（相当于高度为宽度的80%）
+//            .background(.green)
             
             MetronomeToolbarView()
+//                .background(.purple)
                 
         }
         .ignoresSafeArea(edges: .top)

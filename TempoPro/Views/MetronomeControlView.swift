@@ -14,7 +14,7 @@ struct MetronomeControlView: View {
     @Binding var tempo: Double
     @Binding var isPlaying: Bool
     let beatsPerBar: Int
-    let wheelSizeRatio:Double = 0.75
+    let wheelSizeRatio:Double = 0.72
     
     @State private var rotation: Double = 0
     @State private var lastAngle: Double = 0
@@ -29,7 +29,7 @@ struct MetronomeControlView: View {
             ZStack {
                 ForEach(0..<60) { i in
                     Rectangle()
-                        .fill(Color.gray)
+                        .fill(Color.black.opacity(0.3))
                         .frame(width: 1, height: 10)
                         .offset(y: -(wheelSize/2 - 10))
                         .rotationEffect(.degrees(Double(i) * 6))
@@ -60,6 +60,8 @@ struct MetronomeControlView: View {
     
     var body: some View {
         GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            
             let wheelSize = geometry.size.width * wheelSizeRatio
             ZStack {
                 Color.clear
@@ -82,7 +84,7 @@ struct MetronomeControlView: View {
                         .foregroundColor(.black)
                 }
             }
-            .frame(width: wheelSize, height: wheelSize)
+            .ignoresSafeArea()
             .contentShape(Rectangle())
             .gesture(
                 DragGesture()
@@ -113,7 +115,7 @@ struct MetronomeControlView: View {
                         rotation += angleDiff
                         
                         let tempoChange = round(totalRotation / sensitivity)
-                        let targetTempo = max(30, min(240, startTempo + tempoChange))
+                        let targetTempo = max(30, min(320, startTempo + tempoChange))
                         
                         tempo = targetTempo
                         lastAngle = currentAngle
@@ -123,7 +125,7 @@ struct MetronomeControlView: View {
                         totalRotation = 0
                     }
             )
-            .frame(width: geometry.size.width, height: geometry.size.width)
+            
             
         }
     }

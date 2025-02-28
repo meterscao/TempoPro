@@ -40,14 +40,14 @@ struct MetronomeTheme: Equatable {
     )
     
     static let greenTheme = MetronomeTheme(
-        primaryColor: .green,
+        primaryColor: Color(red: 0.56, green: 0.64, blue: 0.51),
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
-        strongBeatColor: .green,
-        mediumBeatColor: .green,
-        normalBeatColor: .green,
-        mutedBeatColor: Color.gray.opacity(0.2),
+        strongBeatColor: Color(red: 0.56, green: 0.64, blue: 0.51),
+        mediumBeatColor: Color(red: 0.56, green: 0.64, blue: 0.51),
+        normalBeatColor: Color(red: 0.56, green: 0.64, blue: 0.51),
+        mutedBeatColor: Color(red: 0.56, green: 0.64, blue: 0.51).opacity(0.2),
         currentBeatHighlightColor: .red
     )
     

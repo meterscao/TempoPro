@@ -151,12 +151,13 @@ struct MetronomeInfoView: View {
                     Button(action: {
                         showingThemeSettings = true
                     }) {
-                        Image(systemName: "gearshape")
-                            .foregroundColor(theme.textColor)
+                        Image("icon-setting")
+                            .foregroundColor(theme.primaryColor)
                     }
                     Spacer()
                     Button(action: {}) {
-                        Image(systemName: "timer")
+                        Image("icon-timer")
+                            .foregroundColor(theme.primaryColor)
                     }
                 }
                 .padding(.top,10)
@@ -207,9 +208,13 @@ struct MetronomeInfoView: View {
                     
                     Text("切分")
                 }
-                .foregroundStyle(.white)
+                .foregroundStyle(theme.primaryColor)
                 
-                Color.yellow.frame(maxWidth:.infinity).frame(height: 60).cornerRadius(10)
+                // 新增加的 BPMRulerView
+                BPMRulerView(tempo: .constant(tempo))
+                    .frame(height: 60)
+                
+                
             }
             .padding(.horizontal,15)
             .padding(.bottom,15)
@@ -230,6 +235,7 @@ struct MetronomeInfoView: View {
         }
         
         .padding(8)
+        .frame(maxHeight: .infinity)
         .ignoresSafeArea() // 忽略所有安全区域
         
         .sheet(isPresented: $showingTimeSignature) {
