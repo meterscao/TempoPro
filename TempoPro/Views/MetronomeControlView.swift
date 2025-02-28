@@ -72,10 +72,8 @@ struct MetronomeControlView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: wheelSize, height: wheelSize)
+                    Image(isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
                         
-                    Circle()
-                    .fill(Color.green)
-                    .frame(width: 10, height: 10)
                     .offset(x: wheelSize * 0.5 * 0.75, y: 0)
                 }
                 
