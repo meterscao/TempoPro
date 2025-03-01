@@ -195,7 +195,7 @@ struct MetronomeInfoView: View {
                                 Text("\(beatUnit)")
                                     
                             }
-                            .font(.custom("MiSansLatin-Semibold", size: 18))
+                            .font(.custom("MiSansLatin-Semibold", size: 22))
                             .onTapGesture {
                                 showingTimeSignature = true
                             }
@@ -219,7 +219,7 @@ struct MetronomeInfoView: View {
                         .fontWeight(.light)
                         .foregroundColor(theme.primaryColor)
                         .onTapGesture {
-                            showingTimeSignature = true
+                            showingKeypad = true
                         }
                 }
                 .padding(.vertical,10)

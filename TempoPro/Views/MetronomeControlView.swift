@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit // 导入UIKit以使用震动反馈功能
 
 struct MetronomeControlView: View {
     
@@ -22,6 +23,14 @@ struct MetronomeControlView: View {
     @State private var totalRotation: Double = 0
     @State private var startTempo: Double = 0
     @State private var isDragging: Bool = false
+    @State private var lastBPMInt: Int = 0 // 记录上一个整数BPM值
+    @State private var lastFeedbackTime: Date = Date.distantPast // 记录上次震动的时间
+    
+    // 反馈生成器
+    private let feedbackGeneratorHeavy = UIImpactFeedbackGenerator(style: .heavy)
+    private let feedbackGeneratorLight = UIImpactFeedbackGenerator(style: .light)
+    // 最小震动间隔(秒)
+    private let minimumFeedbackInterval: TimeInterval = 0.06
     
     private func createTicks(wheelSize:Double) -> some View {
         
@@ -118,6 +127,9 @@ struct MetronomeControlView: View {
                             )
                             lastAngle = calculateAngle(location: value.location, in: frame)
                             startTempo = tempo
+                            lastBPMInt = Int(tempo.rounded()) // 初始化上一个BPM值
+                            feedbackGeneratorLight.prepare() // 准备反馈生成器
+                            feedbackGeneratorHeavy.prepare()
                             print("开始拖动 - 初始角度: \(lastAngle)°, 初始速度: \(startTempo)")
                         }
                         
@@ -142,6 +154,17 @@ struct MetronomeControlView: View {
                         
                         let tempoChange = round(totalRotation / sensitivity)
                         let targetTempo = max(30, min(320, startTempo + tempoChange))
+                        
+                        // 检查BPM是否变化了整数单位，并提供震动反馈
+                        let currentBPMInt = Int(targetTempo.rounded())
+                        let now = Date()
+                        if currentBPMInt != lastBPMInt && 
+                           now.timeIntervalSince(lastFeedbackTime) >= minimumFeedbackInterval {
+                            currentBPMInt % 10 == 0 ? feedbackGeneratorHeavy.impactOccurred() : feedbackGeneratorLight.impactOccurred()
+                            
+                            lastFeedbackTime = now
+                        }
+                        lastBPMInt = currentBPMInt
                         
                         tempo = targetTempo
                         print("拖动中 - 当前角度: \(currentAngle)°, 角度差: \(angleDiff)°, 总旋转: \(totalRotation)°, 实际旋转: \(rotation)°, 目标速度: \(targetTempo)")
