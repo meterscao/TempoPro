@@ -70,6 +70,7 @@ struct BPMRulerView: View {
                 }
             }
         }
+//        .background(.purple)
         
         
         .clipped() // 裁剪超出边界的内容
@@ -118,35 +119,37 @@ struct RulerScaleView: View {
     @Environment(\.metronomeTheme) var theme
     
     var body: some View {
+        
         // 使用ZStack和精确定位替代HStack以确保均匀刻度
-        ZStack(alignment: .bottom) {
-            
-             ForEach(minBPM...maxBPM, id: \.self) { bpm in
-                 // 在确切位置放置每个刻度
-                 VStack(spacing: 4) {
-                     // 刻度数字 (仅显示10的倍数)
-                     if bpm % 10 == 0 {
-                         Text("\(bpm)")
-                             .font(.system(size: 12, weight: .semibold))
-                             .frame(height:16)
-                             .foregroundColor(theme.primaryColor)
-                     }
-                    
-                     // 刻度线
-                     Rectangle()
-                         .fill(bpm % 10 == 0 ? theme.primaryColor : theme.primaryColor.opacity(0.4))
-                         .frame(width: bpm % 10 == 0 ? majorTickWidth : tickWidth,
-                                height: bpm % 10 == 0 ? majorTickHeight : tickHeight)
-                 }
-
-                 .frame(maxHeight: .infinity,alignment: .bottom)
-                 .position(x: CGFloat(bpm - minBPM) * tickSpacing,y:20)
-                 
+            ZStack(alignment: .bottom) {
                 
-             }
-            
-        }
-        .frame(maxHeight: .infinity,alignment: .bottom)
+                 ForEach(minBPM...maxBPM, id: \.self) { bpm in
+                     // 在确切位置放置每个刻度
+                     VStack(spacing: 4) {
+                         // 刻度数字 (仅显示10的倍数)
+                         if bpm % 10 == 0 {
+                             Text("\(bpm)")
+                                 .font(.custom("MiSansLatin-Semibold", size: 12))
+                                 .frame(height:16)
+                                 .foregroundColor(theme.primaryColor)
+                         }
+                        
+                         // 刻度线
+                         Rectangle()
+                             .fill(bpm % 10 == 0 ? theme.primaryColor : theme.primaryColor.opacity(0.4))
+                             .frame(width: bpm % 10 == 0 ? majorTickWidth : tickWidth,
+                                    height: bpm % 10 == 0 ? majorTickHeight : tickHeight)
+                     }
+
+                     .frame(maxHeight: .infinity,alignment: .bottom)
+//                     .background(.yellow)
+                     .position(x: CGFloat(bpm - minBPM) * tickSpacing, y: 30)
+                 }
+                
+            }
+            .frame(maxHeight: .infinity,alignment: .bottom)
+//            .background(.gray)
+        
 
         
     }

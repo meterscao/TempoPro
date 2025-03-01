@@ -195,18 +195,18 @@ struct MetronomeInfoView: View {
                                 Text("\(beatUnit)")
                                     
                             }
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.custom("MiSansLatin-Semibold", size: 18))
                             .onTapGesture {
                                 showingTimeSignature = true
                             }
                             Spacer()
                             Text("切分")
-                                .font(.system(size: 18, weight: .medium))
+                                .font(.custom("MiSansLatin-Semibold", size: 18))
                         }
                         
                         // BPM 显示
                         Text("\(Int(tempo))")
-                            .font(.system(size: 48, weight: .bold))
+                            .font(.custom("MiSansLatin-Semibold", size: 48))
                             .onTapGesture {
                                 showingKeypad = true
                             }
@@ -215,7 +215,7 @@ struct MetronomeInfoView: View {
                         
                     }
                     Text(getTempoTerm(tempo))
-                        .font(.system(size: 12))
+                        .font(.custom("MiSansLatin-Regular", size: 12))
                         .fontWeight(.light)
                         .foregroundColor(theme.primaryColor)
                         .onTapGesture {
@@ -229,7 +229,7 @@ struct MetronomeInfoView: View {
                 
                 // 新增加的 BPMRulerView
                 BPMRulerView(tempo: .constant(tempo))
-                    .frame(height: 40)
+                    .frame(height: 60)
                 
                 
             }
@@ -266,7 +266,7 @@ struct MetronomeInfoView: View {
         
         .sheet(isPresented: $showingThemeSettings) {
             ThemeSelectionView()
-                .presentationDetents([.height(200)])
+                .presentationDetents([.height(150)])
                 .presentationDragIndicator(.visible)
         }
     }

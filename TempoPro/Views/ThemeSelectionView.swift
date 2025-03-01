@@ -13,13 +13,13 @@ struct ThemeSelectionView: View {
     
     // 定义网格布局
     let columns = [
-        GridItem(.adaptive(minimum: 60, maximum: 80), spacing: 12)
+        GridItem(.adaptive(minimum: 48, maximum: 48), spacing: 10)
     ]
     
     var body: some View {
-        NavigationView {
+        
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 12) {
+                LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(themeManager.availableThemes, id: \.self) { themeName in
                         Button(action: {
                             themeManager.switchTheme(to: themeName)
@@ -27,8 +27,8 @@ struct ThemeSelectionView: View {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(themeManager.themeColor(for: themeName))
-                                    .frame(width: 50, height: 50)
-                                    .shadow(radius: 2)
+                                    .frame(width: 48, height: 48)
+                                    .shadow(radius: 6)
                                 
                                 if themeName == themeManager.currentThemeName {
                                     Image(systemName: "checkmark")
@@ -41,10 +41,10 @@ struct ThemeSelectionView: View {
                 }
                 .padding(16)
             }
-            .navigationTitle("选择主题").navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(trailing: Button("完成") {
-                dismiss()
-            })
-        }
+            .padding(.top,20)
+            .background(.black)
+            
+        
     }
 }
+

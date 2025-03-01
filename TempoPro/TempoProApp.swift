@@ -18,6 +18,8 @@ struct TempoProApp: App {
     init() {
         // 应用启动时就禁用屏幕熄屏
         UIApplication.shared.isIdleTimerDisabled = true
+        
+        
     }
     
     var body: some Scene {
