@@ -6,10 +6,14 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct BPMRulerView: View {
     @Binding var tempo: Double
     @Environment(\.metronomeTheme) var theme
+    
+    // 添加中间状态以确保更新正确
+    @State private var internalTempo: Double = 120
     
     // BPM 范围
     private let minBPM: Int = 30
@@ -37,18 +41,23 @@ struct BPMRulerView: View {
                 RulerScaleView(minBPM: minBPM, maxBPM: maxBPM,
                               tickSpacing: tickSpacing,
                               tickHeight: tickHeight, majorTickHeight: majorTickHeight,
-                              tickWidth: tickWidth, majorTickWidth: majorTickWidth)
+                              tickWidth: tickWidth, majorTickWidth: majorTickWidth,
+                              onSelectBPM: { bpm in
+                                // 设置内部状态
+                                print("🔄 选择了BPM: \(bpm)")
+                                withAnimation {
+                                    internalTempo = Double(bpm)
+                                }
+                                print("⏩ 内部tempo已设置为: \(internalTempo)")
+                              })
                     .frame(maxHeight: .infinity)
-                     .offset(x: calculateOffset(for: animatedTempo, in: geometry))
-                    
-                
+                    .offset(x: calculateOffset(for: animatedTempo, in: geometry))
                 
                 // 中心红色指针 - 修改为底部对齐
                 Rectangle()
                     .fill(Color.red)
                     .frame(width: pointerWidth, height: pointerHeight)
                     .position(x: geometry.size.width / 2, y: geometry.size.height - pointerHeight / 2)
-                
                 
                 // 渐变遮罩
                 HStack(spacing: 0) {
@@ -70,31 +79,44 @@ struct BPMRulerView: View {
                 }
             }
         }
-//        .background(.purple)
-        
-        
         .clipped() // 裁剪超出边界的内容
+        // 监听内部状态变化，同步到外部
+        .onChange(of: internalTempo) { newTempo in
+            print("🔄 内部tempo变化为: \(newTempo)，正在更新外部绑定")
+            tempo = newTempo
+            print("✅ 外部tempo已更新为: \(tempo)")
+        }
+        // 监听外部绑定变化，同步到内部
         .onChange(of: tempo) { newTempo in
+            print("⭐️ 外部tempo变化: \(animatedTempo) -> \(newTempo)")
+            // 同步内部状态
+            internalTempo = newTempo
+            
             // 完全优化的动画处理方式
             let tempoChange = abs(animatedTempo - newTempo)
             
             if tempoChange > 20 {
                 // 大幅度变化直接跳转，不使用动画
+                print("大幅度变化，直接跳转")
                 animatedTempo = newTempo
             } else if tempoChange > 5 {
                 // 中等幅度变化使用简单动画
+                print("中等幅度变化，使用简单动画")
                 withAnimation(.easeOut(duration: 0.2)) {
                     animatedTempo = newTempo
                 }
             } else {
                 // 小幅度变化使用更精细的弹簧动画
+                print("小幅度变化，使用弹簧动画")
                 withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.7, blendDuration: 0.1)) {
                     animatedTempo = newTempo
                 }
             }
         }
         .onAppear {
-            // 初始化 animatedTempo
+            // 初始化内部状态和动画状态
+            print("BPMRulerView已加载，初始tempo: \(tempo)")
+            internalTempo = tempo
             animatedTempo = tempo
         }
     }
@@ -118,40 +140,63 @@ struct RulerScaleView: View {
     let majorTickWidth: CGFloat
     @Environment(\.metronomeTheme) var theme
     
+    // 使用回调处理BPM选择
+    var onSelectBPM: (Int) -> Void
+    
     var body: some View {
-        
         // 使用ZStack和精确定位替代HStack以确保均匀刻度
-            ZStack(alignment: .bottom) {
-                
-                 ForEach(minBPM...maxBPM, id: \.self) { bpm in
-                     // 在确切位置放置每个刻度
-                     VStack(spacing: 4) {
-                         // 刻度数字 (仅显示10的倍数)
-                         if bpm % 10 == 0 {
-                             Text("\(bpm)")
-                                 .font(.custom("MiSansLatin-Semibold", size: 12))
-                                 .frame(height:16)
-                                 .foregroundColor(theme.primaryColor)
-                         }
-                        
-                         // 刻度线
-                         Rectangle()
-                             .fill(bpm % 10 == 0 ? theme.primaryColor : theme.primaryColor.opacity(0.4))
-                             .frame(width: bpm % 10 == 0 ? majorTickWidth : tickWidth,
-                                    height: bpm % 10 == 0 ? majorTickHeight : tickHeight)
-                     }
-
-                     .frame(maxHeight: .infinity,alignment: .bottom)
-//                     .background(.yellow)
-                     .position(x: CGFloat(bpm - minBPM) * tickSpacing, y: 30)
-                 }
-                
+        ZStack(alignment: .bottom) {
+            // 明确指定ForEach的泛型参数类型
+            ForEach(Array(minBPM...maxBPM), id: \.self) { bpm in
+                ZStack(alignment: .bottom) {
+                    // 在确切位置放置每个刻度
+                    VStack(spacing: 4) {
+                        // 刻度数字 (仅显示10的倍数)
+                        if bpm % 10 == 0 {
+                            Text("\(bpm)")
+                                .font(.custom("MiSansLatin-Semibold", size: 12))
+                                .frame(height:16)
+                                .foregroundColor(theme.primaryColor)
+                        }
+                       
+                        // 刻度线
+                        Rectangle()
+                            .fill(bpm % 10 == 0 ? theme.primaryColor : theme.primaryColor.opacity(0.4))
+                            .frame(width: bpm % 10 == 0 ? majorTickWidth : tickWidth,
+                                   height: bpm % 10 == 0 ? majorTickHeight : tickHeight)
+                    }
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                    
+                    // 为10的倍数BPM添加可点击区域
+                    if bpm % 10 == 0 {
+                        Rectangle()
+                            .fill(Color.clear)
+                            .frame(width: 30, height: 50)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                print("BPM值\(bpm)被点击")
+                                
+                                // 提供触觉反馈
+                                let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+                                feedbackGenerator.prepare()
+                                feedbackGenerator.impactOccurred()
+                                
+                                // 使用主线程确保UI更新
+                                DispatchQueue.main.async {
+                                    // 只使用回调更新
+                                    onSelectBPM(bpm)
+                                }
+                            }
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .position(x: CGFloat(bpm - minBPM) * tickSpacing, y: 30)
             }
-            .frame(maxHeight: .infinity,alignment: .bottom)
-//            .background(.gray)
-        
-
-        
+        }
+        .frame(maxHeight: .infinity, alignment: .bottom)
+        .onAppear {
+            print("RulerScaleView已加载，BPM范围:\(minBPM)-\(maxBPM)")
+        }
     }
 }
 

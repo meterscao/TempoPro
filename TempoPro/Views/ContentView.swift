@@ -49,7 +49,10 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             MetronomeInfoView(
-                tempo: metronomeState.tempo,
+                tempo: Binding(
+                    get: { metronomeState.tempo },
+                    set: { metronomeState.updateTempo($0) }
+                ),
                 beatsPerBar: beatsPerBar,
                 beatUnit: beatUnit,
                 showingKeypad: $showingKeypad,

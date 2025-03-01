@@ -90,7 +90,7 @@ struct BeatView: View {
 }
 
 struct MetronomeInfoView: View {
-    let tempo: Double
+    @Binding var tempo: Double
     let beatsPerBar: Int
     let beatUnit: Int
     @Binding var showingKeypad: Bool
@@ -228,7 +228,7 @@ struct MetronomeInfoView: View {
                 
                 
                 // 新增加的 BPMRulerView
-                BPMRulerView(tempo: .constant(tempo))
+                BPMRulerView(tempo: $tempo)
                     .frame(height: 60)
                 
                 
@@ -413,5 +413,5 @@ struct MetronomeInfoView: View {
 }
 
 #Preview {
-    MetronomeInfoView(tempo: 120, beatsPerBar: 4, beatUnit: 4, showingKeypad: .constant(false), beatStatuses: .constant([.strong, .normal, .normal, .normal]), currentBeat: 0, isPlaying: false, beatsPerBarBinding: .constant(4), beatUnitBinding: .constant(4))
+    MetronomeInfoView(tempo: .constant(120), beatsPerBar: 4, beatUnit: 4, showingKeypad: .constant(false), beatStatuses: .constant([.strong, .normal, .normal, .normal]), currentBeat: 0, isPlaying: false, beatsPerBarBinding: .constant(4), beatUnitBinding: .constant(4))
 }
