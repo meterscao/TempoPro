@@ -57,7 +57,7 @@ struct BPMRulerView: View {
                         startPoint: .leading,
                         endPoint: .trailing
                     )
-                    .frame(width: 20)
+                    .frame(width: 10)
                     
                     Spacer()
                     
@@ -66,11 +66,11 @@ struct BPMRulerView: View {
                         startPoint: .leading,
                         endPoint: .trailing
                     )
-                    .frame(width: 20)
+                    .frame(width: 10)
                 }
             }
         }
-        .frame(height: 60)
+        
         
         .clipped() // 裁剪超出边界的内容
         .onChange(of: tempo) { newTempo in
@@ -127,7 +127,8 @@ struct RulerScaleView: View {
                      // 刻度数字 (仅显示10的倍数)
                      if bpm % 10 == 0 {
                          Text("\(bpm)")
-                             .font(.system(size: 12, weight: .bold))
+                             .font(.system(size: 12, weight: .semibold))
+                             .frame(height:16)
                              .foregroundColor(theme.primaryColor)
                      }
                     
@@ -139,7 +140,7 @@ struct RulerScaleView: View {
                  }
 
                  .frame(maxHeight: .infinity,alignment: .bottom)
-                 .position(x: CGFloat(bpm - minBPM) * tickSpacing,y:30)
+                 .position(x: CGFloat(bpm - minBPM) * tickSpacing,y:20)
                  
                 
              }

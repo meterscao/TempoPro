@@ -184,43 +184,52 @@ struct MetronomeInfoView: View {
                 
                 
                 
-                // 速度和拍号显示
-                HStack(spacing: 30) {
-                    // 拍号显示 - 添加点击手势
-                    HStack(spacing: 2) {
-                        Text("\(beatsPerBar)")
-                            .font(.system(size: 24, weight: .medium))
-                        Text("/")
-                            .font(.system(size: 24, weight: .medium))
-                        Text("\(beatUnit)")
-                            .font(.system(size: 24, weight: .medium))
-                    }
-                    .onTapGesture {
-                        showingTimeSignature = true
-                    }
-                    
-                    Spacer()
-                    
-                    // BPM 显示
-                    VStack {
+                VStack(spacing:0){
+                    ZStack{
+                        // 速度和拍号显示
+                        HStack(spacing: 30) {
+                            // 拍号显示 - 添加点击手势
+                            HStack(spacing: 2) {
+                                Text("\(beatsPerBar)")
+                                Text("/")
+                                Text("\(beatUnit)")
+                                    
+                            }
+                            .font(.system(size: 18, weight: .medium))
+                            .onTapGesture {
+                                showingTimeSignature = true
+                            }
+                            Spacer()
+                            Text("切分")
+                                .font(.system(size: 18, weight: .medium))
+                        }
+                        
+                        // BPM 显示
                         Text("\(Int(tempo))")
-                            .font(.system(size: 42, weight: .medium))
+                            .font(.system(size: 48, weight: .bold))
                             .onTapGesture {
                                 showingKeypad = true
                             }
-                        Text(getTempoTerm(tempo))
-                            .font(.subheadline)
-                            .foregroundColor(theme.primaryColor.opacity(0.7))
+                            .frame(height:52)
+                            
+                        
                     }
-                    Spacer()
-                    
-                    Text("切分")
+                    Text(getTempoTerm(tempo))
+                        .font(.system(size: 12))
+                        .fontWeight(.light)
+                        .foregroundColor(theme.primaryColor)
+                        .onTapGesture {
+                            showingTimeSignature = true
+                        }
                 }
+                .padding(.vertical,10)
                 .foregroundStyle(theme.primaryColor)
+                
+                
                 
                 // 新增加的 BPMRulerView
                 BPMRulerView(tempo: .constant(tempo))
-                    .frame(height: 60)
+                    .frame(height: 40)
                 
                 
             }
