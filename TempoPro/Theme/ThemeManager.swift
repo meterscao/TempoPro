@@ -61,4 +61,20 @@ class ThemeManager: ObservableObject {
     func addCustomTheme(name: String, theme: MetronomeTheme) {
         themes[name] = theme
     }
+
+    // 在 ThemeManager 类中添加此方法
+    func themeColor(for themeName: String) -> Color {
+        switch themeName.lowercased() {
+        case "green": return MetronomeTheme.greenTheme.primaryColor
+        case "purple": return MetronomeTheme.purpleTheme.primaryColor
+        case "skyblue": return MetronomeTheme.skyBlueTheme.primaryColor
+        case "coral": return MetronomeTheme.coralTheme.primaryColor
+        case "amber": return MetronomeTheme.amberTheme.primaryColor
+        case "lavender": return MetronomeTheme.lavenderTheme.primaryColor
+        case "teal": return MetronomeTheme.tealTheme.primaryColor
+        case "rosegold": return MetronomeTheme.roseGoldTheme.primaryColor
+        case "desert": return MetronomeTheme.desertTheme.primaryColor
+        default: return .gray
+        }
+    }
 }

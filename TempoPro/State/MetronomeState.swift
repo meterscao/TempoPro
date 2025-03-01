@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import UIKit  // 添加UIKit导入
 
 class MetronomeState: ObservableObject {
     // 定义 UserDefaults 的键

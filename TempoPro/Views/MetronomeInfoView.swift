@@ -257,7 +257,7 @@ struct MetronomeInfoView: View {
         
         .sheet(isPresented: $showingThemeSettings) {
             ThemeSelectionView()
-                .presentationDetents([.medium])
+                .presentationDetents([.height(200)])
                 .presentationDragIndicator(.visible)
         }
     }
