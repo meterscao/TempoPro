@@ -11,9 +11,9 @@ struct CircularButtonStyle: ViewModifier {
     @Environment(\.metronomeTheme) var theme
     func body(content: Content) -> some View {
         content
-            .foregroundStyle(theme.backgroundColor)
+            .foregroundStyle(theme.primaryColor)
             .frame(width: 60, height: 60)
-            .overlay(Circle().stroke(theme.backgroundColor, lineWidth: 2))
+            .background(RoundedRectangle(cornerRadius: 18).fill(theme.backgroundColor))
     }
 }
 

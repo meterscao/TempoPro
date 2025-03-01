@@ -18,15 +18,24 @@ struct BPMRulerView: View {
     // BPM 范围
     private let minBPM: Int = 30
     private let maxBPM: Int = 240
+
+    private let rulerHeight: CGFloat = 50
+    private let textHeight: CGFloat = 16
+    private let textMargin: CGFloat = 4
     
     // 视图参数
+
+    private let majorTickWidth: CGFloat = 2
+    private var majorTickHeight: CGFloat { rulerHeight - textHeight - (textMargin * 2) }
+
+    private let pointerWidth: CGFloat = 2
+    private var pointerHeight: CGFloat { majorTickHeight }
+    
     private let tickWidth: CGFloat = 1
     private let tickHeight: CGFloat = 15
     
-    private let majorTickWidth: CGFloat = 2
-    private let majorTickHeight: CGFloat = 25
-    private let pointerWidth: CGFloat = 2
-    private let pointerHeight: CGFloat = 25
+    
+    
     private let tickSpacing: CGFloat = 8  // 刻度线之间的固定间距
     
     // 添加动画状态变量
@@ -42,6 +51,9 @@ struct BPMRulerView: View {
                               tickSpacing: tickSpacing,
                               tickHeight: tickHeight, majorTickHeight: majorTickHeight,
                               tickWidth: tickWidth, majorTickWidth: majorTickWidth,
+                              textMargin: textMargin,
+                              textHeight: textHeight,
+                              rulerHeight: rulerHeight,
                               onSelectBPM: { bpm in
                                 // 设置内部状态
                                 print("🔄 选择了BPM: \(bpm)")
@@ -79,6 +91,7 @@ struct BPMRulerView: View {
                 }
             }
         }
+        .frame(height: rulerHeight)
         .clipped() // 裁剪超出边界的内容
         // 监听内部状态变化，同步到外部
         .onChange(of: internalTempo) { newTempo in
@@ -138,6 +151,10 @@ struct RulerScaleView: View {
     let majorTickHeight: CGFloat
     let tickWidth: CGFloat
     let majorTickWidth: CGFloat
+    let textMargin: CGFloat
+    let textHeight: CGFloat
+    let rulerHeight: CGFloat
+
     @Environment(\.metronomeTheme) var theme
     
     // 使用回调处理BPM选择
@@ -150,12 +167,12 @@ struct RulerScaleView: View {
             ForEach(Array(minBPM...maxBPM), id: \.self) { bpm in
                 ZStack(alignment: .bottom) {
                     // 在确切位置放置每个刻度
-                    VStack(spacing: 4) {
+                    VStack(spacing: textMargin) {
                         // 刻度数字 (仅显示10的倍数)
                         if bpm % 10 == 0 {
                             Text("\(bpm)")
                                 .font(.custom("MiSansLatin-Semibold", size: 12))
-                                .frame(height:16)
+                                .frame(height:textHeight)
                                 .foregroundColor(theme.primaryColor)
                         }
                        
@@ -165,6 +182,7 @@ struct RulerScaleView: View {
                             .frame(width: bpm % 10 == 0 ? majorTickWidth : tickWidth,
                                    height: bpm % 10 == 0 ? majorTickHeight : tickHeight)
                     }
+                    .padding(.top,textMargin)
                     .frame(maxHeight: .infinity, alignment: .bottom)
                     
                     // 为10的倍数BPM添加可点击区域
@@ -190,7 +208,7 @@ struct RulerScaleView: View {
                     }
                 }
                 .frame(maxHeight: .infinity, alignment: .bottom)
-                .position(x: CGFloat(bpm - minBPM) * tickSpacing, y: 30)
+                .position(x: CGFloat(bpm - minBPM) * tickSpacing, y: rulerHeight / 2)
             }
         }
         .frame(maxHeight: .infinity, alignment: .bottom)

@@ -180,10 +180,6 @@ struct MetronomeInfoView: View {
                     // 移除单独的滑动控制区域
                 }
                 
-                
-                
-                
-                
                 VStack(spacing:0){
                     ZStack{
                         // 速度和拍号显示
@@ -195,29 +191,28 @@ struct MetronomeInfoView: View {
                                 Text("\(beatUnit)")
                                     
                             }
-                            .font(.custom("MiSansLatin-Semibold", size: 22))
+                            .font(.custom("MiSansLatin-Regular", size: 22))
                             .onTapGesture {
                                 showingTimeSignature = true
                             }
                             Spacer()
                             Text("切分")
-                                .font(.custom("MiSansLatin-Semibold", size: 18))
+                                .font(.custom("MiSansLatin-Regular", size: 18))
                         }
                         
                         // BPM 显示
                         Text("\(Int(tempo))")
-                            .font(.custom("MiSansLatin-Semibold", size: 50))
+                            .font(.custom("MiSansLatin-Semibold", size: 46))
                             .onTapGesture {
                                 showingKeypad = true
                             }
-                            .frame(height:56)
-                            
-                        
+                            .frame(height:52)
                     }
                     Text(getTempoTerm(tempo))
                         .font(.custom("MiSansLatin-Regular", size: 12))
                         .fontWeight(.light)
                         .foregroundColor(theme.primaryColor)
+                        .padding(.top,-4)
                         .onTapGesture {
                             showingKeypad = true
                         }
@@ -228,9 +223,6 @@ struct MetronomeInfoView: View {
                 
                 // 新增加的 BPMRulerView
                 BPMRulerView(tempo: $tempo)
-                    .frame(height: 60)
-                    .background(.purple)
-                
                 
             }
             .padding(.horizontal,15)
@@ -245,9 +237,6 @@ struct MetronomeInfoView: View {
                     topTrailingRadius: 56
                 )
             )
-            
-            
-            
             
         }
         
