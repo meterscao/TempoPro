@@ -206,11 +206,11 @@ struct MetronomeInfoView: View {
                         
                         // BPM 显示
                         Text("\(Int(tempo))")
-                            .font(.custom("MiSansLatin-Semibold", size: 48))
+                            .font(.custom("MiSansLatin-Semibold", size: 50))
                             .onTapGesture {
                                 showingKeypad = true
                             }
-                            .frame(height:52)
+                            .frame(height:56)
                             
                         
                     }
@@ -222,7 +222,6 @@ struct MetronomeInfoView: View {
                             showingKeypad = true
                         }
                 }
-                .padding(.vertical,10)
                 .foregroundStyle(theme.primaryColor)
                 
                 
@@ -230,6 +229,7 @@ struct MetronomeInfoView: View {
                 // 新增加的 BPMRulerView
                 BPMRulerView(tempo: $tempo)
                     .frame(height: 60)
+                    .background(.purple)
                 
                 
             }
