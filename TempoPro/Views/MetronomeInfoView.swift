@@ -216,7 +216,7 @@ struct MetronomeInfoView: View {
                         .font(.custom("MiSansLatin-Regular", size: 12))
                         .fontWeight(.light)
                         .foregroundColor(theme.primaryColor)
-                        .padding(.top,-8)
+                        .padding(.top,-5)
                         .onTapGesture {
                             showingKeypad = true
                         }
