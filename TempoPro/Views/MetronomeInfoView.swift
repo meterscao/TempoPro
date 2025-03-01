@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 // 添加节拍状态枚举
 enum BeatStatus {
@@ -196,8 +197,9 @@ struct MetronomeInfoView: View {
                                 showingTimeSignature = true
                             }
                             Spacer()
-                            Text("切分")
-                                .font(.custom("MiSansLatin-Regular", size: 18))
+                            Image("icon-time-signature")
+                                .renderingMode(.template)
+                                .foregroundStyle(theme.primaryColor)
                         }
                         
                         // BPM 显示
@@ -212,7 +214,7 @@ struct MetronomeInfoView: View {
                         .font(.custom("MiSansLatin-Regular", size: 12))
                         .fontWeight(.light)
                         .foregroundColor(theme.primaryColor)
-                        .padding(.top,-4)
+                        .padding(.top,-8)
                         .onTapGesture {
                             showingKeypad = true
                         }
@@ -231,10 +233,10 @@ struct MetronomeInfoView: View {
             .foregroundColor(theme.textColor)
             .clipShape(
                 .rect(
-                    topLeadingRadius: 56,
+                    topLeadingRadius: max(15, DisplayCornerRadiusHelper.shared.getCornerRadius() - 7),
                     bottomLeadingRadius: 15,
                     bottomTrailingRadius: 15,
-                    topTrailingRadius: 56
+                    topTrailingRadius: max(15, DisplayCornerRadiusHelper.shared.getCornerRadius() - 7)
                 )
             )
             

@@ -10,16 +10,19 @@ import SwiftUI
 struct BPMKeypadView: View {
     @Binding var isPresented: Bool
     @Binding var tempo: Double
+    @Environment(\.metronomeTheme) var theme
     @State private var inputValue: String = ""
+    private let buttonHeight: CGFloat = 60
     
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
                 Text(inputValue.isEmpty ? "0" : inputValue)
-                    .font(.system(size: 48, weight: .medium))
+                        
+                        .font(.custom("MiSansLatin-Semibold", size: 36))
                     .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
+                    .frame(height: buttonHeight)
+                    .background(theme.backgroundColor.opacity(0.2))
                     .cornerRadius(10)
                 
                 VStack(spacing: 15) {
@@ -34,22 +37,25 @@ struct BPMKeypadView: View {
                                         }
                                     }) {
                                         Text("\(number)")
-                                            .font(.title2)
+                                            
                                             .frame(maxWidth: .infinity)
-                                            .padding()
-                                            .background(Color.gray.opacity(0.2))
+                                            .frame(height: buttonHeight)
+                                            .foregroundColor(theme.backgroundColor)
+                                            .background(theme.backgroundColor.opacity(0.3))
                                             .cornerRadius(10)
                                     }
+                                    
                                 }
                             } else {
                                 Button(action: {
                                     inputValue = ""
                                 }) {
                                     Text("CLEAR")
-                                        .font(.title2)
+                                        
                                         .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color.gray.opacity(0.2))
+                                        .frame(height: buttonHeight)
+                                        .foregroundColor(theme.backgroundColor)
+                                        .background(theme.backgroundColor.opacity(0.3))
                                         .cornerRadius(10)
                                 }
                                 
@@ -59,10 +65,11 @@ struct BPMKeypadView: View {
                                     }
                                 }) {
                                     Text("0")
-                                        .font(.title2)
+                                        
                                         .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color.gray.opacity(0.2))
+                                        .frame(height: buttonHeight)
+                                        .foregroundColor(theme.backgroundColor)
+                                        .background(theme.backgroundColor.opacity(0.3))
                                         .cornerRadius(10)
                                 }
                                 
@@ -73,11 +80,11 @@ struct BPMKeypadView: View {
                                     isPresented = false
                                 }) {
                                     Text("SET")
-                                        .font(.title2)
+                                        
                                         .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color.black)
-                                        .foregroundColor(.white)
+                                        .frame(height: buttonHeight)
+                                        .background(theme.backgroundColor)
+                                        .foregroundColor(theme.primaryColor)
                                         .cornerRadius(10)
                                 }
                             }
@@ -85,16 +92,11 @@ struct BPMKeypadView: View {
                     }
                 }
             }
+            .font(.custom("MiSansLatin-Semibold", size: 22))
             .padding()
             .padding(.bottom, 20)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
-                        isPresented = false
-                    }
-                }
-            }
+            .background(theme.backgroundColor.opacity(0.1))
+            .background(theme.primaryColor)
         }
     }
 }

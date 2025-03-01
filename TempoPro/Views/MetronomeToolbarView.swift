@@ -11,6 +11,7 @@ struct CircularButtonStyle: ViewModifier {
     @Environment(\.metronomeTheme) var theme
     func body(content: Content) -> some View {
         content
+            
             .foregroundStyle(theme.primaryColor)
             .frame(width: 60, height: 60)
             .background(RoundedRectangle(cornerRadius: 18).fill(theme.backgroundColor))
@@ -27,22 +28,26 @@ struct MetronomeToolbarView: View {
     var body: some View {
         HStack() {
             Button(action: {}) {
-                Image(systemName: "music.note")
+                Image("icon-timer")
+                    .renderingMode(.template)
                     .circularButton()
             }
             Spacer()
             Button(action: {}) {
-                Image(systemName: "speaker.wave.2")
+                Image("icon-play-list")
+                    .renderingMode(.template)
                     .circularButton()
             }
             Spacer()
             Button(action: {}) {
-                Image(systemName: "stopwatch")
+                Image("icon-clap")
+                    .renderingMode(.template)
                     .circularButton()
             }
             Spacer()
             Button(action: {}) {
-                Image(systemName: "hand.raised")
+                Image("icon-analysis")
+                    .renderingMode(.template)
                     .circularButton()
             }
         }
