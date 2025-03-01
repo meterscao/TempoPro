@@ -330,7 +330,7 @@ struct MetronomeInfoView: View {
                         if isHorizontal {
                             // 横向滑动结束 - 调整拍数
                             if abs(translation.width) > 30 {
-                                if translation.width < 0 {
+                                if translation.width > 0 {
                                     // 向左滑 - 减少拍数
                                     if beatsPerBarBinding > 1 {
                                         print("横向滑动执行 - 拍数减1: \(beatsPerBarBinding) -> \(beatsPerBarBinding - 1)")
