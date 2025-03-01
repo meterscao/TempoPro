@@ -103,8 +103,9 @@ struct ContentView: View {
                     set: { metronomeState.updateTempo($0) }
                 )
             )
+            .ignoresSafeArea()
             .presentationDetents([.height(400)])
-            .presentationDragIndicator(.visible)
+            
         }
         .onDisappear {
             metronomeState.cleanup()

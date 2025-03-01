@@ -78,14 +78,16 @@ struct BeatView: View {
             ForEach(0..<3, id: \.self) { index in
                 Image("bg-noise")
                     .resizable()
-                    .opacity(0.3)
-                    .frame(maxHeight: .infinity)                    
+                    .opacity(0.2)
+                    .frame(maxHeight: .infinity)
                     .background(barColors()[index])
                     .cornerRadius(2)
-                
+                    
                     
             }
         }
+        
+        
         // 移除所有手势相关代码，由父视图统一处理
     }
 }
