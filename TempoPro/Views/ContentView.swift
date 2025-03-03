@@ -12,7 +12,7 @@ struct ContentView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var themeManager: ThemeManager
     
-    @StateObject private var metronomeState: MetronomeState
+    @StateObject private var metronomeState = MetronomeState()
     @AppStorage(AppStorageKeys.Metronome.beatsPerBar) private var beatsPerBar: Int = 4 {
         didSet {
             print("ContentView - beatsPerBar didSet: \(oldValue) -> \(beatsPerBar)")
@@ -27,16 +27,6 @@ struct ContentView: View {
     }
     @State private var showingKeypad = false
     @State private var showingTimeSignature = false
-    
-    init() {
-        // 仅初始化MetronomeState，不需要手动处理UserDefaults
-        let savedBeatsPerBar = UserDefaults.standard.integer(forKey: AppStorageKeys.Metronome.beatsPerBar)
-        let defaultBeatsPerBar = savedBeatsPerBar != 0 ? savedBeatsPerBar : 4
-        
-        _metronomeState = StateObject(wrappedValue: MetronomeState(beatsPerBar: defaultBeatsPerBar))
-        
-        print("ContentView - 初始化完成: 使用AppStorage自动管理beatsPerBar")
-    }
     
     var body: some View {
         VStack(spacing: 0) {

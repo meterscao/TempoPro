@@ -10,31 +10,16 @@ import SwiftUI
 struct TimeSignatureView: View {
     @Environment(\.dismiss) private var dismiss
     
-    // 改用AppStorage直接管理状态
+    // 使用AppStorage直接管理状态
     @AppStorage(AppStorageKeys.Metronome.beatsPerBar) private var beatsPerBar: Int = 4
     @AppStorage(AppStorageKeys.Metronome.beatUnit) private var beatUnit: Int = 4
     
     // 临时存储修改的值
-    @State private var tempBeatsPerBar: Int
-    @State private var tempBeatUnit: Int
+    @State private var tempBeatsPerBar: Int = 4
+    @State private var tempBeatUnit: Int = 4
     
     // 可选的拍号单位
     private let availableBeatUnits = [1, 2, 4, 8, 16, 32]
-    
-    init() {
-        // 从AppStorage读取初始值
-        let savedBeatsPerBar = UserDefaults.standard.integer(forKey: AppStorageKeys.Metronome.beatsPerBar)
-        let savedBeatUnit = UserDefaults.standard.integer(forKey: AppStorageKeys.Metronome.beatUnit)
-        
-        // 使用有效值或默认值
-        let initialBeatsPerBar = savedBeatsPerBar != 0 ? savedBeatsPerBar : 4
-        let initialBeatUnit = savedBeatUnit != 0 ? savedBeatUnit : 4
-        
-        self._tempBeatsPerBar = State(initialValue: initialBeatsPerBar)
-        self._tempBeatUnit = State(initialValue: initialBeatUnit)
-        
-        print("TimeSignatureView - 初始化 - 使用AppStorage")
-    }
     
     var body: some View {
         VStack(spacing: 30) {
@@ -130,6 +115,11 @@ struct TimeSignatureView: View {
             .padding(.bottom, 30)
         }
         .background(Color(UIColor.systemBackground))
+        .onAppear {
+            // 在视图出现时，使用AppStorage的值初始化临时变量
+            tempBeatsPerBar = beatsPerBar
+            tempBeatUnit = beatUnit
+        }
     }
 }
 
