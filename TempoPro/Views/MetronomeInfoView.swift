@@ -354,10 +354,9 @@ struct MetronomeInfoView: View {
                             horizontalDragAmount = .zero
                             isHorizontalDragging = false
                             
-                            // 添加延迟验证UserDefaults的值
+                            // 添加延迟验证AppStorage的值
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                let saved = UserDefaults.standard.integer(forKey: AppStorageKeys.Metronome.beatsPerBar)
-                                print("横向滑动保存后 - UserDefaults 中的值: \(saved)")
+                                print("横向滑动保存后 - AppStorage 中的值: \(beatsPerBar)")
                             }
                         } else {
                             // 垂直滑动结束 - 调整特定BeatView的状态
