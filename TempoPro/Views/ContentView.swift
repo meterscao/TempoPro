@@ -39,7 +39,7 @@ struct ContentView: View {
         print("ContentView - 初始化: 从 UserDefaults 读取值 - beatsPerBar: \(savedBeatsPerBar), beatUnit: \(savedBeatUnit)")
         
         // 如果没有保存的值，使用默认值
-        _beatsPerBar = State(initialValue: savedBeatsPerBar != 0 ? savedBeatsPerBar : 3)
+        _beatsPerBar = State(initialValue: savedBeatsPerBar != 0 ? savedBeatsPerBar : 4)
         _beatUnit = State(initialValue: savedBeatUnit != 0 ? savedBeatUnit : 4)
         
         // 使用保存的拍数初始化 MetronomeState
