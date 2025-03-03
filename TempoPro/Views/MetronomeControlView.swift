@@ -12,10 +12,9 @@ struct MetronomeControlView: View {
     
     private let sensitivity: Double = 9.0 // 旋转灵敏度
     @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var metronomeState: MetronomeState
     
-    @Binding var tempo: Int
-    @Binding var isPlaying: Bool
-    let beatsPerBar: Int
+    
     let wheelSizeRatio:Double = 0.72
     
     @State private var rotation: Double = 0
@@ -90,16 +89,16 @@ struct MetronomeControlView: View {
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(theme.backgroundColor)
                         .frame(width: wheelSize, height: wheelSize)
-                    Image(isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
+                    Image(metronomeState.isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
                     .offset(x: wheelSize * 0.5 * 0.75, y: 0)
                 }
                 
                 .rotationEffect(.degrees(rotation))
                 
                 Button(action: {
-                    isPlaying.toggle()
+                    metronomeState.togglePlayback()
                 }) {
-                    Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                    Image(systemName: metronomeState.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .renderingMode(.template)
                         .resizable()
                         .foregroundColor(theme.backgroundColor)
@@ -126,8 +125,8 @@ struct MetronomeControlView: View {
                                 height: wheelSize
                             )
                             lastAngle = calculateAngle(location: value.location, in: frame)
-                            startTempo = tempo
-                            lastBPMInt = tempo // 初始化上一个BPM值
+                            startTempo = metronomeState.tempo
+                            lastBPMInt = metronomeState.tempo // 初始化上一个BPM值
                             feedbackGeneratorLight.prepare() // 准备反馈生成器
                             feedbackGeneratorHeavy.prepare()
                             print("开始拖动 - 初始角度: \(lastAngle)°, 初始速度: \(startTempo)")
@@ -166,13 +165,13 @@ struct MetronomeControlView: View {
                         }
                         lastBPMInt = currentBPMInt
                         
-                        tempo = targetTempo
+                        metronomeState.updateTempo(targetTempo)
                         print("拖动中 - 当前角度: \(currentAngle)°, 角度差: \(angleDiff)°, 总旋转: \(totalRotation)°, 实际旋转: \(rotation)°, 目标速度: \(targetTempo)")
                         lastAngle = currentAngle
                     }
                     .onEnded { _ in
                         isDragging = false
-                        print("结束拖动 - 最终旋转: \(rotation)°, 最终速度: \(tempo)")
+                        print("结束拖动 - 最终旋转: \(rotation)°, 最终速度: \(metronomeState.tempo)")
                         totalRotation = 0
                     }
             )
@@ -183,5 +182,6 @@ struct MetronomeControlView: View {
 }
 
 #Preview {
-    MetronomeControlView(tempo: .constant(120), isPlaying: .constant(false), beatsPerBar: 4)
+    MetronomeControlView()
+        .environmentObject(MetronomeState())
 } 

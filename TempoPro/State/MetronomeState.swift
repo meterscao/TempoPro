@@ -13,9 +13,9 @@ class MetronomeState: ObservableObject {
     }
     
     // 状态属性
-    @Published private(set) var tempo: Int = 90
     @Published var isPlaying: Bool = false
     @Published var currentBeat: Int = 0
+    @Published private(set) var tempo: Int = 90
     @Published private(set) var beatsPerBar: Int = 4
     @Published private(set) var beatUnit: Int = 4
     @Published var beatStatuses: [BeatStatus] = []

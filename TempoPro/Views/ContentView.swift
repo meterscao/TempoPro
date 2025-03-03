@@ -42,17 +42,8 @@ struct ContentView: View {
             )
             .frame(maxHeight: .infinity)
 
-            MetronomeControlView(
-                tempo: Binding(
-                    get: { metronomeState.tempo },
-                    set: { metronomeState.updateTempo($0) }
-                ),
-                isPlaying: Binding(
-                    get: { metronomeState.isPlaying },
-                    set: { _ in metronomeState.togglePlayback() }
-                ),
-                beatsPerBar: beatsPerBar
-            )
+            MetronomeControlView()
+            .environmentObject(metronomeState)
             .aspectRatio(10/9, contentMode: .fit) // 设置宽高比为5:4（相当于高度为宽度的80%）
             MetronomeToolbarView()
                 
@@ -70,11 +61,7 @@ struct ContentView: View {
         
         .sheet(isPresented: $showingKeypad) {
             BPMKeypadView(
-                isPresented: $showingKeypad,
-                tempo: Binding(
-                    get: { metronomeState.tempo },
-                    set: { metronomeState.updateTempo($0) }
-                )
+                isPresented: $showingKeypad
             )
             .ignoresSafeArea()
             .presentationDetents([.height(400)])
@@ -88,6 +75,7 @@ struct ContentView: View {
         .onDisappear {
             metronomeState.cleanup()
         }
+        .environmentObject(metronomeState)
     }
 }
 
