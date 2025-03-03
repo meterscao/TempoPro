@@ -10,6 +10,7 @@ class MetronomeState: ObservableObject {
         static let beatsPerBar = AppStorageKeys.Metronome.beatsPerBar
         static let beatUnit = AppStorageKeys.Metronome.beatUnit
         static let beatStatuses = AppStorageKeys.Metronome.beatStatuses
+        static let currentBeat = AppStorageKeys.Metronome.currentBeat
     }
     
     // 状态属性
@@ -167,6 +168,11 @@ class MetronomeState: ObservableObject {
             )
         }
     }
+    
+    func updateCurrentBeat(_ newCurrentBeat: Int) {
+        currentBeat = newCurrentBeat
+        defaults.set(currentBeat, forKey: Keys.currentBeat)
+    }   
     
     // 更新拍号单位
     func updateBeatUnit(_ newBeatUnit: Int) {

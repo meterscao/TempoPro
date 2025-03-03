@@ -9,11 +9,13 @@ import SwiftUI
 import UIKit
 
 struct BPMRulerView: View {
-    @Binding var tempo: Int
+    
     @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var metronomeState: MetronomeState
     
     // 添加中间状态以确保更新正确
     @State private var internalTempo: Int = 120
+    
     
     // BPM 范围
     private let minBPM: Int = 30
@@ -96,11 +98,11 @@ struct BPMRulerView: View {
         // 监听内部状态变化，同步到外部
         .onChange(of: internalTempo) { newTempo in
             print("🔄 内部tempo变化为: \(newTempo)，正在更新外部绑定")
-            tempo = newTempo
-            print("✅ 外部tempo已更新为: \(tempo)")
+            metronomeState.updateTempo(newTempo)
+            print("✅ 外部tempo已更新为: \(newTempo)")
         }
         // 监听外部绑定变化，同步到内部
-        .onChange(of: tempo) { newTempo in
+        .onChange(of: metronomeState.tempo) { newTempo in
             print("⭐️ 外部tempo变化: \(animatedTempo) -> \(newTempo)")
             // 同步内部状态
             internalTempo = newTempo
@@ -128,9 +130,9 @@ struct BPMRulerView: View {
         }
         .onAppear {
             // 初始化内部状态和动画状态
-            print("BPMRulerView已加载，初始tempo: \(tempo)")
-            internalTempo = tempo
-            animatedTempo = tempo
+            print("BPMRulerView已加载，初始tempo: \(metronomeState.tempo)")
+            internalTempo = metronomeState.tempo
+            animatedTempo = metronomeState.tempo
         }
     }
     
@@ -219,7 +221,7 @@ struct RulerScaleView: View {
 }
 
 #Preview {
-    BPMRulerView(tempo: .constant(120))
+    BPMRulerView()
         .frame(height: 60)
         .background(Color.black)
 }

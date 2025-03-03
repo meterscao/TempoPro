@@ -29,6 +29,9 @@ struct AppStorageKeys {
         
         /// 节拍强度配置键
         static let beatStatuses = key("beatStatuses")
+        
+        
+        static let currentBeat = key("currentBeat")
     }
     
     // 主题相关设置

@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct BPMKeypadView: View {
-    @Binding var isPresented: Bool
     @EnvironmentObject var metronomeState: MetronomeState
     @Environment(\.metronomeTheme) var theme
+    @Environment(\.dismiss) var dismiss
+    
     @State private var inputValue: String = ""
     private let buttonHeight: CGFloat = 60
     private let gridSpacing: CGFloat = 10    
@@ -83,7 +84,7 @@ struct BPMKeypadView: View {
                                             let tempo = max(30, min(240, value))
                                             metronomeState.updateTempo(tempo)
                                         }
-                                        isPresented = false
+                                        dismiss()
                                     }) {
                                         Text("SET")
                                             
@@ -108,6 +109,6 @@ struct BPMKeypadView: View {
 }
 
 #Preview {
-    BPMKeypadView(isPresented: .constant(false))
+    BPMKeypadView()
         .environmentObject(MetronomeState())
 }

@@ -93,19 +93,14 @@ struct BeatView: View {
 }
 
 struct MetronomeInfoView: View {
-    @Binding var tempo: Int
-    @Binding var showingKeypad: Bool
-    @Binding var beatStatuses: [BeatStatus]
     
     // 直接使用AppStorage替代Binding
     @AppStorage(AppStorageKeys.Metronome.beatsPerBar) private var beatsPerBar: Int = 4
     @AppStorage(AppStorageKeys.Metronome.beatUnit) private var beatUnit: Int = 4
     
-    let currentBeat: Int
-    let isPlaying: Bool
-    
     // 选择节拍的变量
     @State private var showingTimeSignature = false
+    @State private var showingKeypad = false
     
     // 添加滑动状态变量
     @State private var horizontalDragAmount = CGSize.zero
@@ -114,6 +109,7 @@ struct MetronomeInfoView: View {
     
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var metronomeState: MetronomeState
     
     @State private var showingThemeSettings = false
     
@@ -208,14 +204,14 @@ struct MetronomeInfoView: View {
                         }
                         
                         // BPM 显示
-                        Text("\(Int(tempo))")
+                        Text("\(Int(metronomeState.tempo))")
                             .font(.custom("MiSansLatin-Semibold", size: 46))
                             .onTapGesture {
                                 showingKeypad = true
                             }
                             .frame(height:52)
                     }
-                    Text(getTempoTerm(tempo))
+                    Text(getTempoTerm(metronomeState.tempo))
                         .font(.custom("MiSansLatin-Regular", size: 12))
                         .fontWeight(.light)
                         .foregroundColor(theme.primaryColor)
@@ -229,7 +225,7 @@ struct MetronomeInfoView: View {
                 
                 
                 // 新增加的 BPMRulerView
-                BPMRulerView(tempo: $tempo)
+                BPMRulerView()
                 
             }
             .padding(.horizontal,15)
@@ -262,12 +258,19 @@ struct MetronomeInfoView: View {
                 .presentationDetents([.height(150)])
                 .presentationDragIndicator(.visible)
         }
+        
+        .sheet(isPresented: $showingKeypad) {
+            BPMKeypadView()
+            .ignoresSafeArea()
+            .presentationDetents([.height(400)])
+            
+        }
     }
     
     // 将节拍视图和手势提取为计算属性，使代码更清晰
     private var beatsViewWithGestures: some View {
         // 确保 beatStatuses 数组长度正确
-        let safeStatuses = ensureBeatStatusesLength(beatStatuses, count: beatsPerBar)
+        let safeStatuses = ensureBeatStatusesLength(metronomeState.beatStatuses, count: beatsPerBar)
         print("MetronomeInfoView - beatsViewWithGestures - 当前 beatsPerBar: \(beatsPerBar)")
         
         return GeometryReader { geometry in
@@ -275,8 +278,8 @@ struct MetronomeInfoView: View {
                 ForEach(0..<beatsPerBar, id: \.self) { beat in
                     BeatView(
                         status: safeStatuses[beat],
-                        isCurrentBeat: beat == currentBeat,
-                        isPlaying: isPlaying
+                        isCurrentBeat: beat == metronomeState.currentBeat,
+                        isPlaying: metronomeState.isPlaying
                     )
                     .frame(maxWidth: .infinity)
                     .contentShape(Rectangle()) // 确保形状完整，便于计算位置
@@ -286,7 +289,7 @@ struct MetronomeInfoView: View {
                         // 保留点击切换功能
                         var updatedStatuses = safeStatuses
                         updatedStatuses[beat] = updatedStatuses[beat].next()
-                        beatStatuses = updatedStatuses
+                        metronomeState.updateBeatStatuses(updatedStatuses)
                         print("点击切换BeatView \(beat) 状态为: \(updatedStatuses[beat])")
                     }
                 }
@@ -376,7 +379,7 @@ struct MetronomeInfoView: View {
                                     print("垂直滑动 - BeatView \(beatIndex) 向上滑动，强度增强")
                                     updatedStatuses[beatIndex] = updatedStatuses[beatIndex].next()
                                 }
-                                beatStatuses = updatedStatuses
+                                metronomeState.updateBeatStatuses(updatedStatuses)
                             }
                             
                             // 重置初始索引
@@ -407,7 +410,8 @@ struct MetronomeInfoView: View {
         
         DispatchQueue.main.async {
             // 异步更新绑定的数组，避免在视图更新过程中修改状态
-            beatStatuses = newStatuses
+            metronomeState.updateBeatStatuses(newStatuses)
+//            beatStatuses = newStatuses
         }
         
         return newStatuses
@@ -415,12 +419,7 @@ struct MetronomeInfoView: View {
 }
 
 #Preview {
-    MetronomeInfoView(
-        tempo: .constant(120),
-        showingKeypad: .constant(false),
-        beatStatuses: .constant([.strong, .normal, .normal, .normal]),
-        currentBeat: 0,
-        isPlaying: false
-    )
+    MetronomeInfoView()
     .environmentObject(ThemeManager()) // 添加 ThemeManager 环境对象
+    .environmentObject(MetronomeState())
 }
