@@ -9,10 +9,7 @@ import SwiftUI
 
 struct TimeSignatureView: View {
     @Environment(\.dismiss) private var dismiss
-    
-    // 使用AppStorage直接管理状态
-    @AppStorage(AppStorageKeys.Metronome.beatsPerBar) private var beatsPerBar: Int = 4
-    @AppStorage(AppStorageKeys.Metronome.beatUnit) private var beatUnit: Int = 4
+    @EnvironmentObject var metronomeState: MetronomeState
     
     // 临时存储修改的值
     @State private var tempBeatsPerBar: Int = 4
@@ -95,11 +92,11 @@ struct TimeSignatureView: View {
             
             // 确认按钮
             Button(action: {
-                print("TimeSignatureView - 确认按钮点击: 从 \(beatsPerBar)/\(beatUnit) 更新为 \(tempBeatsPerBar)/\(tempBeatUnit)")
+                print("TimeSignatureView - 更新为 \(tempBeatsPerBar)/\(tempBeatUnit)")
                 
                 // 直接更新AppStorage，自动保存到UserDefaults
-                beatsPerBar = tempBeatsPerBar
-                beatUnit = tempBeatUnit
+                metronomeState.updateBeatsPerBar(tempBeatsPerBar)
+                metronomeState.updateBeatUnit(tempBeatUnit)
                 
                 dismiss()
             }) {
@@ -117,8 +114,8 @@ struct TimeSignatureView: View {
         .background(Color(UIColor.systemBackground))
         .onAppear {
             // 在视图出现时，使用AppStorage的值初始化临时变量
-            tempBeatsPerBar = beatsPerBar
-            tempBeatUnit = beatUnit
+            tempBeatsPerBar = metronomeState.beatsPerBar
+            tempBeatUnit = metronomeState.beatUnit
         }
     }
 }

@@ -24,13 +24,10 @@ struct AppStorageKeys {
         /// 速度/BPM键
         static let tempo = key("tempo")
         
-        /// 是否播放键
-        static let isPlaying = key("isPlaying")
-        
         /// 节拍强度配置键
         static let beatStatuses = key("beatStatuses")
         
-        
+        /// 当前节拍键
         static let currentBeat = key("currentBeat")
     }
     

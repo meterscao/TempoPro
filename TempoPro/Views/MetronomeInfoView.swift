@@ -93,11 +93,6 @@ struct BeatView: View {
 }
 
 struct MetronomeInfoView: View {
-    
-    // 直接使用AppStorage替代Binding
-    @AppStorage(AppStorageKeys.Metronome.beatsPerBar) private var beatsPerBar: Int = 4
-    @AppStorage(AppStorageKeys.Metronome.beatUnit) private var beatUnit: Int = 4
-    
     // 选择节拍的变量
     @State private var showingTimeSignature = false
     @State private var showingKeypad = false
@@ -188,9 +183,9 @@ struct MetronomeInfoView: View {
                         HStack(spacing: 30) {
                             // 拍号显示 - 添加点击手势
                             HStack(spacing: 2) {
-                                Text("\(beatsPerBar)")
+                                Text("\(metronomeState.beatsPerBar)")
                                 Text("/")
-                                Text("\(beatUnit)")
+                                Text("\(metronomeState.beatUnit)")
                                     
                             }
                             .font(.custom("MiSansLatin-Regular", size: 22))
@@ -270,12 +265,12 @@ struct MetronomeInfoView: View {
     // 将节拍视图和手势提取为计算属性，使代码更清晰
     private var beatsViewWithGestures: some View {
         // 确保 beatStatuses 数组长度正确
-        let safeStatuses = ensureBeatStatusesLength(metronomeState.beatStatuses, count: beatsPerBar)
-        print("MetronomeInfoView - beatsViewWithGestures - 当前 beatsPerBar: \(beatsPerBar)")
+        let safeStatuses = ensureBeatStatusesLength(metronomeState.beatStatuses, count: metronomeState.beatsPerBar)
+        print("MetronomeInfoView - beatsViewWithGestures - 当前 beatsPerBar: \(metronomeState.beatsPerBar)")
         
         return GeometryReader { geometry in
             HStack(spacing: 3) {
-                ForEach(0..<beatsPerBar, id: \.self) { beat in
+                ForEach(0..<metronomeState.beatsPerBar, id: \.self) { beat in
                     BeatView(
                         status: safeStatuses[beat],
                         isCurrentBeat: beat == metronomeState.currentBeat,
@@ -318,7 +313,7 @@ struct MetronomeInfoView: View {
                             // 如果是第一次移动，记录初始BeatView索引
                             if initialBeatIndex == nil {
                                 let totalWidth = geometry.size.width
-                                let beatIndex = min(beatsPerBar - 1, max(0, Int(location.x / (totalWidth / CGFloat(beatsPerBar)))))
+                                let beatIndex = min(metronomeState.beatsPerBar - 1, max(0, Int(location.x / (totalWidth / CGFloat(metronomeState.beatsPerBar)))))
                                 initialBeatIndex = beatIndex
                                 print("垂直滑动起始BeatView索引: \(beatIndex), x坐标: \(location.x), 总宽度: \(totalWidth)")
                             }
@@ -336,19 +331,21 @@ struct MetronomeInfoView: View {
                             if abs(translation.width) > 30 {
                                 if translation.width > 0 {
                                     // 向左滑 - 减少拍数
-                                    if beatsPerBar > 1 {
-                                        print("横向滑动 - 拍数修改前: \(beatsPerBar)")
+                                    if metronomeState.beatsPerBar > 1 {
+                                        print("横向滑动 - 拍数修改前: \(metronomeState.beatsPerBar)")
                                         // 直接修改AppStorage变量，自动保存到UserDefaults
-                                        beatsPerBar -= 1
-                                        print("横向滑动 - 拍数修改后: \(beatsPerBar)")
+                                        let tempBeatsPerBar = metronomeState.beatsPerBar
+                                        metronomeState.updateBeatsPerBar(tempBeatsPerBar - 1)
+                                        print("横向滑动 - 拍数修改后: \(metronomeState.beatsPerBar)")
                                     }
                                 } else {
                                     // 向右滑 - 增加拍数
-                                    if beatsPerBar < 12 {
-                                        print("横向滑动执行 - 拍数加1: \(beatsPerBar) -> \(beatsPerBar + 1)")
+                                    if metronomeState.beatsPerBar < 12 {
+                                        print("横向滑动执行 - 拍数加1: \(metronomeState.beatsPerBar) -> \(metronomeState.beatsPerBar + 1)")
                                         // 直接修改AppStorage变量，自动保存到UserDefaults
-                                        beatsPerBar += 1
-                                        print("横向滑动 - 拍数修改后: \(beatsPerBar)")
+                                        let tempBeatsPerBar = metronomeState.beatsPerBar
+                                        metronomeState.updateBeatsPerBar(tempBeatsPerBar + 1)
+                                        print("横向滑动 - 拍数修改后: \(metronomeState.beatsPerBar)")
                                     }
                                 }
                             }
@@ -359,7 +356,7 @@ struct MetronomeInfoView: View {
                             
                             // 添加延迟验证AppStorage的值
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                print("横向滑动保存后 - AppStorage 中的值: \(beatsPerBar)")
+                                print("横向滑动保存后 - AppStorage 中的值: \(metronomeState.beatsPerBar)")
                             }
                         } else {
                             // 垂直滑动结束 - 调整特定BeatView的状态
