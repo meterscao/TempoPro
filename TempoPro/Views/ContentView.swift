@@ -13,37 +13,29 @@ struct ContentView: View {
     @EnvironmentObject var themeManager: ThemeManager
     
     @StateObject private var metronomeState: MetronomeState
-    @State private var beatsPerBar: Int = 4 {
+    @AppStorage(AppStorageKeys.Metronome.beatsPerBar) private var beatsPerBar: Int = 4 {
         didSet {
             print("ContentView - beatsPerBar didSet: \(oldValue) -> \(beatsPerBar)")
             metronomeState.updateBeatsPerBar(beatsPerBar)
         }
     }
-    @State private var beatUnit: Int = 4 {
+    @AppStorage(AppStorageKeys.Metronome.beatUnit) private var beatUnit: Int = 4 {
         didSet {
             print("ContentView - beatUnit didSet: \(oldValue) -> \(beatUnit)")
             metronomeState.updateBeatUnit(beatUnit)
         }
     }
     @State private var showingKeypad = false
+    @State private var showingTimeSignature = false
     
     init() {
-        // 使用与 MetronomeState 相同的键名
-        let beatsPerBarKey = "com.tempopro.beatsPerBar"
-        let beatUnitKey = "com.tempopro.beatUnit"
+        // 仅初始化MetronomeState，不需要手动处理UserDefaults
+        let savedBeatsPerBar = UserDefaults.standard.integer(forKey: AppStorageKeys.Metronome.beatsPerBar)
+        let defaultBeatsPerBar = savedBeatsPerBar != 0 ? savedBeatsPerBar : 4
         
-        // 从 UserDefaults 读取保存的值
-        let savedBeatsPerBar = UserDefaults.standard.integer(forKey: beatsPerBarKey)
-        let savedBeatUnit = UserDefaults.standard.integer(forKey: beatUnitKey)
+        _metronomeState = StateObject(wrappedValue: MetronomeState(beatsPerBar: defaultBeatsPerBar))
         
-        print("ContentView - 初始化: 从 UserDefaults 读取值 - beatsPerBar: \(savedBeatsPerBar), beatUnit: \(savedBeatUnit)")
-        
-        // 如果没有保存的值，使用默认值
-        _beatsPerBar = State(initialValue: savedBeatsPerBar != 0 ? savedBeatsPerBar : 4)
-        _beatUnit = State(initialValue: savedBeatUnit != 0 ? savedBeatUnit : 4)
-        
-        // 使用保存的拍数初始化 MetronomeState
-        _metronomeState = StateObject(wrappedValue: MetronomeState(beatsPerBar: savedBeatsPerBar != 0 ? savedBeatsPerBar : 3))
+        print("ContentView - 初始化完成: 使用AppStorage自动管理beatsPerBar")
     }
     
     var body: some View {
@@ -53,14 +45,10 @@ struct ContentView: View {
                     get: { metronomeState.tempo },
                     set: { metronomeState.updateTempo($0) }
                 ),
-                beatsPerBar: beatsPerBar,
-                beatUnit: beatUnit,
                 showingKeypad: $showingKeypad,
                 beatStatuses: $metronomeState.beatStatuses,
                 currentBeat: metronomeState.currentBeat,
-                isPlaying: metronomeState.isPlaying,
-                beatsPerBarBinding: $beatsPerBar,
-                beatUnitBinding: $beatUnit
+                isPlaying: metronomeState.isPlaying
             )
             .frame(maxHeight: .infinity)
 
@@ -101,6 +89,11 @@ struct ContentView: View {
             .ignoresSafeArea()
             .presentationDetents([.height(400)])
             
+        }
+        .sheet(isPresented: $showingTimeSignature) {
+            TimeSignatureView()
+                .presentationDetents([.height(400)])
+                .presentationDragIndicator(.visible)
         }
         .onDisappear {
             metronomeState.cleanup()

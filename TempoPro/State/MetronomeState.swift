@@ -5,10 +5,10 @@ import UIKit  // 添加UIKit导入
 class MetronomeState: ObservableObject {
     // 定义 UserDefaults 的键
     private enum UserDefaultsKeys {
-        static let tempo = "com.tempopro.tempo"
-        static let beatsPerBar = "com.tempopro.beatsPerBar"
-        static let beatUnit = "com.tempopro.beatUnit"
-        static let beatStatuses = "com.tempopro.beatStatuses"
+        static let tempo = AppStorageKeys.Metronome.tempo
+        static let beatsPerBar = AppStorageKeys.Metronome.beatsPerBar
+        static let beatUnit = AppStorageKeys.Metronome.beatUnit
+        static let beatStatuses = AppStorageKeys.Metronome.beatStatuses
     }
     
     @Published private(set) var tempo: Double
@@ -52,7 +52,7 @@ class MetronomeState: ObservableObject {
         
         print("MetronomeState - 初始化: 从 UserDefaults 读取值 - tempo: \(savedTempo), beatsPerBar: \(savedBeatsPerBar), beatUnit: \(savedBeatUnit)")
         
-        self.tempo = savedTempo != 0 ? savedTempo : 80
+        self.tempo = savedTempo != 0 ? savedTempo : 90
         self.beatsPerBar = savedBeatsPerBar != 0 ? savedBeatsPerBar : beatsPerBar
         self.beatUnit = savedBeatUnit != 0 ? savedBeatUnit : 4
         

@@ -6,7 +6,7 @@ class MetronomeTimer {
     private var tempo: Double = 60.0
     private var beatsPerBar: Int = 4
     private var beatStatuses: [BeatStatus] = []
-    private let timerQueue = DispatchQueue(label: "com.tempopro.metronome.timer", qos: .userInteractive)
+    private let timerQueue = DispatchQueue(label: AppStorageKeys.QueueLabels.metronomeTimer, qos: .userInteractive)
     
     var onBeatUpdate: ((Int) -> Void)?
     var currentBeat: Int = 0

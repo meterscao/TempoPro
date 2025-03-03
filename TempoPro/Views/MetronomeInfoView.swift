@@ -94,15 +94,18 @@ struct BeatView: View {
 
 struct MetronomeInfoView: View {
     @Binding var tempo: Double
-    let beatsPerBar: Int
-    let beatUnit: Int
     @Binding var showingKeypad: Bool
     @Binding var beatStatuses: [BeatStatus]
+    
+    // 直接使用AppStorage替代Binding
+    @AppStorage(AppStorageKeys.Metronome.beatsPerBar) private var beatsPerBar: Int = 4
+    @AppStorage(AppStorageKeys.Metronome.beatUnit) private var beatUnit: Int = 4
+    
     let currentBeat: Int
     let isPlaying: Bool
+    
+    // 选择节拍的变量
     @State private var showingTimeSignature = false
-    @Binding var beatsPerBarBinding: Int
-    @Binding var beatUnitBinding: Int
     
     // 添加滑动状态变量
     @State private var horizontalDragAmount = CGSize.zero
@@ -249,12 +252,9 @@ struct MetronomeInfoView: View {
         .ignoresSafeArea() // 忽略所有安全区域
         
         .sheet(isPresented: $showingTimeSignature) {
-            TimeSignatureView(
-                beatsPerBar: $beatsPerBarBinding,
-                beatUnit: $beatUnitBinding
-            )
-            .presentationDetents([.height(400)])
-            .presentationDragIndicator(.visible)
+            TimeSignatureView()
+                .presentationDetents([.height(400)])
+                .presentationDragIndicator(.visible)
         }
         
         .sheet(isPresented: $showingThemeSettings) {
@@ -268,6 +268,7 @@ struct MetronomeInfoView: View {
     private var beatsViewWithGestures: some View {
         // 确保 beatStatuses 数组长度正确
         let safeStatuses = ensureBeatStatusesLength(beatStatuses, count: beatsPerBar)
+        print("MetronomeInfoView - beatsViewWithGestures - 当前 beatsPerBar: \(beatsPerBar)")
         
         return GeometryReader { geometry in
             HStack(spacing: 3) {
@@ -332,15 +333,19 @@ struct MetronomeInfoView: View {
                             if abs(translation.width) > 30 {
                                 if translation.width > 0 {
                                     // 向左滑 - 减少拍数
-                                    if beatsPerBarBinding > 1 {
-                                        print("横向滑动执行 - 拍数减1: \(beatsPerBarBinding) -> \(beatsPerBarBinding - 1)")
-                                        beatsPerBarBinding -= 1
+                                    if beatsPerBar > 1 {
+                                        print("横向滑动 - 拍数修改前: \(beatsPerBar)")
+                                        // 直接修改AppStorage变量，自动保存到UserDefaults
+                                        beatsPerBar -= 1
+                                        print("横向滑动 - 拍数修改后: \(beatsPerBar)")
                                     }
                                 } else {
                                     // 向右滑 - 增加拍数
-                                    if beatsPerBarBinding < 12 {
-                                        print("横向滑动执行 - 拍数加1: \(beatsPerBarBinding) -> \(beatsPerBarBinding + 1)")
-                                        beatsPerBarBinding += 1
+                                    if beatsPerBar < 12 {
+                                        print("横向滑动执行 - 拍数加1: \(beatsPerBar) -> \(beatsPerBar + 1)")
+                                        // 直接修改AppStorage变量，自动保存到UserDefaults
+                                        beatsPerBar += 1
+                                        print("横向滑动 - 拍数修改后: \(beatsPerBar)")
                                     }
                                 }
                             }
@@ -348,6 +353,12 @@ struct MetronomeInfoView: View {
                             // 重置状态
                             horizontalDragAmount = .zero
                             isHorizontalDragging = false
+                            
+                            // 添加延迟验证UserDefaults的值
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                let saved = UserDefaults.standard.integer(forKey: AppStorageKeys.Metronome.beatsPerBar)
+                                print("横向滑动保存后 - UserDefaults 中的值: \(saved)")
+                            }
                         } else {
                             // 垂直滑动结束 - 调整特定BeatView的状态
                             if abs(translation.height) > 20 && initialBeatIndex != nil { // 最小阈值
@@ -374,7 +385,6 @@ struct MetronomeInfoView: View {
                         }
                     }
             )
-            .id(beatsPerBar) // 添加ID确保拍数变化时视图能重新加载
             .animation(.spring(response: 0.3), value: isHorizontalDragging)
         }
         .frame(maxHeight: .infinity) // 确保GeometryReader有固定高度
@@ -406,5 +416,12 @@ struct MetronomeInfoView: View {
 }
 
 #Preview {
-    MetronomeInfoView(tempo: .constant(120), beatsPerBar: 4, beatUnit: 4, showingKeypad: .constant(false), beatStatuses: .constant([.strong, .normal, .normal, .normal]), currentBeat: 0, isPlaying: false, beatsPerBarBinding: .constant(4), beatUnitBinding: .constant(4))
+    MetronomeInfoView(
+        tempo: .constant(120),
+        showingKeypad: .constant(false),
+        beatStatuses: .constant([.strong, .normal, .normal, .normal]),
+        currentBeat: 0,
+        isPlaying: false
+    )
+    .environmentObject(ThemeManager()) // 添加 ThemeManager 环境对象
 }
