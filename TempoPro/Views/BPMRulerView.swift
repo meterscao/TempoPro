@@ -9,11 +9,11 @@ import SwiftUI
 import UIKit
 
 struct BPMRulerView: View {
-    @Binding var tempo: Double
+    @Binding var tempo: Int
     @Environment(\.metronomeTheme) var theme
     
     // 添加中间状态以确保更新正确
-    @State private var internalTempo: Double = 120
+    @State private var internalTempo: Int = 120
     
     // BPM 范围
     private let minBPM: Int = 30
@@ -39,7 +39,7 @@ struct BPMRulerView: View {
     private let tickSpacing: CGFloat = 8  // 刻度线之间的固定间距
     
     // 添加动画状态变量
-    @State private var animatedTempo: Double = 120
+    @State private var animatedTempo: Int = 120
     
     var body: some View {
         GeometryReader { geometry in
@@ -58,7 +58,7 @@ struct BPMRulerView: View {
                                 // 设置内部状态
                                 print("🔄 选择了BPM: \(bpm)")
                                 withAnimation {
-                                    internalTempo = Double(bpm)
+                                    internalTempo = bpm
                                 }
                                 print("⏩ 内部tempo已设置为: \(internalTempo)")
                               })
@@ -135,9 +135,9 @@ struct BPMRulerView: View {
     }
     
     // 计算整个刻度尺的偏移量
-    private func calculateOffset(for tempo: Double, in geometry: GeometryProxy) -> CGFloat {
+    private func calculateOffset(for tempo: Int, in geometry: GeometryProxy) -> CGFloat {
         let visibleCenter = geometry.size.width / 2
-        let tempoOffset = CGFloat(tempo - Double(minBPM)) * tickSpacing
+        let tempoOffset = CGFloat(Double(tempo) - Double(minBPM)) * tickSpacing
         return visibleCenter - tempoOffset
     }
 }

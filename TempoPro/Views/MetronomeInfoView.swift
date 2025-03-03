@@ -93,7 +93,7 @@ struct BeatView: View {
 }
 
 struct MetronomeInfoView: View {
-    @Binding var tempo: Double
+    @Binding var tempo: Int
     @Binding var showingKeypad: Bool
     @Binding var beatStatuses: [BeatStatus]
     
@@ -118,7 +118,7 @@ struct MetronomeInfoView: View {
     @State private var showingThemeSettings = false
     
     // 添加速度术语判断函数
-    private func getTempoTerm(_ bpm: Double) -> String {
+    private func getTempoTerm(_ bpm: Int) -> String {
         switch bpm {
         case 0..<40:
             return "Grave"

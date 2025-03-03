@@ -11,7 +11,7 @@ class MetronomeState: ObservableObject {
         static let beatStatuses = AppStorageKeys.Metronome.beatStatuses
     }
     
-    @Published private(set) var tempo: Double
+    @Published private(set) var tempo: Int
     @Published var isPlaying: Bool = false
     @Published var currentBeat: Int = 0
     @Published private(set) var beatsPerBar: Int {
@@ -46,7 +46,7 @@ class MetronomeState: ObservableObject {
     
     init(beatsPerBar: Int = 3) {
         // 1. 首先初始化所有存储属性
-        let savedTempo = UserDefaults.standard.double(forKey: UserDefaultsKeys.tempo)
+        let savedTempo = UserDefaults.standard.integer(forKey: UserDefaultsKeys.tempo)
         let savedBeatsPerBar = UserDefaults.standard.integer(forKey: UserDefaultsKeys.beatsPerBar)
         let savedBeatUnit = UserDefaults.standard.integer(forKey: UserDefaultsKeys.beatUnit)
         
@@ -85,7 +85,7 @@ class MetronomeState: ObservableObject {
     }
     
     // 提供更新方法而不是直接使用 didSet
-    func updateTempo(_ newTempo: Double) {
+    func updateTempo(_ newTempo: Int) {
         tempo = max(30, min(240, newTempo))
         UserDefaults.standard.set(tempo, forKey: UserDefaultsKeys.tempo)
         
@@ -98,7 +98,7 @@ class MetronomeState: ObservableObject {
         isPlaying.toggle()
         if isPlaying {
             currentBeat = 0
-            nextScheduledBeatTime = Date().timeIntervalSince1970 + (60.0 / tempo)
+            nextScheduledBeatTime = Date().timeIntervalSince1970 + (60.0 / Double(tempo))
             metronomeTimer?.start(
                 tempo: tempo,
                 beatsPerBar: beatStatuses.count,

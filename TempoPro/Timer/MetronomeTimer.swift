@@ -3,7 +3,7 @@ import Foundation
 class MetronomeTimer {
     private var timer: DispatchSourceTimer?
     private let audioEngine: MetronomeAudioEngine
-    private var tempo: Double = 60.0
+    private var tempo: Int = 60
     private var beatsPerBar: Int = 4
     private var beatStatuses: [BeatStatus] = []
     private let timerQueue = DispatchQueue(label: AppStorageKeys.QueueLabels.metronomeTimer, qos: .userInteractive)
@@ -28,7 +28,7 @@ class MetronomeTimer {
         }
     }
     
-    func start(tempo: Double, beatsPerBar: Int, beatStatuses: [BeatStatus], currentBeat: Int = 0, beatUnit: Int = 4) {
+    func start(tempo: Int, beatsPerBar: Int, beatStatuses: [BeatStatus], currentBeat: Int = 0, beatUnit: Int = 4) {
         self.tempo = tempo
         self.beatsPerBar = beatsPerBar
         self.beatStatuses = beatStatuses
@@ -41,7 +41,7 @@ class MetronomeTimer {
         
         let startTime = Date().timeIntervalSince1970
         nextBeatTime = startTime
-        print("开始节拍器 - BPM: \(tempo), 拍号: \(beatsPerBar)/\(beatUnit), 间隔: \(60.0 / tempo)秒")
+        print("开始节拍器 - BPM: \(tempo), 拍号: \(beatsPerBar)/\(beatUnit), 间隔: \(60.0 / Double(tempo))秒")
         print("首拍开始时间: \(startTime)")
         
         // 停止已有定时器
@@ -51,7 +51,7 @@ class MetronomeTimer {
         playCurrentBeat()
         
         // 计算下一拍的时间
-        nextBeatTime = startTime + (60.0 / tempo)
+        nextBeatTime = startTime + (60.0 / Double(tempo))
         
         // 创建新的定时器
         scheduleNextBeat()
@@ -90,7 +90,7 @@ class MetronomeTimer {
                 self.onBeatUpdate?(self.currentBeat)
                 
                 // 计算下一拍的绝对时间
-                self.nextBeatTime += (60.0 / self.tempo)
+                self.nextBeatTime += (60.0 / Double(self.tempo))
                 
                 // 重置 tempo 变更标志
                 self.isTempoChangedBeforeNextBeat = false
@@ -117,7 +117,7 @@ class MetronomeTimer {
         }
     }
 
-    func setTempo(tempo: Double) {
+    func setTempo(tempo: Int) {
         let oldTempo = self.tempo
         self.tempo = tempo
         print("更新速度 - 旧BPM: \(oldTempo), 新BPM: \(tempo)")

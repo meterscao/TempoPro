@@ -13,7 +13,7 @@ struct MetronomeControlView: View {
     private let sensitivity: Double = 9.0 // 旋转灵敏度
     @Environment(\.metronomeTheme) var theme
     
-    @Binding var tempo: Double
+    @Binding var tempo: Int
     @Binding var isPlaying: Bool
     let beatsPerBar: Int
     let wheelSizeRatio:Double = 0.72
@@ -21,7 +21,7 @@ struct MetronomeControlView: View {
     @State private var rotation: Double = 0
     @State private var lastAngle: Double = 0
     @State private var totalRotation: Double = 0
-    @State private var startTempo: Double = 0
+    @State private var startTempo: Int = 0
     @State private var isDragging: Bool = false
     @State private var lastBPMInt: Int = 0 // 记录上一个整数BPM值
     @State private var lastFeedbackTime: Date = Date.distantPast // 记录上次震动的时间
@@ -127,7 +127,7 @@ struct MetronomeControlView: View {
                             )
                             lastAngle = calculateAngle(location: value.location, in: frame)
                             startTempo = tempo
-                            lastBPMInt = Int(tempo.rounded()) // 初始化上一个BPM值
+                            lastBPMInt = tempo // 初始化上一个BPM值
                             feedbackGeneratorLight.prepare() // 准备反馈生成器
                             feedbackGeneratorHeavy.prepare()
                             print("开始拖动 - 初始角度: \(lastAngle)°, 初始速度: \(startTempo)")
@@ -152,11 +152,11 @@ struct MetronomeControlView: View {
                         totalRotation += angleDiff
                         rotation += angleDiff
                         
-                        let tempoChange = round(totalRotation / sensitivity)
+                        let tempoChange = Int(round(totalRotation / sensitivity))
                         let targetTempo = max(30, min(320, startTempo + tempoChange))
                         
                         // 检查BPM是否变化了整数单位，并提供震动反馈
-                        let currentBPMInt = Int(targetTempo.rounded())
+                        let currentBPMInt = targetTempo
                         let now = Date()
                         if currentBPMInt != lastBPMInt && 
                            now.timeIntervalSince(lastFeedbackTime) >= minimumFeedbackInterval {
