@@ -77,8 +77,8 @@ struct BeatView: View {
         VStack(spacing: 3) {
             ForEach(0..<3, id: \.self) { index in
                 Image("bg-noise")
-                    .resizable()
-                    .opacity(0.2)
+                    .resizable(resizingMode: .tile)
+                    .opacity(0.06)
                     .frame(maxHeight: .infinity)
                     .background(barColors()[index])
                     .cornerRadius(2)

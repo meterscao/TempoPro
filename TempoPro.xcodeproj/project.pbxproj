@@ -26,6 +26,7 @@
 		F71AF6B42D716E6500ADBC17 /* ThemeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */; };
 		F71AF6B62D716E9B00ADBC17 /* ThemeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */; };
 		F71AF6B92D71A60200ADBC17 /* BPMRulerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B82D71A5FB00ADBC17 /* BPMRulerView.swift */; };
+		F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */; };
 		F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */; };
 		F7FF3F162D7073EB00390C16 /* MetronomeTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F132D7073EB00390C16 /* MetronomeTimer.swift */; };
 		F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F172D7074CA00390C16 /* MetronomeState.swift */; };
@@ -77,6 +78,7 @@
 		F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEnvironment.swift; sourceTree = "<group>"; };
 		F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectionView.swift; sourceTree = "<group>"; };
 		F71AF6B82D71A5FB00ADBC17 /* BPMRulerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BPMRulerView.swift; sourceTree = "<group>"; };
+		F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileBackgroundImage.swift; sourceTree = "<group>"; };
 		F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeAudioEngine.swift; sourceTree = "<group>"; };
 		F7FF3F132D7073EB00390C16 /* MetronomeTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTimer.swift; sourceTree = "<group>"; };
 		F7FF3F172D7074CA00390C16 /* MetronomeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeState.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 		3ADE94832D734B5B00731F83 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */,
 				3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */,
 			);
 			path = Extensions;
@@ -408,6 +411,7 @@
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
+				F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */,
 				F71AF6B42D716E6500ADBC17 /* ThemeEnvironment.swift in Sources */,
 				F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */,
 				F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */,

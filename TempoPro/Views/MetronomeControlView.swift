@@ -77,8 +77,8 @@ struct MetronomeControlView: View {
                 
                 ZStack() {
                     Image("bg-noise")
-                        .resizable()
-                        .opacity(0.2)
+                        .resizable(resizingMode: .tile)
+                        .opacity(0.06)
                         .clipShape(
                             .circle
                         )
