@@ -16,9 +16,9 @@ class MetronomeState: ObservableObject {
     // 状态属性
     @Published var isPlaying: Bool = false
     @Published var currentBeat: Int = 0
-    @Published private(set) var tempo: Int = 90
-    @Published private(set) var beatsPerBar: Int = 4
-    @Published private(set) var beatUnit: Int = 4
+    @Published private(set) var tempo: Int = 0
+    @Published private(set) var beatsPerBar: Int = 0
+    @Published private(set) var beatUnit: Int = 0
     @Published var beatStatuses: [BeatStatus] = []
     
     private let audioEngine = MetronomeAudioEngine()
@@ -44,7 +44,7 @@ class MetronomeState: ObservableObject {
     private func loadFromUserDefaults() {
         // 读取速度值
         let savedTempo = defaults.integer(forKey: Keys.tempo)
-        self.tempo = savedTempo != 0 ? savedTempo : 90
+        self.tempo = savedTempo != 0 ? savedTempo : 120
         
         // 读取拍号设置
         let savedBeatsPerBar = defaults.integer(forKey: Keys.beatsPerBar)
@@ -68,6 +68,7 @@ class MetronomeState: ObservableObject {
             // 初始化默认节拍状态
             self.beatStatuses = Array(repeating: .normal, count: self.beatsPerBar)
             self.beatStatuses[0] = .strong
+            self.beatStatuses[2] = .medium
             
             // 保存默认状态
             saveBeatStatuses()
