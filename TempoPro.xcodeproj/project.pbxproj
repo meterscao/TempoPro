@@ -56,7 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3A9C889C2D6F728A004CFD88 /* TempoPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TempoPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A9C889C2D6F728A004CFD88 /* Tempo Pro, Metronome Beats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tempo Pro, Metronome Beats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9C889F2D6F728A004CFD88 /* TempoProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempoProApp.swift; sourceTree = "<group>"; };
 		3A9C88A12D6F728A004CFD88 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3A9C88A32D6F728B004CFD88 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -130,7 +130,7 @@
 		3A9C889D2D6F728A004CFD88 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3A9C889C2D6F728A004CFD88 /* TempoPro.app */,
+				3A9C889C2D6F728A004CFD88 /* Tempo Pro, Metronome Beats.app */,
 				3A9C88AD2D6F728B004CFD88 /* TempoProTests.xctest */,
 				3A9C88B72D6F728B004CFD88 /* TempoProUITests.xctest */,
 			);
@@ -294,7 +294,7 @@
 			);
 			name = TempoPro;
 			productName = TempoPro;
-			productReference = 3A9C889C2D6F728A004CFD88 /* TempoPro.app */;
+			productReference = 3A9C889C2D6F728A004CFD88 /* Tempo Pro, Metronome Beats.app */;
 			productType = "com.apple.product-type.application";
 		};
 		3A9C88AC2D6F728B004CFD88 /* TempoProTests */ = {
@@ -611,9 +611,10 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = us.besttime.tempopro;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Tempo Pro, Metronome Beats";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -650,9 +651,10 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = us.besttime.tempopro;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Tempo Pro, Metronome Beats";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
