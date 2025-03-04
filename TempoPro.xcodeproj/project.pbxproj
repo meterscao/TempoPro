@@ -27,7 +27,6 @@
 		F71AF6B62D716E9B00ADBC17 /* ThemeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */; };
 		F71AF6B92D71A60200ADBC17 /* BPMRulerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B82D71A5FB00ADBC17 /* BPMRulerView.swift */; };
 		F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */; };
-		F7F538E52D75D59700A7395C /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E32D75D59700A7395C /* AppStorageKeys.swift */; };
 		F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */; };
 		F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */; };
 		F7FF3F162D7073EB00390C16 /* MetronomeTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F132D7073EB00390C16 /* MetronomeTimer.swift */; };
@@ -424,7 +423,6 @@
 				F7FF3F232D7078E900390C16 /* TimeSignatureView.swift in Sources */,
 				F7FF3F162D7073EB00390C16 /* MetronomeTimer.swift in Sources */,
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
-				F7F538E52D75D59700A7395C /* AppStorageKeys.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
 				F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */,
