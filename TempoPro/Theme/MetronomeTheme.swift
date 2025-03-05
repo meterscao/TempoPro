@@ -6,6 +6,7 @@ struct MetronomeTheme: Equatable {
     let secondaryColor: Color     // 次要色调
     let backgroundColor: Color    // 背景色
     let textColor: Color          // 文本颜色
+    let cardBackgroundColor: Color // 卡片背景色
     
     // 节拍器专用颜色
     let beatHightColor: Color // 当前拍高亮色
@@ -17,6 +18,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
+        cardBackgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
         beatHightColor: Color(red: 0.9, green: 0.2, blue: 0.7) // 红紫色，绿色的对比色
     )
     
@@ -26,6 +28,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
+        cardBackgroundColor: Color(red: 0.12, green: 0.1, blue: 0.15),
         beatHightColor: Color(red: 0.95, green: 0.95, blue: 0.1) // 亮黄色，紫色的对比色
     )
     
@@ -35,6 +38,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
+        cardBackgroundColor: Color(red: 0.1, green: 0.12, blue: 0.15),
         beatHightColor: Color(red: 0.95, green: 0.6, blue: 0.1) // 橙色，蓝色的对比色
     )
 
@@ -44,6 +48,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
+        cardBackgroundColor: Color(red: 0.15, green: 0.1, blue: 0.1),
         beatHightColor: Color(red: 0.1, green: 0.8, blue: 0.8) // 青色，红色的对比色
     )
     
@@ -53,6 +58,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,  
+        cardBackgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
         beatHightColor: Color(red: 0.1, green: 0.3, blue: 0.9) // 深蓝色，琥珀色的对比色
     )
     
@@ -62,6 +68,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
+        cardBackgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
         beatHightColor: Color(red: 0.6, green: 0.95, blue: 0.1) // 黄绿色，薰衣草色的对比色
     )
     
@@ -71,6 +78,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
+        cardBackgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
         beatHightColor: Color(red: 0.95, green: 0.1, blue: 0.3) // 红色，青绿色的对比色
     )
     
@@ -80,6 +88,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
+        cardBackgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
         beatHightColor: Color(red: 0.1, green: 0.6, blue: 0.9) // 青蓝色，玫瑰金的对比色
     )
     
@@ -89,6 +98,7 @@ struct MetronomeTheme: Equatable {
         secondaryColor: .white,
         backgroundColor: .black,
         textColor: .white,
+        cardBackgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
         beatHightColor: Color(red: 0.3, green: 0.2, blue: 0.9) // 蓝紫色，沙漠色的对比色
     )
 }

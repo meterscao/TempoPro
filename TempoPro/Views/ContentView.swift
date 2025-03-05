@@ -11,6 +11,7 @@ import UIKit
 struct ContentView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var playlistManager: PlaylistManager
     @StateObject private var metronomeState = MetronomeState()
     
     var body: some View {
@@ -23,6 +24,7 @@ struct ContentView: View {
                 .aspectRatio(10/9, contentMode: .fit) // 设置宽高比为5:4（相当于高度为宽度的80%）
             
             MetronomeToolbarView()
+                .environmentObject(playlistManager)
                 
         }
         .ignoresSafeArea(edges: .top)
@@ -45,4 +47,6 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(ThemeManager())
+        .environmentObject(PlaylistManager())
 }

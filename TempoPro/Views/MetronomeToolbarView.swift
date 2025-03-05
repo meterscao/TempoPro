@@ -11,7 +11,7 @@ struct CircularButtonStyle: ViewModifier {
     @Environment(\.metronomeTheme) var theme
     func body(content: Content) -> some View {
         content
-            
+            .padding(14)
             .foregroundStyle(theme.primaryColor)
             .frame(width: 60, height: 60)
             .background(RoundedRectangle(cornerRadius: 18).fill(theme.backgroundColor))
@@ -25,6 +25,8 @@ extension View {
 }
 
 struct MetronomeToolbarView: View {
+    @EnvironmentObject var playlistManager: PlaylistManager
+    
     var body: some View {
         HStack() {
             Button(action: {}) {
@@ -33,7 +35,10 @@ struct MetronomeToolbarView: View {
                     .circularButton()
             }
             Spacer()
-            Button(action: {}) {
+            Button(action: {
+                // 打开歌单列表
+                playlistManager.openPlaylistsSheet()
+            }) {
                 Image("icon-play-list")
                     .renderingMode(.template)
                     .circularButton()
@@ -54,10 +59,14 @@ struct MetronomeToolbarView: View {
         .font(.title2)
         .padding(.horizontal,30)
         .frame(maxWidth: .infinity)
-        
+        .sheet(isPresented: $playlistManager.showPlaylistsSheet) {
+            PlaylistListView()
+                .environmentObject(playlistManager)
+        }
     }
 }
 
 #Preview {
     MetronomeToolbarView()
+        .environmentObject(PlaylistManager())
 } 

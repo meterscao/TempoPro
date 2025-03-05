@@ -11,6 +11,7 @@ import UIKit
 @main
 struct TempoProApp: App {
     @StateObject private var themeManager = ThemeManager()
+    @StateObject private var playlistManager = PlaylistManager()
     
     // 添加应用生命周期事件观察
     @Environment(\.scenePhase) private var scenePhase
@@ -26,6 +27,7 @@ struct TempoProApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(themeManager)
+                .environmentObject(playlistManager)
                 .environment(\.metronomeTheme, themeManager.currentTheme)
                 .onChange(of: themeManager.currentThemeName) { _ in
                     // 通过主题名称变化来触发环境更新
