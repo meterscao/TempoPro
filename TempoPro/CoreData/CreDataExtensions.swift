@@ -32,7 +32,7 @@ extension Song {
         self.bpm = Int16(model.bpm)
         self.beatsPerBar = Int16(model.beatsPerBar)
         self.beatUnit = Int16(model.beatUnit)
-        self.beatStatuses = model.beatStatuses as NSObject
+        self.beatStatuses = model.beatStatuses as NSArray
         self.createdDate = self.createdDate ?? Date()
     }
 }

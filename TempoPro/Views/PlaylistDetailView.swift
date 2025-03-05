@@ -3,10 +3,12 @@ import SwiftUI
 struct PlaylistDetailView: View {
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var playlistManager: PlaylistManager
+    @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 更改类型
     @EnvironmentObject var metronomeState: MetronomeState
     
-    @State var playlist: PlaylistModel
+    // 修改为使用 CoreData Playlist 实体
+    @ObservedObject var playlist: Playlist
+    
     @State private var showingSongForm = false
     @State private var isEditMode = false
     @State private var showingEditPlaylist = false
@@ -18,8 +20,8 @@ struct PlaylistDetailView: View {
     @State private var beatUnit = 4
     @State private var beatStatuses: [BeatStatus] = Array(repeating: .normal, count: 4)
     @State private var showingDeleteAlert = false
-    @State private var songToDelete: SongModel?
-    @State private var songToEdit: SongModel?
+    @State private var songToDelete: Song?
+    @State private var songToEdit: Song?
     
     var body: some View {
         ZStack {
@@ -30,21 +32,22 @@ struct PlaylistDetailView: View {
                 // 歌单标题
                 HStack(spacing: 16) {
                     Circle()
-                        .fill(playlist.getColor())
+                        .fill(Color(hex: playlist.color ?? "#0000FF") ?? .blue)
                         .frame(width: 50, height: 50)
                         .overlay(
                             Image(systemName: "music.note.list")
                                 .font(.system(size: 20))
                                 .foregroundColor(.white)
                         )
-                        .shadow(color: playlist.getColor().opacity(0.3), radius: 5, x: 0, y: 3)
+                        .shadow(color: Color(hex: playlist.color ?? "#0000FF")?.opacity(0.3) ?? .blue.opacity(0.3), radius: 5, x: 0, y: 3)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(playlist.name)
+                        Text(playlist.name ?? "未命名歌单")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
                             .foregroundColor(theme.textColor)
                         
-                        Text("\(playlist.songs.count) 首歌曲")
+                        let songCount = playlist.songs?.count ?? 0
+                        Text("\(songCount) 首歌曲")
                             .font(.system(size: 16))
                             .foregroundColor(theme.textColor.opacity(0.6))
                     }
@@ -59,8 +62,10 @@ struct PlaylistDetailView: View {
                     .background(theme.textColor.opacity(0.1))
                     .padding(.horizontal, 20)
                 
-                // 歌曲列表
-                if playlist.songs.isEmpty {
+                // 歌曲列表 - 使用 CoreData 获取歌曲
+                let songs = playlist.songs?.allObjects as? [Song] ?? []
+                if songs.isEmpty {
+                    // 显示空状态...
                     VStack {
                         Spacer()
                         
@@ -92,10 +97,8 @@ struct PlaylistDetailView: View {
                     }
                 } else {
                     List {
-                        ForEach(playlist.songs) { song in
-                            SongRow(song: song, onPlay: {
-                                applySongSettings(song)
-                            })
+                        ForEach(songs, id: \.id) { song in
+                            SongRow(song: song)
                             .listRowInsets(EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20))
                             .listRowBackground(Color.clear)
                             .contentShape(Rectangle())
@@ -149,12 +152,12 @@ struct PlaylistDetailView: View {
             }
         }
         .navigationBarTitle("", displayMode: .inline)
-        .navigationBarItems(trailing: 
+        .navigationBarItems(trailing:
             Menu {
                 Button(action: {
                     // 准备编辑信息
-                    editPlaylistName = playlist.name
-                    editPlaylistColor = playlist.getColor()
+                    editPlaylistName = playlist.name ?? ""
+                    editPlaylistColor = Color(hex: playlist.color ?? "#0000FF") ?? .blue
                     showingEditPlaylist = true
                 }) {
                     Label("编辑歌单", systemImage: "pencil")
@@ -194,30 +197,24 @@ struct PlaylistDetailView: View {
                     
                     if isEditMode, let song = songToEdit {
                         // 更新现有歌曲
-                        updateSong(song: song, name: name, tempo: tempo, beatsPerBar: beatsPerBar, beatUnit: beatUnit, statuses: statuses)
-                    } else {
-                        // 添加新歌曲
-                        let newSong = SongModel(
+                        playlistManager.updateSong(
+                            song,
                             name: name,
                             bpm: tempo,
                             beatsPerBar: beatsPerBar,
                             beatUnit: beatUnit,
                             beatStatuses: statusInts
                         )
-                        
-                        // 更新歌单
-                        var updatedSongs = playlist.songs
-                        updatedSongs.append(newSong)
-                        let updatedPlaylist = PlaylistModel(
-                            id: playlist.id,
-                            name: playlist.name,
-                            songs: updatedSongs,
-                            color: playlist.color
+                    } else {
+                        // 添加新歌曲
+                        _ = playlistManager.addSong(
+                            to: playlist,
+                            name: name,
+                            bpm: tempo,
+                            beatsPerBar: beatsPerBar,
+                            beatUnit: beatUnit,
+                            beatStatuses: statusInts
                         )
-                        
-                        // 更新状态
-                        playlist = updatedPlaylist
-                        playlistManager.updatePlaylist(updatedPlaylist)
                     }
                     
                     // 重置表单
@@ -232,16 +229,11 @@ struct PlaylistDetailView: View {
                 selectedColor: $editPlaylistColor,
                 onSave: { name, color in
                     // 更新歌单
-                    let updatedPlaylist = PlaylistModel(
-                        id: playlist.id,
+                    playlistManager.updatePlaylist(
+                        playlist,
                         name: name,
-                        songs: playlist.songs,
                         color: color.toHex() ?? "#0000FF"
                     )
-                    
-                    // 更新状态
-                    playlist = updatedPlaylist
-                    playlistManager.updatePlaylist(updatedPlaylist)
                 }
             )
         }
@@ -250,18 +242,7 @@ struct PlaylistDetailView: View {
             Button("删除", role: .destructive) {
                 if let song = songToDelete {
                     // 删除歌曲
-                    var updatedSongs = playlist.songs
-                    updatedSongs.removeAll { $0.id == song.id }
-                    let updatedPlaylist = PlaylistModel(
-                        id: playlist.id,
-                        name: playlist.name,
-                        songs: updatedSongs,
-                        color: playlist.color
-                    )
-                    
-                    // 更新状态
-                    playlist = updatedPlaylist
-                    playlistManager.updatePlaylist(updatedPlaylist)
+                    playlistManager.deleteSong(song)
                 }
             }
         }, message: {
@@ -270,69 +251,60 @@ struct PlaylistDetailView: View {
     }
     
     // 准备编辑歌曲
-    private func prepareEditSong(_ song: SongModel) {
+    private func prepareEditSong(_ song: Song) {
         songToEdit = song
-        songName = song.name
-        tempo = song.bpm
-        beatsPerBar = song.beatsPerBar
-        beatUnit = song.beatUnit
-        beatStatuses = song.getBeatStatuses()
+        songName = song.name ?? ""
+        tempo = Int(song.bpm)
+        beatsPerBar = Int(song.beatsPerBar)
+        beatUnit = Int(song.beatUnit)
+        
+        // 转换 beatStatuses
+        if let statusArray = song.beatStatuses as? [Int] {
+            beatStatuses = statusArray.map { statusInt -> BeatStatus in
+                switch statusInt {
+                case 0: return .strong
+                case 1: return .medium
+                case 2: return .normal
+                case 3: return .muted
+                default: return .normal
+                }
+            }
+        } else {
+            // 默认状态
+            beatStatuses = Array(repeating: .normal, count: beatsPerBar)
+            if beatStatuses.count > 0 {
+                beatStatuses[0] = .strong
+            }
+        }
+        
         isEditMode = true
         showingSongForm = true
     }
     
-    // 更新歌曲
-    private func updateSong(song: SongModel, name: String, tempo: Int, beatsPerBar: Int, beatUnit: Int, statuses: [BeatStatus]) {
-        let statusInts = statuses.map { status -> Int in
-            switch status {
-            case .strong: return 0
-            case .medium: return 1
-            case .normal: return 2
-            case .muted: return 3
-            }
-        }
-        
-        let updatedSong = SongModel(
-            id: song.id,
-            name: name,
-            bpm: tempo,
-            beatsPerBar: beatsPerBar,
-            beatUnit: beatUnit,
-            beatStatuses: statusInts
-        )
-        
-        // 更新歌单中的歌曲
-        var updatedSongs = playlist.songs
-        if let index = updatedSongs.firstIndex(where: { $0.id == song.id }) {
-            updatedSongs[index] = updatedSong
-            
-            let updatedPlaylist = PlaylistModel(
-                id: playlist.id,
-                name: playlist.name,
-                songs: updatedSongs,
-                color: playlist.color
-            )
-            
-            // 更新状态
-            playlist = updatedPlaylist
-            playlistManager.updatePlaylist(updatedPlaylist)
-        }
-    }
-    
     // 应用歌曲设置到节拍器
-    private func applySongSettings(_ song: SongModel) {
-        metronomeState.updateTempo(song.bpm)
-        metronomeState.updateBeatsPerBar(song.beatsPerBar)
-        metronomeState.updateBeatUnit(song.beatUnit)
-        metronomeState.updateBeatStatuses(song.getBeatStatuses())
+    private func applySongSettings(_ song: Song) {
+        metronomeState.updateTempo(Int(song.bpm))
+        metronomeState.updateBeatsPerBar(Int(song.beatsPerBar))
+        metronomeState.updateBeatUnit(Int(song.beatUnit))
+        
+        // 转换 beatStatuses
+        if let statusArray = song.beatStatuses as? [Int] {
+            let statuses = statusArray.map { statusInt -> BeatStatus in
+                switch statusInt {
+                case 0: return .strong
+                case 1: return .medium
+                case 2: return .normal
+                case 3: return .muted
+                default: return .normal
+                }
+            }
+            metronomeState.updateBeatStatuses(statuses)
+        }
         
         // 如果节拍器还没有启动，则启动它
         if !metronomeState.isPlaying {
             metronomeState.togglePlayback()
         }
-        
-        // // 关闭歌单视图
-        // dismiss()
     }
     
     // 重置添加歌曲表单
@@ -347,90 +319,16 @@ struct PlaylistDetailView: View {
     }
 }
 
-// 编辑歌单视图
-struct EditPlaylistView: View {
-    @Environment(\.metronomeTheme) var theme
-    @Binding var isPresented: Bool
-    @Binding var playlistName: String
-    @Binding var selectedColor: Color
-    var onSave: (String, Color) -> Void
-    
-    let colors: [Color] = [
-        .blue, .red, .green, .orange, .purple, .pink, 
-        Color(hex: "#1E90FF") ?? .blue,
-        Color(hex: "#8B4513") ?? .brown,
-        Color(hex: "#2E8B57") ?? .green,
-        Color(hex: "#9932CC") ?? .purple,
-        Color(hex: "#FF6347") ?? .red,
-        Color(hex: "#4682B4") ?? .blue
-    ]
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                theme.backgroundColor
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 24) {
-                    TextField("歌单名称", text: $playlistName)
-                        .font(.system(size: 18, design: .rounded))
-                        .padding()
-                        .background(theme.cardBackgroundColor)
-                        .cornerRadius(12)
-                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                    
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("选择颜色")
-                            .font(.system(size: 16, weight: .medium, design: .rounded))
-                            .foregroundColor(theme.textColor)
-                        
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 16) {
-                            ForEach(colors, id: \.self) { color in
-                                Circle()
-                                    .fill(color)
-                                    .frame(width: 50, height: 50)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color.white, lineWidth: selectedColor == color ? 3 : 0)
-                                    )
-                                    .shadow(color: color.opacity(0.3), radius: 3, x: 0, y: 2)
-                                    .onTapGesture {
-                                        selectedColor = color
-                                    }
-                            }
-                        }
-                    }
-                    
-                    Spacer()
-                }
-                .padding(24)
-            }
-            .navigationBarTitle("编辑歌单", displayMode: .inline)
-            .navigationBarItems(
-                leading: Button("取消") {
-                    isPresented = false
-                },
-                trailing: Button("保存") {
-                    if !playlistName.isEmpty {
-                        onSave(playlistName, selectedColor)
-                        isPresented = false
-                    }
-                }
-                .disabled(playlistName.isEmpty)
-            )
-        }
-    }
-}
-
+// 更新 SongRow 以使用 CoreData Song 实体
 struct SongRow: View {
     @Environment(\.metronomeTheme) var theme
-    let song: SongModel
-    let onPlay: () -> Void
+    @EnvironmentObject var metronomeState: MetronomeState
+    let song: Song
     
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
-                Text(song.name)
+                Text(song.name ?? "未命名歌曲")
                     .font(.system(size: 17, weight: .medium, design: .rounded))
                     .foregroundColor(theme.textColor)
                 
@@ -448,7 +346,9 @@ struct SongRow: View {
             
             Spacer()
             
-            Button(action: onPlay) {
+            Button(action: {
+                applySongSettings(song)
+            }) {
                 Image(systemName: "play.circle.fill")
                     .font(.system(size: 32))
                     .foregroundColor(theme.primaryColor)
@@ -462,11 +362,37 @@ struct SongRow: View {
                 .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
         )
     }
+    
+    // 应用歌曲设置到节拍器
+    private func applySongSettings(_ song: Song) {
+        metronomeState.updateTempo(Int(song.bpm))
+        metronomeState.updateBeatsPerBar(Int(song.beatsPerBar))
+        metronomeState.updateBeatUnit(Int(song.beatUnit))
+        
+        // 转换 beatStatuses
+        if let statusArray = song.beatStatuses as? [Int] {
+            let statuses = statusArray.map { statusInt -> BeatStatus in
+                switch statusInt {
+                case 0: return .strong
+                case 1: return .medium
+                case 2: return .normal
+                case 3: return .muted
+                default: return .normal
+                }
+            }
+            metronomeState.updateBeatStatuses(statuses)
+        }
+        
+        // 如果节拍器还没有启动，则启动它
+        if !metronomeState.isPlaying {
+            metronomeState.togglePlayback()
+        }
+    }
 }
 
-// 编辑歌曲视图
 struct EditSongView: View {
     @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var playlistManager: CoreDataPlaylistManager
     @Binding var isPresented: Bool
     @Binding var songName: String
     @Binding var tempo: Int
@@ -717,20 +643,3 @@ struct EditSongView: View {
         }
     }
 }
-
-// Preview
-struct PlaylistDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            PlaylistDetailView(playlist: PlaylistModel(
-                id: UUID(),
-                name: "古典乐集",
-                songs: [
-                    SongModel(name: "贝多芬第五交响曲", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
-                    SongModel(name: "莫扎特小夜曲", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-                ],
-                color: "#8B4513"
-            ))
-        }
-    }
-} 

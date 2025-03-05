@@ -54,7 +54,7 @@ class CoreDataPlaylistManager: ObservableObject {
         newSong.bpm = Int16(bpm)
         newSong.beatsPerBar = Int16(beatsPerBar)
         newSong.beatUnit = Int16(beatUnit)
-        newSong.beatStatuses = beatStatuses as NSObject
+        newSong.beatStatuses = beatStatuses as NSArray
         newSong.createdDate = Date()
         newSong.playlist = playlist
         
@@ -75,7 +75,7 @@ class CoreDataPlaylistManager: ObservableObject {
         song.bpm = Int16(bpm)
         song.beatsPerBar = Int16(beatsPerBar)
         song.beatUnit = Int16(beatUnit)
-        song.beatStatuses = beatStatuses as NSObject
+        song.beatStatuses = beatStatuses as NSArray
         saveContext()
     }
     
@@ -103,7 +103,7 @@ class CoreDataPlaylistManager: ObservableObject {
         newSong.bpm = Int16(model.bpm)
         newSong.beatsPerBar = Int16(model.beatsPerBar)
         newSong.beatUnit = Int16(model.beatUnit)
-        newSong.beatStatuses = model.beatStatuses as NSObject
+        newSong.beatStatuses = model.beatStatuses as NSArray
         newSong.createdDate = Date()
         newSong.playlist = playlist
         

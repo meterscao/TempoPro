@@ -25,7 +25,7 @@ extension View {
 }
 
 struct MetronomeToolbarView: View {
-    @EnvironmentObject var playlistManager: PlaylistManager
+    @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 更改类型
     
     var body: some View {
         HStack() {
@@ -68,5 +68,5 @@ struct MetronomeToolbarView: View {
 
 #Preview {
     MetronomeToolbarView()
-        .environmentObject(PlaylistManager())
+        
 } 

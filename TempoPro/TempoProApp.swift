@@ -7,7 +7,6 @@
 
 import SwiftUI
 import UIKit
-
 @main
 struct TempoProApp: App {
     @StateObject private var themeManager = ThemeManager()
@@ -15,18 +14,29 @@ struct TempoProApp: App {
     // 注入PersistenceController
     let persistenceController = PersistenceController.shared
     
-    // 添加应用生命周期事件观察
+    // 添加 CoreDataPlaylistManager 替代原来的 PlaylistManager
+    @StateObject private var coreDataPlaylistManager: CoreDataPlaylistManager
+    
+    // 应用生命周期事件观察
     @Environment(\.scenePhase) private var scenePhase
     
     init() {
         // 应用启动时就禁用屏幕熄屏
         UIApplication.shared.isIdleTimerDisabled = true
+        
+        // 初始化CoreDataPlaylistManager
+        let manager = CoreDataPlaylistManager(context: PersistenceController.shared.viewContext)
+        self._coreDataPlaylistManager = StateObject(wrappedValue: manager)
+        
+        // 创建示例数据（如果需要）
+        manager.createSampleDataIfNeeded()
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(themeManager)
+                .environmentObject(coreDataPlaylistManager) // 使用CoreDataPlaylistManager
                 .environment(\.metronomeTheme, themeManager.currentTheme)
                 .environment(\.managedObjectContext, persistenceController.viewContext)
                 .onChange(of: themeManager.currentThemeName) { _ in

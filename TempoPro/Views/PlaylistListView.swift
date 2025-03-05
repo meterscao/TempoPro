@@ -1,9 +1,10 @@
 import SwiftUI
 
+
 struct PlaylistListView: View {
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var playlistManager: PlaylistManager
+    @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 更改类型
     @State private var showingAddPlaylist = false
     @State private var newPlaylistName = ""
     @State private var selectedPlaylistColor = Color.blue
@@ -34,10 +35,11 @@ struct PlaylistListView: View {
                     .padding([.horizontal, .top], 20)
                     .padding(.bottom, 10)
                     
-                    // 歌单列表
+                    // 歌单列表 - 改为使用 CoreData
+                    let playlists = playlistManager.fetchPlaylists()
                     ScrollView {
                         LazyVStack(spacing: 16) {
-                            ForEach(playlistManager.playlists) { playlist in
+                            ForEach(playlists) { playlist in
                                 NavigationLink(destination: PlaylistDetailView(playlist: playlist)) {
                                     PlaylistRow(playlist: playlist)
                                 }
@@ -67,13 +69,12 @@ struct PlaylistListView: View {
                     playlistName: $newPlaylistName,
                     selectedColor: $selectedPlaylistColor,
                     onSave: { name, color in
-                        let newPlaylist = PlaylistModel(
-                            id: UUID(),
+                        // 使用 CoreDataPlaylistManager 创建歌单
+                        _ = playlistManager.createPlaylist(
                             name: name,
-                            songs: [],
                             color: color.toHex() ?? "#0000FF"
                         )
-                        playlistManager.addPlaylist(newPlaylist)
+                        
                         newPlaylistName = ""
                         selectedPlaylistColor = .blue
                     }
@@ -85,27 +86,28 @@ struct PlaylistListView: View {
 
 struct PlaylistRow: View {
     @Environment(\.metronomeTheme) var theme
-    let playlist: PlaylistModel
+    let playlist: Playlist
     
     var body: some View {
         HStack(spacing: 16) {
             // 歌单颜色标识
             RoundedRectangle(cornerRadius: 10)
-                .fill(playlist.getColor())
+                .fill(Color(hex: playlist.color ?? "#0000FF") ?? .blue)
                 .frame(width: 60, height: 60)
                 .overlay(
                     Image(systemName: "music.note.list")
                         .font(.system(size: 24))
                         .foregroundColor(.white)
                 )
-                .shadow(color: playlist.getColor().opacity(0.3), radius: 5, x: 0, y: 3)
+                .shadow(color: Color(hex: playlist.color ?? "#0000FF")?.opacity(0.3) ?? .blue.opacity(0.3), radius: 5, x: 0, y: 3)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(playlist.name)
+                Text(playlist.name ?? "未命名歌单")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(theme.textColor)
                 
-                Text("\(playlist.songs.count) 首歌曲")
+                let songCount = playlist.songs?.count ?? 0
+                Text("\(songCount) 首歌曲")
                     .font(.system(size: 14))
                     .foregroundColor(theme.textColor.opacity(0.6))
             }
@@ -124,15 +126,18 @@ struct PlaylistRow: View {
     }
 }
 
+// 在 PlaylistListView.swift 中添加或更新 AddPlaylistView
+
 struct AddPlaylistView: View {
     @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var playlistManager: CoreDataPlaylistManager
     @Binding var isPresented: Bool
     @Binding var playlistName: String
     @Binding var selectedColor: Color
     var onSave: (String, Color) -> Void
     
     let colors: [Color] = [
-        .blue, .red, .green, .orange, .purple, .pink, 
+        .blue, .red, .green, .orange, .purple, .pink,
         Color(hex: "#1E90FF") ?? .blue,
         Color(hex: "#8B4513") ?? .brown,
         Color(hex: "#2E8B57") ?? .green,
@@ -198,6 +203,78 @@ struct AddPlaylistView: View {
     }
 }
 
-#Preview {
-    PlaylistListView()
-} 
+
+struct EditPlaylistView: View {
+    @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var playlistManager: CoreDataPlaylistManager
+    @Binding var isPresented: Bool
+    @Binding var playlistName: String
+    @Binding var selectedColor: Color
+    var onSave: (String, Color) -> Void
+    
+    let colors: [Color] = [
+        .blue, .red, .green, .orange, .purple, .pink,
+        Color(hex: "#1E90FF") ?? .blue,
+        Color(hex: "#8B4513") ?? .brown,
+        Color(hex: "#2E8B57") ?? .green,
+        Color(hex: "#9932CC") ?? .purple,
+        Color(hex: "#FF6347") ?? .red,
+        Color(hex: "#4682B4") ?? .blue
+    ]
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                theme.backgroundColor
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 24) {
+                    TextField("歌单名称", text: $playlistName)
+                        .font(.system(size: 18, design: .rounded))
+                        .padding()
+                        .background(theme.cardBackgroundColor)
+                        .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("选择颜色")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(theme.textColor)
+                        
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 16) {
+                            ForEach(colors, id: \.self) { color in
+                                Circle()
+                                    .fill(color)
+                                    .frame(width: 50, height: 50)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color.white, lineWidth: selectedColor == color ? 3 : 0)
+                                    )
+                                    .shadow(color: color.opacity(0.3), radius: 3, x: 0, y: 2)
+                                    .onTapGesture {
+                                        selectedColor = color
+                                    }
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .padding(24)
+            }
+            .navigationBarTitle("编辑歌单", displayMode: .inline)
+            .navigationBarItems(
+                leading: Button("取消") {
+                    isPresented = false
+                },
+                trailing: Button("保存") {
+                    if !playlistName.isEmpty {
+                        onSave(playlistName, selectedColor)
+                        isPresented = false
+                    }
+                }
+                .disabled(playlistName.isEmpty)
+            )
+        }
+    }
+}
