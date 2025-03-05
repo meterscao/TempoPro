@@ -32,7 +32,7 @@ struct PersistenceController {
         sampleSong.bpm = 120
         sampleSong.beatsPerBar = 4
         sampleSong.beatUnit = 4
-        sampleSong.beatStatuses = [0, 2, 1, 2] as NSArray // 存储为NSObject
+        sampleSong.beatStatuses = [0, 2, 1, 2] as NSArray
         sampleSong.createdDate = Date()
         sampleSong.playlist = samplePlaylist
         

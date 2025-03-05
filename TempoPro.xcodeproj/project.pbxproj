@@ -33,7 +33,6 @@
 		F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F0589D2D787819005DF482 /* CreDataExtensions.swift */; };
 		F7F058A42D787BF3005DF482 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A32D787BF3005DF482 /* ColorExtension.swift */; };
 		F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */; };
-		F7F058A82D78824F005DF482 /* PlaylistModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A72D78824F005DF482 /* PlaylistModels.swift */; };
 		F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */; };
 		F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */; };
 		F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */; };
@@ -94,7 +93,6 @@
 		F7F0589D2D787819005DF482 /* CreDataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreDataExtensions.swift; sourceTree = "<group>"; };
 		F7F058A32D787BF3005DF482 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlaylistManager.swift; sourceTree = "<group>"; };
-		F7F058A72D78824F005DF482 /* PlaylistModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistModels.swift; sourceTree = "<group>"; };
 		F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileBackgroundImage.swift; sourceTree = "<group>"; };
 		F7F538E32D75D59700A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
@@ -250,7 +248,6 @@
 		F750D23E2D78166A0022C405 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				F7F058A72D78824F005DF482 /* PlaylistModels.swift */,
 				F7F058972D787651005DF482 /* TempoProModel.xcdatamodeld */,
 			);
 			path = Models;
@@ -458,7 +455,6 @@
 				3AA1E5572D6F7372002D9615 /* MetronomeInfoView.swift in Sources */,
 				3AA1E5552D6F7372002D9615 /* MetronomeToolbarView.swift in Sources */,
 				3AA1E5562D6F7372002D9615 /* MetronomeControlView.swift in Sources */,
-				F7F058A82D78824F005DF482 /* PlaylistModels.swift in Sources */,
 				F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */,
 				F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */,
 				F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */,

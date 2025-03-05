@@ -95,21 +95,6 @@ class CoreDataPlaylistManager: ObservableObject {
         saveContext()
     }
     
-    // 从SongModel创建Song实体
-    func createSong(from model: SongModel, in playlist: Playlist) -> Song {
-        let newSong = Song(context: viewContext)
-        newSong.id = model.id
-        newSong.name = model.name
-        newSong.bpm = Int16(model.bpm)
-        newSong.beatsPerBar = Int16(model.beatsPerBar)
-        newSong.beatUnit = Int16(model.beatUnit)
-        newSong.beatStatuses = model.beatStatuses as NSArray
-        newSong.createdDate = Date()
-        newSong.playlist = playlist
-        
-        saveContext()
-        return newSong
-    }
     
     // 保存上下文
     private func saveContext() {

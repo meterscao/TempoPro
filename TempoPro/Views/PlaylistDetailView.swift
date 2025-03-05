@@ -177,51 +177,51 @@ struct PlaylistDetailView: View {
             }
         )
         .sheet(isPresented: $showingSongForm) {
-            EditSongView(
-                isPresented: $showingSongForm,
-                songName: $songName,
-                tempo: $tempo,
-                beatsPerBar: $beatsPerBar,
-                beatUnit: $beatUnit,
-                beatStatuses: $beatStatuses,
-                isEditMode: isEditMode,
-                onSave: { name, tempo, beatsPerBar, beatUnit, statuses in
-                    let statusInts = statuses.map { status -> Int in
-                        switch status {
-                        case .strong: return 0
-                        case .medium: return 1
-                        case .normal: return 2
-                        case .muted: return 3
+                EditSongView(
+                    isPresented: $showingSongForm,
+                    songName: $songName,
+                    tempo: $tempo,
+                    beatsPerBar: $beatsPerBar,
+                    beatUnit: $beatUnit,
+                    beatStatuses: $beatStatuses,
+                    isEditMode: isEditMode,
+                    onSave: { name, tempo, beatsPerBar, beatUnit, statuses in
+                        let statusInts = statuses.map { status -> Int in
+                            switch status {
+                            case .strong: return 0
+                            case .medium: return 1
+                            case .normal: return 2
+                            case .muted: return 3
+                            }
                         }
+                        
+                        if isEditMode, let song = songToEdit {
+                            // 更新现有歌曲
+                            playlistManager.updateSong(
+                                song,
+                                name: name,
+                                bpm: tempo,
+                                beatsPerBar: beatsPerBar,
+                                beatUnit: beatUnit,
+                                beatStatuses: statusInts
+                            )
+                        } else {
+                            // 添加新歌曲
+                            _ = playlistManager.addSong(
+                                to: playlist,
+                                name: name,
+                                bpm: tempo,
+                                beatsPerBar: beatsPerBar,
+                                beatUnit: beatUnit,
+                                beatStatuses: statusInts
+                            )
+                        }
+                        
+                        // 重置表单
+                        resetSongForm()
                     }
-                    
-                    if isEditMode, let song = songToEdit {
-                        // 更新现有歌曲
-                        playlistManager.updateSong(
-                            song,
-                            name: name,
-                            bpm: tempo,
-                            beatsPerBar: beatsPerBar,
-                            beatUnit: beatUnit,
-                            beatStatuses: statusInts
-                        )
-                    } else {
-                        // 添加新歌曲
-                        _ = playlistManager.addSong(
-                            to: playlist,
-                            name: name,
-                            bpm: tempo,
-                            beatsPerBar: beatsPerBar,
-                            beatUnit: beatUnit,
-                            beatStatuses: statusInts
-                        )
-                    }
-                    
-                    // 重置表单
-                    resetSongForm()
-                }
-            )
-        }
+                )
+            }
         .sheet(isPresented: $showingEditPlaylist) {
             EditPlaylistView(
                 isPresented: $showingEditPlaylist,

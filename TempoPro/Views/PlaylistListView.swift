@@ -64,22 +64,22 @@ struct PlaylistListView: View {
                 }
             )
             .sheet(isPresented: $showingAddPlaylist) {
-                AddPlaylistView(
-                    isPresented: $showingAddPlaylist,
-                    playlistName: $newPlaylistName,
-                    selectedColor: $selectedPlaylistColor,
-                    onSave: { name, color in
-                        // 使用 CoreDataPlaylistManager 创建歌单
-                        _ = playlistManager.createPlaylist(
-                            name: name,
-                            color: color.toHex() ?? "#0000FF"
-                        )
-                        
-                        newPlaylistName = ""
-                        selectedPlaylistColor = .blue
-                    }
-                )
-            }
+                    AddPlaylistView(
+                        isPresented: $showingAddPlaylist,
+                        playlistName: $newPlaylistName,
+                        selectedColor: $selectedPlaylistColor,
+                        onSave: { name, color in
+                            // 使用 CoreDataPlaylistManager 创建歌单
+                            _ = playlistManager.createPlaylist(
+                                name: name,
+                                color: color.toHex() ?? "#0000FF"
+                            )
+                            
+                            newPlaylistName = ""
+                            selectedPlaylistColor = .blue
+                        }
+                    )
+                }
         }
     }
 }
@@ -92,7 +92,7 @@ struct PlaylistRow: View {
         HStack(spacing: 16) {
             // 歌单颜色标识
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(hex: playlist.color ?? "#0000FF") ?? .blue)
+                .fill(playlist.getColor())  // 使用扩展方法
                 .frame(width: 60, height: 60)
                 .overlay(
                     Image(systemName: "music.note.list")
