@@ -8,8 +8,8 @@ class PlaylistManager: ObservableObject {
         static let playlists = "playlists_data"
     }
     
-    @Published var playlists: [Playlist] = []
-    @Published var selectedPlaylist: Playlist?
+    @Published var playlists: [PlaylistModel] = []
+    @Published var selectedPlaylist: PlaylistModel?
     @Published var showPlaylistsSheet = false
     
     private let defaults = UserDefaults.standard
@@ -27,7 +27,7 @@ class PlaylistManager: ObservableObject {
     private func loadPlaylists() {
         if let data = defaults.data(forKey: Keys.playlists) {
             do {
-                let decodedPlaylists = try JSONDecoder().decode([Playlist].self, from: data)
+                let decodedPlaylists = try JSONDecoder().decode([PlaylistModel].self, from: data)
                 self.playlists = decodedPlaylists
                 print("已成功加载\(decodedPlaylists.count)个歌单")
             } catch {
@@ -49,13 +49,13 @@ class PlaylistManager: ObservableObject {
     }
     
     // 添加歌单
-    func addPlaylist(_ playlist: Playlist) {
+    func addPlaylist(_ playlist: PlaylistModel) {
         playlists.append(playlist)
         savePlaylists()
     }
     
     // 更新歌单
-    func updatePlaylist(_ playlist: Playlist) {
+    func updatePlaylist(_ playlist: PlaylistModel) {
         if let index = playlists.firstIndex(where: { $0.id == playlist.id }) {
             playlists[index] = playlist
             savePlaylists()
@@ -63,7 +63,7 @@ class PlaylistManager: ObservableObject {
     }
     
     // 删除歌单
-    func deletePlaylist(_ playlist: Playlist) {
+    func deletePlaylist(_ playlist: PlaylistModel) {
         playlists.removeAll { $0.id == playlist.id }
         savePlaylists()
         
@@ -74,7 +74,7 @@ class PlaylistManager: ObservableObject {
     }
     
     // 添加歌曲到歌单
-    func addSong(_ song: Song, toPlaylist playlistId: UUID) {
+    func addSong(_ song: SongModel, toPlaylist playlistId: UUID) {
         if let index = playlists.firstIndex(where: { $0.id == playlistId }) {
             playlists[index].songs.append(song)
             savePlaylists()
@@ -82,7 +82,7 @@ class PlaylistManager: ObservableObject {
     }
     
     // 从歌单中删除歌曲
-    func removeSong(_ song: Song, fromPlaylist playlistId: UUID) {
+    func removeSong(_ song: SongModel, fromPlaylist playlistId: UUID) {
         if let playlistIndex = playlists.firstIndex(where: { $0.id == playlistId }) {
             playlists[playlistIndex].songs.removeAll { $0.id == song.id }
             savePlaylists()
@@ -91,35 +91,35 @@ class PlaylistManager: ObservableObject {
     
     // 创建示例歌单
     private func createSamplePlaylists() {
-        let classicalPlaylist = Playlist(
+        let classicalPlaylist = PlaylistModel(
             id: UUID(),
             name: "古典乐集",
             songs: [
-                Song(name: "贝多芬第五交响曲", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
-                Song(name: "莫扎特小夜曲", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
-                Song(name: "巴赫平均律", bpm: 72, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 2, 2])
+                SongModel(name: "贝多芬第五交响曲", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
+                SongModel(name: "莫扎特小夜曲", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
+                SongModel(name: "巴赫平均律", bpm: 72, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 2, 2])
             ],
             color: "#8B4513"
         )
         
-        let rockPlaylist = Playlist(
+        let rockPlaylist = PlaylistModel(
             id: UUID(),
             name: "摇滚精选",
             songs: [
-                Song(name: "皇后乐队 - We Will Rock You", bpm: 81, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 0, 2]),
-                Song(name: "AC/DC - Back in Black", bpm: 96, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
-                Song(name: "Led Zeppelin - Stairway to Heaven", bpm: 82, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+                SongModel(name: "皇后乐队 - We Will Rock You", bpm: 81, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 0, 2]),
+                SongModel(name: "AC/DC - Back in Black", bpm: 96, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
+                SongModel(name: "Led Zeppelin - Stairway to Heaven", bpm: 82, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
             ],
             color: "#B22222"
         )
         
-        let jazzPlaylist = Playlist(
+        let jazzPlaylist = PlaylistModel(
             id: UUID(),
             name: "爵士鼓点",
             songs: [
-                Song(name: "Take Five", bpm: 172, beatsPerBar: 5, beatUnit: 4, beatStatuses: [0, 2, 1, 2, 1]),
-                Song(name: "So What", bpm: 136, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
-                Song(name: "Autumn Leaves", bpm: 100, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+                SongModel(name: "Take Five", bpm: 172, beatsPerBar: 5, beatUnit: 4, beatStatuses: [0, 2, 1, 2, 1]),
+                SongModel(name: "So What", bpm: 136, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
+                SongModel(name: "Autumn Leaves", bpm: 100, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
             ],
             color: "#191970"
         )

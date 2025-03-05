@@ -67,7 +67,7 @@ struct PlaylistListView: View {
                     playlistName: $newPlaylistName,
                     selectedColor: $selectedPlaylistColor,
                     onSave: { name, color in
-                        let newPlaylist = Playlist(
+                        let newPlaylist = PlaylistModel(
                             id: UUID(),
                             name: name,
                             songs: [],
@@ -85,7 +85,7 @@ struct PlaylistListView: View {
 
 struct PlaylistRow: View {
     @Environment(\.metronomeTheme) var theme
-    let playlist: Playlist
+    let playlist: PlaylistModel
     
     var body: some View {
         HStack(spacing: 16) {

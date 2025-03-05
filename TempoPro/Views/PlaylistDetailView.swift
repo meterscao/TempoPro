@@ -6,7 +6,7 @@ struct PlaylistDetailView: View {
     @EnvironmentObject var playlistManager: PlaylistManager
     @EnvironmentObject var metronomeState: MetronomeState
     
-    @State var playlist: Playlist
+    @State var playlist: PlaylistModel
     @State private var showingSongForm = false
     @State private var isEditMode = false
     @State private var showingEditPlaylist = false
@@ -18,8 +18,8 @@ struct PlaylistDetailView: View {
     @State private var beatUnit = 4
     @State private var beatStatuses: [BeatStatus] = Array(repeating: .normal, count: 4)
     @State private var showingDeleteAlert = false
-    @State private var songToDelete: Song?
-    @State private var songToEdit: Song?
+    @State private var songToDelete: SongModel?
+    @State private var songToEdit: SongModel?
     
     var body: some View {
         ZStack {
@@ -197,7 +197,7 @@ struct PlaylistDetailView: View {
                         updateSong(song: song, name: name, tempo: tempo, beatsPerBar: beatsPerBar, beatUnit: beatUnit, statuses: statuses)
                     } else {
                         // 添加新歌曲
-                        let newSong = Song(
+                        let newSong = SongModel(
                             name: name,
                             bpm: tempo,
                             beatsPerBar: beatsPerBar,
@@ -208,7 +208,7 @@ struct PlaylistDetailView: View {
                         // 更新歌单
                         var updatedSongs = playlist.songs
                         updatedSongs.append(newSong)
-                        let updatedPlaylist = Playlist(
+                        let updatedPlaylist = PlaylistModel(
                             id: playlist.id,
                             name: playlist.name,
                             songs: updatedSongs,
@@ -232,7 +232,7 @@ struct PlaylistDetailView: View {
                 selectedColor: $editPlaylistColor,
                 onSave: { name, color in
                     // 更新歌单
-                    let updatedPlaylist = Playlist(
+                    let updatedPlaylist = PlaylistModel(
                         id: playlist.id,
                         name: name,
                         songs: playlist.songs,
@@ -252,7 +252,7 @@ struct PlaylistDetailView: View {
                     // 删除歌曲
                     var updatedSongs = playlist.songs
                     updatedSongs.removeAll { $0.id == song.id }
-                    let updatedPlaylist = Playlist(
+                    let updatedPlaylist = PlaylistModel(
                         id: playlist.id,
                         name: playlist.name,
                         songs: updatedSongs,
@@ -270,7 +270,7 @@ struct PlaylistDetailView: View {
     }
     
     // 准备编辑歌曲
-    private func prepareEditSong(_ song: Song) {
+    private func prepareEditSong(_ song: SongModel) {
         songToEdit = song
         songName = song.name
         tempo = song.bpm
@@ -282,7 +282,7 @@ struct PlaylistDetailView: View {
     }
     
     // 更新歌曲
-    private func updateSong(song: Song, name: String, tempo: Int, beatsPerBar: Int, beatUnit: Int, statuses: [BeatStatus]) {
+    private func updateSong(song: SongModel, name: String, tempo: Int, beatsPerBar: Int, beatUnit: Int, statuses: [BeatStatus]) {
         let statusInts = statuses.map { status -> Int in
             switch status {
             case .strong: return 0
@@ -292,7 +292,7 @@ struct PlaylistDetailView: View {
             }
         }
         
-        let updatedSong = Song(
+        let updatedSong = SongModel(
             id: song.id,
             name: name,
             bpm: tempo,
@@ -306,7 +306,7 @@ struct PlaylistDetailView: View {
         if let index = updatedSongs.firstIndex(where: { $0.id == song.id }) {
             updatedSongs[index] = updatedSong
             
-            let updatedPlaylist = Playlist(
+            let updatedPlaylist = PlaylistModel(
                 id: playlist.id,
                 name: playlist.name,
                 songs: updatedSongs,
@@ -320,7 +320,7 @@ struct PlaylistDetailView: View {
     }
     
     // 应用歌曲设置到节拍器
-    private func applySongSettings(_ song: Song) {
+    private func applySongSettings(_ song: SongModel) {
         metronomeState.updateTempo(song.bpm)
         metronomeState.updateBeatsPerBar(song.beatsPerBar)
         metronomeState.updateBeatUnit(song.beatUnit)
@@ -424,7 +424,7 @@ struct EditPlaylistView: View {
 
 struct SongRow: View {
     @Environment(\.metronomeTheme) var theme
-    let song: Song
+    let song: SongModel
     let onPlay: () -> Void
     
     var body: some View {
@@ -722,12 +722,12 @@ struct EditSongView: View {
 struct PlaylistDetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            PlaylistDetailView(playlist: Playlist(
+            PlaylistDetailView(playlist: PlaylistModel(
                 id: UUID(),
                 name: "古典乐集",
                 songs: [
-                    Song(name: "贝多芬第五交响曲", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
-                    Song(name: "莫扎特小夜曲", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+                    SongModel(name: "贝多芬第五交响曲", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2]),
+                    SongModel(name: "莫扎特小夜曲", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
                 ],
                 color: "#8B4513"
             ))

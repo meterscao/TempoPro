@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 // 歌曲模型
-struct Song: Identifiable, Codable, Equatable {
+struct SongModel: Identifiable, Codable, Equatable {
     var id = UUID()
     var name: String
     var bpm: Int
@@ -23,16 +23,16 @@ struct Song: Identifiable, Codable, Equatable {
         }
     }
     
-    static func == (lhs: Song, rhs: Song) -> Bool {
+    static func == (lhs: SongModel, rhs: SongModel) -> Bool {
         return lhs.id == rhs.id
     }
 }
 
 // 歌单模型
-struct Playlist: Identifiable, Codable, Equatable {
+struct PlaylistModel: Identifiable, Codable, Equatable {
     var id = UUID()
     var name: String
-    var songs: [Song]
+    var songs: [SongModel]
     var color: String // 存储颜色的Hex值
     
     // 获取UI颜色
@@ -40,7 +40,7 @@ struct Playlist: Identifiable, Codable, Equatable {
         return Color(hex: color) ?? .blue
     }
     
-    static func == (lhs: Playlist, rhs: Playlist) -> Bool {
+    static func == (lhs: PlaylistModel, rhs: PlaylistModel) -> Bool {
         return lhs.id == rhs.id
     }
 }
