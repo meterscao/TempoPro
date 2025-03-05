@@ -11,7 +11,9 @@ import UIKit
 @main
 struct TempoProApp: App {
     @StateObject private var themeManager = ThemeManager()
-    @StateObject private var playlistManager = PlaylistManager()
+    
+    // 注入PersistenceController
+    let persistenceController = PersistenceController.shared
     
     // 添加应用生命周期事件观察
     @Environment(\.scenePhase) private var scenePhase
@@ -19,16 +21,14 @@ struct TempoProApp: App {
     init() {
         // 应用启动时就禁用屏幕熄屏
         UIApplication.shared.isIdleTimerDisabled = true
-        
-        
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(themeManager)
-                .environmentObject(playlistManager)
                 .environment(\.metronomeTheme, themeManager.currentTheme)
+                .environment(\.managedObjectContext, persistenceController.viewContext)
                 .onChange(of: themeManager.currentThemeName) { _ in
                     // 通过主题名称变化来触发环境更新
                 }
@@ -42,10 +42,9 @@ struct TempoProApp: App {
             case .inactive:
                 print("应用进入非活跃状态")
             case .background:
-                // 应用进入后台时，可以考虑恢复系统默认的熄屏设置以节省电池
-                print("应用进入后台，保持屏幕熄屏设置不变")
-                // 注释掉下面一行，让应用即使在后台也保持屏幕常亮设置
-                // UIApplication.shared.isIdleTimerDisabled = false
+                // 保存CoreData更改
+                persistenceController.save()
+                print("应用进入后台，已保存数据")
             @unknown default:
                 print("未知场景状态")
             }

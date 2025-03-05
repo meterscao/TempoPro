@@ -33,6 +33,8 @@
 		F7F058992D787651005DF482 /* TempoProModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F7F058972D787651005DF482 /* TempoProModel.xcdatamodeld */; };
 		F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F0589B2D787728005DF482 /* PersistenceController.swift */; };
 		F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F0589D2D787819005DF482 /* CreDataExtensions.swift */; };
+		F7F058A42D787BF3005DF482 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A32D787BF3005DF482 /* ColorExtension.swift */; };
+		F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */; };
 		F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */; };
 		F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */; };
 		F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */; };
@@ -93,6 +95,8 @@
 		F7F058982D787651005DF482 /* TempoProModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TempoProModel.xcdatamodel; sourceTree = "<group>"; };
 		F7F0589B2D787728005DF482 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		F7F0589D2D787819005DF482 /* CreDataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreDataExtensions.swift; sourceTree = "<group>"; };
+		F7F058A32D787BF3005DF482 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlaylistManager.swift; sourceTree = "<group>"; };
 		F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileBackgroundImage.swift; sourceTree = "<group>"; };
 		F7F538E32D75D59700A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
@@ -153,6 +157,7 @@
 		3A9C889E2D6F728A004CFD88 /* TempoPro */ = {
 			isa = PBXGroup;
 			children = (
+				F7F058A22D787BD5005DF482 /* CoreData */,
 				F750D23E2D78166A0022C405 /* Models */,
 				F7F538E42D75D59700A7395C /* Utils */,
 				3ADE94832D734B5B00731F83 /* Extensions */,
@@ -210,7 +215,7 @@
 		3ADE94832D734B5B00731F83 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				F7F0589D2D787819005DF482 /* CreDataExtensions.swift */,
+				F7F058A32D787BF3005DF482 /* ColorExtension.swift */,
 				F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */,
 				3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */,
 			);
@@ -247,11 +252,20 @@
 		F750D23E2D78166A0022C405 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				F7F0589B2D787728005DF482 /* PersistenceController.swift */,
 				F750D23D2D78166A0022C405 /* PlaylistModels.swift */,
 				F7F058972D787651005DF482 /* TempoProModel.xcdatamodeld */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		F7F058A22D787BD5005DF482 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */,
+				F7F0589D2D787819005DF482 /* CreDataExtensions.swift */,
+				F7F0589B2D787728005DF482 /* PersistenceController.swift */,
+			);
+			path = CoreData;
 			sourceTree = "<group>";
 		};
 		F7F538E42D75D59700A7395C /* Utils */ = {
@@ -449,6 +463,7 @@
 				3AA1E5552D6F7372002D9615 /* MetronomeToolbarView.swift in Sources */,
 				3AA1E5562D6F7372002D9615 /* MetronomeControlView.swift in Sources */,
 				F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */,
+				F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */,
 				F750D2382D7816220022C405 /* PlaylistManager.swift in Sources */,
 				F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */,
 				F71AF6B92D71A60200ADBC17 /* BPMRulerView.swift in Sources */,
@@ -463,6 +478,7 @@
 				F750D23B2D7816360022C405 /* PlaylistDetailView.swift in Sources */,
 				F750D23C2D7816360022C405 /* PlaylistListView.swift in Sources */,
 				F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */,
+				F7F058A42D787BF3005DF482 /* ColorExtension.swift in Sources */,
 				F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */,
 				F7F058992D787651005DF482 /* TempoProModel.xcdatamodeld in Sources */,
 			);
