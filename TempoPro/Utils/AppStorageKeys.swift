@@ -29,6 +29,9 @@ struct AppStorageKeys {
         
         /// 当前节拍键
         static let currentBeat = key("currentBeat")
+        
+        // 在 Metronome 结构体中添加
+        static let subdivisionType = key("subdivisionType")
     }
     
     // 主题相关设置

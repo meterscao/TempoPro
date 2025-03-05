@@ -3,6 +3,36 @@ import Combine
 import UIKit  // 添加UIKit导入
 import SwiftUI // 添加SwiftUI导入以使用AppStorage
 
+// 添加切分音符类型枚举（同TimeSignatureView.swift中的定义）
+enum SubdivisionType: String, CaseIterable, Identifiable, Codable {
+    case whole = "整拍"
+    case duple = "二等分"
+    case dotted = "附点节奏"
+    case triplet = "三连音"
+    case quadruple = "四等分"
+    case dupleTriplet = "二连三连音"
+    
+    var id: String { self.rawValue }
+    
+    // 获取描述文本
+    func getDescription(forBeatUnit beatUnit: Int) -> String {
+        switch self {
+        case .whole:
+            return "1个\(beatUnit)分音符"
+        case .duple:
+            return "2个\(beatUnit*2)分音符"
+        case .dotted:
+            return "空+1个\(beatUnit*2)分音符"
+        case .triplet:
+            return "\(beatUnit*2)分音符3连音"
+        case .quadruple:
+            return "4个\(beatUnit*4)分音符"
+        case .dupleTriplet:
+            return "2个\"\(beatUnit*2)分音符3连音\""
+        }
+    }
+}
+
 class MetronomeState: ObservableObject {
     // 定义引用的键
     private enum Keys {
@@ -11,6 +41,7 @@ class MetronomeState: ObservableObject {
         static let beatUnit = AppStorageKeys.Metronome.beatUnit
         static let beatStatuses = AppStorageKeys.Metronome.beatStatuses
         static let currentBeat = AppStorageKeys.Metronome.currentBeat
+        static let subdivisionType = AppStorageKeys.Metronome.subdivisionType
     }
     
     // 状态属性
@@ -20,6 +51,7 @@ class MetronomeState: ObservableObject {
     @Published private(set) var beatsPerBar: Int = 0
     @Published private(set) var beatUnit: Int = 0
     @Published var beatStatuses: [BeatStatus] = []
+    @Published private(set) var subdivisionType: SubdivisionType = .whole
     
     private let audioEngine = MetronomeAudioEngine()
     private var metronomeTimer: MetronomeTimer?
@@ -72,6 +104,16 @@ class MetronomeState: ObservableObject {
             
             // 保存默认状态
             saveBeatStatuses()
+        }
+        
+        // 加载切分音符类型
+        if let savedSubdivisionTypeString = defaults.string(forKey: Keys.subdivisionType),
+           let savedType = SubdivisionType(rawValue: savedSubdivisionTypeString) {
+            self.subdivisionType = savedType
+        } else {
+            // 默认为整拍
+            self.subdivisionType = .whole
+            defaults.set(subdivisionType.rawValue, forKey: Keys.subdivisionType)
         }
     }
     
@@ -188,5 +230,14 @@ class MetronomeState: ObservableObject {
     func updateBeatStatuses(_ newStatuses: [BeatStatus]) {
         beatStatuses = newStatuses
         saveBeatStatuses()
+    }
+    
+    // 添加更新切分音符类型的方法
+    func updateSubdivisionType(_ newType: SubdivisionType) {
+        print("MetronomeState - updateSubdivisionType: \(subdivisionType.rawValue) -> \(newType.rawValue)")
+        if subdivisionType == newType { return }
+        
+        subdivisionType = newType
+        defaults.set(subdivisionType.rawValue, forKey: Keys.subdivisionType)
     }
 } 

@@ -196,6 +196,9 @@ struct MetronomeInfoView: View {
                             Image("icon-time-signature")
                                 .renderingMode(.template)
                                 .foregroundStyle(theme.primaryColor)
+                                .onTapGesture {
+                                    showingTimeSignature = true
+                                }
                         }
                         
                         // BPM 显示
@@ -384,7 +387,7 @@ struct MetronomeInfoView: View {
                         }
                     }
             )
-            .animation(.spring(response: 0.3), value: isHorizontalDragging)
+            .animation(.easeInOut(duration: 0.2), value: isHorizontalDragging)
         }
         .frame(maxHeight: .infinity) // 确保GeometryReader有固定高度
     }
