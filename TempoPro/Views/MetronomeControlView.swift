@@ -32,8 +32,6 @@ struct MetronomeControlView: View {
     private let minimumFeedbackInterval: TimeInterval = 0.06
     
     private func createTicks(wheelSize:Double) -> some View {
-        
-        
             
             ZStack {
                 ForEach(0..<60) { i in
