@@ -12,6 +12,47 @@ struct PersistenceController {
     // 单例实例
     static let shared = PersistenceController()
     
+    
+    
+    // CoreData容器
+    let container: NSPersistentContainer
+    
+    // 获取主视图上下文的便捷访问器
+    var viewContext: NSManagedObjectContext {
+        return container.viewContext
+    }
+    
+    // 初始化方法
+    init(inMemory: Bool = false) {
+        container = NSPersistentContainer(name: "TempoProModel")
+        
+        if inMemory {
+            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
+        }
+        
+        container.loadPersistentStores { description, error in
+            if let error = error as NSError? {
+                fatalError("加载CoreData存储失败: \(error), \(error.userInfo)")
+            }
+        }
+        // 启用自动合并策略
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+    }
+    
+    // 保存上下文的方便方法
+    func save() {
+        let context = container.viewContext
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                let nsError = error as NSError
+                print("保存CoreData上下文失败: \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
+    
     // 用于预览的实例
     static var preview: PersistenceController = {
         let controller = PersistenceController(inMemory: true)
@@ -45,44 +86,4 @@ struct PersistenceController {
         
         return controller
     }()
-    
-    // CoreData容器
-    let container: NSPersistentContainer
-    
-    // 获取主视图上下文的便捷访问器
-    var viewContext: NSManagedObjectContext {
-        return container.viewContext
-    }
-    
-    // 初始化方法
-    init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "TempoProModel")
-        
-        if inMemory {
-            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
-        }
-        
-        container.loadPersistentStores { description, error in
-            if let error = error as NSError? {
-                fatalError("加载CoreData存储失败: \(error), \(error.userInfo)")
-            }
-        }
-        
-        // 启用自动合并策略
-        container.viewContext.automaticallyMergesChangesFromParent = true
-        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-    }
-    
-    // 保存上下文的方便方法
-    func save() {
-        let context = container.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                let nsError = error as NSError
-                print("保存CoreData上下文失败: \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
 }
