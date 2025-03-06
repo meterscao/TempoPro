@@ -10,7 +10,7 @@ import UIKit // 导入UIKit以使用震动反馈功能
 
 struct MetronomeControlView: View {
     
-    private let sensitivity: Double = 9.0 // 旋转灵敏度
+    private let sensitivity: Double = 12.0 // 旋转灵敏度
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var metronomeState: MetronomeState
     
