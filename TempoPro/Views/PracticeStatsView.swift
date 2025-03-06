@@ -10,35 +10,19 @@ import SwiftUI
 struct PracticeStatsView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var practiceManager: CoreDataPracticeManager
     
-    // Mock data
-    let dayStreak = 12
-    let daysThisMonth = 23
-    let hoursTotal = 18.5
-    
-    // Weekly practice data (in minutes)
-    let weeklyData = [
-        ("MON", 70),
-        ("TUE", 100),
-        ("WED", 40),
-        ("THU", 80),
-        ("FRI", 60),
-        ("SUN", 120),
-        ("SAT", 50)
-    ]
-    
-    // Monthly heatmap data (opacity values)
-    let monthlyData: [[Double]] = [
-        [0.3, 0.5, 0.6, 0.4, 0.7, 0.8, 0.3],
-        [0.4, 0.0, 0.5, 0.7, 0.9, 1.0, 0.4],
-        [0.6, 0.7, 0.8, 0.7, 0.9, 1.0, 0.6],
-        [0.7, 0.8, 0.7, 0.9, 1.0, 0.9, 0.8]
-    ]
+    // 状态变量用于保存统计数据
+    @State private var dayStreak = 0
+    @State private var daysThisMonth = 0
+    @State private var totalHours = 0.0
+    @State private var weeklyData: [(String, Double)] = []
+    @State private var monthlyData: [[Double]] = []
+    @State private var mostPracticedTempo = ""
+    @State private var longestSession = ""
     
     var body: some View {
         ZStack {
-           
-            
             ScrollView {
                 VStack(spacing: 28) {
                     // Header
@@ -72,7 +56,7 @@ struct PracticeStatsView: View {
                     HStack(spacing: 10) {
                         StatsSummaryCard(value: "\(dayStreak)", label: "STREAK DAYS")
                         StatsSummaryCard(value: "\(daysThisMonth)", label: "DAYS THIS MONTH")
-                        StatsSummaryCard(value: "\(hoursTotal)", label: "TOTAL HOURS")
+                        StatsSummaryCard(value: String(format: "%.1f", totalHours), label: "TOTAL HOURS")
                     }
                     
                     // Weekly Streak
@@ -89,36 +73,71 @@ struct PracticeStatsView: View {
                         // Bar chart - expanding to fill width
                         GeometryReader { geometry in
                             VStack(spacing: 16) {
-                                HStack(alignment: .bottom, spacing: 0) {
-                                    ForEach(0..<weeklyData.count, id: \.self) { index in
-                                        let day = weeklyData[index]
-                                        let barWidth = (geometry.size.width - CGFloat(weeklyData.count - 1) * 8) / CGFloat(weeklyData.count)
-                                        
-                                        VStack(spacing: 8) {
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(theme.beatHightColor)
-                                                .frame(width: barWidth, height: CGFloat(day.1))
+                                if weeklyData.isEmpty {
+                                    Text("No practice data for this week")
+                                        .foregroundColor(theme.primaryColor.opacity(0.7))
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                } else {
+                                    HStack(alignment: .bottom, spacing: 0) {
+                                        ForEach(0..<weeklyData.count, id: \.self) { index in
+                                            let day = weeklyData[index]
+                                            let barWidth = (geometry.size.width - CGFloat(weeklyData.count - 1) * 8) / CGFloat(weeklyData.count)
                                             
-                                            Text(day.0)
-                                                .font(.custom("MiSansLatin-Regular", size: 12))
-                                                .foregroundColor(theme.beatHightColor)
-                                        }
-                                        
-                                        if index < weeklyData.count - 1 {
-                                            Spacer()
+                                            // 计算合理的高度值，使图表更美观
+                                            let maxHeight: CGFloat = 120
+                                            let maxMinutes = weeklyData.map { $0.1 }.max() ?? 1
+                                            let height = day.1 > 0 ? max(20, CGFloat(day.1) / CGFloat(maxMinutes) * maxHeight) : 0
+                                            
+                                            VStack(spacing: 8) {
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(theme.beatHightColor)
+                                                    .frame(width: barWidth, height: height)
+                                                
+                                                Text(day.0)
+                                                    .font(.custom("MiSansLatin-Regular", size: 12))
+                                                    .foregroundColor(theme.beatHightColor)
+                                            }
+                                            
+                                            if index < weeklyData.count - 1 {
+                                                Spacer()
+                                            }
                                         }
                                     }
-                                }
-                                .frame(height: 120, alignment: .bottom)
-                                
-                                HStack {
-                                    Text("45 MIN")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.9))
-                                    Spacer()
-                                    Text("2H 15M")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.9))
+                                    .frame(height: 120, alignment: .bottom)
+                                    
+                                    HStack {
+                                        // 找出最小和最大的非零值
+                                        let nonZeroValues = weeklyData.map { $0.1 }.filter { $0 > 0 }
+                                        let minVal = nonZeroValues.min() ?? 0
+                                        let maxVal = nonZeroValues.max() ?? 0
+                                        
+                                        if minVal > 0 {
+                                            Text("\(Int(minVal))分钟")
+                                                .font(.custom("MiSansLatin-Regular", size: 12))
+                                                .foregroundColor(theme.primaryColor.opacity(0.9))
+                                        } else {
+                                            Text("0分钟")
+                                                .font(.custom("MiSansLatin-Regular", size: 12))
+                                                .foregroundColor(theme.primaryColor.opacity(0.9))
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        if maxVal > 0 {
+                                            let hours = Int(maxVal) / 60
+                                            let minutes = Int(maxVal) % 60
+                                            
+                                            if hours > 0 {
+                                                Text("\(hours)小时\(minutes)分钟")
+                                                    .font(.custom("MiSansLatin-Regular", size: 12))
+                                                    .foregroundColor(theme.primaryColor.opacity(0.9))
+                                            } else {
+                                                Text("\(minutes)分钟")
+                                                    .font(.custom("MiSansLatin-Regular", size: 12))
+                                                    .foregroundColor(theme.primaryColor.opacity(0.9))
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -131,7 +150,11 @@ struct PracticeStatsView: View {
                     // Monthly Heatmap
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
-                            Text("MARCH 2025")
+                            // 获取当前月份名称
+                            let monthName = DateFormatter().monthSymbols[Calendar.current.component(.month, from: Date()) - 1]
+                            let year = Calendar.current.component(.year, from: Date())
+                            
+                            Text("\(monthName.uppercased()) \(year)")
                                 .font(.custom("MiSansLatin-Semibold", size: 20))
                                 .foregroundColor(theme.primaryColor)
                             
@@ -155,7 +178,7 @@ struct PracticeStatsView: View {
                         
                         // 将日期标签移出GeometryReader
                         HStack {
-                            ForEach(["M", "T", "W", "T", "F", "S", "S"], id: \.self) { day in
+                            ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { day in
                                 Text(day)
                                     .font(.custom("MiSansLatin-Regular", size: 12))
                                     .frame(maxWidth: .infinity)
@@ -165,17 +188,27 @@ struct PracticeStatsView: View {
                         
                         // 只让热力图在GeometryReader中
                         GeometryReader { geometry in
-                            // Calendar grid
-                            let cellWidth = (geometry.size.width - 24) / 7 // Accounting for spacing
-                            VStack(spacing: 8) {
-                                ForEach(0..<4, id: \.self) { row in
-                                    HStack(spacing: 4) {
-                                        ForEach(0..<7, id: \.self) { col in
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(monthlyData[row][col] == 0 ?
-                                                      theme.beatHightColor.opacity(0.2) :
-                                                      theme.beatHightColor.opacity(0.4 + (monthlyData[row][col] * 0.6)))
-                                                .frame(width: cellWidth, height: cellWidth)
+                            if monthlyData.isEmpty {
+                                Text("No data for this month")
+                                    .foregroundColor(theme.primaryColor.opacity(0.7))
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            } else {
+                                // Calendar grid
+                                let cellWidth = (geometry.size.width - 24) / 7 // Accounting for spacing
+                                VStack(spacing: 8) {
+                                    ForEach(0..<monthlyData.count, id: \.self) { row in
+                                        if row < monthlyData.count {
+                                            HStack(spacing: 4) {
+                                                ForEach(0..<7, id: \.self) { col in
+                                                    if col < monthlyData[row].count {
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .fill(monthlyData[row][col] == 0 ?
+                                                                  theme.beatHightColor.opacity(0.2) :
+                                                                  theme.beatHightColor.opacity(0.4 + (monthlyData[row][col] * 0.6)))
+                                                            .frame(width: cellWidth, height: cellWidth)
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -224,7 +257,7 @@ struct PracticeStatsView: View {
                                         .font(.custom("MiSansLatin-Regular", size: 12))
                                         .foregroundColor(theme.primaryColor.opacity(0.8))
                                     
-                                    Text("120-140 BPM")
+                                    Text(mostPracticedTempo)
                                         .font(.custom("MiSansLatin-Semibold", size: 18))
                                         .foregroundColor(theme.beatHightColor)
                                 }
@@ -248,7 +281,7 @@ struct PracticeStatsView: View {
                                         .font(.custom("MiSansLatin-Regular", size: 12))
                                         .foregroundColor(theme.primaryColor.opacity(0.8))
                                     
-                                    Text("1H 45M (MAR 15)")
+                                    Text(longestSession)
                                         .font(.custom("MiSansLatin-Semibold", size: 18))
                                         .foregroundColor(theme.beatHightColor)
                                 }
@@ -269,7 +302,6 @@ struct PracticeStatsView: View {
                     }
                     .padding(20)
                     .background(theme.backgroundColor)
-                    
                     .cornerRadius(16)
                     
                     // Share Stats Button
@@ -294,16 +326,43 @@ struct PracticeStatsView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
             }
-             .background(
+            .background(
                 Image("bg-noise")
                     .resizable(resizingMode: .tile)
                     .opacity(0.06)
                     .ignoresSafeArea()
             )
             .background(theme.primaryColor.ignoresSafeArea())
-            
+            .onAppear {
+                // 加载数据
+                loadPracticeData()
+            }
         }
-            
+    }
+    
+    // 加载练习数据
+    private func loadPracticeData() {
+        // 连续练习天数
+        dayStreak = practiceManager.getCurrentStreak()
+        
+        // 当月练习天数
+        daysThisMonth = practiceManager.getPracticeDaysInCurrentMonth()
+        
+        // 总练习时间
+        totalHours = practiceManager.getTotalPracticeHours()
+        
+        // 本周数据
+        weeklyData = practiceManager.getWeeklyPracticeData()
+        
+        // 月度热图数据
+        monthlyData = practiceManager.getMonthlyHeatmapData()
+        
+        // 最常练习的速度
+        mostPracticedTempo = practiceManager.getMostPracticedTempo()
+        
+        // 最长练习会话
+        let longestSessionInfo = practiceManager.getLongestSession()
+        longestSession = longestSessionInfo.date
     }
 }
 

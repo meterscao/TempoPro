@@ -52,6 +52,7 @@ class MetronomeState: ObservableObject {
     @Published private(set) var beatUnit: Int = 0
     @Published var beatStatuses: [BeatStatus] = []
     @Published private(set) var subdivisionType: SubdivisionType = .whole
+    @Published var practiceManager: CoreDataPracticeManager?
     
     private let audioEngine = MetronomeAudioEngine()
     private var metronomeTimer: MetronomeTimer?
@@ -60,6 +61,9 @@ class MetronomeState: ObservableObject {
     // 添加订阅管理
     private var cancellables = Set<AnyCancellable>()
     private let defaults = UserDefaults.standard
+    
+    // 在MetronomeState类中添加属性
+    
     
     init() {
         // 从UserDefaults加载初始数据
@@ -143,10 +147,15 @@ class MetronomeState: ObservableObject {
         }
     }
     
-    // 切换播放状态
+    // 修改togglePlayback方法
     func togglePlayback() {
         isPlaying.toggle()
         if isPlaying {
+            // 开始练习会话
+            let beatStatusString = getBeatStatusString()
+            practiceManager?.startPracticeSession(bpm: tempo, beatPattern: beatStatusString)
+            
+            // 原有代码...
             currentBeat = 0
             nextScheduledBeatTime = Date().timeIntervalSince1970 + (60.0 / Double(tempo))
             metronomeTimer?.start(
@@ -156,6 +165,26 @@ class MetronomeState: ObservableObject {
                 beatUnit: beatUnit
             )
         } else {
+            // 记录停止时间
+            let stopTime = Date()
+            
+            // 结束练习会话
+            practiceManager?.endPracticeSession()
+            
+            // 如果练习时间超过一定阈值（例如1分钟），显示完成视图
+            if let startTime = practiceManager?.sessionStartTime {
+                let duration = stopTime.timeIntervalSince(startTime)
+                if duration > 5 { // 大于一分钟才显示
+                    // 使用NotificationCenter发送通知，让ContentView处理显示
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("ShowPracticeCompletion"),
+                        object: nil,
+                        userInfo: ["duration": duration, "tempo": tempo]
+                    )
+                }
+            }
+            
+            // 原有代码...
             metronomeTimer?.stop()
             nextScheduledBeatTime = 0
         }
@@ -240,4 +269,17 @@ class MetronomeState: ObservableObject {
         subdivisionType = newType
         defaults.set(subdivisionType.rawValue, forKey: Keys.subdivisionType)
     }
-} 
+    
+    // 添加辅助方法，将beatStatuses转换为字符串形式
+    private func getBeatStatusString() -> String {
+        let statusInts = beatStatuses.map { status -> Int in
+            switch status {
+            case .strong: return 0
+            case .medium: return 1
+            case .normal: return 2
+            case .muted: return 3
+            }
+        }
+        return "\(beatsPerBar)/\(beatUnit): \(statusInts.map {String($0)}.joined(separator: ","))"
+    }
+}
