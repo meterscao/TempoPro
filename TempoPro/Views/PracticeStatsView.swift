@@ -67,6 +67,19 @@ struct PracticeStatsView: View {
                                 .foregroundColor(theme.primaryColor)
                             
                             Spacer()
+                            HStack(spacing: 16) {
+                                Button(action: {}) {
+                                    Image(systemName: "chevron.left")
+                                        .font(.custom("MiSansLatin-Regular", size: 16))
+                                        .foregroundColor(theme.primaryColor)
+                                }
+                                
+                                Button(action: {}) {
+                                    Image(systemName: "chevron.right")
+                                        .font(.custom("MiSansLatin-Regular", size: 16))
+                                        .foregroundColor(theme.primaryColor)
+                                }
+                            }
                         }
                         .padding(.bottom, 8)
                         
@@ -186,35 +199,67 @@ struct PracticeStatsView: View {
                             }
                         }
                         
-                        // 只让热力图在GeometryReader中
-                        GeometryReader { geometry in
-                            if monthlyData.isEmpty {
-                                Text("No data for this month")
-                                    .foregroundColor(theme.primaryColor.opacity(0.7))
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            } else {
-                                // Calendar grid
-                                let cellWidth = (geometry.size.width - 24) / 7 // Accounting for spacing
-                                VStack(spacing: 8) {
-                                    ForEach(0..<monthlyData.count, id: \.self) { row in
-                                        if row < monthlyData.count {
-                                            HStack(spacing: 4) {
-                                                ForEach(0..<7, id: \.self) { col in
-                                                    if col < monthlyData[row].count {
-                                                        RoundedRectangle(cornerRadius: 8)
-                                                            .fill(monthlyData[row][col] == 0 ?
-                                                                  theme.beatHightColor.opacity(0.2) :
-                                                                  theme.beatHightColor.opacity(0.4 + (monthlyData[row][col] * 0.6)))
-                                                            .frame(width: cellWidth, height: cellWidth)
+                        
+                        
+                        VStack{
+                            GeometryReader { geometry in
+                                if monthlyData.isEmpty {
+                                    Text("No data for this month")
+                                        .foregroundColor(theme.primaryColor.opacity(0.7))
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                } else {
+                                    // 计算每个单元格的尺寸，确保宽高相等
+                                    let spacing: CGFloat = 8 // 设置固定间距为8
+                                    
+                                    // 修正计算单元格大小的方式
+                                    // 一行有7个单元格，它们之间有6个间距，总共需要空间是 7*cellSize + 6*spacing
+                                    let availableWidth = geometry.size.width
+                                    let cellSize = (availableWidth - (spacing * 6)) / 7
+                                    
+                                    // 计算整个热力图需要的高度
+                                    let rowCount = monthlyData.count
+                                    let totalHeight = (cellSize * CGFloat(rowCount)) + (spacing * CGFloat(rowCount - 1))
+                                    
+                                    
+                                    // 使容器固定在计算出的高度
+                                    VStack(spacing: 0) {
+                                        // 热力图内容
+                                        VStack(spacing: spacing) {
+                                            ForEach(0..<monthlyData.count, id: \.self) { row in
+                                                HStack(spacing: spacing) {
+                                                    ForEach(0..<7, id: \.self) { col in
+                                                        if col < monthlyData[row].count {
+                                                            RoundedRectangle(cornerRadius: 8)
+                                                                .fill(monthlyData[row][col] == 0 ?
+                                                                    theme.beatHightColor.opacity(0.2) :
+                                                                    theme.beatHightColor.opacity(0.4 + (monthlyData[row][col] * 0.6)))
+                                                                .frame(width: cellSize, height: cellSize)
+                                                        } else {
+                                                            // 如果没有数据，显示空白区域保持布局
+                                                            Rectangle()
+                                                                .fill(Color.clear)
+                                                                .frame(width: cellSize, height: cellSize)
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
+                                        .frame(height: totalHeight)
+                                        .onAppear{
+                                            print("cellSize: \(cellSize), totalHeight: \(totalHeight)")
+                                        }
+                                        .frame(height: totalHeight)
+                                        Spacer(minLength: 0) // 让热力图保持在顶部
                                     }
                                 }
                             }
+                            .frame(height: nil) // 移除任何固定高度约束
+                            .fixedSize(horizontal: false, vertical: true) // 让视图采用其自然高度
+                            .onAppear {
+                                print("Debug: GeometryReader available size")
+                                
+                            }
                         }
-                        .frame(height: 170) // 调整为仅容纳热力图的高度
                         
                         // 将图例移到GeometryReader外部
                         HStack {
