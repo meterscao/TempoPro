@@ -247,7 +247,7 @@ class CoreDataPracticeManager: ObservableObject {
         let today = Date()
         
         // 获取本周的开始日期（默认周日为一周的第一天）
-        var weekdaySymbols = calendar.shortWeekdaySymbols
+        let weekdaySymbols = calendar.shortWeekdaySymbols
         let weekdayIndex = calendar.component(.weekday, from: today) - 1
         
         // 重新排列weekdaySymbols，使其从今天开始向前推7天

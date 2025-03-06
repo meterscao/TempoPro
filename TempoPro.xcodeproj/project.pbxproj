@@ -170,7 +170,6 @@
 			isa = PBXGroup;
 			children = (
 				F7F058A22D787BD5005DF482 /* CoreData */,
-				F750D23E2D78166A0022C405 /* Models */,
 				F7F538E42D75D59700A7395C /* Utils */,
 				3ADE94832D734B5B00731F83 /* Extensions */,
 				3AB64D5C2D73158800B056FE /* Info.plist */,
@@ -260,13 +259,6 @@
 				F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		F750D23E2D78166A0022C405 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		F7F058A22D787BD5005DF482 /* CoreData */ = {
