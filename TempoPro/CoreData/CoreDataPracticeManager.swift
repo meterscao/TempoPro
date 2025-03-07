@@ -243,56 +243,66 @@ class CoreDataPracticeManager: ObservableObject {
         }
     }
 
-    // 获取过去7天的练习数据
+    // 优化后的获取过去7天数据的方法
     func getWeeklyPracticeData() -> [(String, Double)] {
         let calendar = Calendar.current
         let today = Date()
         
-        // 获取本周的开始日期（默认周日为一周的第一天）
+        // 计算7天前的日期
+        guard let sevenDaysAgo = calendar.date(byAdding: .day, value: -6, to: today) else {
+            return []
+        }
+        
+        // 获取星期几的简称顺序
         let weekdaySymbols = calendar.shortWeekdaySymbols
         let weekdayIndex = calendar.component(.weekday, from: today) - 1
         
-        // 重新排列weekdaySymbols，使其从今天开始向前推7天
+        // 重新排列，并转换为普通数组
         let reorderedSymbols = Array(weekdaySymbols[weekdayIndex...] + weekdaySymbols[..<weekdayIndex])
         
-        // 获取过去7天的日期
+        // 一次性查询过去7天的数据
+        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
+        let startDateString = formatDate(sevenDaysAgo)
+        let endDateString = formatDate(calendar.date(byAdding: .day, value: 1, to: today)!)
+        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString <= %@", startDateString, endDateString)
+        
+        var practiceDictionary: [String: Double] = [:]
+        
+        do {
+            let practices = try viewContext.fetch(request)
+            for practice in practices {
+                if let dateString = practice.dateString {
+                    practiceDictionary[dateString] = Double(practice.totalDuration) / 60.0
+                }
+            }
+        } catch {
+            print("获取周练习数据失败: \(error.localizedDescription)")
+        }
+        
+        // 构建结果数组
         var result: [(String, Double)] = []
         for i in 0..<7 {
             if let date = calendar.date(byAdding: .day, value: -i, to: today) {
                 let dateString = formatDate(date)
-                let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-                request.predicate = NSPredicate(format: "dateString == %@", dateString)
-                
-                do {
-                    let practices = try viewContext.fetch(request)
-                    if let practice = practices.first {
-                        // 转换秒到分钟
-                        let minutes = Double(practice.totalDuration) / 60.0
-                        result.append((reorderedSymbols[6-i], minutes))
-                    } else {
-                        result.append((reorderedSymbols[6-i], 0))
-                    }
-                } catch {
-                    result.append((reorderedSymbols[6-i], 0))
-                }
+                let minutes = practiceDictionary[dateString] ?? 0
+                // 使用6-i来反向获取符号
+                result.append((reorderedSymbols[6-i], minutes))
             }
         }
         
-        return result.reversed() // 从最早到最近
+        return result  // 不需要再reversed()，因为已经通过索引调整了顺序
     }
 
-    // 获取当月热图数据
-    func getMonthlyHeatmapData() -> [[Double]] {
-        return getMonthlyHeatmapData(for: Date())
-    }
-    
-    // 获取指定月份的热图数据
+    // 优化后的获取月热图数据的方法  
     func getMonthlyHeatmapData(for date: Date) -> [[Double]] {
         let calendar = Calendar.current
         
-        // 获取指定月份的第一天
+        // 获取指定月份的第一天和最后一天
         let components = calendar.dateComponents([.year, .month], from: date)
-        let firstDayOfMonth = calendar.date(from: components)!
+        guard let firstDayOfMonth = calendar.date(from: components),
+              let nextMonth = calendar.date(byAdding: .month, value: 1, to: firstDayOfMonth) else {
+            return Array(repeating: Array(repeating: 0.0, count: 7), count: 6)
+        }
         
         // 获取当月的天数
         let range = calendar.range(of: .day, in: .month, for: firstDayOfMonth)!
@@ -303,7 +313,28 @@ class CoreDataPracticeManager: ObservableObject {
         // 调整为以周一为第一天（0-6，周一为0，周日为6）
         let adjustedFirstWeekday = (firstDayWeekday + 5) % 7
         
-        // 创建一个6x7的网格，表示一个月的日历视图
+        // 一次性查询整个月的数据
+        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
+        let startDateString = formatDate(firstDayOfMonth)
+        let endDateString = formatDate(nextMonth)
+        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString < %@", startDateString, endDateString)
+        
+        var practiceDictionary: [String: Double] = [:]
+        
+        do {
+            let practices = try viewContext.fetch(request)
+            for practice in practices {
+                if let dateString = practice.dateString {
+                    let totalMinutes = Double(practice.totalDuration) / 60.0
+                    let heatValue = min(1.0, totalMinutes / 120.0) // 假设2小时是100%热度
+                    practiceDictionary[dateString] = heatValue
+                }
+            }
+        } catch {
+            print("获取月练习数据失败: \(error.localizedDescription)")
+        }
+        
+        // 创建热图数据
         var heatmapData = Array(repeating: Array(repeating: 0.0, count: 7), count: 6)
         
         // 填充数据
@@ -311,29 +342,16 @@ class CoreDataPracticeManager: ObservableObject {
             let dayComponents = DateComponents(year: components.year, month: components.month, day: day)
             if let dayDate = calendar.date(from: dayComponents) {
                 let dateString = formatDate(dayDate)
-                // 修正行列计算，使周一为每周第一天
+                
+                // 计算行列
                 let row = (day - 1 + adjustedFirstWeekday) / 7
                 let col = (day - 1 + adjustedFirstWeekday) % 7
                 
-                // 查询该日期的练习记录
-                let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-                request.predicate = NSPredicate(format: "dateString == %@", dateString)
-                
-                do {
-                    let practices = try viewContext.fetch(request)
-                    if let practice = practices.first {
-                        // 计算热度值：基于总时长和会话数
-                        let totalMinutes = Double(practice.totalDuration) / 60.0
-                        let heatValue = min(1.0, totalMinutes / 120.0) // 假设2小时是100%热度
-                        heatmapData[row][col] = heatValue
-                    }
-                } catch {
-                    print("获取日期\(dateString)的练习记录失败")
-                }
+                // 从字典获取对应日期的热度值
+                heatmapData[row][col] = practiceDictionary[dateString] ?? 0.0
             }
         }
-        // print heatmapData
-        print("heatmapData: \(heatmapData)")
+        
         return heatmapData
     }
 
@@ -403,7 +421,7 @@ class CoreDataPracticeManager: ObservableObject {
         }
     }
 
-    // 获取当前星期（从周一开始）的7天练习数据
+    // 优化后的获取当前星期数据的方法
     func getCurrentWeekPracticeData() -> [(String, Double)] {
         // 创建以周一为第一天的日历
         var calendar = Calendar(identifier: .gregorian)
@@ -411,55 +429,60 @@ class CoreDataPracticeManager: ObservableObject {
         
         let today = Date()
         
-        // 计算本周开始（周一）的日期
+        // 计算本周的周一日期
         let weekdayComponents = calendar.dateComponents([.weekday], from: today)
         let weekdayOrdinal = weekdayComponents.weekday!
-        
-        // 计算到本周一的偏移量
         let daysToSubtract = weekdayOrdinal - calendar.firstWeekday
         guard let monday = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) else {
             return []
         }
         
-        // 获取星期几的本地化短名称
+        // 获取星期几的本地化短名称，以周一为第一天
         let weekdaySymbols = calendar.shortWeekdaySymbols
-        // 重新排列，使周一为第一天（索引0为周一）
         let mondayFirstSymbols = Array(weekdaySymbols[calendar.firstWeekday-1..<weekdaySymbols.count] + weekdaySymbols[0..<calendar.firstWeekday-1])
         
-        var result: [(String, Double)] = []
+        // 计算一周的结束日期（周日）
+        guard let endDate = calendar.date(byAdding: .day, value: 7, to: monday) else {
+            return []
+        }
         
-        // 从周一开始，获取一周的数据
-        for i in 0..<7 {
-            guard let date = calendar.date(byAdding: .day, value: i, to: monday) else {
-                continue
-            }
+        // 一次性查询整周的数据
+        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
+        let startDateString = formatDate(monday)
+        let endDateString = formatDate(endDate)
+        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString < %@", startDateString, endDateString)
+        
+        var practiceDictionary: [String: Double] = [:]
+        
+        do {
+            let practices = try viewContext.fetch(request)
             
-            // 检查这一天是否超过今天
-            if date > today {
-                // 超过今天的日期用空数据填充
-                result.append((mondayFirstSymbols[i], 0))
-                continue
-            }
-            
-            let dateString = formatDate(date)
-            let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-            request.predicate = NSPredicate(format: "dateString == %@", dateString)
-            
-            do {
-                let practices = try viewContext.fetch(request)
-                if let practice = practices.first {
-                    // 转换秒到分钟
-                    let minutes = Double(practice.totalDuration) / 60.0
-                    result.append((mondayFirstSymbols[i], minutes))
-                } else {
-                    result.append((mondayFirstSymbols[i], 0))
+            // 将查询结果存入字典，便于快速查找
+            for practice in practices {
+                if let dateString = practice.dateString {
+                    practiceDictionary[dateString] = Double(practice.totalDuration) / 60.0
                 }
-            } catch {
-                print("获取\(dateString)练习数据失败: \(error.localizedDescription)")
-                result.append((mondayFirstSymbols[i], 0))
+            }
+        } catch {
+            print("获取周练习数据失败: \(error.localizedDescription)")
+        }
+        
+        // 构建结果数组
+        var result: [(String, Double)] = []
+        for i in 0..<7 {
+            if let date = calendar.date(byAdding: .day, value: i, to: monday) {
+                // 检查是否超过今天
+                if date > today {
+                    result.append((mondayFirstSymbols[i], 0))
+                } else {
+                    let dateString = formatDate(date)
+                    let minutes = practiceDictionary[dateString] ?? 0
+                    result.append((mondayFirstSymbols[i], minutes))
+                }
             }
         }
         
         return result
     }
 }
+
