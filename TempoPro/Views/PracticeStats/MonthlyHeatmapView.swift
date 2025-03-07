@@ -50,6 +50,7 @@ private struct HeatmapRowView: View {
                             .font(.system(size: max(10, cellSize * 0.25)))
                             .foregroundColor(theme.primaryColor.opacity(0.7))
                             .position(x: cellSize * 0.25, y: cellSize * 0.25) // 放置在左上角
+                            .hidden()
                     }
                 } else {
                     // 不可见的日期显示透明方块

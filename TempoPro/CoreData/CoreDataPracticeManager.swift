@@ -17,6 +17,9 @@ class CoreDataPracticeManager: ObservableObject {
     @Published var currentSession: PracticeSession?
     @Published var sessionStartTime: Date?
     
+    // 生成测试数据标志
+    private let testDataGeneratedKey = "TempoPro.testDataGenerated"
+    
     init(context: NSManagedObjectContext) {
         self.viewContext = context
     }
@@ -483,6 +486,134 @@ class CoreDataPracticeManager: ObservableObject {
         }
         
         return result
+    }
+
+    // 生成半年随机练习数据
+    func generateRandomHistoricalData() {
+        // 检查是否已经生成过测试数据
+        if UserDefaults.standard.bool(forKey: testDataGeneratedKey) {
+            print("已经生成过测试数据，跳过")
+            return
+        }
+        
+        print("开始生成随机历史练习数据...")
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // 计算半年前的日期
+        guard let sixMonthsAgo = calendar.date(byAdding: .month, value: -6, to: today) else {
+            return
+        }
+        
+        // 常用练习速度
+        let commonTempos = [60, 70, 80, 90, 100, 120, 140, 160]
+        
+        // 设置随机种子
+        var dateIterator = sixMonthsAgo
+        var practiceCount = 0
+        
+        // 生成规律性练习模式
+        // - 周一、周三、周五晚上固定练习
+        // - 周末早上或下午可能练习
+        // - 随机跳过一些天
+        
+        while dateIterator <= today {
+            // 获取星期几
+            let weekday = calendar.component(.weekday, from: dateIterator)
+            let hour = calendar.component(.hour, from: dateIterator)
+            
+            // 决定今天是否有练习
+            var shouldPractice = false
+            var practiceCount = 1 // 当天练习次数
+            
+            // 工作日模式：周一、周三、周五晚上练习
+            if (weekday == 2 || weekday == 4 || weekday == 6) && hour >= 18 {
+                shouldPractice = true
+                // 80%概率练习
+                shouldPractice = Double.random(in: 0...1) < 0.8
+            }
+            
+            // 周末模式：周六、周日白天可能练习
+            if (weekday == 7 || weekday == 1) && hour >= 10 && hour <= 18 {
+                shouldPractice = Double.random(in: 0...1) < 0.6
+                // 周末可能多练几次
+                if shouldPractice {
+                    practiceCount = Int.random(in: 1...3)
+                }
+            }
+            
+            // 添加一些随机性
+            if !shouldPractice && Double.random(in: 0...1) < 0.15 {
+                shouldPractice = true
+            }
+            
+            // 生成练习数据
+            if shouldPractice {
+                // 记录当前日期字符串
+                let dateString = formatDate(dateIterator)
+                
+                for _ in 1...practiceCount {
+                    // 生成一个随机练习会话
+                    let session = PracticeSession(context: viewContext)
+                    session.id = UUID()
+                    session.dateString = dateString
+                    
+                    // 随机挑选一个常用速度，偶尔有变化
+                    let tempoIndex = Int.random(in: 0..<commonTempos.count)
+                    let baseTempo = commonTempos[tempoIndex]
+                    let finalTempo = Double.random(in: 0...1) < 0.8 ? 
+                        baseTempo : 
+                        baseTempo + Int.random(in: -5...5)
+                    
+                    session.tempo = Int16(finalTempo)
+                    
+                    // 生成合理的练习时长 (10分钟到1小时)
+                    let durationMinutes = Double.random(in: 10...60)
+                    session.duration = Int32(durationMinutes * 60)
+                    
+                    // 设置一天内的开始时间
+                    let startHour = Double.random(in: 9...21)
+                    let startMinute = Double.random(in: 0...59) / 60.0
+                    session.startTimeOfDay = startHour + startMinute
+                    
+                    // 更新或创建当日练习摘要
+                    updateDailyPracticeSummary(for: session)
+                    
+                    practiceCount += 1
+                }
+            }
+            
+            // 移动到下一个时段（最小粒度为3小时）
+            dateIterator = calendar.date(byAdding: .hour, value: 3, to: dateIterator) ?? today
+        }
+        
+        // 保存生成的数据
+        saveContext()
+        print("随机历史数据生成完成，共生成 \(practiceCount) 条练习记录")
+        
+        // 标记已生成
+        UserDefaults.standard.set(true, forKey: testDataGeneratedKey)
+    }
+
+    // 重置测试数据（如需重新生成）
+    func resetTestData() {
+        UserDefaults.standard.removeObject(forKey: testDataGeneratedKey)
+        
+        // 删除所有已有练习记录
+        let practiceSessionRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PracticeSession")
+        let dailyPracticeRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DailyPractice")
+        
+        let practiceSessionDeleteRequest = NSBatchDeleteRequest(fetchRequest: practiceSessionRequest)
+        let dailyPracticeDeleteRequest = NSBatchDeleteRequest(fetchRequest: dailyPracticeRequest)
+        
+        do {
+            try viewContext.execute(practiceSessionDeleteRequest)
+            try viewContext.execute(dailyPracticeDeleteRequest)
+            try viewContext.save()
+            print("所有测试数据已重置")
+        } catch {
+            print("重置测试数据失败: \(error.localizedDescription)")
+        }
     }
 }
 

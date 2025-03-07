@@ -34,6 +34,8 @@ struct TempoProApp: App {
         // 初始化CoreDataPracticeManager
         let practiceManager = CoreDataPracticeManager(context: PersistenceController.shared.viewContext)
         self._practiceManager = StateObject(wrappedValue: practiceManager)
+
+        practiceManager.generateRandomHistoricalData()
         
         // 创建示例数据（如果需要）
         manager.createSampleDataIfNeeded()
