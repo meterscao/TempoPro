@@ -271,7 +271,7 @@ struct PracticeStatsView: View {
         totalHours = practiceManager.getTotalPracticeHours()
         
         // 本周数据
-        weeklyData = practiceManager.getWeeklyPracticeData()
+        weeklyData = practiceManager.getCurrentWeekPracticeData()
         
         // 最常练习的速度
         mostPracticedTempo = practiceManager.getMostPracticedTempo()

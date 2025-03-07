@@ -243,7 +243,7 @@ class CoreDataPracticeManager: ObservableObject {
         }
     }
 
-    // 获取本周练习数据
+    // 获取过去7天的练习数据
     func getWeeklyPracticeData() -> [(String, Double)] {
         let calendar = Calendar.current
         let today = Date()
@@ -401,5 +401,65 @@ class CoreDataPracticeManager: ObservableObject {
             print("获取最长会话失败: \(error.localizedDescription)")
             return (0, "无记录")
         }
+    }
+
+    // 获取当前星期（从周一开始）的7天练习数据
+    func getCurrentWeekPracticeData() -> [(String, Double)] {
+        // 创建以周一为第一天的日历
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.firstWeekday = 2  // 设置周一为一周的第一天
+        
+        let today = Date()
+        
+        // 计算本周开始（周一）的日期
+        let weekdayComponents = calendar.dateComponents([.weekday], from: today)
+        let weekdayOrdinal = weekdayComponents.weekday!
+        
+        // 计算到本周一的偏移量
+        let daysToSubtract = weekdayOrdinal - calendar.firstWeekday
+        guard let monday = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) else {
+            return []
+        }
+        
+        // 获取星期几的本地化短名称
+        let weekdaySymbols = calendar.shortWeekdaySymbols
+        // 重新排列，使周一为第一天（索引0为周一）
+        let mondayFirstSymbols = Array(weekdaySymbols[calendar.firstWeekday-1..<weekdaySymbols.count] + weekdaySymbols[0..<calendar.firstWeekday-1])
+        
+        var result: [(String, Double)] = []
+        
+        // 从周一开始，获取一周的数据
+        for i in 0..<7 {
+            guard let date = calendar.date(byAdding: .day, value: i, to: monday) else {
+                continue
+            }
+            
+            // 检查这一天是否超过今天
+            if date > today {
+                // 超过今天的日期用空数据填充
+                result.append((mondayFirstSymbols[i], 0))
+                continue
+            }
+            
+            let dateString = formatDate(date)
+            let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
+            request.predicate = NSPredicate(format: "dateString == %@", dateString)
+            
+            do {
+                let practices = try viewContext.fetch(request)
+                if let practice = practices.first {
+                    // 转换秒到分钟
+                    let minutes = Double(practice.totalDuration) / 60.0
+                    result.append((mondayFirstSymbols[i], minutes))
+                } else {
+                    result.append((mondayFirstSymbols[i], 0))
+                }
+            } catch {
+                print("获取\(dateString)练习数据失败: \(error.localizedDescription)")
+                result.append((mondayFirstSymbols[i], 0))
+            }
+        }
+        
+        return result
     }
 }
