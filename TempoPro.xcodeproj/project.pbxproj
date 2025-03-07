@@ -246,8 +246,7 @@
 		F71AF6B72D71716E00ADBC17 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */,
-				F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */,
+				F75EC5652D7ABE86001CBAA4 /* PracticeStats */,
 				F7F058BD2D794414005DF482 /* Playlist */,
 				F71AF6B82D71A5FB00ADBC17 /* BPMRulerView.swift */,
 				3A9C88A12D6F728A004CFD88 /* ContentView.swift */,
@@ -259,6 +258,15 @@
 				F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		F75EC5652D7ABE86001CBAA4 /* PracticeStats */ = {
+			isa = PBXGroup;
+			children = (
+				3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */,
+				F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */,
+			);
+			path = PracticeStats;
 			sourceTree = "<group>";
 		};
 		F7F058A22D787BD5005DF482 /* CoreData */ = {
