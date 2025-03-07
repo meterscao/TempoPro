@@ -31,6 +31,7 @@
 		F750D23B2D7816360022C405 /* PlaylistDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F750D2392D7816360022C405 /* PlaylistDetailView.swift */; };
 		F750D23C2D7816360022C405 /* PlaylistListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F750D23A2D7816360022C405 /* PlaylistListView.swift */; };
 		F75EC5672D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75EC5662D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift */; };
+		F792941C2D7B12B000A2D91C /* WeeklyStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F792941B2D7B12B000A2D91C /* WeeklyStatsView.swift */; };
 		F7A3E73D2D79C378008869AB /* PracticeStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */; };
 		F7F058992D787651005DF482 /* TempoProModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F7F058972D787651005DF482 /* TempoProModel.xcdatamodeld */; };
 		F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F0589B2D787728005DF482 /* PersistenceController.swift */; };
@@ -100,6 +101,7 @@
 		F750D2392D7816360022C405 /* PlaylistDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDetailView.swift; sourceTree = "<group>"; };
 		F750D23A2D7816360022C405 /* PlaylistListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistListView.swift; sourceTree = "<group>"; };
 		F75EC5662D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyHeatmapView.swift; sourceTree = "<group>"; };
+		F792941B2D7B12B000A2D91C /* WeeklyStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyStatsView.swift; sourceTree = "<group>"; };
 		F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeStatsView.swift; sourceTree = "<group>"; };
 		F7F058982D787651005DF482 /* TempoProModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TempoProModel.xcdatamodel; sourceTree = "<group>"; };
 		F7F0589B2D787728005DF482 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 		F75EC5652D7ABE86001CBAA4 /* PracticeStats */ = {
 			isa = PBXGroup;
 			children = (
+				F792941B2D7B12B000A2D91C /* WeeklyStatsView.swift */,
 				F75EC5662D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift */,
 				3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */,
 				F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */,
@@ -502,6 +505,7 @@
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
 				F75EC5672D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift in Sources */,
 				F7F058C32D794466005DF482 /* SongRow.swift in Sources */,
+				F792941C2D7B12B000A2D91C /* WeeklyStatsView.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
