@@ -38,7 +38,7 @@ struct WeeklyStatsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("本周练习")
+                Text(getWeekRangeText())
                     .font(.custom("MiSansLatin-Semibold", size: 20))
                     .foregroundColor(theme.primaryColor)
                 
@@ -65,10 +65,6 @@ struct WeeklyStatsView: View {
             }
             .padding(.bottom, 8)
             
-            // 周日期范围显示
-            Text(getWeekRangeText())
-                .font(.custom("MiSansLatin-Regular", size: 14))
-                .foregroundColor(theme.primaryColor.opacity(0.8))
             
             // Bar chart - expanding to fill width
             GeometryReader { geometry in
