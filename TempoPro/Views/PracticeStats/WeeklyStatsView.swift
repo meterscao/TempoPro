@@ -12,26 +12,51 @@ struct WeeklyStatsView: View {
     @EnvironmentObject var practiceManager: CoreDataPracticeManager
     
     // 状态变量
-    @State private var weeklyData: [(String, Double)] = []
-    @State private var weeklyDates: [String] = []  // 新增：存储对应的日期字符串
+    @State private var weeklyData: [PracticeDataPoint] = []
     @State private var selectedWeekdayIndex: Int? = nil
+    @State private var currentWeekStartDate: Date = Date()
+    
+    // 获取格式化的星期几和日期
+    private var formattedWeekData: [(weekday: String, date: String, dataPoint: PracticeDataPoint)] {
+        let calendar = Calendar.current
+        let weekdaySymbols = calendar.shortWeekdaySymbols
+        let mondayFirstSymbols = Array(weekdaySymbols[1..<weekdaySymbols.count] + [weekdaySymbols[0]])
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "zh_CN")
+        dateFormatter.dateFormat = "M月d日"
+        
+        return weeklyData.enumerated().map { index, dataPoint in
+            return (
+                weekday: mondayFirstSymbols[index],
+                date: dateFormatter.string(from: dataPoint.date),
+                dataPoint: dataPoint
+            )
+        }
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("THIS WEEK")
+                Text("本周练习")
                     .font(.custom("MiSansLatin-Semibold", size: 20))
                     .foregroundColor(theme.primaryColor)
                 
                 Spacer()
                 HStack(spacing: 16) {
-                    Button(action: {}) {
+                    Button(action: {
+                        // 显示上一周
+                        moveWeek(byDays: -7)
+                    }) {
                         Image(systemName: "chevron.left")
                             .font(.custom("MiSansLatin-Regular", size: 16))
                             .foregroundColor(theme.primaryColor)
                     }
                     
-                    Button(action: {}) {
+                    Button(action: {
+                        // 显示下一周
+                        moveWeek(byDays: 7)
+                    }) {
                         Image(systemName: "chevron.right")
                             .font(.custom("MiSansLatin-Regular", size: 16))
                             .foregroundColor(theme.primaryColor)
@@ -40,34 +65,38 @@ struct WeeklyStatsView: View {
             }
             .padding(.bottom, 8)
             
+            // 周日期范围显示
+            Text(getWeekRangeText())
+                .font(.custom("MiSansLatin-Regular", size: 14))
+                .foregroundColor(theme.primaryColor.opacity(0.8))
+            
             // Bar chart - expanding to fill width
             GeometryReader { geometry in
                 VStack(spacing: 16) {
                     if weeklyData.isEmpty {
-                        Text("No practice data for this week")
+                        Text("本周无练习数据")
                             .foregroundColor(theme.primaryColor.opacity(0.7))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         HStack(alignment: .bottom, spacing: 0) {
-                            ForEach(0..<weeklyData.count, id: \.self) { index in
-                                let day = weeklyData[index]
-                                let barWidth = (geometry.size.width - CGFloat(weeklyData.count - 1) * 8) / CGFloat(weeklyData.count)
+                            ForEach(0..<formattedWeekData.count, id: \.self) { index in
+                                let item = formattedWeekData[index]
+                                let dataPoint = item.dataPoint
+                                let barWidth = (geometry.size.width - CGFloat(formattedWeekData.count - 1) * 8) / CGFloat(formattedWeekData.count)
                                 
                                 // 计算合理的高度值，使图表更美观
                                 let maxHeight: CGFloat = 120
-                                let maxMinutes = weeklyData.map { $0.1 }.max() ?? 1
-                                let height = max(15, CGFloat(day.1) / CGFloat(maxMinutes) * maxHeight)
+                                let maxMinutes = weeklyData.map { $0.duration }.max() ?? 1
+                                let height = max(15, CGFloat(dataPoint.duration) / CGFloat(maxMinutes) * maxHeight)
                                 
-                                // 根据选中状态设置颜色
+                                // 根据选中状态和禁用状态设置颜色
                                 let isSelected = selectedWeekdayIndex == index
+                                let isDisabled = dataPoint.disabled
                                 let barColor = isSelected ? theme.primaryColor : (
-                                    day.1 > 0 ? 
-                                    theme.beatBarColor : 
+                                    dataPoint.duration > 0 ? 
+                                    (isDisabled ? theme.beatBarColor.opacity(0.3) : theme.beatBarColor) : 
                                     theme.beatBarColor.opacity(0.1)
                                 )
-                                
-                                
-                                  
                                 
                                 VStack(spacing: 8) {
                                     RoundedRectangle(cornerRadius: 8)
@@ -79,22 +108,23 @@ struct WeeklyStatsView: View {
                                                 .stroke(isSelected ? theme.primaryColor : Color.clear, lineWidth: 2)
                                         )
                                     
-                                    Text(day.0)
+                                    Text(item.weekday)
                                         .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(isSelected ? theme.primaryColor : theme.beatBarColor)
+                                        .foregroundColor(isSelected ? theme.primaryColor : 
+                                                        (isDisabled ? theme.beatBarColor.opacity(0.5) : theme.beatBarColor))
                                 }
                                 .onTapGesture {
-                                    // 点击处理逻辑
-                                    if selectedWeekdayIndex == index {
-                                        // 再次点击取消选择
-                                        selectedWeekdayIndex = nil
-                                    } else {
-                                        // 选中当前日期
-                                        selectedWeekdayIndex = index
+                                    // 仅当不是禁用状态时才可点击
+                                    if !dataPoint.disabled {
+                                        if selectedWeekdayIndex == index {
+                                            selectedWeekdayIndex = nil
+                                        } else {
+                                            selectedWeekdayIndex = index
+                                        }
                                     }
                                 }
                                 
-                                if index < weeklyData.count - 1 {
+                                if index < formattedWeekData.count - 1 {
                                     Spacer()
                                 }
                             }
@@ -103,20 +133,29 @@ struct WeeklyStatsView: View {
                         
                         // 统计信息展示 - 根据选中状态变化
                         HStack {
-                            if let selectedIndex = selectedWeekdayIndex, selectedIndex < weeklyData.count {
+                            if let selectedIndex = selectedWeekdayIndex, selectedIndex < formattedWeekData.count {
                                 // 显示选中日期的信息
-                                let selectedDay = weeklyData[selectedIndex]
+                                let selectedItem = formattedWeekData[selectedIndex]
+                                let dataPoint = selectedItem.dataPoint
                                 
                                 // 显示日期而非星期几
-                                Text(weeklyDates[selectedIndex])
+                                Text(selectedItem.date)
                                     .font(.custom("MiSansLatin-Regular", size: 12))
                                     .foregroundColor(theme.primaryColor)
                                 
                                 Spacer()
                                 
+                                // 显示会话数量
+                                if dataPoint.sessionCount > 0 {
+                                    Text("\(dataPoint.sessionCount)次练习")
+                                        .font(.custom("MiSansLatin-Regular", size: 12))
+                                        .foregroundColor(theme.primaryColor.opacity(0.8))
+                                        .padding(.trailing, 8)
+                                }
+                                
                                 // 格式化练习时间
-                                if selectedDay.1 > 0 {
-                                    Text(practiceManager.formatDuration(minutes: selectedDay.1))
+                                if dataPoint.duration > 0 {
+                                    Text(practiceManager.formatDuration(minutes: dataPoint.duration))
                                         .font(.custom("MiSansLatin-Regular", size: 12))
                                         .foregroundColor(theme.primaryColor)
                                 } else {
@@ -127,9 +166,9 @@ struct WeeklyStatsView: View {
                             } else {
                                 // 显示周统计信息
                                 // 计算有练习记录的天数
-                                let practiceDays = weeklyData.filter { $0.1 > 0 }.count
+                                let practiceDays = weeklyData.filter { !$0.isEmpty && !$0.disabled }.count
                                 // 计算总练习时间
-                                let totalMinutes = weeklyData.map { $0.1 }.reduce(0, +)
+                                let totalMinutes = weeklyData.filter { !$0.disabled }.map { $0.duration }.reduce(0, +)
                                 
                                 // 显示有练习的天数
                                 Text("\(practiceDays)天练习")
@@ -161,47 +200,64 @@ struct WeeklyStatsView: View {
         .background(theme.backgroundColor)
         .cornerRadius(16)
         .onAppear {
-            // 加载周视图数据
+            // 首先计算当前周的周一日期
+            calculateCurrentWeekMonday()
+            // 然后加载数据
             loadWeeklyData()
         }
     }
     
-    // 加载周视图数据
-    private func loadWeeklyData() {
-        // 获取本周数据
-        weeklyData = practiceManager.getCurrentWeekPracticeData()
+    // 计算当前日期所在周的周一
+    private func calculateCurrentWeekMonday() {
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2 // 设置周一为每周第一天
         
-        // 获取对应的日期字符串 (如: "3月7日"，"3月8日"等)
-        weeklyDates = getFormattedDates()
+        let today = Date()
+        let weekdayComponent = calendar.component(.weekday, from: today)
+        // 计算需要减去的天数以获得周一
+        let daysToSubtract = (weekdayComponent + 5) % 7 // 把周几转换为距离周一的天数
         
-        // 重置选中状态
-        selectedWeekdayIndex = nil
+        if let monday = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) {
+            currentWeekStartDate = monday
+        }
     }
     
-    // 获取格式化的日期字符串
-    private func getFormattedDates() -> [String] {
+    // 获取当前显示周的范围文本 (如: "3月7日-3月13日")
+    private func getWeekRangeText() -> String {
         let calendar = Calendar.current
-        let today = Date()
-        let weekday = calendar.component(.weekday, from: today)
-        let daysToSubtract = weekday - 1 // 从周日开始算
-        
-        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) else {
-            return Array(repeating: "", count: 7)
+        guard let endDate = calendar.date(byAdding: .day, value: 6, to: currentWeekStartDate) else {
+            return ""
         }
         
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "zh_CN")
         dateFormatter.dateFormat = "M月d日"
         
-        var dates: [String] = []
-        for i in 0..<7 {
-            if let date = calendar.date(byAdding: .day, value: i, to: startOfWeek) {
-                dates.append(dateFormatter.string(from: date))
-            } else {
-                dates.append("")
-            }
+        return "\(dateFormatter.string(from: currentWeekStartDate)) - \(dateFormatter.string(from: endDate))"
+    }
+    
+    // 移动周数据显示
+    private func moveWeek(byDays days: Int) {
+        let calendar = Calendar.current
+        if let newDate = calendar.date(byAdding: .day, value: days, to: currentWeekStartDate) {
+            currentWeekStartDate = newDate
+            loadWeeklyData()
+        }
+    }
+    
+    // 加载周视图数据
+    private func loadWeeklyData() {
+        // 获取当前显示周的结束日期（周日）
+        let calendar = Calendar.current
+        guard let endDate = calendar.date(byAdding: .day, value: 6, to: currentWeekStartDate) else {
+            weeklyData = []
+            return
         }
         
-        return dates
+        // 使用新的数据获取方法获取一周的数据
+        weeklyData = practiceManager.getPracticeDataForDateRange(from: currentWeekStartDate, to: endDate)
+        
+        // 重置选中状态
+        selectedWeekdayIndex = nil
     }
 }

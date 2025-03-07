@@ -10,6 +10,28 @@ import CoreData
 import SwiftUI
 import Combine
 
+// 将结构体定义移到类的外部
+public struct PracticeDataPoint {
+    let date: Date
+    let dateString: String
+    let duration: Double // 以分钟为单位
+    let sessionCount: Int
+    let maxSessionDuration: Double // 最长单次练习时长（分钟）
+    let isEmpty: Bool // 标识是否为无数据的填充项
+    let disabled: Bool // 标识是否在有效日期范围外（灰显）
+    
+    // 添加一个初始化方法，便于创建实例
+    init(date: Date, dateString: String, duration: Double, sessionCount: Int, maxSessionDuration: Double, isEmpty: Bool, disabled: Bool = false) {
+        self.date = date
+        self.dateString = dateString
+        self.duration = duration
+        self.sessionCount = sessionCount
+        self.maxSessionDuration = maxSessionDuration
+        self.isEmpty = isEmpty
+        self.disabled = disabled
+    }
+}
+
 class CoreDataPracticeManager: ObservableObject {
     private let viewContext: NSManagedObjectContext
     
@@ -25,7 +47,7 @@ class CoreDataPracticeManager: ObservableObject {
     }
     
     // 开始新的练习会话
-    func startPracticeSession(bpm: Int, beatPattern: String) {
+    func startPracticeSession(bpm: Int) {
         // 结束任何已存在的会话
         if currentSession != nil {
             endPracticeSession()
@@ -246,55 +268,6 @@ class CoreDataPracticeManager: ObservableObject {
         }
     }
 
-    // 优化后的获取过去7天数据的方法
-    func getWeeklyPracticeData() -> [(String, Double)] {
-        let calendar = Calendar.current
-        let today = Date()
-        
-        // 计算7天前的日期
-        guard let sevenDaysAgo = calendar.date(byAdding: .day, value: -6, to: today) else {
-            return []
-        }
-        
-        // 获取星期几的简称顺序
-        let weekdaySymbols = calendar.shortWeekdaySymbols
-        let weekdayIndex = calendar.component(.weekday, from: today) - 1
-        
-        // 重新排列，并转换为普通数组
-        let reorderedSymbols = Array(weekdaySymbols[weekdayIndex...] + weekdaySymbols[..<weekdayIndex])
-        
-        // 一次性查询过去7天的数据
-        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-        let startDateString = formatDate(sevenDaysAgo)
-        let endDateString = formatDate(calendar.date(byAdding: .day, value: 1, to: today)!)
-        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString <= %@", startDateString, endDateString)
-        
-        var practiceDictionary: [String: Double] = [:]
-        
-        do {
-            let practices = try viewContext.fetch(request)
-            for practice in practices {
-                if let dateString = practice.dateString {
-                    practiceDictionary[dateString] = Double(practice.totalDuration) / 60.0
-                }
-            }
-        } catch {
-            print("获取周练习数据失败: \(error.localizedDescription)")
-        }
-        
-        // 构建结果数组
-        var result: [(String, Double)] = []
-        for i in 0..<7 {
-            if let date = calendar.date(byAdding: .day, value: -i, to: today) {
-                let dateString = formatDate(date)
-                let minutes = practiceDictionary[dateString] ?? 0
-                // 使用6-i来反向获取符号
-                result.append((reorderedSymbols[6-i], minutes))
-            }
-        }
-        
-        return result  // 不需要再reversed()，因为已经通过索引调整了顺序
-    }
 
     // 优化后的获取月热图数据的方法  
     func getMonthlyHeatmapData(for date: Date) -> [[Double]] {
@@ -711,6 +684,233 @@ class CoreDataPracticeManager: ObservableObject {
             let mins = Int(minutes) % 60
             return "\(hours)小时\(mins)分钟"
         }
+    }
+
+    // 实现 funA 函数，获取指定日期范围的练习数据
+    func getPracticeDataForDateRange(from startDate: Date, to endDate: Date) -> [PracticeDataPoint] {
+        // 1. 确保日期范围有效
+        guard startDate <= endDate else {
+            print("无效的日期范围：开始日期不能晚于结束日期")
+            return []
+        }
+        
+        // 2. 创建日期格式化器用于日期转字符串
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        // 3. 获取起始日期和结束日期的字符串表示
+        let startDateString = dateFormatter.string(from: startDate)
+        let endDateString = dateFormatter.string(from: endDate)
+        
+        // 4. 准备查询条件
+        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
+        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString <= %@", startDateString, endDateString)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \DailyPractice.dateString, ascending: true)]
+        
+        // 5. 准备结果数组
+        var practiceData: [PracticeDataPoint] = []
+        
+        // 6. 查询数据库
+        do {
+            // 获取查询结果
+            let practices = try viewContext.fetch(request)
+            
+            // 将结果转换为字典，方便按日期查找
+            var practiceByDate: [String: DailyPractice] = [:]
+            for practice in practices {
+                if let dateString = practice.dateString {
+                    practiceByDate[dateString] = practice
+                }
+            }
+            
+            // 7. 生成连续日期，并填充数据
+            let calendar = Calendar.current
+            var currentDate = startDate
+            
+            // 为每一天创建数据点
+            while currentDate <= endDate {
+                let dateString = dateFormatter.string(from: currentDate)
+                
+                if let practice = practiceByDate[dateString] {
+                    // 有数据的日期
+                    let dataPoint = PracticeDataPoint(
+                        date: currentDate,
+                        dateString: dateString,
+                        duration: Double(practice.totalDuration) / 60.0, // 转换为分钟
+                        sessionCount: Int(practice.sessionCount),
+                        maxSessionDuration: Double(practice.maxSessionDuration) / 60.0, // 转换为分钟
+                        isEmpty: false,
+                        disabled: false
+                    )
+                    practiceData.append(dataPoint)
+                } else {
+                    // 无数据的日期，填充空值
+                    let emptyDataPoint = PracticeDataPoint(
+                        date: currentDate,
+                        dateString: dateString,
+                        duration: 0,
+                        sessionCount: 0,
+                        maxSessionDuration: 0,
+                        isEmpty: true,
+                        disabled: false
+                    )
+                    practiceData.append(emptyDataPoint)
+                }
+                
+                // 移动到下一天
+                guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else {
+                    break
+                }
+                currentDate = nextDate
+            }
+            
+        } catch {
+            print("获取日期范围数据失败: \(error.localizedDescription)")
+        }
+        
+        return practiceData
+    }
+
+    /// 获取指定日期范围内的练习数据，并按周分割
+    /// - Parameters:
+    ///   - startDate: 开始日期（包含）
+    ///   - endDate: 结束日期（包含）
+    /// - Returns: 二维数组，每个子数组代表一周（从周一到周日）
+    func getPracticeDataByWeeks(from startDate: Date, to endDate: Date) -> [[PracticeDataPoint]] {
+        // 1. 确保日期范围有效
+        guard startDate <= endDate else {
+            print("无效的日期范围：开始日期不能晚于结束日期")
+            return []
+        }
+        
+        // 2. 设置日历，确保周一为每周第一天
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2 // 设置周一为每周第一天
+        
+        // 3. 计算开始日期所在周的周一
+        let startDateWeekday = calendar.component(.weekday, from: startDate)
+        let daysToSubtractForStartMonday = (startDateWeekday + 5) % 7 // 转换为周一为第一天的偏移量
+        guard let startWeekMonday = calendar.date(byAdding: .day, value: -daysToSubtractForStartMonday, to: startDate) else {
+            return []
+        }
+        
+        // 4. 计算结束日期所在周的周日
+        let endDateWeekday = calendar.component(.weekday, from: endDate)
+        let daysToAddForEndSunday = (7 - endDateWeekday + 1) % 7 // 转换为周日为最后一天的偏移量
+        guard let endWeekSunday = calendar.date(byAdding: .day, value: daysToAddForEndSunday, to: endDate) else {
+            return []
+        }
+        
+        // 5. 获取整个扩展日期范围内的所有数据
+        let allData = getPracticeDataForDateRange(from: startWeekMonday, to: endWeekSunday)
+        
+        // 6. 创建日期格式化器
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        // 7. 按周分组数据
+        var weeklyData: [[PracticeDataPoint]] = []
+        var currentWeekData: [PracticeDataPoint] = []
+        var dayCount = 0
+        
+        // 8. 重新遍历每一天，判断是否在有效范围内
+        for var dataPoint in allData {
+            // 创建一个可变副本，因为结构体是不可变的
+            let isBeforeStartDate = dataPoint.date < startDate
+            let isAfterEndDate = dataPoint.date > endDate
+            
+            // 根据日期是否在有效范围内设置disabled属性
+            let updatedDataPoint = PracticeDataPoint(
+                date: dataPoint.date,
+                dateString: dataPoint.dateString,
+                duration: dataPoint.duration,
+                sessionCount: dataPoint.sessionCount,
+                maxSessionDuration: dataPoint.maxSessionDuration,
+                isEmpty: dataPoint.isEmpty,
+                disabled: isBeforeStartDate || isAfterEndDate // 在有效范围外的日期标记为disabled
+            )
+            
+            // 添加到当前周
+            currentWeekData.append(updatedDataPoint)
+            dayCount += 1
+            
+            // 如果已经有7天数据或者是最后一个数据点，当前周完成
+            if dayCount == 7 || updatedDataPoint.date == endWeekSunday {
+                // 确保每周都是7天（周一到周日），如果不足则用空数据填充
+                while currentWeekData.count < 7 {
+                    // 这种情况通常不会发生，因为我们已经计算了完整的周期
+                    // 但为了健壮性添加此处理
+                    guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentWeekData.last!.date) else {
+                        break
+                    }
+                    
+                    let emptyPoint = PracticeDataPoint(
+                        date: nextDate,
+                        dateString: dateFormatter.string(from: nextDate),
+                        duration: 0,
+                        sessionCount: 0,
+                        maxSessionDuration: 0,
+                        isEmpty: true,
+                        disabled: true
+                    )
+                    currentWeekData.append(emptyPoint)
+                }
+                
+                weeklyData.append(currentWeekData)
+                currentWeekData = []
+                dayCount = 0
+            }
+        }
+        
+        return weeklyData
+    }
+
+    /// 获取指定月份的练习数据，按周分组
+    /// - Parameters:
+    ///   - year: 年份
+    ///   - month: 月份（1-12）
+    /// - Returns: 二维数组，每个子数组代表一周（从周一到周日）
+    func getPracticeDataByMonth(year: Int, month: Int) -> [[PracticeDataPoint]] {
+        // 1. 验证月份参数
+        guard month >= 1 && month <= 12 else {
+            print("无效的月份参数：月份必须在1-12之间")
+            return []
+        }
+        
+        // 2. 创建日历
+        let calendar = Calendar.current
+        
+        // 3. 计算月份的第一天
+        var startComponents = DateComponents()
+        startComponents.year = year
+        startComponents.month = month
+        startComponents.day = 1
+        
+        guard let startOfMonth = calendar.date(from: startComponents) else {
+            print("无效的日期参数")
+            return []
+        }
+        
+        // 4. 计算月份的最后一天
+        var endComponents = DateComponents()
+        // 如果是12月，则下一个月是下一年的1月
+        if month == 12 {
+            endComponents.year = year + 1
+            endComponents.month = 1
+        } else {
+            endComponents.year = year
+            endComponents.month = month + 1
+        }
+        endComponents.day = 1
+        
+        guard let startOfNextMonth = calendar.date(from: endComponents),
+              let endOfMonth = calendar.date(byAdding: .day, value: -1, to: startOfNextMonth) else {
+            print("计算月份结束日期失败")
+            return []
+        }
+        
+        // 5. 使用 getPracticeDataByWeeks 获取按周分组的数据
+        return getPracticeDataByWeeks(from: startOfMonth, to: endOfMonth)
     }
 }
 

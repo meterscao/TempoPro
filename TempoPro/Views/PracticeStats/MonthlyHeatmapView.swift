@@ -244,24 +244,61 @@ private struct HeatmapGridView: View {
     }
 }
 
-// 提取出来的月度热力图组件
+// 添加日期格式化扩展
+extension Date {
+    func formattedDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "M月d日 EEEE"
+        return formatter.string(from: self)
+    }
+}
+
+// 月度热力图组件
 struct MonthlyHeatmapView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var practiceManager: CoreDataPracticeManager
-    @State private var monthlyData: [[Double]] = []
-    @State private var currentMonth = Date()
-    @State private var selectedDay: Int? = nil  // 跟踪选中的日期
-    @State private var selectedDayStats: (sessions: Int, duration: Double)? = nil  // 选中日期的统计数据
-    @State private var monthStats: (days: Int, duration: Double) = (0, 0)  // 月度统计数据
+    
+    // 状态变量
+    @State private var currentYear: Int
+    @State private var currentMonth: Int
+    @State private var monthlyData: [[PracticeDataPoint]] = []
+    @State private var selectedDay: PracticeDataPoint? = nil
+    @State private var monthlyStatsData: (days: Int, totalMinutes: Double) = (0, 0)
+    @State private var selectedDayFormattedDate: String = ""
+    
+    // 月份名称列表
+    private let monthNames = ["January", "February", "March", "April", "May", "June", 
+                              "July", "August", "September", "October", "November", "December"]
+    
+    // 星期几缩写
+    private let weekdaySymbols = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    
+    // 选中日期信息的计算属性
+    private var selectedDayInfo: (dateString: String, hasPractice: Bool, sessionCount: Int, durationText: String) {
+        guard let selected = selectedDay else {
+            return ("", false, 0, "")
+        }
+        
+        let hasPractice = selected.sessionCount > 0
+        let durationText = hasPractice ? practiceManager.formatDuration(minutes: selected.duration) : "无练习记录"
+        
+        return (selectedDayFormattedDate, hasPractice, selected.sessionCount, durationText)
+    }
+    
+    init() {
+        // 初始化为当前年月
+        let calendar = Calendar.current
+        let today = Date()
+        _currentYear = State(initialValue: calendar.component(.year, from: today))
+        _currentMonth = State(initialValue: calendar.component(.month, from: today))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            // 月份导航栏
             HStack {
-                // 获取当前月份名称
-                let monthName = monthFormatter.string(from: currentMonth)
-                let year = Calendar.current.component(.year, from: currentMonth)
-                
-                Text("\(monthName.uppercased()) \(year)")
+                Text("\(currentYear)\(monthNames[currentMonth-1])")
                     .font(.custom("MiSansLatin-Semibold", size: 20))
                     .foregroundColor(theme.primaryColor)
                 
@@ -269,7 +306,8 @@ struct MonthlyHeatmapView: View {
                 
                 HStack(spacing: 16) {
                     Button(action: {
-                        goToPreviousMonth()
+                        // 切换到上一个月
+                        moveMonth(by: -1)
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.custom("MiSansLatin-Regular", size: 16))
@@ -277,7 +315,8 @@ struct MonthlyHeatmapView: View {
                     }
                     
                     Button(action: {
-                        goToNextMonth()
+                        // 切换到下一个月
+                        moveMonth(by: 1)
                     }) {
                         Image(systemName: "chevron.right")
                             .font(.custom("MiSansLatin-Regular", size: 16))
@@ -287,78 +326,105 @@ struct MonthlyHeatmapView: View {
             }
             .padding(.bottom, 8)
             
-            // 星期标签 - 调整为周一至周日
-            HStack {
-                // 重新排序周标签，使周一为第一天
-                let weekdaySymbols = Array(Calendar.current.shortWeekdaySymbols[1...6]) + [Calendar.current.shortWeekdaySymbols[0]]
-                
-                ForEach(weekdaySymbols, id: \.self) { day in
-                    Text(day)
+            // 星期几标题
+            HStack(spacing: 8) {
+                ForEach(weekdaySymbols, id: \.self) { symbol in
+                    Text(symbol)
                         .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.primaryColor.opacity(0.7))
                         .frame(maxWidth: .infinity)
-                        .foregroundColor(theme.beatBarColor)
+                }
+            }
+            .padding(.bottom, 8)
+            
+            // 热图主体
+            VStack(spacing: 8) {
+                ForEach(0..<monthlyData.count, id: \.self) { weekIndex in
+                    let week = monthlyData[weekIndex]
+                    
+                    HStack(spacing: 8) {
+                        ForEach(0..<week.count, id: \.self) { dayIndex in
+                            let day = week[dayIndex]
+                            
+                            // 热图单元格
+                            ZStack {
+                                Rectangle()
+                                    .fill(colorForPracticeTime(minutes: day.duration, isDisabled: day.disabled))
+                                    .cornerRadius(4)
+                                    .aspectRatio(1, contentMode: .fit)
+                                
+                                // 当天日期
+                                // if !day.disabled {
+                                //     let dayNumber = Calendar.current.component(.day, from: day.date)
+                                //     Text("\(dayNumber)")
+                                //         .font(.custom("MiSansLatin-Regular", size: 10))
+                                //         .foregroundColor(day.duration > 60 ? Color.white : theme.primaryColor.opacity(0.7))
+                                // }
+                            }
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(selectedDay?.dateString == day.dateString ? theme.primaryColor : Color.clear, lineWidth: 2)
+                            )
+                            .onTapGesture {
+                                if !day.disabled {
+                                    if selectedDay?.dateString == day.dateString {
+                                        selectedDay = nil
+                                    } else {
+                                        selectDay(day)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
                 }
             }
             
-            // 热力图主体 - 传递当前月份信息、选中的日期和选择回调
-            HeatmapGridView(
-                monthlyData: monthlyData, 
-                theme: theme, 
-                currentMonth: currentMonth,
-                selectedDay: selectedDay,  // 传递选中的日期
-                onDateSelected: { day in 
-                    if selectedDay == day {
-                        // 再次点击同一天就取消选择
-                        selectedDay = nil
-                        selectedDayStats = nil
-                    } else {
-                        selectedDay = day
-                        // 使用Manager获取日期统计
-                        let calendar = Calendar.current
-                        let year = calendar.component(.year, from: currentMonth)
-                        let month = calendar.component(.month, from: currentMonth)
-                        selectedDayStats = practiceManager.getDayStats(year: year, month: month, day: day)
+            // 统计信息展示 - 使用预计算的信息
+            VStack(alignment: .leading, spacing: 8) {
+                if selectedDay != nil {
+                    // 使用预先计算的信息
+                    let info = selectedDayInfo
+                    
+                    HStack {
+                        Text(info.dateString)
+                            .font(.custom("MiSansLatin-Regular", size: 14))
+                            .foregroundColor(theme.primaryColor)
+                        
+                        Spacer()
+                        
+                        if info.hasPractice {
+                            Text("\(info.sessionCount)次练习")
+                                .font(.custom("MiSansLatin-Regular", size: 14))
+                                .foregroundColor(theme.primaryColor.opacity(0.8))
+                                .padding(.trailing, 8)
+                            
+                            Text(info.durationText)
+                                .font(.custom("MiSansLatin-Regular", size: 14))
+                                .foregroundColor(theme.primaryColor)
+                        } else {
+                            Text("无练习记录")
+                                .font(.custom("MiSansLatin-Regular", size: 14))
+                                .foregroundColor(theme.primaryColor.opacity(0.7))
+                        }
                     }
-                }
-            )
-                
-            // 替换图例为统计信息
-            HStack {
-                if let selectedDay = selectedDay, let stats = selectedDayStats {
-                    // 显示选中日期的信息
-                    Text("\(stats.sessions)次练习")
-                        .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.primaryColor)
-                    
-                    Spacer()
-                    
-                    // 使用Manager格式化日期
-                    let calendar = Calendar.current
-                    let year = calendar.component(.year, from: currentMonth)
-                    let month = calendar.component(.month, from: currentMonth)
-                    let dateString = practiceManager.formatDayString(year: year, month: month, day: selectedDay)
-                    Text(dateString)
-                        .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.primaryColor)
-                    
-                    Spacer()
-                    
-                    // 使用Manager格式化时间
-                    Text(practiceManager.formatDuration(minutes: stats.duration))
-                        .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.primaryColor)
                 } else {
-                    // 显示月度统计信息
-                    Text("\(monthStats.days)天练习")
-                        .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.primaryColor)
-                    
-                    Spacer()
-                    
-                    // 使用Manager格式化时间
-                    Text(practiceManager.formatDuration(minutes: monthStats.duration))
-                        .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.primaryColor)
+                    // 显示月度统计信息 - 使用预计算的数据
+                    HStack {
+                        Text("本月共练习")
+                            .font(.custom("MiSansLatin-Regular", size: 14))
+                            .foregroundColor(theme.primaryColor)
+                        
+                        Text("\(monthlyStatsData.days)天")
+                            .font(.custom("MiSansLatin-Semibold", size: 14))
+                            .foregroundColor(theme.primaryColor)
+                        
+                        Spacer()
+                        
+                        Text(practiceManager.formatDuration(minutes: monthlyStatsData.totalMinutes))
+                            .font(.custom("MiSansLatin-Regular", size: 14))
+                            .foregroundColor(theme.primaryColor)
+                    }
                 }
             }
             .padding(.top, 8)
@@ -371,114 +437,79 @@ struct MonthlyHeatmapView: View {
         }
     }
     
-    // 月份格式化器
-    private var monthFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM"
-        return formatter
+    // 选择日期
+    private func selectDay(_ day: PracticeDataPoint) {
+        selectedDay = day
+        // 预先格式化日期字符串
+        selectedDayFormattedDate = day.date.formattedDateString()
     }
     
-    // 加载特定月份的数据
+    // 切换月份
+    private func moveMonth(by offset: Int) {
+        var newMonth = currentMonth + offset
+        var newYear = currentYear
+        
+        // 处理年份变更
+        if newMonth < 1 {
+            newMonth = 12
+            newYear -= 1
+        } else if newMonth > 12 {
+            newMonth = 1
+            newYear += 1
+        }
+        
+        currentMonth = newMonth
+        currentYear = newYear
+        
+        loadMonthData()
+    }
+    
+    // 加载月度数据
     private func loadMonthData() {
-        // 打印当前月份信息
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        print("========== 开始数据源调试 ==========")
-        print("当前选择月份: \(dateFormatter.string(from: currentMonth))")
-        
-        // 尝试获取该月份的第一天和最后一天
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: currentMonth)
-        if let firstDayOfMonth = calendar.date(from: components),
-           let range = calendar.range(of: .day, in: .month, for: firstDayOfMonth),
-           let lastDayOfMonth = calendar.date(byAdding: .day, value: range.count - 1, to: firstDayOfMonth) {
-            
-            print("月份范围: \(dateFormatter.string(from: firstDayOfMonth)) 至 \(dateFormatter.string(from: lastDayOfMonth))")
-            
-            
-        }
-        
-        // 保存原始数据用于调试
-        let rawData = practiceManager.getMonthlyHeatmapData(for: currentMonth)
-        print("\n原始热力图数据源:")
-        for (weekIndex, week) in rawData.enumerated() {
-            var weekData = "第\(weekIndex)周: "
-            for (dayIndex, value) in week.enumerated() {
-                weekData += "[\(dayIndex)]:\(value) "
-            }
-            print(weekData)
-        }
-        
-        // 将原始数据与日历日期对应显示
-        print("\n数据与日期映射关系:")
-        if let firstDayOfMonth = calendar.date(from: components) {
-            // 获取月初是星期几
-            let firstWeekday = calendar.component(.weekday, from: firstDayOfMonth)
-            // 调整为以周一为0的索引 (ISO日历)
-            let adjustedFirstWeekday = (firstWeekday + 5) % 7 // 周一=0, 周日=6
-            
-            for week in 0..<rawData.count {
-                var weekMapping = "第\(week)周: "
-                for day in 0..<7 {
-                    // 计算日期
-                    let dayOffset = week * 7 + day - adjustedFirstWeekday
-                    if dayOffset >= 0 && dayOffset < 31 { // 假设最多31天
-                        if let date = calendar.date(byAdding: .day, value: dayOffset, to: firstDayOfMonth) {
-                            let dayValue = (week < rawData.count && day < rawData[week].count) ? rawData[week][day] : 0
-                            let dayNumber = calendar.component(.day, from: date)
-                            weekMapping += "\(dayNumber):\(dayValue) "
-                        }
-                    } else {
-                        weekMapping += "x:x "
-                    }
-                }
-                print(weekMapping)
-            }
-        }
-        
-        // 检查数据加载实现
-        print("\n检查practiceManager.getMonthlyHeatmapData实现:")
-        print("请查看CoreDataPracticeManager中getMonthlyHeatmapData方法的实现，确认数据是如何按周组织的")
-        print("========== 结束数据源调试 ==========\n")
-        
-        // 使用Manager获取数据
-        monthlyData = practiceManager.getMonthlyHeatmapData(for: currentMonth)
-        
-        // 使用Manager获取月度统计信息
-        monthStats = practiceManager.getMonthStats(for: currentMonth)
-        
-        // 重置选中状态
+        monthlyData = practiceManager.getPracticeDataByMonth(year: currentYear, month: currentMonth)
         selectedDay = nil
-        selectedDayStats = nil
         
-        // 常规日志
-        print("Debug: 加载了 \(dateFormatter.string(from: currentMonth)) 的数据，行数: \(monthlyData.count)")
-        for (index, row) in monthlyData.enumerated() {
-            var rowValues = "第\(index)行数据: "
-            for (colIdx, value) in row.enumerated() {
-                rowValues += "\(value) "
-            }
-            print(rowValues)
-        }
+        // 预先计算月度统计
+        calculateMonthStats()
     }
     
-    // 前往上一个月
-    private func goToPreviousMonth() {
-        if let newDate = Calendar.current.date(byAdding: .month, value: -1, to: currentMonth) {
-            currentMonth = newDate
-            loadMonthData()
-        }
+    // 计算月度统计数据
+    private func calculateMonthStats() {
+        // 计算有练习记录的天数
+        let practiceDays = monthlyData.flatMap { $0 }
+            .filter { !$0.isEmpty && !$0.disabled }
+            .count
+        
+        // 计算总练习时间
+        let totalMinutes = monthlyData.flatMap { $0 }
+            .filter { !$0.disabled }
+            .reduce(0) { $0 + $1.duration }
+        
+        monthlyStatsData = (practiceDays, totalMinutes)
     }
     
-    // 前往下一个月
-    private func goToNextMonth() {
-        // 只允许浏览到当前月份
-        let now = Date()
-        if currentMonth < now, 
-           let newDate = Calendar.current.date(byAdding: .month, value: 1, to: currentMonth),
-           Calendar.current.compare(newDate, to: now, toGranularity: .month) != .orderedDescending {
-            currentMonth = newDate
-            loadMonthData()
+    // 根据练习时间获取显示颜色
+    private func colorForPracticeTime(minutes: Double, isDisabled: Bool) -> Color {
+        if isDisabled {
+            return Color.gray.opacity(0.1) // 超出月份范围的日期使用浅灰色
+        }
+        
+        // 无数据使用非常浅的颜色
+        if minutes == 0 {
+            return theme.beatBarColor.opacity(0.1)
+        }
+        
+        // 根据练习时长设置不同深度的颜色
+        if minutes < 15 {
+            return theme.beatBarColor.opacity(0.3)
+        } else if minutes < 30 {
+            return theme.beatBarColor.opacity(0.5)
+        } else if minutes < 60 {
+            return theme.beatBarColor.opacity(0.7)
+        } else if minutes < 120 {
+            return theme.beatBarColor.opacity(0.85)
+        } else {
+            return theme.beatBarColor // 超过2小时使用完全不透明的颜色
         }
     }
 }

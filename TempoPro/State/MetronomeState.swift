@@ -153,7 +153,7 @@ class MetronomeState: ObservableObject {
         if isPlaying {
             // 开始练习会话
             let beatStatusString = getBeatStatusString()
-            practiceManager?.startPracticeSession(bpm: tempo, beatPattern: beatStatusString)
+            practiceManager?.startPracticeSession(bpm: tempo)
             
             // 原有代码...
             currentBeat = 0
