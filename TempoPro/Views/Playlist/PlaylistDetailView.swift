@@ -55,6 +55,14 @@ struct PlaylistDetailView: View {
                         
                         Menu {
                             Button(action: {
+                                resetSongForm()
+                                isEditMode = false
+                                showingSongForm = true
+                                
+                            }) {
+                                Label("添加歌曲", systemImage: "plus.circle")
+                            }
+                            Button(action: {
                                 // 准备编辑信息
                                 editPlaylistName = playlist.name ?? ""
                                 editPlaylistColor = Color(hex: playlist.color ?? "#0000FF") ?? .blue
@@ -75,57 +83,6 @@ struct PlaylistDetailView: View {
                                 .font(.custom("MiSansLatin-Regular", size: 20))
                                 .foregroundColor(theme.backgroundColor)
                         }
-                    }
-                    
-                    // 歌单信息卡片
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(spacing: 16) {
-                            Circle()
-                                .fill(Color(hex: playlist.color ?? "#0000FF") ?? theme.beatBarColor)
-                                .frame(width: 60, height: 60)
-                                .overlay(
-                                    Image(systemName: "music.note.list")
-                                        .font(.custom("MiSansLatin-Regular", size: 22))
-                                        .foregroundColor(theme.backgroundColor)
-                                )
-                            
-                            VStack(alignment: .leading, spacing: 6) {
-                                let songCount = playlist.songs?.count ?? 0
-                                Text("\(songCount) 首歌曲")
-                                    .font(.custom("MiSansLatin-Semibold", size: 18))
-                                    .foregroundColor(theme.beatBarColor)
-                                
-                                Text("点击歌曲开始练习")
-                                    .font(.custom("MiSansLatin-Regular", size: 14))
-                                    .foregroundColor(theme.primaryColor)
-                            }
-                            
-                            Spacer()
-                        }
-                    }
-                    .padding(20)
-                    .background(theme.backgroundColor)
-                    .cornerRadius(16)
-                    
-                    // 添加按钮
-                    Button(action: {
-                        resetSongForm()
-                        isEditMode = false
-                        showingSongForm = true
-                    }) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "plus.circle")
-                                .font(.custom("MiSansLatin-Regular", size: 16))
-                                .foregroundColor(theme.backgroundColor)
-                            
-                            Text("添加歌曲")
-                                .font(.custom("MiSansLatin-Semibold", size: 16))
-                                .foregroundColor(theme.backgroundColor)
-                        }
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 20)
-                        .background(theme.beatBarColor.opacity(0.7))
-                        .cornerRadius(12)
                     }
                     
                     // 歌曲列表
@@ -304,18 +261,6 @@ struct SongRowCard: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            Button(action: onPlay) {
-                ZStack {
-                    Circle()
-                        .fill(theme.beatBarColor)
-                        .frame(width: 44, height: 44)
-                    
-                    Image(systemName: "play.fill")
-                        .font(.custom("MiSansLatin-Regular", size: 18))
-                        .foregroundColor(theme.backgroundColor)
-                }
-            }
-            
             VStack(alignment: .leading, spacing: 6) {
                 Text(song.name ?? "未命名歌曲")
                     .font(.custom("MiSansLatin-Semibold", size: 18))

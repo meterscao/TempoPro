@@ -46,13 +46,6 @@ struct PracticeStatsView: View {
                         
                         Spacer()
                         
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.custom("MiSansLatin-Regular", size: 20))
-                                .foregroundColor(theme.backgroundColor)
-                        }
                     }
                     
                     // Stats Summary - 替换为新的组件

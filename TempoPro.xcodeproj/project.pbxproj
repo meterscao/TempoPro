@@ -40,7 +40,6 @@
 		F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */; };
 		F7F058BF2D79443C005DF482 /* EditSongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058BE2D79443C005DF482 /* EditSongView.swift */; };
 		F7F058C12D794453005DF482 /* AddPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058C02D794453005DF482 /* AddPlaylistView.swift */; };
-		F7F058C32D794466005DF482 /* SongRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058C22D794466005DF482 /* SongRow.swift */; };
 		F7F058C52D79448A005DF482 /* EditPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058C42D79448A005DF482 /* EditPlaylistView.swift */; };
 		F7F058C72D7944AA005DF482 /* PlaylistRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058C62D7944AA005DF482 /* PlaylistRow.swift */; };
 		F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */; };
@@ -110,7 +109,6 @@
 		F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlaylistManager.swift; sourceTree = "<group>"; };
 		F7F058BE2D79443C005DF482 /* EditSongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongView.swift; sourceTree = "<group>"; };
 		F7F058C02D794453005DF482 /* AddPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPlaylistView.swift; sourceTree = "<group>"; };
-		F7F058C22D794466005DF482 /* SongRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongRow.swift; sourceTree = "<group>"; };
 		F7F058C42D79448A005DF482 /* EditPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPlaylistView.swift; sourceTree = "<group>"; };
 		F7F058C62D7944AA005DF482 /* PlaylistRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistRow.swift; sourceTree = "<group>"; };
 		F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileBackgroundImage.swift; sourceTree = "<group>"; };
@@ -295,7 +293,6 @@
 				F7F058C42D79448A005DF482 /* EditPlaylistView.swift */,
 				F7F058C02D794453005DF482 /* AddPlaylistView.swift */,
 				F750D2392D7816360022C405 /* PlaylistDetailView.swift */,
-				F7F058C22D794466005DF482 /* SongRow.swift */,
 				F7F058BE2D79443C005DF482 /* EditSongView.swift */,
 			);
 			path = Playlist;
@@ -504,7 +501,6 @@
 				F7FF3F162D7073EB00390C16 /* MetronomeTimer.swift in Sources */,
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
 				F75EC5672D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift in Sources */,
-				F7F058C32D794466005DF482 /* SongRow.swift in Sources */,
 				F792941C2D7B12B000A2D91C /* WeeklyStatsView.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */,
