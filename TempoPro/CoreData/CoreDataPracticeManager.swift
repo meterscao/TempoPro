@@ -49,6 +49,8 @@ class CoreDataPracticeManager: ObservableObject {
         // 计算持续时间（秒）
         let duration = Int32(Date().timeIntervalSince(startTime))
         session.duration = duration
+
+        print("session.duration: \(session.duration)")
         
         // 更新或创建当日练习摘要
         updateDailyPracticeSummary(for: session)
@@ -298,6 +300,8 @@ class CoreDataPracticeManager: ObservableObject {
         
         // 当月第一天是星期几
         let firstDayWeekday = calendar.component(.weekday, from: firstDayOfMonth)
+        // 调整为以周一为第一天（0-6，周一为0，周日为6）
+        let adjustedFirstWeekday = (firstDayWeekday + 5) % 7
         
         // 创建一个6x7的网格，表示一个月的日历视图
         var heatmapData = Array(repeating: Array(repeating: 0.0, count: 7), count: 6)
@@ -307,8 +311,9 @@ class CoreDataPracticeManager: ObservableObject {
             let dayComponents = DateComponents(year: components.year, month: components.month, day: day)
             if let dayDate = calendar.date(from: dayComponents) {
                 let dateString = formatDate(dayDate)
-                let row = (day + firstDayWeekday - 2) / 7
-                let col = (day + firstDayWeekday - 2) % 7
+                // 修正行列计算，使周一为每周第一天
+                let row = (day - 1 + adjustedFirstWeekday) / 7
+                let col = (day - 1 + adjustedFirstWeekday) % 7
                 
                 // 查询该日期的练习记录
                 let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
@@ -327,7 +332,8 @@ class CoreDataPracticeManager: ObservableObject {
                 }
             }
         }
-        
+        // print heatmapData
+        print("heatmapData: \(heatmapData)")
         return heatmapData
     }
 
