@@ -130,32 +130,6 @@ class CoreDataPracticeManager: ObservableObject {
         }
     }
     
-    // 获取所有练习日期摘要
-    func fetchDailyPracticeSummaries() -> [DailyPractice] {
-        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \DailyPractice.dateString, ascending: false)]
-        
-        do {
-            return try viewContext.fetch(request)
-        } catch {
-            print("获取练习摘要失败: \(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    // 获取特定日期的练习会话
-    func fetchPracticeSessions(for dateString: String) -> [PracticeSession] {
-        let request = NSFetchRequest<PracticeSession>(entityName: "PracticeSession")
-        request.predicate = NSPredicate(format: "dateString == %@", dateString)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \PracticeSession.startTimeOfDay, ascending: true)]
-        
-        do {
-            return try viewContext.fetch(request)
-        } catch {
-            print("获取练习会话失败: \(error.localizedDescription)")
-            return []
-        }
-    }
     
     // 获取当前日期字符串 YYYY-MM-DD
     private func getCurrentDateString() -> String {
@@ -269,67 +243,7 @@ class CoreDataPracticeManager: ObservableObject {
     }
 
 
-    // 优化后的获取月热图数据的方法  
-    func getMonthlyHeatmapData(for date: Date) -> [[Double]] {
-        let calendar = Calendar.current
-        
-        // 获取指定月份的第一天和最后一天
-        let components = calendar.dateComponents([.year, .month], from: date)
-        guard let firstDayOfMonth = calendar.date(from: components),
-              let nextMonth = calendar.date(byAdding: .month, value: 1, to: firstDayOfMonth) else {
-            return Array(repeating: Array(repeating: 0.0, count: 7), count: 6)
-        }
-        
-        // 获取当月的天数
-        let range = calendar.range(of: .day, in: .month, for: firstDayOfMonth)!
-        let numberOfDaysInMonth = range.count
-        
-        // 当月第一天是星期几
-        let firstDayWeekday = calendar.component(.weekday, from: firstDayOfMonth)
-        // 调整为以周一为第一天（0-6，周一为0，周日为6）
-        let adjustedFirstWeekday = (firstDayWeekday + 5) % 7
-        
-        // 一次性查询整个月的数据
-        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-        let startDateString = formatDate(firstDayOfMonth)
-        let endDateString = formatDate(nextMonth)
-        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString < %@", startDateString, endDateString)
-        
-        var practiceDictionary: [String: Double] = [:]
-        
-        do {
-            let practices = try viewContext.fetch(request)
-            for practice in practices {
-                if let dateString = practice.dateString {
-                    let totalMinutes = Double(practice.totalDuration) / 60.0
-                    let heatValue = min(1.0, totalMinutes / 120.0) // 假设2小时是100%热度
-                    practiceDictionary[dateString] = heatValue
-                }
-            }
-        } catch {
-            print("获取月练习数据失败: \(error.localizedDescription)")
-        }
-        
-        // 创建热图数据
-        var heatmapData = Array(repeating: Array(repeating: 0.0, count: 7), count: 6)
-        
-        // 填充数据
-        for day in 1...numberOfDaysInMonth {
-            let dayComponents = DateComponents(year: components.year, month: components.month, day: day)
-            if let dayDate = calendar.date(from: dayComponents) {
-                let dateString = formatDate(dayDate)
-                
-                // 计算行列
-                let row = (day - 1 + adjustedFirstWeekday) / 7
-                let col = (day - 1 + adjustedFirstWeekday) % 7
-                
-                // 从字典获取对应日期的热度值
-                heatmapData[row][col] = practiceDictionary[dateString] ?? 0.0
-            }
-        }
-        
-        return heatmapData
-    }
+    
 
     // 辅助方法：将Date格式化为YYYY-MM-DD
     private func formatDate(_ date: Date) -> String {
@@ -395,70 +309,6 @@ class CoreDataPracticeManager: ObservableObject {
             print("获取最长会话失败: \(error.localizedDescription)")
             return (0, "无记录")
         }
-    }
-
-    // 优化后的获取当前星期数据的方法
-    func getCurrentWeekPracticeData() -> [(String, Double)] {
-        // 创建以周一为第一天的日历
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.firstWeekday = 2  // 设置周一为一周的第一天
-        
-        let today = Date()
-        
-        // 计算本周的周一日期
-        let weekdayComponents = calendar.dateComponents([.weekday], from: today)
-        let weekdayOrdinal = weekdayComponents.weekday!
-        let daysToSubtract = weekdayOrdinal - calendar.firstWeekday
-        guard let monday = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) else {
-            return []
-        }
-        
-        // 获取星期几的本地化短名称，以周一为第一天
-        let weekdaySymbols = calendar.shortWeekdaySymbols
-        let mondayFirstSymbols = Array(weekdaySymbols[calendar.firstWeekday-1..<weekdaySymbols.count] + weekdaySymbols[0..<calendar.firstWeekday-1])
-        
-        // 计算一周的结束日期（周日）
-        guard let endDate = calendar.date(byAdding: .day, value: 7, to: monday) else {
-            return []
-        }
-        
-        // 一次性查询整周的数据
-        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-        let startDateString = formatDate(monday)
-        let endDateString = formatDate(endDate)
-        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString < %@", startDateString, endDateString)
-        
-        var practiceDictionary: [String: Double] = [:]
-        
-        do {
-            let practices = try viewContext.fetch(request)
-            
-            // 将查询结果存入字典，便于快速查找
-            for practice in practices {
-                if let dateString = practice.dateString {
-                    practiceDictionary[dateString] = Double(practice.totalDuration) / 60.0
-                }
-            }
-        } catch {
-            print("获取周练习数据失败: \(error.localizedDescription)")
-        }
-        
-        // 构建结果数组
-        var result: [(String, Double)] = []
-        for i in 0..<7 {
-            if let date = calendar.date(byAdding: .day, value: i, to: monday) {
-                // 检查是否超过今天
-                if date > today {
-                    result.append((mondayFirstSymbols[i], 0))
-                } else {
-                    let dateString = formatDate(date)
-                    let minutes = practiceDictionary[dateString] ?? 0
-                    result.append((mondayFirstSymbols[i], minutes))
-                }
-            }
-        }
-        
-        return result
     }
 
     // 生成半年随机练习数据
@@ -589,91 +439,8 @@ class CoreDataPracticeManager: ObservableObject {
         }
     }
 
-    // 获取月度练习统计
-    func getMonthStats(for date: Date) -> (days: Int, duration: Double) {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: date)
-        
-        guard let startOfMonth = calendar.date(from: components),
-              let nextMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) else {
-            return (0, 0)
-        }
-        
-        // 查询本月数据
-        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-        let startDateString = formatDate(startOfMonth)
-        let endDateString = formatDate(nextMonth)
-        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString < %@", startDateString, endDateString)
-        
-        do {
-            let practices = try viewContext.fetch(request)
-            
-            // 计算总天数和总时长
-            let days = practices.count
-            let totalMinutes = practices.reduce(0.0) { $0 + Double($1.totalDuration) / 60.0 }
-            
-            return (days, totalMinutes)
-        } catch {
-            print("获取月统计数据失败: \(error.localizedDescription)")
-            return (0, 0)
-        }
-    }
 
-    // 获取特定日期的练习统计
-    func getDayStats(year: Int, month: Int, day: Int) -> (sessions: Int, duration: Double) {
-        let calendar = Calendar.current
-        var dayComponents = DateComponents()
-        dayComponents.year = year
-        dayComponents.month = month
-        dayComponents.day = day
-        
-        guard let date = calendar.date(from: dayComponents) else {
-            return (0, 0)
-        }
-        
-        let dateString = formatDate(date)
-        
-        // 获取该日期的练习记录
-        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
-        request.predicate = NSPredicate(format: "dateString == %@", dateString)
-        
-        do {
-            let practices = try viewContext.fetch(request)
-            if let practice = practices.first {
-                let sessions = Int(practice.sessionCount)
-                let minutes = Double(practice.totalDuration) / 60.0
-                return (sessions, minutes)
-            } else {
-                return (0, 0)
-            }
-        } catch {
-            print("获取日期统计数据失败: \(error.localizedDescription)")
-            return (0, 0)
-        }
-    }
-
-    // 格式化日期字符串 (MM-dd 星期几)
-    func formatDayString(year: Int, month: Int, day: Int) -> String {
-        let calendar = Calendar.current
-        var dayComponents = DateComponents()
-        dayComponents.year = year
-        dayComponents.month = month
-        dayComponents.day = day
-        
-        guard let date = calendar.date(from: dayComponents) else {
-            return ""
-        }
-        
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM-dd"
-        formatter.locale = Locale(identifier: "zh_CN")
-        
-        let weekdayFormatter = DateFormatter()
-        weekdayFormatter.dateFormat = "EEEE"
-        weekdayFormatter.locale = Locale(identifier: "zh_CN")
-        
-        return "\(formatter.string(from: date)) \(weekdayFormatter.string(from: date))"
-    }
+    
 
     // 格式化时长（分钟转为小时分钟）
     func formatDuration(minutes: Double) -> String {

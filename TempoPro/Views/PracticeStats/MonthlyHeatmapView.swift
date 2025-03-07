@@ -298,7 +298,7 @@ struct MonthlyHeatmapView: View {
         VStack(alignment: .leading, spacing: 16) {
             // 月份导航栏
             HStack {
-                Text("\(currentYear)\(monthNames[currentMonth-1])")
+                Text("\(currentYear) \(monthNames[currentMonth-1])")
                     .font(.custom("MiSansLatin-Semibold", size: 20))
                     .foregroundColor(theme.primaryColor)
                 
