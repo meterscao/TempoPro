@@ -615,5 +615,102 @@ class CoreDataPracticeManager: ObservableObject {
             print("重置测试数据失败: \(error.localizedDescription)")
         }
     }
+
+    // 获取月度练习统计
+    func getMonthStats(for date: Date) -> (days: Int, duration: Double) {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: date)
+        
+        guard let startOfMonth = calendar.date(from: components),
+              let nextMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) else {
+            return (0, 0)
+        }
+        
+        // 查询本月数据
+        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
+        let startDateString = formatDate(startOfMonth)
+        let endDateString = formatDate(nextMonth)
+        request.predicate = NSPredicate(format: "dateString >= %@ AND dateString < %@", startDateString, endDateString)
+        
+        do {
+            let practices = try viewContext.fetch(request)
+            
+            // 计算总天数和总时长
+            let days = practices.count
+            let totalMinutes = practices.reduce(0.0) { $0 + Double($1.totalDuration) / 60.0 }
+            
+            return (days, totalMinutes)
+        } catch {
+            print("获取月统计数据失败: \(error.localizedDescription)")
+            return (0, 0)
+        }
+    }
+
+    // 获取特定日期的练习统计
+    func getDayStats(year: Int, month: Int, day: Int) -> (sessions: Int, duration: Double) {
+        let calendar = Calendar.current
+        var dayComponents = DateComponents()
+        dayComponents.year = year
+        dayComponents.month = month
+        dayComponents.day = day
+        
+        guard let date = calendar.date(from: dayComponents) else {
+            return (0, 0)
+        }
+        
+        let dateString = formatDate(date)
+        
+        // 获取该日期的练习记录
+        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
+        request.predicate = NSPredicate(format: "dateString == %@", dateString)
+        
+        do {
+            let practices = try viewContext.fetch(request)
+            if let practice = practices.first {
+                let sessions = Int(practice.sessionCount)
+                let minutes = Double(practice.totalDuration) / 60.0
+                return (sessions, minutes)
+            } else {
+                return (0, 0)
+            }
+        } catch {
+            print("获取日期统计数据失败: \(error.localizedDescription)")
+            return (0, 0)
+        }
+    }
+
+    // 格式化日期字符串 (MM-dd 星期几)
+    func formatDayString(year: Int, month: Int, day: Int) -> String {
+        let calendar = Calendar.current
+        var dayComponents = DateComponents()
+        dayComponents.year = year
+        dayComponents.month = month
+        dayComponents.day = day
+        
+        guard let date = calendar.date(from: dayComponents) else {
+            return ""
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM-dd"
+        formatter.locale = Locale(identifier: "zh_CN")
+        
+        let weekdayFormatter = DateFormatter()
+        weekdayFormatter.dateFormat = "EEEE"
+        weekdayFormatter.locale = Locale(identifier: "zh_CN")
+        
+        return "\(formatter.string(from: date)) \(weekdayFormatter.string(from: date))"
+    }
+
+    // 格式化时长（分钟转为小时分钟）
+    func formatDuration(minutes: Double) -> String {
+        if minutes < 60 {
+            return String(format: "%.0f分钟", minutes)
+        } else {
+            let hours = Int(minutes) / 60
+            let mins = Int(minutes) % 60
+            return "\(hours)小时\(mins)分钟"
+        }
+    }
 }
 

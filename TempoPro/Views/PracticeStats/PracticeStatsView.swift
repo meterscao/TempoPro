@@ -21,6 +21,9 @@ struct PracticeStatsView: View {
     @State private var mostPracticedTempo = ""
     @State private var longestSession = ""
     
+    // 添加选中的周视图日期索引
+    @State private var selectedWeekdayIndex: Int? = nil
+    
     var body: some View {
         ZStack {
             ScrollView {
@@ -100,16 +103,36 @@ struct PracticeStatsView: View {
                                             let maxHeight: CGFloat = 120
                                             let maxMinutes = weeklyData.map { $0.1 }.max() ?? 1
                                             let height = max(15, CGFloat(day.1) / CGFloat(maxMinutes) * maxHeight)
-                                            let barColor = day.1 > 0 ? theme.beatHightColor : theme.beatHightColor.opacity(0.1)
+                                            
+                                            // 根据选中状态设置颜色
+                                            let isSelected = selectedWeekdayIndex == index
+                                            let barColor = day.1 > 0 ? 
+                                                (isSelected ? theme.primaryColor : theme.beatHightColor) : 
+                                                (isSelected ? theme.primaryColor.opacity(0.2) : theme.beatHightColor.opacity(0.1))
                                             
                                             VStack(spacing: 8) {
                                                 RoundedRectangle(cornerRadius: 8)
                                                     .fill(barColor)
                                                     .frame(width: barWidth, height: height)
+                                                    // 添加边框标识选中状态
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(isSelected ? theme.primaryColor : Color.clear, lineWidth: 2)
+                                                    )
                                                 
                                                 Text(day.0)
                                                     .font(.custom("MiSansLatin-Regular", size: 12))
-                                                    .foregroundColor(theme.beatHightColor)
+                                                    .foregroundColor(isSelected ? theme.primaryColor : theme.beatHightColor)
+                                            }
+                                            .onTapGesture {
+                                                // 点击处理逻辑
+                                                if selectedWeekdayIndex == index {
+                                                    // 再次点击取消选择
+                                                    selectedWeekdayIndex = nil
+                                                } else {
+                                                    // 选中当前日期
+                                                    selectedWeekdayIndex = index
+                                                }
                                             }
                                             
                                             if index < weeklyData.count - 1 {
@@ -119,34 +142,51 @@ struct PracticeStatsView: View {
                                     }
                                     .frame(maxHeight: .infinity, alignment: .bottom)
                                     
+                                    // 统计信息展示 - 根据选中状态变化
                                     HStack {
-                                        // 找出最小和最大的非零值
-                                        let nonZeroValues = weeklyData.map { $0.1 }.filter { $0 > 0 }
-                                        let minVal = nonZeroValues.min() ?? 0
-                                        let maxVal = nonZeroValues.max() ?? 0
-                                        
-                                        if minVal > 0 {
-                                            Text("\(Int(minVal))分钟")
-                                                .font(.custom("MiSansLatin-Regular", size: 12))
-                                                .foregroundColor(theme.primaryColor.opacity(0.9))
-                                        } else {
-                                            Text("0分钟")
-                                                .font(.custom("MiSansLatin-Regular", size: 12))
-                                                .foregroundColor(theme.primaryColor.opacity(0.9))
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        if maxVal > 0 {
-                                            let hours = Int(maxVal) / 60
-                                            let minutes = Int(maxVal) % 60
+                                        if let selectedIndex = selectedWeekdayIndex, selectedIndex < weeklyData.count {
+                                            // 显示选中日期的信息
+                                            let selectedDay = weeklyData[selectedIndex]
                                             
-                                            if hours > 0 {
-                                                Text("\(hours)小时\(minutes)分钟")
+                                            // 显示星期几
+                                            Text(selectedDay.0)
+                                                .font(.custom("MiSansLatin-Regular", size: 12))
+                                                .foregroundColor(theme.primaryColor)
+                                            
+                                            Spacer()
+                                            
+                                            // 格式化练习时间
+                                            if selectedDay.1 > 0 {
+                                                Text(practiceManager.formatDuration(minutes: selectedDay.1))
+                                                    .font(.custom("MiSansLatin-Regular", size: 12))
+                                                    .foregroundColor(theme.primaryColor)
+                                            } else {
+                                                Text("无练习记录")
+                                                    .font(.custom("MiSansLatin-Regular", size: 12))
+                                                    .foregroundColor(theme.primaryColor.opacity(0.7))
+                                            }
+                                        } else {
+                                            // 显示周统计信息
+                                            // 找出最小和最大的非零值
+                                            let nonZeroValues = weeklyData.map { $0.1 }.filter { $0 > 0 }
+                                            let minVal = nonZeroValues.min() ?? 0
+                                            let maxVal = nonZeroValues.max() ?? 0
+                                            
+                                            if minVal > 0 {
+                                                Text("\(Int(minVal))分钟")
                                                     .font(.custom("MiSansLatin-Regular", size: 12))
                                                     .foregroundColor(theme.primaryColor.opacity(0.9))
                                             } else {
-                                                Text("\(minutes)分钟")
+                                                Text("0分钟")
+                                                    .font(.custom("MiSansLatin-Regular", size: 12))
+                                                    .foregroundColor(theme.primaryColor.opacity(0.9))
+                                            }
+                                            
+                                            Spacer()
+                                            
+                                            if maxVal > 0 {
+                                                // 使用Manager格式化时间
+                                                Text(practiceManager.formatDuration(minutes: maxVal))
                                                     .font(.custom("MiSansLatin-Regular", size: 12))
                                                     .foregroundColor(theme.primaryColor.opacity(0.9))
                                             }
@@ -258,6 +298,8 @@ struct PracticeStatsView: View {
             .onAppear {
                 // 加载数据
                 loadPracticeData()
+                // 重置选中状态
+                selectedWeekdayIndex = nil
             }
         }
     }

@@ -29,6 +29,8 @@ private struct HeatmapRowView: View {
     let theme: MetronomeTheme
     let monthlyData: [[Double]]  // 添加完整的月度数据
     let currentMonth: Date  // 添加当前月份
+    let selectedDay: Int?   // 添加选中的日期
+    let onDateSelected: (Int) -> Void  // 添加日期选择回调
     
     var body: some View {
         HStack(spacing: spacing) {
@@ -37,13 +39,26 @@ private struct HeatmapRowView: View {
                     ZStack {
                         // 获取该日期对应的实际数据
                         let practiceValue = getValueForDay(dateCells[col].day)
+                        let isSelected = selectedDay == dateCells[col].day
                         
                         // 背景方块
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(practiceValue == 0 ?
+                            .fill(
+                                isSelected ?
+                                  theme.primaryColor :
+                                  (
+                                    practiceValue == 0 ?
                                   theme.beatHightColor.opacity(0.1) :
-                                  theme.beatHightColor.opacity(0.4 + (practiceValue * 0.6)))
+                                  theme.beatHightColor.opacity(0.4 + (practiceValue * 0.6))
+                                  ))
                             .frame(width: cellSize, height: cellSize)
+                        
+                        // 选中边框
+                        // if isSelected {
+                        //     RoundedRectangle(cornerRadius: 8)
+                        //         .stroke(theme.primaryColor, lineWidth: 2)
+                        //         .frame(width: cellSize, height: cellSize)
+                        // }
                         
                         // 日期数字
                         Text("\(dateCells[col].day)")
@@ -51,6 +66,10 @@ private struct HeatmapRowView: View {
                             .foregroundColor(theme.primaryColor.opacity(0.7))
                             .position(x: cellSize * 0.25, y: cellSize * 0.25) // 放置在左上角
                             .hidden()
+                    }
+                    .contentShape(Rectangle())  // 确保整个区域可点击
+                    .onTapGesture {
+                        onDateSelected(dateCells[col].day)  // 点击时触发回调
                     }
                 } else {
                     // 不可见的日期显示透明方块
@@ -100,6 +119,8 @@ private struct HeatmapGridView: View {
     let monthlyData: [[Double]]
     let theme: MetronomeTheme
     let currentMonth: Date
+    let selectedDay: Int?  // 添加选中的日期
+    let onDateSelected: (Int) -> Void  // 添加日期选择回调
     @State private var calculatedHeight: CGFloat = 100
     @State private var monthDays: [[DateCellInfo]] = []
     
@@ -181,7 +202,7 @@ private struct HeatmapGridView: View {
                     
                     VStack(spacing: spacing) {
                         ForEach(0..<monthDays.count, id: \.self) { row in
-                            // 传递完整数据集和当前月份
+                            // 传递完整数据集、当前月份和选中的日期
                             HeatmapRowView(
                                 rowData: row < monthlyData.count ? monthlyData[row] : Array(repeating: 0, count: 7),
                                 dateCells: monthDays[row],
@@ -189,7 +210,9 @@ private struct HeatmapGridView: View {
                                 spacing: spacing,
                                 theme: theme,
                                 monthlyData: monthlyData,
-                                currentMonth: currentMonth
+                                currentMonth: currentMonth,
+                                selectedDay: selectedDay,  // 传递选中的日期
+                                onDateSelected: onDateSelected
                             )
                         }
                     }
@@ -227,6 +250,9 @@ struct MonthlyHeatmapView: View {
     @EnvironmentObject var practiceManager: CoreDataPracticeManager
     @State private var monthlyData: [[Double]] = []
     @State private var currentMonth = Date()
+    @State private var selectedDay: Int? = nil  // 跟踪选中的日期
+    @State private var selectedDayStats: (sessions: Int, duration: Double)? = nil  // 选中日期的统计数据
+    @State private var monthStats: (days: Int, duration: Double) = (0, 0)  // 月度统计数据
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -274,31 +300,66 @@ struct MonthlyHeatmapView: View {
                 }
             }
             
-            // 热力图主体 - 传递当前月份信息
-            HeatmapGridView(monthlyData: monthlyData, theme: theme, currentMonth: currentMonth)
-                
-            
-            // 图例
-            HStack {
-                Text("LESS")
-                    .font(.custom("MiSansLatin-Regular", size: 12))
-                    .foregroundColor(theme.beatHightColor.opacity(0.9))
-                
-                Spacer()
-                
-                HStack(spacing: 4) {
-                    ForEach([0.2, 0.4, 0.6, 0.8, 1.0], id: \.self) { opacity in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(theme.beatHightColor.opacity(opacity))
-                            .frame(width: 12, height: 12)
+            // 热力图主体 - 传递当前月份信息、选中的日期和选择回调
+            HeatmapGridView(
+                monthlyData: monthlyData, 
+                theme: theme, 
+                currentMonth: currentMonth,
+                selectedDay: selectedDay,  // 传递选中的日期
+                onDateSelected: { day in 
+                    if selectedDay == day {
+                        // 再次点击同一天就取消选择
+                        selectedDay = nil
+                        selectedDayStats = nil
+                    } else {
+                        selectedDay = day
+                        // 使用Manager获取日期统计
+                        let calendar = Calendar.current
+                        let year = calendar.component(.year, from: currentMonth)
+                        let month = calendar.component(.month, from: currentMonth)
+                        selectedDayStats = practiceManager.getDayStats(year: year, month: month, day: day)
                     }
                 }
+            )
                 
-                Spacer()
-                
-                Text("MORE")
-                    .font(.custom("MiSansLatin-Regular", size: 12))
-                    .foregroundColor(theme.beatHightColor.opacity(0.9))
+            // 替换图例为统计信息
+            HStack {
+                if let selectedDay = selectedDay, let stats = selectedDayStats {
+                    // 显示选中日期的信息
+                    Text("\(stats.sessions)次练习")
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.primaryColor)
+                    
+                    Spacer()
+                    
+                    // 使用Manager格式化日期
+                    let calendar = Calendar.current
+                    let year = calendar.component(.year, from: currentMonth)
+                    let month = calendar.component(.month, from: currentMonth)
+                    let dateString = practiceManager.formatDayString(year: year, month: month, day: selectedDay)
+                    Text(dateString)
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.primaryColor)
+                    
+                    Spacer()
+                    
+                    // 使用Manager格式化时间
+                    Text(practiceManager.formatDuration(minutes: stats.duration))
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.primaryColor)
+                } else {
+                    // 显示月度统计信息
+                    Text("\(monthStats.days)天练习")
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.primaryColor)
+                    
+                    Spacer()
+                    
+                    // 使用Manager格式化时间
+                    Text(practiceManager.formatDuration(minutes: monthStats.duration))
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.primaryColor)
+                }
             }
             .padding(.top, 8)
         }
@@ -380,8 +441,15 @@ struct MonthlyHeatmapView: View {
         print("请查看CoreDataPracticeManager中getMonthlyHeatmapData方法的实现，确认数据是如何按周组织的")
         print("========== 结束数据源调试 ==========\n")
         
-        // 常规代码
-        monthlyData = rawData
+        // 使用Manager获取数据
+        monthlyData = practiceManager.getMonthlyHeatmapData(for: currentMonth)
+        
+        // 使用Manager获取月度统计信息
+        monthStats = practiceManager.getMonthStats(for: currentMonth)
+        
+        // 重置选中状态
+        selectedDay = nil
+        selectedDayStats = nil
         
         // 常规日志
         print("Debug: 加载了 \(dateFormatter.string(from: currentMonth)) 的数据，行数: \(monthlyData.count)")
