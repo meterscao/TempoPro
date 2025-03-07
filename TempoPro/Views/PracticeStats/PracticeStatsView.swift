@@ -273,9 +273,6 @@ struct PracticeStatsView: View {
         // 本周数据
         weeklyData = practiceManager.getWeeklyPracticeData()
         
-        // 月度热图数据
-        monthlyData = practiceManager.getMonthlyHeatmapData()
-        
         // 最常练习的速度
         mostPracticedTempo = practiceManager.getMostPracticedTempo()
         

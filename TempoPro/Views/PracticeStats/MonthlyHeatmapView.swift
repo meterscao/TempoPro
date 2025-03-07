@@ -6,6 +6,121 @@
 //
 import SwiftUI
 
+// 首先定义一个PreferenceKey来传递高度信息
+private struct HeatmapHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 100
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+// 添加一个内部视图来处理布局计算
+private struct HeatmapContentView: View {
+    let monthlyData: [[Double]]
+    let theme: MetronomeTheme
+    let width: CGFloat
+    
+    var body: some View {
+        let spacing: CGFloat = 8
+        let cellSize = (width - (spacing * 6)) / 7
+        let rowCount = monthlyData.count
+        let totalHeight = (cellSize * CGFloat(rowCount)) + (spacing * CGFloat(rowCount - 1))
+        
+        VStack(spacing: spacing) {
+            ForEach(0..<monthlyData.count, id: \.self) { row in
+                HeatmapRowView(
+                    rowData: row < monthlyData.count ? monthlyData[row] : [],
+                    cellSize: cellSize,
+                    spacing: spacing,
+                    theme: theme
+                )
+            }
+        }
+        .frame(height: totalHeight)
+        .onAppear {
+            debugPrint("Debug: width = \(width), cellSize = \(cellSize)")
+            debugPrint("Debug: rowCount = \(rowCount), totalHeight = \(totalHeight)")
+        }
+    }
+}
+
+// 添加这个辅助视图来拆分复杂结构
+private struct HeatmapGridView: View {
+    let monthlyData: [[Double]]
+    let theme: MetronomeTheme
+    @State private var calculatedHeight: CGFloat = 100
+    
+    var body: some View {
+        let spacing: CGFloat = 8
+        
+        Group {
+            if monthlyData.isEmpty {
+                Text("No data for this month")
+                    .foregroundColor(theme.primaryColor.opacity(0.7))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 100)
+            } else {
+                GeometryReader { geometry in
+                    let availableWidth = geometry.size.width
+                    let cellSize = (availableWidth - (spacing * 6)) / 7
+                    let rowCount = monthlyData.count
+                    let totalHeight = (cellSize * CGFloat(rowCount)) + (spacing * CGFloat(rowCount - 1))
+                    
+                    VStack(spacing: spacing) {
+                        ForEach(0..<monthlyData.count, id: \.self) { row in
+                            HeatmapRowView(
+                                rowData: row < monthlyData.count ? monthlyData[row] : [],
+                                cellSize: cellSize,
+                                spacing: spacing,
+                                theme: theme
+                            )
+                        }
+                    }
+                    .frame(height: totalHeight)
+                    // 使用preference传递计算出的高度
+                    .preference(key: HeatmapHeightPreferenceKey.self, value: totalHeight)
+                    .onAppear {
+                        debugPrint("Debug: availableWidth = \(availableWidth), cellSize = \(cellSize)")
+                        debugPrint("Debug: rowCount = \(rowCount), totalHeight = \(totalHeight)")
+                    }
+                }
+                // 使用计算出的高度
+                .frame(height: calculatedHeight)
+                // 监听高度变化
+                .onPreferenceChange(HeatmapHeightPreferenceKey.self) { height in
+                    self.calculatedHeight = height
+                }
+            }
+        }
+    }
+}
+
+// 再拆分一层，处理每一行
+private struct HeatmapRowView: View {
+    let rowData: [Double]
+    let cellSize: CGFloat
+    let spacing: CGFloat
+    let theme: MetronomeTheme
+    
+    var body: some View {
+        HStack(spacing: spacing) {
+            ForEach(0..<7, id: \.self) { col in
+                if col < rowData.count {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(rowData[col] == 0 ?
+                            theme.beatHightColor.opacity(0.1) :
+                            theme.beatHightColor.opacity(0.4 + (rowData[col] * 0.6)))
+                        .frame(width: cellSize, height: cellSize)
+                } else {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(width: cellSize, height: cellSize)
+                }
+            }
+        }
+    }
+}
+
 // 提取出来的月度热力图组件
 struct MonthlyHeatmapView: View {
     @Environment(\.metronomeTheme) var theme
@@ -56,57 +171,9 @@ struct MonthlyHeatmapView: View {
                 }
             }
             
-            // 热力图主体
-            VStack {
-                GeometryReader { geometry in
-                    if monthlyData.isEmpty {
-                        Text("No data for this month")
-                            .foregroundColor(theme.primaryColor.opacity(0.7))
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else {
-                        // 计算每个单元格的尺寸，确保宽高相等
-                        let spacing: CGFloat = 8 // 设置固定间距为8
-                        
-                        // 修正计算单元格大小的方式
-                        // 一行有7个单元格，它们之间有6个间距，总共需要空间是 7*cellSize + 6*spacing
-                        let availableWidth = geometry.size.width
-                        let cellSize = (availableWidth - (spacing * 6)) / 7
-                        
-                        // 计算整个热力图需要的高度
-                        let rowCount = monthlyData.count
-                        let totalHeight = (cellSize * CGFloat(rowCount)) + (spacing * CGFloat(rowCount - 1))
-                        
-                        // 使容器固定在计算出的高度
-                        VStack(spacing: 0) {
-                            // 热力图内容
-                            VStack(spacing: spacing) {
-                                ForEach(0..<monthlyData.count, id: \.self) { row in
-                                    HStack(spacing: spacing) {
-                                        ForEach(0..<7, id: \.self) { col in
-                                            if col < monthlyData[row].count {
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .fill(monthlyData[row][col] == 0 ?
-                                                        theme.beatHightColor.opacity(0.2) :
-                                                        theme.beatHightColor.opacity(0.4 + (monthlyData[row][col] * 0.6)))
-                                                    .frame(width: cellSize, height: cellSize)
-                                            } else {
-                                                // 如果没有数据，显示空白区域保持布局
-                                                Rectangle()
-                                                    .fill(Color.clear)
-                                                    .frame(width: cellSize, height: cellSize)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            .frame(height: totalHeight)
-                            Spacer(minLength: 0) // 让热力图保持在顶部
-                        }
-                    }
-                }
-                .frame(height: nil) // 移除任何固定高度约束
-                .fixedSize(horizontal: false, vertical: true) // 让视图采用其自然高度
-            }
+            // 热力图主体 - 简化嵌套结构
+            HeatmapGridView(monthlyData: monthlyData, theme: theme)
+                
             
             // 图例
             HStack {
@@ -150,6 +217,11 @@ struct MonthlyHeatmapView: View {
     // 加载特定月份的数据
     private func loadMonthData() {
         monthlyData = practiceManager.getMonthlyHeatmapData(for: currentMonth)
+        print("Debug: 加载了 \(currentMonth) 的数据，行数: \(monthlyData.count)")
+        // 打印每行的数据长度
+        for (index, row) in monthlyData.enumerated() {
+            print("Debug: 第\(index)行数据长度: \(row.count)")
+        }
     }
     
     // 前往上一个月
