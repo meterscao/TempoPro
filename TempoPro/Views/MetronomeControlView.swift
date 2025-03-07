@@ -31,26 +31,7 @@ struct MetronomeControlView: View {
     // 最小震动间隔(秒)
     private let minimumFeedbackInterval: TimeInterval = 0.06
     
-    private func createTicks(wheelSize:Double) -> some View {
-            
-            ZStack {
-                ForEach(0..<60) { i in
-                    Rectangle()
-                        .fill(Color.black.opacity(0.3))
-                        .frame(width: 1, height: 10)
-                        .offset(y: -(wheelSize/2 - 10))
-                        .rotationEffect(.degrees(Double(i) * 6))
-                }
-                ForEach(0..<12) { i in
-                    Rectangle()
-                        .fill(Color.black)
-                        .frame(width: 2, height: 20)
-                        .offset(y: -(wheelSize/2 - 15))
-                        .rotationEffect(.degrees(Double(i) * 30))
-                }
-            }
-        
-    }
+
     
     private func calculateAngle(location: CGPoint, in frame: CGRect) -> Double {
         let centerX = frame.midX
