@@ -14,107 +14,144 @@ private struct HeatmapHeightPreferenceKey: PreferenceKey {
     }
 }
 
-// 添加一个内部视图来处理布局计算
-private struct HeatmapContentView: View {
-    let monthlyData: [[Double]]
-    let theme: MetronomeTheme
-    let width: CGFloat
-    
-    var body: some View {
-        let spacing: CGFloat = 8
-        let cellSize = (width - (spacing * 6)) / 7
-        let rowCount = monthlyData.count
-        let totalHeight = (cellSize * CGFloat(rowCount)) + (spacing * CGFloat(rowCount - 1))
-        
-        VStack(spacing: spacing) {
-            ForEach(0..<monthlyData.count, id: \.self) { row in
-                HeatmapRowView(
-                    rowData: row < monthlyData.count ? monthlyData[row] : [],
-                    cellSize: cellSize,
-                    spacing: spacing,
-                    theme: theme
-                )
-            }
-        }
-        .frame(height: totalHeight)
-        .onAppear {
-            debugPrint("Debug: width = \(width), cellSize = \(cellSize)")
-            debugPrint("Debug: rowCount = \(rowCount), totalHeight = \(totalHeight)")
-        }
-    }
+// 定义一个日期单元格数据结构
+private struct DateCellInfo {
+    let day: Int  // 日期
+    let isVisible: Bool  // 是否显示
 }
 
-// 添加这个辅助视图来拆分复杂结构
-private struct HeatmapGridView: View {
-    let monthlyData: [[Double]]
-    let theme: MetronomeTheme
-    @State private var calculatedHeight: CGFloat = 100
-    
-    var body: some View {
-        let spacing: CGFloat = 8
-        
-        Group {
-            if monthlyData.isEmpty {
-                Text("No data for this month")
-                    .foregroundColor(theme.primaryColor.opacity(0.7))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 100)
-            } else {
-                GeometryReader { geometry in
-                    let availableWidth = geometry.size.width
-                    let cellSize = (availableWidth - (spacing * 6)) / 7
-                    let rowCount = monthlyData.count
-                    let totalHeight = (cellSize * CGFloat(rowCount)) + (spacing * CGFloat(rowCount - 1))
-                    
-                    VStack(spacing: spacing) {
-                        ForEach(0..<monthlyData.count, id: \.self) { row in
-                            HeatmapRowView(
-                                rowData: row < monthlyData.count ? monthlyData[row] : [],
-                                cellSize: cellSize,
-                                spacing: spacing,
-                                theme: theme
-                            )
-                        }
-                    }
-                    .frame(height: totalHeight)
-                    // 使用preference传递计算出的高度
-                    .preference(key: HeatmapHeightPreferenceKey.self, value: totalHeight)
-                    .onAppear {
-                        debugPrint("Debug: availableWidth = \(availableWidth), cellSize = \(cellSize)")
-                        debugPrint("Debug: rowCount = \(rowCount), totalHeight = \(totalHeight)")
-                    }
-                }
-                // 使用计算出的高度
-                .frame(height: calculatedHeight)
-                // 监听高度变化
-                .onPreferenceChange(HeatmapHeightPreferenceKey.self) { height in
-                    self.calculatedHeight = height
-                }
-            }
-        }
-    }
-}
-
-// 再拆分一层，处理每一行
+// 处理每一行的视图
 private struct HeatmapRowView: View {
     let rowData: [Double]
+    let dateCells: [DateCellInfo]  // 该行的日期信息
     let cellSize: CGFloat
     let spacing: CGFloat
     let theme: MetronomeTheme
     
     var body: some View {
         HStack(spacing: spacing) {
-            ForEach(0..<7, id: \.self) { col in
-                if col < rowData.count {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(rowData[col] == 0 ?
-                            theme.beatHightColor.opacity(0.1) :
-                            theme.beatHightColor.opacity(0.4 + (rowData[col] * 0.6)))
-                        .frame(width: cellSize, height: cellSize)
+            ForEach(0..<dateCells.count, id: \.self) { col in
+                if dateCells[col].isVisible {
+                    ZStack {
+                        // 背景方块
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(rowData[col] == 0 ?
+                                  theme.beatHightColor.opacity(0.1) :
+                                  theme.beatHightColor.opacity(0.4 + (rowData[col] * 0.6)))
+                            .frame(width: cellSize, height: cellSize)
+                        
+                        // 日期数字
+                        Text("\(dateCells[col].day)")
+                            .font(.system(size: max(10, cellSize * 0.25)))
+                            .foregroundColor(theme.primaryColor.opacity(0.7))
+                            .position(x: cellSize * 0.25, y: cellSize * 0.25) // 放置在左上角
+                    }
                 } else {
-                    Rectangle()
-                        .fill(Color.clear)
+                    // 不可见的日期显示透明方块
+                    Color.clear
                         .frame(width: cellSize, height: cellSize)
+                }
+            }
+        }
+    }
+}
+
+// 热力图主视图
+private struct HeatmapGridView: View {
+    let monthlyData: [[Double]]
+    let theme: MetronomeTheme
+    let currentMonth: Date
+    @State private var calculatedHeight: CGFloat = 100
+    @State private var monthDays: [[DateCellInfo]] = []
+    
+    // 生成当月日期信息
+    private func generateMonthDays() -> [[DateCellInfo]] {
+        let calendar = Calendar.current
+        
+        // 创建一个以周一为第一天的日历
+        var mondayFirstCalendar = Calendar.current
+        mondayFirstCalendar.firstWeekday = 2  // 2 表示周一
+        
+        // 获取当前月的第一天和天数
+        let components = calendar.dateComponents([.year, .month], from: currentMonth)
+        guard let firstDayOfMonth = calendar.date(from: components),
+              let daysInMonth = calendar.range(of: .day, in: .month, for: currentMonth)?.count else { 
+            return [] 
+        }
+        
+        // 确定第一天是星期几（以周一为基准）
+        let firstWeekday = mondayFirstCalendar.component(.weekday, from: firstDayOfMonth)
+        // 调整为以周一为0的索引
+        let adjustedFirstWeekday = (firstWeekday + 5) % 7 // 周一=0, 周二=1, ..., 周日=6
+        
+        // 按周整理日期
+        var result: [[DateCellInfo]] = []
+        
+        // 默认每个位置都是不可见的
+        for _ in 0..<6 { // 最多6周
+            result.append(Array(repeating: DateCellInfo(day: 0, isVisible: false), count: 7))
+        }
+        
+        // 填充当月的日期
+        var currentDay = 1
+        for day in 1...daysInMonth {
+            // 计算这一天在哪一行哪一列
+            let rowIndex = (adjustedFirstWeekday + day - 1) / 7
+            let colIndex = (adjustedFirstWeekday + day - 1) % 7
+            
+            // 填充这一天
+            if rowIndex < result.count {
+                result[rowIndex][colIndex] = DateCellInfo(day: day, isVisible: true)
+            }
+        }
+        
+        // 移除空行
+        return result.filter { row in
+            row.contains { $0.isVisible }
+        }
+    }
+    
+    var body: some View {
+        Group {
+            if monthlyData.isEmpty {
+                Text("无该月数据")
+                    .foregroundColor(theme.primaryColor.opacity(0.7))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 100)
+            } else {
+                GeometryReader { geometry in
+                    let availableWidth = geometry.size.width
+                    let spacing: CGFloat = 8
+                    let cellSize = (availableWidth - (spacing * 6)) / 7
+                    
+                    // 计算实际需要显示的行数
+                    let rowCount = monthDays.count
+                    let totalHeight = (cellSize * CGFloat(rowCount)) + (spacing * CGFloat(rowCount - 1))
+                    
+                    VStack(spacing: spacing) {
+                        ForEach(0..<monthDays.count, id: \.self) { row in
+                            // 确保行索引有效
+                            if row < monthlyData.count {
+                                HeatmapRowView(
+                                    rowData: monthlyData[row],
+                                    dateCells: monthDays[row],
+                                    cellSize: cellSize,
+                                    spacing: spacing,
+                                    theme: theme
+                                )
+                            }
+                        }
+                    }
+                    .frame(height: totalHeight)
+                    .preference(key: HeatmapHeightPreferenceKey.self, value: totalHeight)
+                }
+                .frame(height: calculatedHeight)
+                .onPreferenceChange(HeatmapHeightPreferenceKey.self) { height in
+                    self.calculatedHeight = height
+                }
+                .onAppear {
+                    self.monthDays = generateMonthDays()
+                    debugPrint("月份天数分布: \(monthDays.map { row in row.filter { $0.isVisible }.count })")
                 }
             }
         }
@@ -161,9 +198,12 @@ struct MonthlyHeatmapView: View {
             }
             .padding(.bottom, 8)
             
-            // 星期标签
+            // 星期标签 - 调整为周一至周日
             HStack {
-                ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { day in
+                // 重新排序周标签，使周一为第一天
+                let weekdaySymbols = Array(Calendar.current.shortWeekdaySymbols[1...6]) + [Calendar.current.shortWeekdaySymbols[0]]
+                
+                ForEach(weekdaySymbols, id: \.self) { day in
                     Text(day)
                         .font(.custom("MiSansLatin-Regular", size: 12))
                         .frame(maxWidth: .infinity)
@@ -171,8 +211,8 @@ struct MonthlyHeatmapView: View {
                 }
             }
             
-            // 热力图主体 - 简化嵌套结构
-            HeatmapGridView(monthlyData: monthlyData, theme: theme)
+            // 热力图主体 - 传递当前月份信息
+            HeatmapGridView(monthlyData: monthlyData, theme: theme, currentMonth: currentMonth)
                 
             
             // 图例
