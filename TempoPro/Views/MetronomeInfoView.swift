@@ -54,7 +54,7 @@ struct BeatView: View {
     @Environment(\.metronomeTheme) var theme
     
     private func barColors() -> [Color] {
-        let baseColor = isPlaying && isCurrentBeat ?   .red : theme.beatHightColor 
+        let baseColor = isPlaying && isCurrentBeat ?   .red : theme.beatBarColor 
         let accentBeatColor = baseColor
         let mutedBeatColor = baseColor.opacity(0.2)
         let colors: [Color] = switch status {

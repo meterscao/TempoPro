@@ -45,11 +45,11 @@ private struct HeatmapRowView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(
                                 isSelected ?
-                                  theme.primaryColor :
+                                  theme.primaryColor:
                                   (
                                     practiceValue == 0 ?
-                                  theme.beatHightColor.opacity(0.1) :
-                                  theme.beatHightColor.opacity(0.4 + (practiceValue * 0.6))
+                                  theme.beatBarColor.opacity(0.1) :
+                                  theme.beatBarColor.opacity(0.4 + (practiceValue * 0.6))
                                   ))
                             .frame(width: cellSize, height: cellSize)
                         
@@ -296,7 +296,7 @@ struct MonthlyHeatmapView: View {
                     Text(day)
                         .font(.custom("MiSansLatin-Regular", size: 12))
                         .frame(maxWidth: .infinity)
-                        .foregroundColor(theme.beatHightColor)
+                        .foregroundColor(theme.beatBarColor)
                 }
             }
             

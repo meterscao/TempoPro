@@ -46,7 +46,7 @@ struct EditSongView: View {
                                 .padding()
                                 .background(theme.backgroundColor)
                                 .cornerRadius(12)
-                                .foregroundColor(theme.beatHightColor)
+                                .foregroundColor(theme.beatBarColor)
                         }
                         
                         // BPM设置
@@ -87,7 +87,7 @@ struct EditSongView: View {
                                 
                                 Text("\(tempo) BPM")
                                     .font(.custom("MiSansLatin-Semibold", size: 20))
-                                    .foregroundColor(theme.beatHightColor)
+                                    .foregroundColor(theme.beatBarColor)
                                     .padding(.vertical, 10)
                                     .frame(maxWidth: .infinity)
                                     .background(theme.backgroundColor)
@@ -156,7 +156,7 @@ struct EditSongView: View {
                                             }) {
                                                 Text("\(unit)")
                                                     .font(.custom("MiSansLatin-Semibold", size: 20))
-                                                    .foregroundColor(unit == beatUnit ? theme.beatHightColor : theme.backgroundColor)
+                                                    .foregroundColor(unit == beatUnit ? theme.beatBarColor : theme.backgroundColor)
                                                     .frame(width: 40, height: 40)
                                                     .background(
                                                         RoundedRectangle(cornerRadius: 8)
@@ -240,7 +240,7 @@ struct EditSongView: View {
                             }
                             .padding(.vertical, 14)
                             .frame(maxWidth: .infinity)
-                            .background(songName.isEmpty ? theme.beatHightColor.opacity(0.3) : theme.beatHightColor)
+                            .background(songName.isEmpty ? theme.beatBarColor.opacity(0.3) : theme.beatBarColor)
                             .cornerRadius(12)
                         }
                         .disabled(songName.isEmpty)
@@ -293,7 +293,7 @@ struct EditSongView: View {
         case .medium:
             return .orange
         case .normal:
-            return theme.beatHightColor
+            return theme.beatBarColor
         case .muted:
             return .gray
         }

@@ -42,7 +42,7 @@ struct PlaylistRow: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(theme.cardBackgroundColor)
+                .fill(theme.backgroundColor)
                 .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
         )
     }

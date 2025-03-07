@@ -46,7 +46,7 @@ struct EditPlaylistView: View {
                                 .padding()
                                 .background(theme.backgroundColor)
                                 .cornerRadius(12)
-                                .foregroundColor(theme.beatHightColor)
+                                .foregroundColor(theme.beatBarColor)
                         }
                         
                         VStack(alignment: .leading, spacing: 16) {
@@ -97,7 +97,7 @@ struct EditPlaylistView: View {
                             }
                             .padding(.vertical, 14)
                             .frame(maxWidth: .infinity)
-                            .background(playlistName.isEmpty ? theme.beatHightColor.opacity(0.3) : theme.beatHightColor)
+                            .background(playlistName.isEmpty ? theme.beatBarColor.opacity(0.3) : theme.beatBarColor)
                             .cornerRadius(12)
                         }
                         .disabled(playlistName.isEmpty)

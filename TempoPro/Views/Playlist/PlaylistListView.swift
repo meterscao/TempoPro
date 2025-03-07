@@ -111,7 +111,7 @@ struct PlaylistRowCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(playlist.name ?? "未命名歌单")
                     .font(.custom("MiSansLatin-Semibold", size: 18))
-                    .foregroundColor(theme.beatHightColor)
+                    .foregroundColor(theme.beatBarColor)
                 
                 Text("\(playlist.songs?.count ?? 0) 首歌曲")
                     .font(.custom("MiSansLatin-Regular", size: 14))
@@ -122,7 +122,7 @@ struct PlaylistRowCard: View {
             
             Image(systemName: "chevron.right")
                 .font(.custom("MiSansLatin-Regular", size: 16))
-                .foregroundColor(theme.beatHightColor)
+                .foregroundColor(theme.beatBarColor)
         }
         .padding(16)
         .background(theme.backgroundColor) // 去掉透明度

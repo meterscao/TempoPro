@@ -13,6 +13,7 @@ struct WeeklyStatsView: View {
     
     // 状态变量
     @State private var weeklyData: [(String, Double)] = []
+    @State private var weeklyDates: [String] = []  // 新增：存储对应的日期字符串
     @State private var selectedWeekdayIndex: Int? = nil
     
     var body: some View {
@@ -59,9 +60,14 @@ struct WeeklyStatsView: View {
                                 
                                 // 根据选中状态设置颜色
                                 let isSelected = selectedWeekdayIndex == index
-                                let barColor = day.1 > 0 ? 
-                                    (isSelected ? theme.primaryColor : theme.beatHightColor) : 
-                                    (isSelected ? theme.primaryColor.opacity(0.2) : theme.beatHightColor.opacity(0.1))
+                                let barColor = isSelected ? theme.primaryColor : (
+                                    day.1 > 0 ? 
+                                    theme.beatBarColor : 
+                                    theme.beatBarColor.opacity(0.1)
+                                )
+                                
+                                
+                                  
                                 
                                 VStack(spacing: 8) {
                                     RoundedRectangle(cornerRadius: 8)
@@ -75,7 +81,7 @@ struct WeeklyStatsView: View {
                                     
                                     Text(day.0)
                                         .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(isSelected ? theme.primaryColor : theme.beatHightColor)
+                                        .foregroundColor(isSelected ? theme.primaryColor : theme.beatBarColor)
                                 }
                                 .onTapGesture {
                                     // 点击处理逻辑
@@ -101,8 +107,8 @@ struct WeeklyStatsView: View {
                                 // 显示选中日期的信息
                                 let selectedDay = weeklyData[selectedIndex]
                                 
-                                // 显示星期几
-                                Text(selectedDay.0)
+                                // 显示日期而非星期几
+                                Text(weeklyDates[selectedIndex])
                                     .font(.custom("MiSansLatin-Regular", size: 12))
                                     .foregroundColor(theme.primaryColor)
                                 
@@ -120,28 +126,27 @@ struct WeeklyStatsView: View {
                                 }
                             } else {
                                 // 显示周统计信息
-                                // 找出最小和最大的非零值
-                                let nonZeroValues = weeklyData.map { $0.1 }.filter { $0 > 0 }
-                                let minVal = nonZeroValues.min() ?? 0
-                                let maxVal = nonZeroValues.max() ?? 0
+                                // 计算有练习记录的天数
+                                let practiceDays = weeklyData.filter { $0.1 > 0 }.count
+                                // 计算总练习时间
+                                let totalMinutes = weeklyData.map { $0.1 }.reduce(0, +)
                                 
-                                if minVal > 0 {
-                                    Text("\(Int(minVal))分钟")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.9))
-                                } else {
-                                    Text("0分钟")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.9))
-                                }
+                                // 显示有练习的天数
+                                Text("\(practiceDays)天练习")
+                                    .font(.custom("MiSansLatin-Regular", size: 12))
+                                    .foregroundColor(theme.primaryColor.opacity(0.9))
                                 
                                 Spacer()
                                 
-                                if maxVal > 0 {
-                                    // 使用Manager格式化时间
-                                    Text(practiceManager.formatDuration(minutes: maxVal))
+                                // 显示总练习时间
+                                if totalMinutes > 0 {
+                                    Text(practiceManager.formatDuration(minutes: totalMinutes))
                                         .font(.custom("MiSansLatin-Regular", size: 12))
                                         .foregroundColor(theme.primaryColor.opacity(0.9))
+                                } else {
+                                    Text("无练习记录")
+                                        .font(.custom("MiSansLatin-Regular", size: 12))
+                                        .foregroundColor(theme.primaryColor.opacity(0.7))
                                 }
                             }
                         }
@@ -165,7 +170,38 @@ struct WeeklyStatsView: View {
     private func loadWeeklyData() {
         // 获取本周数据
         weeklyData = practiceManager.getCurrentWeekPracticeData()
+        
+        // 获取对应的日期字符串 (如: "3月7日"，"3月8日"等)
+        weeklyDates = getFormattedDates()
+        
         // 重置选中状态
         selectedWeekdayIndex = nil
+    }
+    
+    // 获取格式化的日期字符串
+    private func getFormattedDates() -> [String] {
+        let calendar = Calendar.current
+        let today = Date()
+        let weekday = calendar.component(.weekday, from: today)
+        let daysToSubtract = weekday - 1 // 从周日开始算
+        
+        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) else {
+            return Array(repeating: "", count: 7)
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "zh_CN")
+        dateFormatter.dateFormat = "M月d日"
+        
+        var dates: [String] = []
+        for i in 0..<7 {
+            if let date = calendar.date(byAdding: .day, value: i, to: startOfWeek) {
+                dates.append(dateFormatter.string(from: date))
+            } else {
+                dates.append("")
+            }
+        }
+        
+        return dates
     }
 }

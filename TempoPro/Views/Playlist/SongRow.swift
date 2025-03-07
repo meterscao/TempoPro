@@ -45,7 +45,7 @@ struct SongRow: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(theme.cardBackgroundColor)
+                .fill(theme.backgroundColor)
                 .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
         )
     }

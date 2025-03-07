@@ -55,78 +55,17 @@ struct PracticeStatsView: View {
                         }
                     }
                     
-                    // Stats Summary
-                    HStack(spacing: 10) {
-                        StatsSummaryCard(value: "\(dayStreak)", label: "STREAK DAYS")
-                        StatsSummaryCard(value: "\(daysThisMonth)", label: "DAYS THIS MONTH")
-                        StatsSummaryCard(value: String(format: "%.1f", totalHours), label: "TOTAL HOURS")
-                    }
+                    // Stats Summary - 替换为新的组件
+                    StatsSummaryView()
                     
-                    // Weekly Streak - 替换为新的组件
+                    // Weekly Streak
                     WeeklyStatsView()
                     
                     // Monthly Heatmap
                     MonthlyHeatmapView()
                     
-                    // Performance Insights
-                    VStack(alignment: .leading, spacing: 18) {
-                        Text("INSIGHTS")
-                            .font(.custom("MiSansLatin-Semibold", size: 20))
-                            .foregroundColor(theme.primaryColor)
-                        
-                        VStack(spacing: 22) {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text("MOST PRACTICED TEMPO")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.8))
-                                    
-                                    Text(mostPracticedTempo)
-                                        .font(.custom("MiSansLatin-Semibold", size: 18))
-                                        .foregroundColor(theme.beatHightColor)
-                                }
-                                
-                                Spacer()
-                                
-                                ZStack {
-                                    Circle()
-                                        .fill(theme.primaryColor.opacity(0.6))
-                                        .frame(width: 48, height: 48)
-                                    
-                                    Image(systemName: "waveform.path")
-                                        .font(.custom("MiSansLatin-Regular", size: 16))
-                                        .foregroundColor(theme.backgroundColor)
-                                }
-                            }
-                            
-                            HStack {
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text("LONGEST SESSION")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.8))
-                                    
-                                    Text(longestSession)
-                                        .font(.custom("MiSansLatin-Semibold", size: 18))
-                                        .foregroundColor(theme.beatHightColor)
-                                }
-                                
-                                Spacer()
-                                
-                                ZStack {
-                                    Circle()
-                                        .fill(theme.primaryColor.opacity(0.6))
-                                        .frame(width: 48, height: 48)
-                                    
-                                    Image(systemName: "timer")
-                                        .font(.custom("MiSansLatin-Regular", size: 16))
-                                        .foregroundColor(theme.backgroundColor)
-                                }
-                            }
-                        }
-                    }
-                    .padding(20)
-                    .background(theme.backgroundColor)
-                    .cornerRadius(16)
+                    // Performance Insights - 替换为新的组件
+                    PerformanceInsightsView()
                     
                     // Share Stats Button
                     Button(action: {}) {
@@ -158,14 +97,35 @@ struct PracticeStatsView: View {
             )
             .background(theme.primaryColor.ignoresSafeArea())
             .onAppear {
-                // 加载数据
-                loadPracticeData()
+                // 加载数据已移至各独立组件
             }
         }
     }
+}
+
+// 统计摘要视图组件
+struct StatsSummaryView: View {
+    @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var practiceManager: CoreDataPracticeManager
     
-    // 加载练习数据
-    private func loadPracticeData() {
+    // 状态变量
+    @State private var dayStreak = 0
+    @State private var daysThisMonth = 0
+    @State private var totalHours = 0.0
+    
+    var body: some View {
+        HStack(spacing: 10) {
+            StatsSummaryCard(value: "\(dayStreak)", label: "STREAK DAYS")
+            StatsSummaryCard(value: "\(daysThisMonth)", label: "DAYS THIS MONTH")
+            StatsSummaryCard(value: String(format: "%.1f", totalHours), label: "TOTAL HOURS")
+        }
+        .onAppear {
+            loadSummaryData()
+        }
+    }
+    
+    // 加载统计摘要数据
+    private func loadSummaryData() {
         // 连续练习天数
         dayStreak = practiceManager.getCurrentStreak()
         
@@ -174,7 +134,84 @@ struct PracticeStatsView: View {
         
         // 总练习时间
         totalHours = practiceManager.getTotalPracticeHours()
-        
+    }
+}
+
+// 绩效洞察视图组件
+struct PerformanceInsightsView: View {
+    @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var practiceManager: CoreDataPracticeManager
+    
+    // 状态变量
+    @State private var mostPracticedTempo = ""
+    @State private var longestSession = ""
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("INSIGHTS")
+                .font(.custom("MiSansLatin-Semibold", size: 20))
+                .foregroundColor(theme.primaryColor)
+            
+            VStack(spacing: 22) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("MOST PRACTICED TEMPO")
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(theme.primaryColor.opacity(0.8))
+                        
+                        Text(mostPracticedTempo)
+                            .font(.custom("MiSansLatin-Semibold", size: 18))
+                            .foregroundColor(theme.beatBarColor)
+                    }
+                    
+                    Spacer()
+                    
+                    ZStack {
+                        Circle()
+                            .fill(theme.primaryColor.opacity(0.6))
+                            .frame(width: 48, height: 48)
+                        
+                        Image(systemName: "waveform.path")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(theme.backgroundColor)
+                    }
+                }
+                
+                HStack {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("LONGEST SESSION")
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(theme.primaryColor.opacity(0.8))
+                        
+                        Text(longestSession)
+                            .font(.custom("MiSansLatin-Semibold", size: 18))
+                            .foregroundColor(theme.beatBarColor)
+                    }
+                    
+                    Spacer()
+                    
+                    ZStack {
+                        Circle()
+                            .fill(theme.primaryColor.opacity(0.6))
+                            .frame(width: 48, height: 48)
+                        
+                        Image(systemName: "timer")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(theme.backgroundColor)
+                    }
+                }
+            }
+        }
+        .padding(20)
+        .background(theme.backgroundColor)
+        .cornerRadius(16)
+        .onAppear {
+            loadInsightsData()
+        }
+    }
+    
+    // 加载洞察数据
+    private func loadInsightsData() {
         // 最常练习的速度
         mostPracticedTempo = practiceManager.getMostPracticedTempo()
         
@@ -183,7 +220,6 @@ struct PracticeStatsView: View {
         longestSession = longestSessionInfo.date
     }
 }
-
 
 
 struct StatsSummaryCard: View {
@@ -195,7 +231,7 @@ struct StatsSummaryCard: View {
         VStack(spacing: 8) {
             Text(value)
                 .font(.custom("MiSansLatin-Semibold", size: 32))
-                .foregroundColor(theme.beatHightColor)
+                .foregroundColor(theme.beatBarColor)
             
             Text(label)
                 .font(.custom("MiSansLatin-Regular", size: 11))

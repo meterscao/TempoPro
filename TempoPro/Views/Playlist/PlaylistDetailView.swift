@@ -81,7 +81,7 @@ struct PlaylistDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 16) {
                             Circle()
-                                .fill(Color(hex: playlist.color ?? "#0000FF") ?? theme.beatHightColor)
+                                .fill(Color(hex: playlist.color ?? "#0000FF") ?? theme.beatBarColor)
                                 .frame(width: 60, height: 60)
                                 .overlay(
                                     Image(systemName: "music.note.list")
@@ -93,7 +93,7 @@ struct PlaylistDetailView: View {
                                 let songCount = playlist.songs?.count ?? 0
                                 Text("\(songCount) 首歌曲")
                                     .font(.custom("MiSansLatin-Semibold", size: 18))
-                                    .foregroundColor(theme.beatHightColor)
+                                    .foregroundColor(theme.beatBarColor)
                                 
                                 Text("点击歌曲开始练习")
                                     .font(.custom("MiSansLatin-Regular", size: 14))
@@ -124,7 +124,7 @@ struct PlaylistDetailView: View {
                         }
                         .padding(.vertical, 12)
                         .padding(.horizontal, 20)
-                        .background(theme.beatHightColor.opacity(0.7))
+                        .background(theme.beatBarColor.opacity(0.7))
                         .cornerRadius(12)
                     }
                     
@@ -307,7 +307,7 @@ struct SongRowCard: View {
             Button(action: onPlay) {
                 ZStack {
                     Circle()
-                        .fill(theme.beatHightColor)
+                        .fill(theme.beatBarColor)
                         .frame(width: 44, height: 44)
                     
                     Image(systemName: "play.fill")
@@ -319,7 +319,7 @@ struct SongRowCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(song.name ?? "未命名歌曲")
                     .font(.custom("MiSansLatin-Semibold", size: 18))
-                    .foregroundColor(theme.beatHightColor)
+                    .foregroundColor(theme.beatBarColor)
                 
                 Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit))")
                     .font(.custom("MiSansLatin-Regular", size: 14))
@@ -332,13 +332,13 @@ struct SongRowCard: View {
                 Button(action: onEdit) {
                     Image(systemName: "pencil")
                         .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(theme.beatHightColor)
+                        .foregroundColor(theme.beatBarColor)
                 }
                 
                 Button(action: onDelete) {
                     Image(systemName: "trash")
                         .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(theme.beatHightColor)
+                        .foregroundColor(theme.beatBarColor)
                 }
             }
         }
