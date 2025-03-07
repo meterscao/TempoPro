@@ -99,11 +99,12 @@ struct PracticeStatsView: View {
                                             // 计算合理的高度值，使图表更美观
                                             let maxHeight: CGFloat = 120
                                             let maxMinutes = weeklyData.map { $0.1 }.max() ?? 1
-                                            let height = day.1 > 0 ? max(20, CGFloat(day.1) / CGFloat(maxMinutes) * maxHeight) : 0
+                                            let height = max(15, CGFloat(day.1) / CGFloat(maxMinutes) * maxHeight)
+                                            let barColor = day.1 > 0 ? theme.beatHightColor : theme.beatHightColor.opacity(0.1)
                                             
                                             VStack(spacing: 8) {
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .fill(theme.beatHightColor)
+                                                    .fill(barColor)
                                                     .frame(width: barWidth, height: height)
                                                 
                                                 Text(day.0)
@@ -116,7 +117,7 @@ struct PracticeStatsView: View {
                                             }
                                         }
                                     }
-                                    .frame(height: 120, alignment: .bottom)
+                                    .frame(maxHeight: .infinity, alignment: .bottom)
                                     
                                     HStack {
                                         // 找出最小和最大的非零值
@@ -153,8 +154,10 @@ struct PracticeStatsView: View {
                                     }
                                 }
                             }
+                            .padding(.top, 20)
+                            .frame(maxHeight: .infinity, alignment: .bottom)
                         }
-                        .frame(height: 160)
+                        .frame(height: 200, alignment: .bottom)
                     }
                     .padding(20)
                     .background(theme.backgroundColor)
