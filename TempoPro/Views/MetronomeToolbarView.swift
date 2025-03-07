@@ -63,7 +63,7 @@ struct MetronomeToolbarView: View {
         .font(.title2)
         .padding(.horizontal,30)
         .frame(maxWidth: .infinity)
-        .sheet(isPresented: $playlistManager.showPlaylistsSheet) {
+        .fullScreenCover(isPresented: $playlistManager.showPlaylistsSheet) {
             PlaylistListView()
                 .environmentObject(playlistManager)
         }

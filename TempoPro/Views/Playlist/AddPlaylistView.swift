@@ -27,56 +27,107 @@ struct AddPlaylistView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                theme.backgroundColor
+                theme.primaryColor.ignoresSafeArea()
+                Image("bg-noise")
+                    .resizable(resizingMode: .tile)
+                    .opacity(0.06)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 24) {
-                    TextField("歌单名称", text: $playlistName)
-                        .font(.system(size: 18, design: .rounded))
-                        .padding()
-                        .background(theme.cardBackgroundColor)
-                        .cornerRadius(12)
-                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                    
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("选择颜色")
-                            .font(.system(size: 16, weight: .medium, design: .rounded))
-                            .foregroundColor(theme.textColor)
-                        
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 16) {
-                            ForEach(colors, id: \.self) { color in
-                                Circle()
-                                    .fill(color)
-                                    .frame(width: 50, height: 50)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color.white, lineWidth: selectedColor == color ? 3 : 0)
-                                    )
-                                    .shadow(color: color.opacity(0.3), radius: 3, x: 0, y: 2)
-                                    .onTapGesture {
-                                        selectedColor = color
-                                    }
-                            }
+                ScrollView {
+                    VStack(spacing: 28) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("歌单名称")
+                                .font(.custom("MiSansLatin-Semibold", size: 18))
+                                .foregroundColor(theme.backgroundColor)
+                                .padding(.leading, 4)
+                            
+                            TextField("输入歌单名称", text: $playlistName)
+                                .font(.custom("MiSansLatin-Regular", size: 16))
+                                .padding()
+                                .background(theme.backgroundColor)
+                                .cornerRadius(12)
+                                .foregroundColor(theme.beatHightColor)
                         }
+                        
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("选择颜色")
+                                .font(.custom("MiSansLatin-Semibold", size: 18))
+                                .foregroundColor(theme.backgroundColor)
+                                .padding(.leading, 4)
+                            
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 60, maximum: 70))], spacing: 20) {
+                                ForEach(colors, id: \.self) { color in
+                                    Circle()
+                                        .fill(color)
+                                        .frame(width: 60, height: 60)
+                                        .overlay(
+                                            ZStack {
+                                                if selectedColor == color {
+                                                    Circle()
+                                                        .stroke(theme.backgroundColor, lineWidth: 3)
+                                                    
+                                                    Image(systemName: "checkmark")
+                                                        .font(.custom("MiSansLatin-Bold", size: 24))
+                                                        .foregroundColor(theme.backgroundColor)
+                                                }
+                                            }
+                                        )
+                                        .onTapGesture {
+                                            selectedColor = color
+                                        }
+                                }
+                            }
+                            .padding(8)
+                        }
+                        
+                        Button(action: {
+                            if !playlistName.isEmpty {
+                                onSave(playlistName, selectedColor)
+                                isPresented = false
+                            }
+                        }) {
+                            HStack(spacing: 10) {
+                                Image(systemName: "checkmark.circle")
+                                    .font(.custom("MiSansLatin-Regular", size: 16))
+                                    .foregroundColor(theme.backgroundColor)
+                                
+                                Text("保存歌单")
+                                    .font(.custom("MiSansLatin-Semibold", size: 16))
+                                    .foregroundColor(theme.backgroundColor)
+                            }
+                            .padding(.vertical, 14)
+                            .frame(maxWidth: .infinity)
+                            .background(playlistName.isEmpty ? theme.beatHightColor.opacity(0.3) : theme.beatHightColor)
+                            .cornerRadius(12)
+                        }
+                        .disabled(playlistName.isEmpty)
+                        .padding(.top, 20)
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    .padding(.bottom, 30)
                 }
-                .padding(24)
             }
             .navigationBarTitle("新建歌单", displayMode: .inline)
-            .navigationBarItems(
-                leading: Button("取消") {
-                    isPresented = false
-                },
-                trailing: Button("保存") {
-                    if !playlistName.isEmpty {
-                        onSave(playlistName, selectedColor)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
                         isPresented = false
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.custom("MiSansLatin-Regular", size: 20))
+                            .foregroundColor(theme.backgroundColor)
                     }
                 }
-                .disabled(playlistName.isEmpty)
-            )
+                
+                ToolbarItem(placement: .principal) {
+                    Text("新建歌单")
+                        .font(.custom("MiSansLatin-Semibold", size: 20))
+                        .foregroundColor(theme.backgroundColor)
+                }
+            }
         }
     }
 }

@@ -24,77 +24,90 @@ struct EditSongView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                theme.backgroundColor
+                // 使用与PracticeStatsView相同的背景
+                theme.primaryColor.ignoresSafeArea()
+                // 添加噪声背景
+                Image("bg-noise")
+                    .resizable(resizingMode: .tile)
+                    .opacity(0.06)
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: 28) {
                         // 歌曲名称
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("歌曲名称")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(theme.textColor)
+                                .font(.custom("MiSansLatin-Semibold", size: 18))
+                                .foregroundColor(theme.backgroundColor)
+                                .padding(.leading, 4)
                             
                             TextField("输入歌曲名称", text: $songName)
-                                .font(.system(size: 17))
+                                .font(.custom("MiSansLatin-Regular", size: 16))
                                 .padding()
-                                .background(theme.cardBackgroundColor)
-                                .cornerRadius(10)
-                                .shadow(color: Color.black.opacity(0.03), radius: 3, x: 0, y: 1)
+                                .background(theme.backgroundColor)
+                                .cornerRadius(12)
+                                .foregroundColor(theme.beatHightColor)
                         }
                         
                         // BPM设置
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("节拍速度 (BPM)")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(theme.textColor)
+                                .font(.custom("MiSansLatin-Semibold", size: 18))
+                                .foregroundColor(theme.backgroundColor)
+                                .padding(.leading, 4)
                             
-                            HStack {
-                                Button(action: {
-                                    if tempo > 30 {
-                                        tempo -= 1
+                            VStack(spacing: 16) {
+                                HStack {
+                                    Button(action: {
+                                        if tempo > 30 {
+                                            tempo -= 1
+                                        }
+                                    }) {
+                                        Image(systemName: "minus.circle.fill")
+                                            .font(.custom("MiSansLatin-Regular", size: 24))
+                                            .foregroundColor(theme.backgroundColor)
                                     }
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(theme.primaryColor)
+                                    
+                                    Slider(value: Binding(
+                                        get: { Double(tempo) },
+                                        set: { tempo = Int($0) }
+                                    ), in: 30...240, step: 1)
+                                    .accentColor(theme.backgroundColor)
+                                    
+                                    Button(action: {
+                                        if tempo < 240 {
+                                            tempo += 1
+                                        }
+                                    }) {
+                                        Image(systemName: "plus.circle.fill")
+                                            .font(.custom("MiSansLatin-Regular", size: 24))
+                                            .foregroundColor(theme.backgroundColor)
+                                    }
                                 }
                                 
-                                Slider(value: Binding(
-                                    get: { Double(tempo) },
-                                    set: { tempo = Int($0) }
-                                ), in: 30...240, step: 1)
-                                .accentColor(theme.primaryColor)
-                                
-                                Button(action: {
-                                    if tempo < 240 {
-                                        tempo += 1
-                                    }
-                                }) {
-                                    Image(systemName: "plus.circle.fill")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(theme.primaryColor)
-                                }
+                                Text("\(tempo) BPM")
+                                    .font(.custom("MiSansLatin-Semibold", size: 20))
+                                    .foregroundColor(theme.beatHightColor)
+                                    .padding(.vertical, 10)
+                                    .frame(maxWidth: .infinity)
+                                    .background(theme.backgroundColor)
+                                    .cornerRadius(12)
                             }
-                            
-                            Text("\(tempo) BPM")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(theme.primaryColor)
-                                .frame(maxWidth: .infinity, alignment: .center)
                         }
                         
                         // 拍号设置
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("拍号设置")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(theme.textColor)
+                                .font(.custom("MiSansLatin-Semibold", size: 18))
+                                .foregroundColor(theme.backgroundColor)
+                                .padding(.leading, 4)
                             
                             HStack(spacing: 20) {
-                                // 分子
-                                VStack(alignment: .leading, spacing: 4) {
+                                // 拍子数
+                                VStack(alignment: .center, spacing: 8) {
                                     Text("节拍数")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(theme.textColor.opacity(0.7))
+                                        .font(.custom("MiSansLatin-Regular", size: 14))
+                                        .foregroundColor(theme.backgroundColor)
                                     
                                     HStack {
                                         Button(action: {
@@ -104,13 +117,13 @@ struct EditSongView: View {
                                             }
                                         }) {
                                             Image(systemName: "minus.circle")
-                                                .font(.system(size: 20))
-                                                .foregroundColor(theme.primaryColor)
+                                                .font(.custom("MiSansLatin-Regular", size: 20))
+                                                .foregroundColor(theme.backgroundColor)
                                         }
                                         
                                         Text("\(beatsPerBar)")
-                                            .font(.system(size: 24, weight: .semibold))
-                                            .foregroundColor(theme.textColor)
+                                            .font(.custom("MiSansLatin-Semibold", size: 24))
+                                            .foregroundColor(theme.backgroundColor)
                                             .frame(width: 40, alignment: .center)
                                         
                                         Button(action: {
@@ -120,102 +133,142 @@ struct EditSongView: View {
                                             }
                                         }) {
                                             Image(systemName: "plus.circle")
-                                                .font(.system(size: 20))
-                                                .foregroundColor(theme.primaryColor)
+                                                .font(.custom("MiSansLatin-Regular", size: 20))
+                                                .foregroundColor(theme.backgroundColor)
                                         }
                                     }
                                 }
                                 
                                 Divider()
                                     .frame(height: 40)
+                                    .background(theme.backgroundColor)
                                 
-                                // 分母
-                                VStack(alignment: .leading, spacing: 4) {
+                                // 音符单位
+                                VStack(alignment: .center, spacing: 8) {
                                     Text("音符单位")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(theme.textColor.opacity(0.7))
+                                        .font(.custom("MiSansLatin-Regular", size: 14))
+                                        .foregroundColor(theme.backgroundColor)
                                     
-                                    HStack {
+                                    HStack(spacing: 8) {
                                         ForEach(beatUnits, id: \.self) { unit in
                                             Button(action: {
                                                 beatUnit = unit
                                             }) {
                                                 Text("\(unit)")
-                                                    .font(.system(size: 20, weight: unit == beatUnit ? .bold : .regular))
-                                                    .foregroundColor(unit == beatUnit ? theme.primaryColor : theme.textColor.opacity(0.7))
+                                                    .font(.custom("MiSansLatin-Semibold", size: 20))
+                                                    .foregroundColor(unit == beatUnit ? theme.beatHightColor : theme.backgroundColor)
                                                     .frame(width: 40, height: 40)
                                                     .background(
                                                         RoundedRectangle(cornerRadius: 8)
-                                                            .stroke(unit == beatUnit ? theme.primaryColor : theme.textColor.opacity(0.3), lineWidth: unit == beatUnit ? 2 : 1)
+                                                            .fill(unit == beatUnit ? theme.backgroundColor : theme.primaryColor.opacity(0.3))
                                                     )
                                             }
                                         }
                                     }
                                 }
                             }
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .background(theme.primaryColor.opacity(0.2))
+                            .cornerRadius(12)
                         }
                         
                         // 节拍强弱设置
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("节拍强弱设置")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(theme.textColor)
+                                .font(.custom("MiSansLatin-Semibold", size: 18))
+                                .foregroundColor(theme.backgroundColor)
+                                .padding(.leading, 4)
                             
-                            HStack(spacing: 8) {
-                                ForEach(0..<beatsPerBar, id: \.self) { index in
-                                    Button(action: {
-                                        var newStatuses = beatStatuses
-                                        newStatuses[index] = newStatuses[index].next()
-                                        beatStatuses = newStatuses
-                                    }) {
-                                        ZStack {
+                            VStack(spacing: 16) {
+                                HStack(spacing: 8) {
+                                    ForEach(0..<beatsPerBar, id: \.self) { index in
+                                        Button(action: {
+                                            var newStatuses = beatStatuses
+                                            newStatuses[index] = newStatuses[index].next()
+                                            beatStatuses = newStatuses
+                                        }) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(getBeatStatusColor(beatStatuses[index]))
+                                                    .frame(width: 40, height: 40)
+                                                
+                                                Text("\(index + 1)")
+                                                    .font(.custom("MiSansLatin-Bold", size: 16))
+                                                    .foregroundColor(theme.backgroundColor)
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(.vertical, 12)
+                                .frame(maxWidth: .infinity)
+                                .background(theme.backgroundColor)
+                                .cornerRadius(12)
+                                
+                                // 强弱图例
+                                HStack(spacing: 16) {
+                                    ForEach([BeatStatus.strong, BeatStatus.medium, BeatStatus.normal, BeatStatus.muted], id: \.self) { status in
+                                        HStack(spacing: 5) {
                                             Circle()
-                                                .fill(getBeatStatusColor(beatStatuses[index]))
-                                                .frame(width: 40, height: 40)
-                                                .shadow(color: getBeatStatusColor(beatStatuses[index]).opacity(0.3), radius: 3, x: 0, y: 2)
+                                                .fill(getBeatStatusColor(status))
+                                                .frame(width: 12, height: 12)
                                             
-                                            Text("\(index + 1)")
-                                                .font(.system(size: 16, weight: .bold))
-                                                .foregroundColor(.white)
+                                            Text(getBeatStatusName(status))
+                                                .font(.custom("MiSansLatin-Regular", size: 12))
+                                                .foregroundColor(theme.backgroundColor)
                                         }
                                     }
                                 }
                             }
-                            .padding(.top, 6)
-                            
-                            // 强弱图例
-                            HStack(spacing: 10) {
-                                ForEach([BeatStatus.strong, BeatStatus.medium, BeatStatus.normal, BeatStatus.muted], id: \.self) { status in
-                                    HStack(spacing: 5) {
-                                        Circle()
-                                            .fill(getBeatStatusColor(status))
-                                            .frame(width: 12, height: 12)
-                                        
-                                        Text(getBeatStatusName(status))
-                                            .font(.system(size: 12))
-                                            .foregroundColor(theme.textColor.opacity(0.7))
-                                    }
-                                }
-                            }
-                            .padding(.top, 8)
                         }
+                        
+                        // 保存按钮
+                        Button(action: {
+                            if !songName.isEmpty {
+                                onSave(songName, tempo, beatsPerBar, beatUnit, beatStatuses)
+                                isPresented = false
+                            }
+                        }) {
+                            HStack(spacing: 10) {
+                                Image(systemName: "checkmark.circle")
+                                    .font(.custom("MiSansLatin-Regular", size: 16))
+                                    .foregroundColor(theme.backgroundColor)
+                                
+                                Text(isEditMode ? "保存修改" : "添加歌曲")
+                                    .font(.custom("MiSansLatin-Semibold", size: 16))
+                                    .foregroundColor(theme.backgroundColor)
+                            }
+                            .padding(.vertical, 14)
+                            .frame(maxWidth: .infinity)
+                            .background(songName.isEmpty ? theme.beatHightColor.opacity(0.3) : theme.beatHightColor)
+                            .cornerRadius(12)
+                        }
+                        .disabled(songName.isEmpty)
+                        .padding(.top, 10)
                     }
-                    .padding(20)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    .padding(.bottom, 30)
                 }
             }
             .navigationBarTitle(isEditMode ? "编辑歌曲" : "添加歌曲", displayMode: .inline)
-            .navigationBarItems(
-                leading: Button("取消") {
-                    isPresented = false
-                },
-                trailing: Button("保存") {
-                    if !songName.isEmpty {
-                        onSave(songName, tempo, beatsPerBar, beatUnit, beatStatuses)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
                         isPresented = false
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.custom("MiSansLatin-Regular", size: 20))
+                            .foregroundColor(theme.backgroundColor)
                     }
                 }
-                .disabled(songName.isEmpty)
-            )
+                
+                ToolbarItem(placement: .principal) {
+                    Text(isEditMode ? "编辑歌曲" : "添加歌曲")
+                        .font(.custom("MiSansLatin-Semibold", size: 20))
+                        .foregroundColor(theme.backgroundColor)
+                }
+            }
         }
     }
     
@@ -240,7 +293,7 @@ struct EditSongView: View {
         case .medium:
             return .orange
         case .normal:
-            return .blue
+            return theme.beatHightColor
         case .muted:
             return .gray
         }
@@ -253,7 +306,7 @@ struct EditSongView: View {
         case .medium:
             return "次强拍"
         case .normal:
-            return "普通拍"
+            return "弱拍"
         case .muted:
             return "静音"
         }
