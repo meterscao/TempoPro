@@ -281,26 +281,32 @@ class CoreDataPracticeManager: ObservableObject {
 
     // 获取当月热图数据
     func getMonthlyHeatmapData() -> [[Double]] {
+        return getMonthlyHeatmapData(for: Date())
+    }
+    
+    // 获取指定月份的热图数据
+    func getMonthlyHeatmapData(for date: Date) -> [[Double]] {
         let calendar = Calendar.current
-        let today = Date()
+        
+        // 获取指定月份的第一天
+        let components = calendar.dateComponents([.year, .month], from: date)
+        let firstDayOfMonth = calendar.date(from: components)!
         
         // 获取当月的天数
-        let range = calendar.range(of: .day, in: .month, for: today)!
+        let range = calendar.range(of: .day, in: .month, for: firstDayOfMonth)!
         let numberOfDaysInMonth = range.count
         
         // 当月第一天是星期几
-        let components = calendar.dateComponents([.year, .month], from: today)
-        let firstDayOfMonth = calendar.date(from: components)!
         let firstDayWeekday = calendar.component(.weekday, from: firstDayOfMonth)
         
-        // 创建一个4x7的网格，表示一个月的日历视图
+        // 创建一个6x7的网格，表示一个月的日历视图
         var heatmapData = Array(repeating: Array(repeating: 0.0, count: 7), count: 6)
         
         // 填充数据
         for day in 1...numberOfDaysInMonth {
-            let components = DateComponents(year: components.year, month: components.month, day: day)
-            if let date = calendar.date(from: components) {
-                let dateString = formatDate(date)
+            let dayComponents = DateComponents(year: components.year, month: components.month, day: day)
+            if let dayDate = calendar.date(from: dayComponents) {
+                let dateString = formatDate(dayDate)
                 let row = (day + firstDayWeekday - 2) / 7
                 let col = (day + firstDayWeekday - 2) % 7
                 
