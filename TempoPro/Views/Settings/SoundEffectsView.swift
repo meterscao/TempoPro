@@ -50,5 +50,9 @@ struct SoundEffectsView: View {
             // 预加载所有音效
             audioEngine.preloadAllSoundSets(soundSets: soundOptions)
         }
+        .onDisappear {
+            // 在视图消失时清理资源
+            audioEngine.cleanupBeforeDestroy()
+        }
     }
 }

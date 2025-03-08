@@ -270,4 +270,24 @@ class MetronomeAudioEngine: ObservableObject {
         playerNode?.stop()
         previewPlayer?.stop()
     }
+
+    // 在类中添加这个方法
+    func cleanupBeforeDestroy() {
+        print("【资源清理】准备清理音频资源")
+        
+        // 停止所有播放
+        stop()
+        
+        // 断开预览播放器连接
+        if let engine = audioEngine, let previewNode = previewPlayer {
+            print("【资源清理】断开预览播放器连接")
+            engine.disconnectNodeOutput(previewNode)
+        }
+        
+        // 不要清空缓存，因为主引擎可能还需要使用
+        // 但需要重置预览状态
+        previewPlayerFormat = nil
+        
+        print("【资源清理】音频资源清理完成")
+    }
 }

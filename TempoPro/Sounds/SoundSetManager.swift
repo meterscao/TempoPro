@@ -33,7 +33,6 @@ struct SoundSet {
 
 // 工具类获取音效
 class SoundSetManager {
-    
     // 定义全局可用音效数组
     static var availableSoundSets: [SoundSet] = [
         SoundSet(displayName: "咔哒", key: "kada", fileNamePrefix: "kada"),
