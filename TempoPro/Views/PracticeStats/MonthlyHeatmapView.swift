@@ -269,7 +269,7 @@ struct MonthlyHeatmapView: View {
     // 根据练习时间获取显示颜色
     private func colorForPracticeTime(minutes: Double, isDisabled: Bool) -> Color {
         if isDisabled {
-            return Color.gray.opacity(0.1) // 超出月份范围的日期使用浅灰色
+            return Color.clear
         }
         
         // 无数据使用非常浅的颜色
@@ -281,11 +281,10 @@ struct MonthlyHeatmapView: View {
         if minutes < 15 {
             return theme.beatBarColor.opacity(0.3)
         } else if minutes < 30 {
-            return theme.beatBarColor.opacity(0.5)
+            return theme.beatBarColor.opacity(0.6)
         } else if minutes < 60 {
-            return theme.beatBarColor.opacity(0.7)
-        } else if minutes < 120 {
-            return theme.beatBarColor.opacity(0.85)
+            return theme.beatBarColor.opacity(0.8)
+        
         } else {
             return theme.beatBarColor // 超过2小时使用完全不透明的颜色
         }

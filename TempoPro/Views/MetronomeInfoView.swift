@@ -219,16 +219,18 @@ struct MetronomeInfoView: View {
                         }
                 }
                 .foregroundStyle(theme.primaryColor)
-                
-                
-                
                 // 新增加的 BPMRulerView
                 BPMRulerView()
-                
             }
             .padding(.horizontal,15)
             .padding(.bottom,15)
-            .background(theme.backgroundColor)
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.black, theme.backgroundColor]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                ).ignoresSafeArea()
+            )
             .foregroundColor(theme.textColor)
             .clipShape(
                 .rect(
