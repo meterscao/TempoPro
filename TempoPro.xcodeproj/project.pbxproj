@@ -31,6 +31,18 @@
 		3AD042CB2D7C95CF002EAB55 /* wood_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C62D7C95CF002EAB55 /* wood_hi.wav */; };
 		3AD042CC2D7C95CF002EAB55 /* elec_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C22D7C95CF002EAB55 /* elec_hi.wav */; };
 		3AD042CD2D7C95CF002EAB55 /* wood_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C72D7C95CF002EAB55 /* wood_low.wav */; };
+		3AD042D12D7CADFD002EAB55 /* bell_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042CE2D7CADFD002EAB55 /* bell_mid.wav */; };
+		3AD042D22D7CADFD002EAB55 /* bell_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042D02D7CADFD002EAB55 /* bell_low.wav */; };
+		3AD042D32D7CADFD002EAB55 /* bell_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042CF2D7CADFD002EAB55 /* bell_hi.wav */; };
+		3AD042D72D7CAFA4002EAB55 /* cowbell_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042D62D7CAFA4002EAB55 /* cowbell_low.wav */; };
+		3AD042D82D7CAFA4002EAB55 /* cowbell_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042D42D7CAFA4002EAB55 /* cowbell_hi.wav */; };
+		3AD042D92D7CAFA4002EAB55 /* cowbell_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042D52D7CAFA4002EAB55 /* cowbell_mid.wav */; };
+		3AD042DD2D7CB01C002EAB55 /* clap_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042DC2D7CB01C002EAB55 /* clap_low.wav */; };
+		3AD042DE2D7CB01C002EAB55 /* clap_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042DA2D7CB01C002EAB55 /* clap_mid.wav */; };
+		3AD042DF2D7CB01C002EAB55 /* clap_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042DB2D7CB01C002EAB55 /* clap_hi.wav */; };
+		3AD042E32D7CB146002EAB55 /* clock_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042E22D7CB146002EAB55 /* clock_low.wav */; };
+		3AD042E42D7CB146002EAB55 /* clock_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042E12D7CB146002EAB55 /* clock_hi.wav */; };
+		3AD042E52D7CB146002EAB55 /* clock_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042E02D7CB146002EAB55 /* clock_mid.wav */; };
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
 		F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */; };
@@ -108,6 +120,18 @@
 		3AD042C52D7C95CF002EAB55 /* wood_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wood_mid.wav; sourceTree = "<group>"; };
 		3AD042C62D7C95CF002EAB55 /* wood_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wood_hi.wav; sourceTree = "<group>"; };
 		3AD042C72D7C95CF002EAB55 /* wood_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wood_low.wav; sourceTree = "<group>"; };
+		3AD042CE2D7CADFD002EAB55 /* bell_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_mid.wav; sourceTree = "<group>"; };
+		3AD042CF2D7CADFD002EAB55 /* bell_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_hi.wav; sourceTree = "<group>"; };
+		3AD042D02D7CADFD002EAB55 /* bell_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_low.wav; sourceTree = "<group>"; };
+		3AD042D42D7CAFA4002EAB55 /* cowbell_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cowbell_hi.wav; sourceTree = "<group>"; };
+		3AD042D52D7CAFA4002EAB55 /* cowbell_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cowbell_mid.wav; sourceTree = "<group>"; };
+		3AD042D62D7CAFA4002EAB55 /* cowbell_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cowbell_low.wav; sourceTree = "<group>"; };
+		3AD042DA2D7CB01C002EAB55 /* clap_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clap_mid.wav; sourceTree = "<group>"; };
+		3AD042DB2D7CB01C002EAB55 /* clap_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clap_hi.wav; sourceTree = "<group>"; };
+		3AD042DC2D7CB01C002EAB55 /* clap_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clap_low.wav; sourceTree = "<group>"; };
+		3AD042E02D7CB146002EAB55 /* clock_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clock_mid.wav; sourceTree = "<group>"; };
+		3AD042E12D7CB146002EAB55 /* clock_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clock_hi.wav; sourceTree = "<group>"; };
+		3AD042E22D7CB146002EAB55 /* clock_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clock_low.wav; sourceTree = "<group>"; };
 		3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayCornerRadius.swift; sourceTree = "<group>"; };
 		F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTheme.swift; sourceTree = "<group>"; };
 		F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
@@ -367,6 +391,12 @@
 			isa = PBXGroup;
 			children = (
 				3AD042B82D7C94F0002EAB55 /* SoundSetManager.swift */,
+				3AD042D42D7CAFA4002EAB55 /* cowbell_hi.wav */,
+				3AD042D52D7CAFA4002EAB55 /* cowbell_mid.wav */,
+				3AD042D62D7CAFA4002EAB55 /* cowbell_low.wav */,
+				3AD042CE2D7CADFD002EAB55 /* bell_mid.wav */,
+				3AD042CF2D7CADFD002EAB55 /* bell_hi.wav */,
+				3AD042D02D7CADFD002EAB55 /* bell_low.wav */,
 				F7FF3F1B2D70787B00390C16 /* kada_hi.wav */,
 				F7FF3F1C2D70787B00390C16 /* kada_low.wav */,
 				F7FF3F1D2D70787B00390C16 /* kada_mid.wav */,
@@ -376,6 +406,12 @@
 				3AD042C52D7C95CF002EAB55 /* wood_mid.wav */,
 				3AD042C62D7C95CF002EAB55 /* wood_hi.wav */,
 				3AD042C72D7C95CF002EAB55 /* wood_low.wav */,
+				3AD042DA2D7CB01C002EAB55 /* clap_mid.wav */,
+				3AD042DB2D7CB01C002EAB55 /* clap_hi.wav */,
+				3AD042DC2D7CB01C002EAB55 /* clap_low.wav */,
+				3AD042E02D7CB146002EAB55 /* clock_mid.wav */,
+				3AD042E12D7CB146002EAB55 /* clock_hi.wav */,
+				3AD042E22D7CB146002EAB55 /* clock_low.wav */,
 			);
 			path = Sounds;
 			sourceTree = "<group>";
@@ -487,8 +523,20 @@
 				3AD042C82D7C95CF002EAB55 /* elec_low.wav in Resources */,
 				3AD042C92D7C95CF002EAB55 /* elec_mid.wav in Resources */,
 				3AD042CA2D7C95CF002EAB55 /* wood_mid.wav in Resources */,
+				3AD042DD2D7CB01C002EAB55 /* clap_low.wav in Resources */,
+				3AD042DE2D7CB01C002EAB55 /* clap_mid.wav in Resources */,
+				3AD042DF2D7CB01C002EAB55 /* clap_hi.wav in Resources */,
+				3AD042D12D7CADFD002EAB55 /* bell_mid.wav in Resources */,
+				3AD042D22D7CADFD002EAB55 /* bell_low.wav in Resources */,
+				3AD042E32D7CB146002EAB55 /* clock_low.wav in Resources */,
+				3AD042E42D7CB146002EAB55 /* clock_hi.wav in Resources */,
+				3AD042E52D7CB146002EAB55 /* clock_mid.wav in Resources */,
+				3AD042D32D7CADFD002EAB55 /* bell_hi.wav in Resources */,
 				3AD042CB2D7C95CF002EAB55 /* wood_hi.wav in Resources */,
 				3AD042CC2D7C95CF002EAB55 /* elec_hi.wav in Resources */,
+				3AD042D72D7CAFA4002EAB55 /* cowbell_low.wav in Resources */,
+				3AD042D82D7CAFA4002EAB55 /* cowbell_hi.wav in Resources */,
+				3AD042D92D7CAFA4002EAB55 /* cowbell_mid.wav in Resources */,
 				3AD042CD2D7C95CF002EAB55 /* wood_low.wav in Resources */,
 				3A9C88A82D6F728B004CFD88 /* Preview Assets.xcassets in Resources */,
 				3A9C88A42D6F728B004CFD88 /* Assets.xcassets in Resources */,

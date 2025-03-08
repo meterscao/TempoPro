@@ -154,10 +154,12 @@ class MetronomeAudioEngine: ObservableObject {
         guard let fileName = fileName else { return }
         
         if let buffer = soundBufferCache[fileName] {
+            
             // 确保播放器连接使用正确的格式
             ensurePlayerConnected(player, withFormat: buffer.format, engine: engine)
             
-            player.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
+            // 使用 .interrupts 选项，自动中断当前正在播放的内容
+            player.scheduleBuffer(buffer, at: nil, options: .interrupts, completionHandler: nil)
             player.play()
         }
     }
@@ -230,7 +232,8 @@ class MetronomeAudioEngine: ObservableObject {
             print("【预览播放】准备播放音效")
             DispatchQueue.main.async {
                 print("【预览播放】主线程上调度缓冲区")
-                self.previewPlayer?.scheduleBuffer(buffer, at: nil, options: [], completionHandler: {
+                // 使用 .interrupts 选项
+                self.previewPlayer?.scheduleBuffer(buffer, at: nil, options: .interrupts, completionHandler: {
                     print("【预览播放】播放完成")
                 })
                 print("【预览播放】开始播放")
@@ -249,7 +252,8 @@ class MetronomeAudioEngine: ObservableObject {
                         print("【预览播放】找到新加载的缓冲区，准备播放")
                         DispatchQueue.main.async {
                             print("【预览播放】主线程上调度新加载的缓冲区")
-                            self.previewPlayer?.scheduleBuffer(buffer, at: nil, options: [], completionHandler: {
+                            // 使用 .interrupts 选项
+                            self.previewPlayer?.scheduleBuffer(buffer, at: nil, options: .interrupts, completionHandler: {
                                 print("【预览播放】播放完成")
                             })
                             print("【预览播放】开始播放新加载的音效")

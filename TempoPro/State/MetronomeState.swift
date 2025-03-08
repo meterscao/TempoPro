@@ -152,10 +152,7 @@ class MetronomeState: ObservableObject {
         isPlaying.toggle()
         if isPlaying {
             // 开始练习会话
-            let beatStatusString = getBeatStatusString()
             practiceManager?.startPracticeSession(bpm: tempo)
-            
-            // 原有代码...
             currentBeat = 0
             nextScheduledBeatTime = Date().timeIntervalSince1970 + (60.0 / Double(tempo))
             metronomeTimer?.start(
@@ -170,21 +167,6 @@ class MetronomeState: ObservableObject {
             
             // 结束练习会话
             practiceManager?.endPracticeSession()
-            
-            // 如果练习时间超过一定阈值（例如1分钟），显示完成视图
-            if let startTime = practiceManager?.sessionStartTime {
-                let duration = stopTime.timeIntervalSince(startTime)
-                if duration > 5 { // 大于一分钟才显示
-                    // 使用NotificationCenter发送通知，让ContentView处理显示
-                    NotificationCenter.default.post(
-                        name: NSNotification.Name("ShowPracticeCompletion"),
-                        object: nil,
-                        userInfo: ["duration": duration, "tempo": tempo]
-                    )
-                }
-            }
-            
-            // 原有代码...
             metronomeTimer?.stop()
             nextScheduledBeatTime = 0
         }

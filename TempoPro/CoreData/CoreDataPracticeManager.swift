@@ -77,11 +77,13 @@ class CoreDataPracticeManager: ObservableObject {
 
         print("session.duration: \(session.duration)")
         
-        // 更新或创建当日练习摘要
-        updateDailyPracticeSummary(for: session)
-        
-        // 保存上下文
-        saveContext()
+        // 如果持续时间大于30秒，则更新或创建当日练习摘要
+        if session.duration > 30 {
+            // 更新或创建当日练习摘要
+            updateDailyPracticeSummary(for: session)
+            // 保存上下文
+            saveContext()
+        }
         
         // 重置当前会话
         currentSession = nil
