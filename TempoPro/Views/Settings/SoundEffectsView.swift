@@ -15,12 +15,14 @@ struct SoundEffectsView: View {
     let soundOptions = SoundSetManager.availableSoundSets
     @State private var selectedSoundKey = SoundSetManager.getDefaultSoundSet().key
     
+    // 添加音频引擎实例
+    private let audioEngine = MetronomeAudioEngine()
+    
     var body: some View {
         List {
-           ForEach(soundOptions, id: \.key) { soundSet in
+            ForEach(soundOptions, id: \.key) { soundSet in
                 Button(action: {
                     selectedSoundKey = soundSet.key
-                    // 这里可以添加试听音效的逻辑
                 }) {
                     HStack {
                         Text(soundSet.displayName)
@@ -30,7 +32,8 @@ struct SoundEffectsView: View {
                                 .foregroundColor(.blue)
                         }
                         Button(action: {
-                            // 试听音效
+                            // 播放音效预览
+                            audioEngine.previewSoundSet(soundSet)
                         }) {
                             Image(systemName: "play.circle")
                                 .foregroundColor(.blue)
@@ -41,5 +44,11 @@ struct SoundEffectsView: View {
             }
         }
         .navigationTitle("节奏音效")
+        .onAppear {
+            // 确保音频引擎已初始化
+            audioEngine.initialize()
+            // 预加载所有音效
+            audioEngine.preloadAllSoundSets(soundSets: soundOptions)
+        }
     }
 }
