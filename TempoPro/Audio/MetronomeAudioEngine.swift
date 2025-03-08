@@ -47,7 +47,7 @@ class MetronomeAudioEngine: ObservableObject {
     private func loadAudioBuffers() throws {
         guard let engine = audioEngine, let player = playerNode else { return }
         
-        if let strongURL = Bundle.main.url(forResource: "Metr_fl_hi", withExtension: "wav") {
+        if let strongURL = Bundle.main.url(forResource: "kada_hi", withExtension: "wav") {
             print("加载强拍音频文件")
             let file = try AVAudioFile(forReading: strongURL)
             let format = file.processingFormat
@@ -63,7 +63,7 @@ class MetronomeAudioEngine: ObservableObject {
     }
     
     private func loadMediumBeat(format: AVAudioFormat) throws {
-        if let mediumURL = Bundle.main.url(forResource: "Metr_fl_mid", withExtension: "wav") {
+        if let mediumURL = Bundle.main.url(forResource: "kada_mid", withExtension: "wav") {
             print("加载中拍音频文件")
             let file = try AVAudioFile(forReading: mediumURL)
             mediumBeatBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(file.length))
@@ -72,7 +72,7 @@ class MetronomeAudioEngine: ObservableObject {
     }
     
     private func loadNormalBeat(format: AVAudioFormat) throws {
-        if let normalURL = Bundle.main.url(forResource: "Metr_fl_low", withExtension: "wav") {
+        if let normalURL = Bundle.main.url(forResource: "kada_low", withExtension: "wav") {
             print("加载弱拍音频文件")
             let file = try AVAudioFile(forReading: normalURL)
             normalBeatBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(file.length))

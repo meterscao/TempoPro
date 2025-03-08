@@ -96,6 +96,7 @@ struct MetronomeInfoView: View {
     // 选择节拍的变量
     @State private var showingTimeSignature = false
     @State private var showingKeypad = false
+    @State private var showSetting = false
     
     // 添加滑动状态变量
     @State private var horizontalDragAmount = CGSize.zero
@@ -152,7 +153,8 @@ struct MetronomeInfoView: View {
 
                 HStack {
                     Button(action: {
-                        showingThemeSettings = true
+//                        showingThemeSettings = true
+                        showSetting = true
                     }) {
                         Image("icon-setting")
                             .renderingMode(.template)
@@ -259,11 +261,17 @@ struct MetronomeInfoView: View {
                 .presentationDragIndicator(.visible)
         }
         
+        
+        
         .sheet(isPresented: $showingKeypad) {
             BPMKeypadView()
             .ignoresSafeArea()
             .presentationDetents([.height(400)])
             
+        }
+        
+        .fullScreenCover(isPresented: $showSetting) {
+            SettingsView()
         }
     }
     

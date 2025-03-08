@@ -22,6 +22,15 @@
 		3AB64D5B2D73150700B056FE /* MiSansLatin-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3AB64D582D73150700B056FE /* MiSansLatin-Regular.otf */; };
 		3AB6A8642D79F05C00760B80 /* CoreDataPracticeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB6A8632D79F05C00760B80 /* CoreDataPracticeManager.swift */; };
 		3AB6A8662D79F27000760B80 /* PracticeCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */; };
+		3AD042B92D7C94F0002EAB55 /* SoundSetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042B82D7C94F0002EAB55 /* SoundSetManager.swift */; };
+		3AD042BF2D7C9572002EAB55 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042BE2D7C9572002EAB55 /* SettingsView.swift */; };
+		3AD042C12D7C95A0002EAB55 /* SoundEffectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042C02D7C95A0002EAB55 /* SoundEffectsView.swift */; };
+		3AD042C82D7C95CF002EAB55 /* elec_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C32D7C95CF002EAB55 /* elec_low.wav */; };
+		3AD042C92D7C95CF002EAB55 /* elec_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C42D7C95CF002EAB55 /* elec_mid.wav */; };
+		3AD042CA2D7C95CF002EAB55 /* wood_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C52D7C95CF002EAB55 /* wood_mid.wav */; };
+		3AD042CB2D7C95CF002EAB55 /* wood_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C62D7C95CF002EAB55 /* wood_hi.wav */; };
+		3AD042CC2D7C95CF002EAB55 /* elec_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C22D7C95CF002EAB55 /* elec_hi.wav */; };
+		3AD042CD2D7C95CF002EAB55 /* wood_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042C72D7C95CF002EAB55 /* wood_low.wav */; };
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
 		F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */; };
@@ -46,9 +55,9 @@
 		F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */; };
 		F7FF3F162D7073EB00390C16 /* MetronomeTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F132D7073EB00390C16 /* MetronomeTimer.swift */; };
 		F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F172D7074CA00390C16 /* MetronomeState.swift */; };
-		F7FF3F1F2D70787B00390C16 /* Metr_fl_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = F7FF3F1B2D70787B00390C16 /* Metr_fl_hi.wav */; };
-		F7FF3F202D70787B00390C16 /* Metr_fl_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = F7FF3F1D2D70787B00390C16 /* Metr_fl_mid.wav */; };
-		F7FF3F212D70787B00390C16 /* Metr_fl_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = F7FF3F1C2D70787B00390C16 /* Metr_fl_low.wav */; };
+		F7FF3F1F2D70787B00390C16 /* kada_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = F7FF3F1B2D70787B00390C16 /* kada_hi.wav */; };
+		F7FF3F202D70787B00390C16 /* kada_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = F7FF3F1D2D70787B00390C16 /* kada_mid.wav */; };
+		F7FF3F212D70787B00390C16 /* kada_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = F7FF3F1C2D70787B00390C16 /* kada_low.wav */; };
 		F7FF3F232D7078E900390C16 /* TimeSignatureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F222D7078E900390C16 /* TimeSignatureView.swift */; };
 /* End PBXBuildFile section */
 
@@ -90,6 +99,15 @@
 		3AB64D5C2D73158800B056FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3AB6A8632D79F05C00760B80 /* CoreDataPracticeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPracticeManager.swift; sourceTree = "<group>"; };
 		3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeCompletionView.swift; sourceTree = "<group>"; };
+		3AD042B82D7C94F0002EAB55 /* SoundSetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundSetManager.swift; sourceTree = "<group>"; };
+		3AD042BE2D7C9572002EAB55 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		3AD042C02D7C95A0002EAB55 /* SoundEffectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectsView.swift; sourceTree = "<group>"; };
+		3AD042C22D7C95CF002EAB55 /* elec_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = elec_hi.wav; sourceTree = "<group>"; };
+		3AD042C32D7C95CF002EAB55 /* elec_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = elec_low.wav; sourceTree = "<group>"; };
+		3AD042C42D7C95CF002EAB55 /* elec_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = elec_mid.wav; sourceTree = "<group>"; };
+		3AD042C52D7C95CF002EAB55 /* wood_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wood_mid.wav; sourceTree = "<group>"; };
+		3AD042C62D7C95CF002EAB55 /* wood_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wood_hi.wav; sourceTree = "<group>"; };
+		3AD042C72D7C95CF002EAB55 /* wood_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wood_low.wav; sourceTree = "<group>"; };
 		3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayCornerRadius.swift; sourceTree = "<group>"; };
 		F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTheme.swift; sourceTree = "<group>"; };
 		F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
@@ -115,9 +133,9 @@
 		F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeAudioEngine.swift; sourceTree = "<group>"; };
 		F7FF3F132D7073EB00390C16 /* MetronomeTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTimer.swift; sourceTree = "<group>"; };
 		F7FF3F172D7074CA00390C16 /* MetronomeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeState.swift; sourceTree = "<group>"; };
-		F7FF3F1B2D70787B00390C16 /* Metr_fl_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_hi.wav; sourceTree = "<group>"; };
-		F7FF3F1C2D70787B00390C16 /* Metr_fl_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_low.wav; sourceTree = "<group>"; };
-		F7FF3F1D2D70787B00390C16 /* Metr_fl_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Metr_fl_mid.wav; sourceTree = "<group>"; };
+		F7FF3F1B2D70787B00390C16 /* kada_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = kada_hi.wav; sourceTree = "<group>"; };
+		F7FF3F1C2D70787B00390C16 /* kada_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = kada_low.wav; sourceTree = "<group>"; };
+		F7FF3F1D2D70787B00390C16 /* kada_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = kada_mid.wav; sourceTree = "<group>"; };
 		F7FF3F222D7078E900390C16 /* TimeSignatureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSignatureView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -223,6 +241,15 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		3AD042B32D7C7A64002EAB55 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				3AD042C02D7C95A0002EAB55 /* SoundEffectsView.swift */,
+				3AD042BE2D7C9572002EAB55 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		3ADE94832D734B5B00731F83 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,6 +273,7 @@
 		F71AF6B72D71716E00ADBC17 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3AD042B32D7C7A64002EAB55 /* Settings */,
 				F75EC5652D7ABE86001CBAA4 /* PracticeStats */,
 				F7F058BD2D794414005DF482 /* Playlist */,
 				F71AF6B82D71A5FB00ADBC17 /* BPMRulerView.swift */,
@@ -338,9 +366,16 @@
 		F7FF3F1E2D70787B00390C16 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
-				F7FF3F1B2D70787B00390C16 /* Metr_fl_hi.wav */,
-				F7FF3F1C2D70787B00390C16 /* Metr_fl_low.wav */,
-				F7FF3F1D2D70787B00390C16 /* Metr_fl_mid.wav */,
+				3AD042B82D7C94F0002EAB55 /* SoundSetManager.swift */,
+				F7FF3F1B2D70787B00390C16 /* kada_hi.wav */,
+				F7FF3F1C2D70787B00390C16 /* kada_low.wav */,
+				F7FF3F1D2D70787B00390C16 /* kada_mid.wav */,
+				3AD042C22D7C95CF002EAB55 /* elec_hi.wav */,
+				3AD042C32D7C95CF002EAB55 /* elec_low.wav */,
+				3AD042C42D7C95CF002EAB55 /* elec_mid.wav */,
+				3AD042C52D7C95CF002EAB55 /* wood_mid.wav */,
+				3AD042C62D7C95CF002EAB55 /* wood_hi.wav */,
+				3AD042C72D7C95CF002EAB55 /* wood_low.wav */,
 			);
 			path = Sounds;
 			sourceTree = "<group>";
@@ -449,13 +484,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AD042C82D7C95CF002EAB55 /* elec_low.wav in Resources */,
+				3AD042C92D7C95CF002EAB55 /* elec_mid.wav in Resources */,
+				3AD042CA2D7C95CF002EAB55 /* wood_mid.wav in Resources */,
+				3AD042CB2D7C95CF002EAB55 /* wood_hi.wav in Resources */,
+				3AD042CC2D7C95CF002EAB55 /* elec_hi.wav in Resources */,
+				3AD042CD2D7C95CF002EAB55 /* wood_low.wav in Resources */,
 				3A9C88A82D6F728B004CFD88 /* Preview Assets.xcassets in Resources */,
 				3A9C88A42D6F728B004CFD88 /* Assets.xcassets in Resources */,
-				F7FF3F1F2D70787B00390C16 /* Metr_fl_hi.wav in Resources */,
-				F7FF3F202D70787B00390C16 /* Metr_fl_mid.wav in Resources */,
+				F7FF3F1F2D70787B00390C16 /* kada_hi.wav in Resources */,
+				F7FF3F202D70787B00390C16 /* kada_mid.wav in Resources */,
 				3AB64D5A2D73150700B056FE /* MiSansLatin-Semibold.otf in Resources */,
 				3AB64D5B2D73150700B056FE /* MiSansLatin-Regular.otf in Resources */,
-				F7FF3F212D70787B00390C16 /* Metr_fl_low.wav in Resources */,
+				F7FF3F212D70787B00390C16 /* kada_low.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +521,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AD042BF2D7C9572002EAB55 /* SettingsView.swift in Sources */,
+				3AD042C12D7C95A0002EAB55 /* SoundEffectsView.swift in Sources */,
 				F7F058C12D794453005DF482 /* AddPlaylistView.swift in Sources */,
 				F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */,
 				F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */,
@@ -504,6 +547,7 @@
 				F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */,
 				F71AF6B42D716E6500ADBC17 /* ThemeEnvironment.swift in Sources */,
 				3AB6A8642D79F05C00760B80 /* CoreDataPracticeManager.swift in Sources */,
+				3AD042B92D7C94F0002EAB55 /* SoundSetManager.swift in Sources */,
 				F7A3E73D2D79C378008869AB /* PracticeStatsView.swift in Sources */,
 				F750D23B2D7816360022C405 /* PlaylistDetailView.swift in Sources */,
 				F750D23C2D7816360022C405 /* PlaylistListView.swift in Sources */,

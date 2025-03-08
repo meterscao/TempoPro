@@ -17,33 +17,26 @@ struct ThemeSelectionView: View {
     ]
     
     var body: some View {
-        
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(themeManager.availableThemes, id: \.self) { themeName in
-                        Button(action: {
-                            themeManager.switchTheme(to: themeName)
-                        }) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(themeManager.themeColor(for: themeName))
-                                    .frame(width: 48, height: 48)
-                                    .shadow(radius: 6)
-                                
-                                if themeName == themeManager.currentThemeName {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.white)
-                                        .shadow(color: .black.opacity(0.5), radius: 1)
-                                }
+            LazyVGrid(columns: columns, spacing: 10) {
+                ForEach(themeManager.availableThemes, id: \.self) { themeName in
+                    Button(action: {
+                        themeManager.switchTheme(to: themeName)
+                    }) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(themeManager.themeColor(for: themeName))
+                                .frame(width: 48, height: 48)
+                            if themeName == themeManager.currentThemeName {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.white)
+                                    
                             }
                         }
                     }
                 }
-                .padding(16)
             }
-            .padding(.top,20)
-            .background(.black)
-            
+            .frame(alignment: .leading)
+            .padding()
         
     }
 }
