@@ -40,7 +40,7 @@ class MetronomeState: ObservableObject {
         loadFromUserDefaults()
         
         // 初始化音频引擎
-        audioEngine.initialize()
+        audioEngine.initialize(defaultSoundSet: soundSet)
         
         // 创建节拍定时器，传入self引用
         metronomeTimer = MetronomeTimer(state: self, audioEngine: audioEngine)

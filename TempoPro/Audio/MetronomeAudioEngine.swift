@@ -34,7 +34,7 @@ class MetronomeAudioEngine: ObservableObject {
     private let audioSessionLock = NSLock()
     
     // 初始化音频引擎及相关组件
-    func initialize() {
+    func initialize(defaultSoundSet: SoundSet = SoundSetManager.getDefaultSoundSet()) {
         // 避免重复初始化
         guard !isInitialized else { return }
         
@@ -83,7 +83,7 @@ class MetronomeAudioEngine: ObservableObject {
             print("【引擎初始化】音频引擎初始化完成 - 总耗时: \(Date().timeIntervalSince1970 - initStartTime)秒")
             
             // 加载默认音效集
-            loadDefaultSoundSet()
+            loadDefaultSoundSet(defaultSoundSet: defaultSoundSet)
 
             // 添加中断处理
             setupInterruptionHandling()
@@ -94,14 +94,13 @@ class MetronomeAudioEngine: ObservableObject {
 
     
     // 加载默认音效集
-    private func loadDefaultSoundSet() {
+    private func loadDefaultSoundSet(defaultSoundSet: SoundSet) {
         
         Task {
             
             do {
                 let loadStartTime = Date().timeIntervalSince1970
                 // 获取默认音效
-                let defaultSoundSet = SoundSetManager.getDefaultSoundSet()
                 print("【加载默认音效】开始加载默认音效: \(defaultSoundSet.displayName)")
                 
                 // 加载全套音效（强拍、中拍、弱拍）
@@ -222,7 +221,7 @@ class MetronomeAudioEngine: ObservableObject {
     func setCurrentSoundSet(_ soundSet: SoundSet) {
         Task {
             // 先加载全套音效
-            try? await loadCompleteSoundSet(soundSet)
+            // try? await loadCompleteSoundSet(soundSet)
             // 更新当前音效
             currentSoundSet = soundSet
         }
