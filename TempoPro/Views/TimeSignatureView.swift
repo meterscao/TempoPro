@@ -102,20 +102,40 @@ struct TimeSignatureView: View {
                                 .padding(.vertical, 5)
                         } else {
                             ForEach(patterns, id: \.name) { pattern in
-                                HStack {
-                                    Text("• \(pattern.displayName)")
-                                        .font(.system(.body))
-                                    
-                                    Spacer()
-                                    
-                                    Text(pattern.description)
-                                        .font(.system(.caption))
-                                        .foregroundColor(.gray)
+                                Button(action: {
+                                    // 点击时更新切分音符
+                                    metronomeState.updateSubdivisionPattern(pattern)
+                                }) {
+                                    HStack {
+                                        Text("• \(pattern.displayName)")
+                                            .font(.system(.body))
+                                        
+                                        Spacer()
+                                        
+                                        Text(pattern.description)
+                                            .font(.system(.caption))
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding(.vertical, 5)
+                                    .padding(.horizontal, 10)
+                                    .background(
+                                        // 检查当前选中的模式，高亮显示
+                                        metronomeState.subdivisionPattern?.name == pattern.name 
+                                            ? theme.primaryColor.opacity(0.2) 
+                                            : Color(UIColor.secondarySystemBackground)
+                                    )
+                                    .cornerRadius(5)
+                                    // 添加选中指示器
+                                    .overlay(
+                                        Group {
+                                            if metronomeState.subdivisionPattern?.name == pattern.name {
+                                                RoundedRectangle(cornerRadius: 5)
+                                                    .stroke(theme.primaryColor, lineWidth: 2)
+                                            }
+                                        }
+                                    )
                                 }
-                                .padding(.vertical, 5)
-                                .padding(.horizontal, 10)
-                                .background(Color(UIColor.secondarySystemBackground))
-                                .cornerRadius(5)
+                                .buttonStyle(PlainButtonStyle()) // 使用PlainButtonStyle以避免默认按钮样式干扰
                             }
                         }
                     }
@@ -139,9 +159,8 @@ struct TimeSignatureView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 20)
             }
-            
+            .padding(20)
         }
-        .padding(30)
         .background(Color(UIColor.systemBackground))
     }
 }
