@@ -45,7 +45,6 @@ class MetronomeTimer {
             timer.cancel()
             self.timer = nil
         }
-        
         // 重置当前拍到第一拍
         state?.updateCurrentBeat(0)
     }

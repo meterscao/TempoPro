@@ -163,9 +163,6 @@ class MetronomeState: ObservableObject {
         print("MetronomeState - updateBeatsPerBar: \(beatsPerBar) -> \(newBeatsPerBar)")
         if beatsPerBar == newBeatsPerBar { return }
         
-        // 保存当前播放状态
-        let wasPlaying = isPlaying
-        
         // 创建新的节拍状态数组
         var newBeatStatuses = Array(repeating: BeatStatus.normal, count: newBeatsPerBar)
         
@@ -186,17 +183,7 @@ class MetronomeState: ObservableObject {
         // 保存到UserDefaults
         defaults.set(beatsPerBar, forKey: Keys.beatsPerBar)
         saveBeatStatuses()
-        
-        // // 如果正在播放，重新启动节拍器
-        // if wasPlaying {
-        //     // 先停止
-        //     metronomeTimer?.stop()
-        //     isPlaying = false
-            
-        //     // 然后重新开始
-        //     isPlaying = true
-        //     metronomeTimer?.start()
-        // }
+
     }
     
     func updateCurrentBeat(_ newCurrentBeat: Int) {
