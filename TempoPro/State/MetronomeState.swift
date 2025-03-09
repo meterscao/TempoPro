@@ -3,35 +3,6 @@ import Combine
 import UIKit  // 添加UIKit导入
 import SwiftUI // 添加SwiftUI导入以使用AppStorage
 
-// 添加切分音符类型枚举（同TimeSignatureView.swift中的定义）
-enum SubdivisionType: String, CaseIterable, Identifiable, Codable {
-    case whole = "整拍"
-    case duple = "二等分"
-    case dotted = "附点节奏"
-    case triplet = "三连音"
-    case quadruple = "四等分"
-    case dupleTriplet = "二连三连音"
-    
-    var id: String { self.rawValue }
-    
-    // 获取描述文本
-    func getDescription(forBeatUnit beatUnit: Int) -> String {
-        switch self {
-        case .whole:
-            return "1个\(beatUnit)分音符"
-        case .duple:
-            return "2个\(beatUnit*2)分音符"
-        case .dotted:
-            return "空+1个\(beatUnit*2)分音符"
-        case .triplet:
-            return "\(beatUnit*2)分音符3连音"
-        case .quadruple:
-            return "4个\(beatUnit*4)分音符"
-        case .dupleTriplet:
-            return "2个\"\(beatUnit*2)分音符3连音\""
-        }
-    }
-}
 
 class MetronomeState: ObservableObject {
     // 定义引用的键
@@ -45,13 +16,13 @@ class MetronomeState: ObservableObject {
     }
     
     // 状态属性
-    @Published var isPlaying: Bool = false
+    @Published private(set) var isPlaying: Bool = false
     @Published var currentBeat: Int = 0
     @Published private(set) var tempo: Int = 0
     @Published private(set) var beatsPerBar: Int = 0
     @Published private(set) var beatUnit: Int = 0
-    @Published var beatStatuses: [BeatStatus] = []
-    @Published private(set) var subdivisionType: SubdivisionType = .whole
+    @Published private(set) var beatStatuses: [BeatStatus] = []
+    @Published private(set) var subdivisionPattern: SubdivisionPattern?
     @Published var practiceManager: CoreDataPracticeManager?
     
     // 直接使用单例引擎
@@ -100,21 +71,68 @@ class MetronomeState: ObservableObject {
             // 初始化默认节拍状态
             self.beatStatuses = Array(repeating: .normal, count: self.beatsPerBar)
             self.beatStatuses[0] = .strong
-            self.beatStatuses[2] = .medium
+            if self.beatsPerBar > 2 {
+                self.beatStatuses[2] = .medium
+            }
             
             // 保存默认状态
             saveBeatStatuses()
         }
         
-        // 加载切分音符类型
-        if let savedSubdivisionTypeString = defaults.string(forKey: Keys.subdivisionType),
-           let savedType = SubdivisionType(rawValue: savedSubdivisionTypeString) {
-            self.subdivisionType = savedType
+        // 加载切分音符模式
+        if let savedPatternName = defaults.string(forKey: Keys.subdivisionType) {
+            // 尝试从名称获取切分模式
+            if let pattern = SubdivisionManager.getSubdivisionPattern(byName: savedPatternName) {
+                self.subdivisionPattern = pattern
+            } else {
+                // 如果找不到对应模式，使用当前拍号单位的默认模式
+                setDefaultSubdivisionPattern()
+            }
         } else {
-            // 默认为整拍
-            self.subdivisionType = .whole
-            defaults.set(subdivisionType.rawValue, forKey: Keys.subdivisionType)
+            // 默认使用整拍模式
+            setDefaultSubdivisionPattern()
         }
+    }
+    
+    // 设置默认的切分模式
+    private func setDefaultSubdivisionPattern() {
+        // 获取当前拍号单位下的整拍模式
+        if let pattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: .whole) {
+            self.subdivisionPattern = pattern
+            // 保存模式名称到 UserDefaults
+            defaults.set(pattern.name, forKey: Keys.subdivisionType)
+        } else {
+            // 回退到4分音符整拍
+            if let fallbackPattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: 4, type: .whole) {
+                self.subdivisionPattern = fallbackPattern
+                defaults.set(fallbackPattern.name, forKey: Keys.subdivisionType)
+            }
+        }
+    }
+    
+    // 更新当前切分模式
+    private func updateCurrentSubdivisionPattern() {
+        guard let currentPattern = subdivisionPattern else {
+            setDefaultSubdivisionPattern()
+            return
+        }
+        
+        // 检查当前模式是否适用于当前拍号单位
+        if currentPattern.beatUnit != beatUnit {
+            // 直接使用当前模式的type获取适合新拍号单位的模式
+            if let newPattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: currentPattern.type) {
+                // 更新到新的模式
+                subdivisionPattern = newPattern
+                defaults.set(newPattern.name, forKey: Keys.subdivisionType)
+                print("切分模式已适配当前拍号单位: \(currentPattern.type.rawValue) -> \(newPattern.name)")
+            } else {
+                // 如果找不到适配当前拍号单位的相同类型模式，使用默认整拍模式
+                print("未找到适配当前拍号单位的\(currentPattern.type.rawValue)类型模式，使用默认模式")
+                setDefaultSubdivisionPattern()
+            }
+        }
+        
+        print("当前切分模式: \(subdivisionPattern?.detailedDescription ?? "未知")")
     }
     
     // 保存节拍状态到UserDefaults
@@ -130,24 +148,39 @@ class MetronomeState: ObservableObject {
         defaults.set(statusInts, forKey: Keys.beatStatuses)
     }
     
-    // 简化的播放控制方法
+    // 播放控制方法
     func togglePlayback() {
         isPlaying.toggle()
         
         if isPlaying {
+            // 确保当前切分模式已更新
+            updateCurrentSubdivisionPattern()
+            
             // 开始练习会话
             practiceManager?.startPracticeSession(bpm: tempo)
-            // 直接启动定时器，无需传递参数
+            
+            // 直接启动定时器
             metronomeTimer?.start()
         } else {
             // 结束练习会话
             practiceManager?.endPracticeSession()
+            
             // 停止定时器
             metronomeTimer?.stop()
         }
     }
     
-    // 更新速度 - 无需特殊处理，Timer会在下一拍自动使用新值
+    // 使用切分类型更新切分模式
+    func updateSubdivisionType(_ type: SubdivisionType) {
+        print("MetronomeState - updateSubdivisionType: \(type.rawValue)")
+        
+        // 获取当前拍号单位下该类型的切分模式
+        if let pattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: type) {
+            updateSubdivisionPattern(pattern)
+        }
+    }
+    
+    // 更新速度
     func updateTempo(_ newTempo: Int) {
         let clampedTempo = max(30, min(240, newTempo))
         if tempo != clampedTempo {
@@ -183,9 +216,11 @@ class MetronomeState: ObservableObject {
         // 保存到UserDefaults
         defaults.set(beatsPerBar, forKey: Keys.beatsPerBar)
         saveBeatStatuses()
-
+        
+        
     }
     
+    // 更新当前拍
     func updateCurrentBeat(_ newCurrentBeat: Int) {
         currentBeat = newCurrentBeat
         defaults.set(currentBeat, forKey: Keys.currentBeat)
@@ -198,24 +233,40 @@ class MetronomeState: ObservableObject {
         
         beatUnit = newBeatUnit
         defaults.set(beatUnit, forKey: Keys.beatUnit)
+        
+        // 更新当前切分模式
+        updateCurrentSubdivisionPattern()
+        
+        
     }
     
     // 更新节拍状态
     func updateBeatStatuses(_ newStatuses: [BeatStatus]) {
         beatStatuses = newStatuses
         saveBeatStatuses()
-    }
-    
-    // 添加更新切分音符类型的方法
-    func updateSubdivisionType(_ newType: SubdivisionType) {
-        print("MetronomeState - updateSubdivisionType: \(subdivisionType.rawValue) -> \(newType.rawValue)")
-        if subdivisionType == newType { return }
         
-        subdivisionType = newType
-        defaults.set(subdivisionType.rawValue, forKey: Keys.subdivisionType)
+        // 如果正在播放，可能需要重新启动节拍器
+        // 但这里不做重启，因为状态变化对当前节拍影响不大
     }
     
-    // 添加辅助方法，将beatStatuses转换为字符串形式
+    // 更新切分模式
+    func updateSubdivisionPattern(_ pattern: SubdivisionPattern) {
+        guard pattern.name != subdivisionPattern?.name else { return }
+        
+        print("MetronomeState - updateSubdivisionPattern: \(subdivisionPattern?.name ?? "nil") -> \(pattern.name)")
+        
+        // 更新当前模式
+        subdivisionPattern = pattern
+        
+        // 保存模式名称到 UserDefaults
+        defaults.set(pattern.name, forKey: Keys.subdivisionType)
+        
+        
+    }
+    
+    
+    
+    // 获取节拍状态字符串
     private func getBeatStatusString() -> String {
         let statusInts = beatStatuses.map { status -> Int in
             switch status {
@@ -234,5 +285,10 @@ class MetronomeState: ObservableObject {
         audioEngine.stop()
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
+    }
+    
+    // 获取当前切分模式的类型（兼容现有代码）
+    var subdivisionType: SubdivisionType {
+        return subdivisionPattern?.type ?? .whole
     }
 }

@@ -43,6 +43,7 @@
 		3AD042E32D7CB146002EAB55 /* clock_low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042E22D7CB146002EAB55 /* clock_low.wav */; };
 		3AD042E42D7CB146002EAB55 /* clock_hi.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042E12D7CB146002EAB55 /* clock_hi.wav */; };
 		3AD042E52D7CB146002EAB55 /* clock_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042E02D7CB146002EAB55 /* clock_mid.wav */; };
+		3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */; };
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
 		F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */; };
@@ -132,6 +133,7 @@
 		3AD042E02D7CB146002EAB55 /* clock_mid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clock_mid.wav; sourceTree = "<group>"; };
 		3AD042E12D7CB146002EAB55 /* clock_hi.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clock_hi.wav; sourceTree = "<group>"; };
 		3AD042E22D7CB146002EAB55 /* clock_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clock_low.wav; sourceTree = "<group>"; };
+		3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubdivisionModels.swift; sourceTree = "<group>"; };
 		3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayCornerRadius.swift; sourceTree = "<group>"; };
 		F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTheme.swift; sourceTree = "<group>"; };
 		F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 		3A9C889E2D6F728A004CFD88 /* TempoPro */ = {
 			isa = PBXGroup;
 			children = (
+				3AD042E72D7D8704002EAB55 /* Models */,
 				F7F058A22D787BD5005DF482 /* CoreData */,
 				F7F538E42D75D59700A7395C /* Utils */,
 				3ADE94832D734B5B00731F83 /* Extensions */,
@@ -272,6 +275,14 @@
 				3AD042BE2D7C9572002EAB55 /* SettingsView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		3AD042E72D7D8704002EAB55 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		3ADE94832D734B5B00731F83 /* Extensions */ = {
@@ -574,6 +585,7 @@
 				F7F058C12D794453005DF482 /* AddPlaylistView.swift in Sources */,
 				F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */,
 				F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */,
+				3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */,
 				3AB6A8662D79F27000760B80 /* PracticeCompletionView.swift in Sources */,
 				3A9C88A22D6F728A004CFD88 /* ContentView.swift in Sources */,
 				F71AF6B62D716E9B00ADBC17 /* ThemeSelectionView.swift in Sources */,
