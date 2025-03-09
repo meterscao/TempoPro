@@ -13,16 +13,18 @@ class MetronomeState: ObservableObject {
         static let beatStatuses = AppStorageKeys.Metronome.beatStatuses
         static let currentBeat = AppStorageKeys.Metronome.currentBeat
         static let subdivisionType = AppStorageKeys.Metronome.subdivisionType
+        static let soundSet = AppStorageKeys.Metronome.soundSet  // 添加音效集设置的键
     }
     
     // 状态属性
     @Published private(set) var isPlaying: Bool = false
-    @Published var currentBeat: Int = 0
+    @Published private(set)var currentBeat: Int = 0
     @Published private(set) var tempo: Int = 0
     @Published private(set) var beatsPerBar: Int = 0
     @Published private(set) var beatUnit: Int = 0
     @Published private(set) var beatStatuses: [BeatStatus] = []
     @Published private(set) var subdivisionPattern: SubdivisionPattern?
+    @Published private(set) var soundSet: SoundSet = SoundSetManager.getDefaultSoundSet()
     @Published var practiceManager: CoreDataPracticeManager?
     
     // 直接使用单例引擎
@@ -91,6 +93,25 @@ class MetronomeState: ObservableObject {
         } else {
             // 默认使用整拍模式
             setDefaultSubdivisionPattern()
+        }
+        
+        // 加载音效设置
+        if let savedSoundSetKey = defaults.string(forKey: Keys.soundSet) {
+            // 通过键查找对应的音效集
+            if let savedSoundSet = SoundSetManager.availableSoundSets.first(where: { $0.key == savedSoundSetKey }) {
+                self.soundSet = savedSoundSet
+                // 更新音频引擎的当前音效
+                audioEngine.setCurrentSoundSet(savedSoundSet)
+                print("从UserDefaults加载音效设置: \(savedSoundSet.displayName)")
+            } else {
+                print("未找到保存的音效设置: \(savedSoundSetKey)，使用默认音效")
+                // 如果找不到，使用默认音效
+                self.soundSet = SoundSetManager.getDefaultSoundSet()
+            }
+        } else {
+            print("UserDefaults中没有音效设置，使用默认音效")
+            // 如果没有保存设置，使用默认音效
+            self.soundSet = SoundSetManager.getDefaultSoundSet()
         }
     }
     
@@ -265,6 +286,23 @@ class MetronomeState: ObservableObject {
     }
     
     
+    // 更新音效设置
+    func updateSoundSet(_ newSoundSet: SoundSet) {
+        guard newSoundSet.key != soundSet.key else { return }
+        
+        print("MetronomeState - updateSoundSet: \(soundSet.key) -> \(newSoundSet.key)")
+        
+        // 更新当前音效集
+        soundSet = newSoundSet
+        
+        // 保存设置到UserDefaults
+        defaults.set(newSoundSet.key, forKey: Keys.soundSet)
+        
+        // 更新音频引擎的当前音效
+        audioEngine.setCurrentSoundSet(newSoundSet)
+        
+        print("音效已更新为: \(newSoundSet.displayName)")
+    }
     
     // 获取节拍状态字符串
     private func getBeatStatusString() -> String {

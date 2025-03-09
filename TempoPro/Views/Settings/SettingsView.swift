@@ -47,7 +47,7 @@ struct SettingsView: View {
                 
                 // 音效设置
                 Section(header: Text("音效")) {
-                    NavigationLink(destination: SoundEffectsView(soundEffectsEnabled: $soundEffectsEnabled, operationSoundEnabled: $operationSoundEnabled)) {
+                    NavigationLink(destination: SoundEffectsView()) {
                         Text("节奏音效")
                     }
                     Toggle("节拍闪光灯", isOn: $flashlightEnabled)

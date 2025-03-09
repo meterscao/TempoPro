@@ -94,7 +94,7 @@ class MetronomeTimer {
                 print("节拍更新 - 计划时间: \(self.nextBeatTime), 实际时间: \(currentTime), 误差: \(currentTime - self.nextBeatTime)秒")
                 
                 // 更新当前拍号
-                state.currentBeat = nextBeatNumber
+                state.updateCurrentBeat(nextBeatNumber) 
                 
                 // 播放当前拍
                 self.playCurrentBeat()

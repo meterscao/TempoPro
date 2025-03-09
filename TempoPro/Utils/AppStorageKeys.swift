@@ -32,6 +32,9 @@ struct AppStorageKeys {
         
         // 在 Metronome 结构体中添加
         static let subdivisionType = key("subdivisionType")
+
+        // 当前选择音效
+        static let soundSet = key("soundSet")
     }
     
     // 主题相关设置
