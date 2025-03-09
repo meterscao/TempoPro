@@ -110,6 +110,23 @@ class MetronomeTimer {
             
             // 只有非muted状态才播放
             if status != .muted {
+                playBeat(at: currentBeat)
+            } else {
+                print("静音拍 - 跳过播放")
+            }
+        }
+    }
+
+    private func playBeat(at index: Int) {
+        // 确保引擎运行
+        audioEngine.ensureEngineRunning()
+        
+        if index < beatStatuses.count {
+            let status = beatStatuses[index]
+            print("播放节拍 - 拍号: \(beatsPerBar)/\(beatUnit), 当前第 \(index + 1) 拍, 重音类型: \(status)")
+            
+            // 只有非muted状态才播放
+            if status != .muted {
                 audioEngine.playBeat(status: status)
             } else {
                 print("静音拍 - 跳过播放")

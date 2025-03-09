@@ -54,7 +54,7 @@ class MetronomeState: ObservableObject {
     @Published private(set) var subdivisionType: SubdivisionType = .whole
     @Published var practiceManager: CoreDataPracticeManager?
     
-    private let audioEngine = MetronomeAudioEngine()
+    private let audioEngine = MetronomeAudioEngine.shared
     private var metronomeTimer: MetronomeTimer?
     private var nextScheduledBeatTime: TimeInterval = 0
     

@@ -11,12 +11,12 @@ struct SoundEffectsView: View {
     @Binding var soundEffectsEnabled: Bool
     @Binding var operationSoundEnabled: Bool
     
+    // 使用共享实例而不是创建新实例
+    @ObservedObject private var audioEngine = MetronomeAudioEngine.shared
+    
     // 使用 SoundSetManager.availableSoundSets 获取所有可用的音效
     let soundOptions = SoundSetManager.availableSoundSets
     @State private var selectedSoundKey = SoundSetManager.getDefaultSoundSet().key
-    
-    // 添加音频引擎实例
-    private let audioEngine = MetronomeAudioEngine()
     
     var body: some View {
         List {

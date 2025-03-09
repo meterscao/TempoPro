@@ -35,12 +35,12 @@ struct SoundSet {
 class SoundSetManager {
     // 定义全局可用音效数组
     static var availableSoundSets: [SoundSet] = [
+        SoundSet(displayName: "木鱼", key: "wood", fileNamePrefix: "wood"),
         SoundSet(displayName: "电子", key: "elec", fileNamePrefix: "elec"),
         SoundSet(displayName: "时钟", key: "clock", fileNamePrefix: "clock"),
         SoundSet(displayName: "拍手", key: "clap", fileNamePrefix: "clap"),
         SoundSet(displayName: "牛铃", key: "cowbell", fileNamePrefix: "cowbell"),
         SoundSet(displayName: "铃铛", key: "bell", fileNamePrefix: "bell"),
-        SoundSet(displayName: "木鱼", key: "wood", fileNamePrefix: "wood"),
         SoundSet(displayName: "咔哒", key: "kada", fileNamePrefix: "kada"),
         
         
@@ -51,16 +51,6 @@ class SoundSetManager {
         return availableSoundSets.first!
     }
     
-    // 通过key获取音效
-    static func getSoundSet(byKey key: String) -> SoundSet? {
-        return availableSoundSets.first { $0.key == key }
-    }
     
-    // 检查音效文件是否存在
-    static func checkSoundSetExists(_ soundSet: SoundSet) -> Bool {
-        let fileNames = soundSet.getAllFileNames()
-        let fileExtension = "wav"
-        // 至少强拍文件必须存在
-        return Bundle.main.path(forResource: fileNames.strong, ofType: fileExtension) != nil
-    }
+    
 }

@@ -2,51 +2,71 @@ import AVFoundation
 import Combine
 
 class MetronomeAudioEngine: ObservableObject {
-    private var audioEngine: AVAudioEngine?
-    private var playerNode: AVAudioPlayerNode?
+    // 单例实现，确保整个应用只有一个音频引擎实例
+    static let shared = MetronomeAudioEngine()
     
-    // 移除单独的缓冲区变量，统一使用缓存
+    // 将初始化方法改为私有，防止外部创建多个实例
+    private init() {}
+    
+    // 核心音频引擎组件
+    private var audioEngine: AVAudioEngine?      // 音频引擎，管理音频节点和连接
+    private var playerNode: AVAudioPlayerNode?   // 主播放节点，用于播放节拍器声音
+    
+    // 统一的音效缓存系统，存储所有已加载的音频缓冲区
+    // 键为音频文件名(如"wood_hi")，值为对应的音频缓冲区
     private var soundBufferCache: [String: AVAudioPCMBuffer] = [:]
+    
+    // 当前使用的音效集
     private var currentSoundSet: SoundSet = SoundSetManager.getDefaultSoundSet()
     
-    // 预览专用播放器
+    // 专门用于预览音效的播放器节点
     private var previewPlayer: AVAudioPlayerNode?
-    // 保存预览播放器连接的格式
+    // 记录预览播放器当前连接的音频格式
     private var previewPlayerFormat: AVAudioFormat?
     
+    // 标记引擎是否已初始化
     @Published private(set) var isInitialized: Bool = false
     
-    // 初始化引擎和播放节点
+    // 用于管理异步加载任务
+    private var loadingTask: Task<Void, Never>? = nil
+    
+    // 音频会话操作锁，防止并发修改音频会话
+    private let audioSessionLock = NSLock()
+    
+    // 初始化音频引擎及相关组件
     func initialize() {
+        // 避免重复初始化
         guard !isInitialized else { return }
         
         let initStartTime = Date().timeIntervalSince1970
         print("【引擎初始化】开始初始化音频引擎 - 时间: \(initStartTime)")
         
         do {
+            // 配置音频会话
             try configureAudioSession()
             print("【引擎初始化】音频会话配置完成")
             
-            // 设置主音频引擎
+            // 创建主音频引擎和播放节点
             audioEngine = AVAudioEngine()
             playerNode = AVAudioPlayerNode()
             
             if let engine = audioEngine, let player = playerNode {
+                // 将播放节点附加到引擎
                 engine.attach(player)
                 print("【引擎初始化】主播放节点已附加到引擎")
                 
-                // 先用标准格式连接，后续会根据实际音频格式重新连接
+                // 使用标准格式进行初始连接，后续会根据实际音频格式动态调整
                 let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 2)!
                 engine.connect(player, to: engine.mainMixerNode, format: format)
             }
             
-            // 设置预览专用播放器（使用同一个引擎）
+            // 设置预览专用播放器
             previewPlayer = AVAudioPlayerNode()
             if let engine = audioEngine, let previewNode = previewPlayer {
                 engine.attach(previewNode)
                 print("【引擎初始化】预览播放节点已附加到引擎")
                 
-                // 记录详细的音频格式信息
+                // 初始化预览播放器连接
                 let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 2)!
                 print("【引擎初始化】预览播放器初始连接格式 - 采样率: \(format.sampleRate), 通道数: \(format.channelCount), 格式ID: \(format.streamDescription.pointee.mFormatID)")
                 
@@ -62,71 +82,77 @@ class MetronomeAudioEngine: ObservableObject {
             isInitialized = true
             print("【引擎初始化】音频引擎初始化完成 - 总耗时: \(Date().timeIntervalSince1970 - initStartTime)秒")
             
-            // 初始化完成后加载默认音效集
+            // 加载默认音效集
             loadDefaultSoundSet()
+
+            // 添加中断处理
+            setupInterruptionHandling()
         } catch {
             print("【引擎初始化错误】音频引擎初始化失败: \(error)")
         }
     }
+
     
     // 加载默认音效集
     private func loadDefaultSoundSet() {
+        
         Task {
+            
             do {
-                // 获取默认音效集
+                let loadStartTime = Date().timeIntervalSince1970
+                // 获取默认音效
                 let defaultSoundSet = SoundSetManager.getDefaultSoundSet()
                 print("【加载默认音效】开始加载默认音效: \(defaultSoundSet.displayName)")
                 
-                // 加载全套音效（包括强拍、中拍和弱拍）
+                // 加载全套音效（强拍、中拍、弱拍）
                 try await loadCompleteSoundSet(defaultSoundSet)
                 
-                // 设置为当前音效
+                // 更新当前音效
                 self.currentSoundSet = defaultSoundSet
                 print("【加载默认音效】默认音效加载完成")
                 
-                // 如果播放器已连接，根据加载的音频格式重新连接
+                // 根据加载的音频格式重新连接主播放器
                 if let engine = self.audioEngine, 
-                   let player = self.playerNode, 
-                   let buffer = self.soundBufferCache[defaultSoundSet.getStrongBeatFileName()] {
+                let player = self.playerNode, 
+                let buffer = self.soundBufferCache[defaultSoundSet.getStrongBeatFileName()] {
                     print("【加载默认音效】使用匹配格式重新连接主播放器节点")
                     engine.disconnectNodeOutput(player)
                     engine.connect(player, to: engine.mainMixerNode, format: buffer.format)
                 }
+                // 打下日志音频加载的耗时
+                let loadTime = Date().timeIntervalSince1970 - loadStartTime
+                print("【加载默认音效】默认音效加载完成 - 总耗时: \(loadTime)秒")
             } catch {
                 print("【加载默认音效错误】加载默认音效失败: \(error)")
             }
         }
+        
     }
-    
-    private func configureAudioSession() throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
-        try session.setActive(true)
-    }
-    
+
     // 加载完整的音效集（强拍、中拍和弱拍）
     private func loadCompleteSoundSet(_ soundSet: SoundSet) async throws {
         try await loadSoundFile(soundSet.getStrongBeatFileName(), withExtension: "wav")
         try await loadSoundFile(soundSet.getMediumBeatFileName(), withExtension: "wav")
         try await loadSoundFile(soundSet.getNormalBeatFileName(), withExtension: "wav")
     }
-    
-    // 加载单个音频文件
+
+    // 加载单个音频文件并缓存
     private func loadSoundFile(_ fileName: String, withExtension ext: String) async throws {
         print("【加载音频】加载音频文件: \(fileName).\(ext)")
         
-        // 如果已经缓存，则跳过
+        // 如果已缓存则跳过
         if soundBufferCache[fileName] != nil {
             print("【加载音频】音频已在缓存中: \(fileName)")
             return
         }
         
-        // 加载音频文件
+        // 从Bundle加载音频文件
         if let fileURL = Bundle.main.url(forResource: fileName, withExtension: ext) {
             let file = try AVAudioFile(forReading: fileURL)
             let format = file.processingFormat
             print("【加载音频】音频文件格式 - 采样率: \(format.sampleRate), 通道数: \(format.channelCount)")
             
+            // 创建缓冲区并读取文件内容
             let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(file.length))
             try file.read(into: buffer!)
             
@@ -139,38 +165,54 @@ class MetronomeAudioEngine: ObservableObject {
         }
     }
     
-    // 播放主节拍器的拍子（使用统一缓存）
+    // 配置音频会话，设置为播放模式并激活
+    private func configureAudioSession() throws {
+        // 加锁确保线程安全
+        audioSessionLock.lock()
+        defer { audioSessionLock.unlock() }
+        
+        let session = AVAudioSession.sharedInstance()
+        // 设置为播放类别，允许与其他应用混音
+        try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+        try session.setActive(true)
+    }
+    
+
+    
+    // 播放主节拍器的拍子
     func playBeat(status: BeatStatus) {
         guard isInitialized, let player = playerNode, let engine = audioEngine else { return }
         
+        // 根据节拍状态确定要播放的音频文件
         let fileName: String? = switch status {
-            case .strong: currentSoundSet.getStrongBeatFileName()
-            case .medium: currentSoundSet.getMediumBeatFileName()
-            case .normal: currentSoundSet.getNormalBeatFileName()
-            case .muted: nil // 改为返回 nil 而不是 return
+            case .strong: currentSoundSet.getStrongBeatFileName()  // 强拍
+            case .medium: currentSoundSet.getMediumBeatFileName()  // 中拍
+            case .normal: currentSoundSet.getNormalBeatFileName()  // 弱拍
+            case .muted: nil  // 静音拍，不播放
         }
         
-        // 检查文件名是否为 nil (静音拍)
+        // 检查文件名是否为nil（静音拍）
         guard let fileName = fileName else { return }
         
+        // 从缓存获取音频缓冲区
         if let buffer = soundBufferCache[fileName] {
-            
-            // 确保播放器连接使用正确的格式
+            // 确保播放器连接使用正确的音频格式
             ensurePlayerConnected(player, withFormat: buffer.format, engine: engine)
             
-            // 使用 .interrupts 选项，自动中断当前正在播放的内容
+            // 调度缓冲区播放，使用.interrupts选项自动中断当前播放内容
             player.scheduleBuffer(buffer, at: nil, options: .interrupts, completionHandler: nil)
             player.play()
         }
     }
     
-    // 确保播放器连接了正确的格式
+    // 确保播放器使用正确的格式连接到引擎
     private func ensurePlayerConnected(_ player: AVAudioPlayerNode, withFormat format: AVAudioFormat, engine: AVAudioEngine) {
-        // 修复错误2: 使用可选绑定处理 outputFormat 可能为 nil 的情况
+        // 检查当前输出格式是否与目标格式一致
         if let currentFormat = player.outputFormat(forBus: 0) as? AVAudioFormat, 
-           currentFormat.channelCount != format.channelCount || 
-           currentFormat.sampleRate != format.sampleRate {
+        currentFormat.channelCount != format.channelCount || 
+        currentFormat.sampleRate != format.sampleRate {
             print("【播放】重新连接播放器 - 旧格式: \(currentFormat.channelCount)通道, 新格式: \(format.channelCount)通道")
+            // 不一致则重新连接
             engine.disconnectNodeOutput(player)
             engine.connect(player, to: engine.mainMixerNode, format: format)
         }
@@ -186,15 +228,26 @@ class MetronomeAudioEngine: ObservableObject {
         }
     }
     
-    // 预加载所有音效的强拍
+    // 预加载所有音效的完整套装（强拍、中拍和弱拍）
     func preloadAllSoundSets(soundSets: [SoundSet]) {
         print("【预加载】开始预加载所有音效，总数: \(soundSets.count)")
-        Task {
+        
+        // 取消之前的加载任务
+        loadingTask?.cancel()
+        
+        // 创建新的加载任务
+        loadingTask = Task {
             for soundSet in soundSets {
+                // 检查任务是否被取消
+                if Task.isCancelled {
+                    print("【预加载】任务已取消，停止加载")
+                    return
+                }
+                
                 print("【预加载】准备加载音效: \(soundSet.displayName)")
                 do {
-                    // 只加载强拍（预览用）
-                    try await loadSoundFile(soundSet.getStrongBeatFileName(), withExtension: "wav")
+                    try await loadCompleteSoundSet(soundSet)
+                    print("【预加载】音效 \(soundSet.displayName) 的全套文件加载完成")
                 } catch {
                     print("【预加载错误】加载音效 \(soundSet.displayName) 失败: \(error)")
                 }
@@ -202,8 +255,8 @@ class MetronomeAudioEngine: ObservableObject {
             print("【预加载】所有音效预加载完成，缓存大小: \(self.soundBufferCache.count)")
         }
     }
-    
-    // 播放预览音效
+ 
+    // 预览音效（用于设置页面）
     func previewSoundSet(_ soundSet: SoundSet) {
         guard isInitialized, let previewPlayer = self.previewPlayer, let engine = self.audioEngine else {
             print("【预览播放】预览引擎未初始化")
@@ -212,15 +265,15 @@ class MetronomeAudioEngine: ObservableObject {
         
         print("【预览播放】开始预览音效: \(soundSet.displayName)")
         
-        // 获取音效强拍文件名
+        // 获取强拍文件名用于预览
         let strongFileName = soundSet.getStrongBeatFileName()
         print("【预览播放】音效文件名: \(strongFileName)")
         
-        // 尝试从缓存获取
+        // 从缓存获取音频缓冲区
         if let buffer = soundBufferCache[strongFileName] {
             print("【预览播放】从缓存获取到缓冲区 - 通道数: \(buffer.format.channelCount)")
             
-            // 重要修改: 在播放前断开并使用正确格式重新连接
+            // 断开并重新连接预览播放器，使用正确的格式
             print("【预览播放】断开现有连接")
             engine.disconnectNodeOutput(previewPlayer)
             
@@ -228,11 +281,10 @@ class MetronomeAudioEngine: ObservableObject {
             engine.connect(previewPlayer, to: engine.mainMixerNode, format: buffer.format)
             previewPlayerFormat = buffer.format
             
-            // 在转到主线程调度 UI 更新之前记录
+            // 主线程上播放音频
             print("【预览播放】准备播放音效")
             DispatchQueue.main.async {
                 print("【预览播放】主线程上调度缓冲区")
-                // 使用 .interrupts 选项
                 self.previewPlayer?.scheduleBuffer(buffer, at: nil, options: .interrupts, completionHandler: {
                     print("【预览播放】播放完成")
                 })
@@ -240,8 +292,8 @@ class MetronomeAudioEngine: ObservableObject {
                 self.previewPlayer?.play()
             }
         } else {
+            // 缓存中找不到时，异步加载并播放
             print("【预览播放】缓存中没有找到音效，尝试加载: \(strongFileName)")
-            // 如果缓存中没有，尝试加载并播放
             Task {
                 do {
                     print("【预览播放】开始加载音效")
@@ -252,7 +304,6 @@ class MetronomeAudioEngine: ObservableObject {
                         print("【预览播放】找到新加载的缓冲区，准备播放")
                         DispatchQueue.main.async {
                             print("【预览播放】主线程上调度新加载的缓冲区")
-                            // 使用 .interrupts 选项
                             self.previewPlayer?.scheduleBuffer(buffer, at: nil, options: .interrupts, completionHandler: {
                                 print("【预览播放】播放完成")
                             })
@@ -268,18 +319,22 @@ class MetronomeAudioEngine: ObservableObject {
             }
         }
     }
-    
+    // 停止所有播放
     func stop() {
         print("【停止播放】停止所有播放器")
         playerNode?.stop()
         previewPlayer?.stop()
     }
 
-    // 在类中添加这个方法
+    // 资源清理（在视图消失时调用）
     func cleanupBeforeDestroy() {
         print("【资源清理】准备清理音频资源")
         
-        // 停止所有播放
+        // 取消异步加载任务
+        loadingTask?.cancel()
+        loadingTask = nil
+        
+        // 停止播放
         stop()
         
         // 断开预览播放器连接
@@ -288,10 +343,55 @@ class MetronomeAudioEngine: ObservableObject {
             engine.disconnectNodeOutput(previewNode)
         }
         
-        // 不要清空缓存，因为主引擎可能还需要使用
-        // 但需要重置预览状态
+        // 重置预览状态，但保留缓存
         previewPlayerFormat = nil
         
         print("【资源清理】音频资源清理完成")
     }
+
+    // 确保引擎正在运行（在播放前调用）
+    func ensureEngineRunning() {
+        if let engine = audioEngine, !engine.isRunning {
+            print("【引擎检查】发现引擎未运行，尝试重启")
+            do {
+                try engine.start()
+                print("【引擎检查】引擎重启成功")
+            } catch {
+                print("【引擎检查】引擎重启失败: \(error)")
+            }
+        }
+    }
+    
+    // 设置音频中断监听
+    private func setupInterruptionHandling() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAudioSessionInterruption),
+            name: AVAudioSession.interruptionNotification,
+            object: nil
+        )
+    }
+
+    // 处理音频中断（如来电、其他应用播放音频等）
+    @objc private func handleAudioSessionInterruption(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+            let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
+            return
+        }
+        
+        if type == .began {
+            // 中断开始
+            print("【音频中断】音频会话被中断")
+        } else if type == .ended {
+            // 中断结束
+            if let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt,
+            AVAudioSession.InterruptionOptions(rawValue: optionsValue).contains(.shouldResume) {
+                print("【音频中断】中断结束，尝试恢复音频引擎")
+                ensureEngineRunning()
+            }
+        }
+    }
+    
+    
 }
