@@ -195,12 +195,22 @@ struct MetronomeInfoView: View {
                                 showingTimeSignature = true
                             }
                             Spacer()
-                            Image("icon-time-signature")
-                                .renderingMode(.template)
-                                .foregroundStyle(theme.primaryColor)
-                                .onTapGesture {
-                                    showingTimeSignature = true
-                                }
+//                            Image("icon-time-signature")
+//                                .renderingMode(.template)
+//                                .foregroundStyle(theme.primaryColor)
+//                                .onTapGesture {
+//                                    showingTimeSignature = true
+//                                }
+                            HStack(spacing: 2) {
+                                
+                                Text("\(metronomeState.subdivisionPattern!.displayName)")
+                                
+                                    
+                            }
+                            .font(.custom("MiSansLatin-Regular", size: 22))
+                            .onTapGesture {
+                                showingTimeSignature = true
+                            }
                         }
                         
                         // BPM 显示

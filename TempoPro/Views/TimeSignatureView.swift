@@ -20,7 +20,7 @@ struct TimeSignatureView: View {
             VStack(spacing: 20) {
                 
                 // 拍号设置（横向排列）
-                HStack(spacing: 30) {
+                HStack(spacing: 0) {
                     // 每小节拍数
                     VStack(alignment: .center, spacing: 5) {
                         Text("每小节拍数")
@@ -51,6 +51,7 @@ struct TimeSignatureView: View {
                             }
                         }
                     }
+                    .frame(maxWidth: .infinity)
                     
                     // 拍号单位
                     VStack(alignment: .center, spacing: 5) {
@@ -84,15 +85,13 @@ struct TimeSignatureView: View {
                             }
                         }
                     }
+                    .frame(maxWidth: .infinity)
                 }
                 
                 // 显示当前拍号单位下所有可用的切分音符
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("当前拍号单位支持的切分音符")
+                    Text("切分音符")
                         .font(.headline)
-                        .padding(.top, 20)
-                    
-                    
                     VStack(alignment: .leading, spacing: 8) {
                         let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
                         
@@ -107,7 +106,7 @@ struct TimeSignatureView: View {
                                     metronomeState.updateSubdivisionPattern(pattern)
                                 }) {
                                     HStack {
-                                        Text("• \(pattern.displayName)")
+                                        Text(pattern.displayName)
                                             .font(.system(.body))
                                         
                                         Spacer()
