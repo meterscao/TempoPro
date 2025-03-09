@@ -54,16 +54,13 @@ class MetronomeState: ObservableObject {
     @Published private(set) var subdivisionType: SubdivisionType = .whole
     @Published var practiceManager: CoreDataPracticeManager?
     
+    // 直接使用单例引擎
     private let audioEngine = MetronomeAudioEngine.shared
     private var metronomeTimer: MetronomeTimer?
-    private var nextScheduledBeatTime: TimeInterval = 0
     
     // 添加订阅管理
     private var cancellables = Set<AnyCancellable>()
     private let defaults = UserDefaults.standard
-    
-    // 在MetronomeState类中添加属性
-    
     
     init() {
         // 从UserDefaults加载初始数据
@@ -71,10 +68,9 @@ class MetronomeState: ObservableObject {
         
         // 初始化音频引擎
         audioEngine.initialize()
-        metronomeTimer = MetronomeTimer(audioEngine: audioEngine)
-        metronomeTimer?.onBeatUpdate = { [weak self] beat in
-            self?.currentBeat = beat
-        }
+        
+        // 创建节拍定时器，传入self引用
+        metronomeTimer = MetronomeTimer(state: self, audioEngine: audioEngine)
     }
     
     private func loadFromUserDefaults() {
@@ -134,53 +130,35 @@ class MetronomeState: ObservableObject {
         defaults.set(statusInts, forKey: Keys.beatStatuses)
     }
     
-    // 更新速度
+    // 简化的播放控制方法
+    func togglePlayback() {
+        isPlaying.toggle()
+        
+        if isPlaying {
+            // 开始练习会话
+            practiceManager?.startPracticeSession(bpm: tempo)
+            // 直接启动定时器，无需传递参数
+            metronomeTimer?.start()
+        } else {
+            // 结束练习会话
+            practiceManager?.endPracticeSession()
+            // 停止定时器
+            metronomeTimer?.stop()
+        }
+    }
+    
+    // 更新速度 - 无需特殊处理，Timer会在下一拍自动使用新值
     func updateTempo(_ newTempo: Int) {
         let clampedTempo = max(30, min(240, newTempo))
         if tempo != clampedTempo {
             tempo = clampedTempo
             defaults.set(tempo, forKey: Keys.tempo)
             
-            if isPlaying {
-                metronomeTimer?.setTempo(tempo: tempo)
-            }
+            // 不需要通知Timer，它会直接使用新值
         }
     }
     
-    // 修改togglePlayback方法
-    func togglePlayback() {
-        isPlaying.toggle()
-        if isPlaying {
-            // 开始练习会话
-            practiceManager?.startPracticeSession(bpm: tempo)
-            currentBeat = 0
-            nextScheduledBeatTime = Date().timeIntervalSince1970 + (60.0 / Double(tempo))
-            metronomeTimer?.start(
-                tempo: tempo,
-                beatsPerBar: beatStatuses.count,
-                beatStatuses: beatStatuses,
-                beatUnit: beatUnit
-            )
-        } else {
-            // 记录停止时间
-            let stopTime = Date()
-            
-            // 结束练习会话
-            practiceManager?.endPracticeSession()
-            metronomeTimer?.stop()
-            nextScheduledBeatTime = 0
-        }
-    }
-    
-    // 清理资源
-    func cleanup() {
-        metronomeTimer?.stop()
-        audioEngine.stop()
-        cancellables.forEach { $0.cancel() }
-        cancellables.removeAll()
-    }
-    
-    // 更新拍数
+    // 更新拍数方法
     func updateBeatsPerBar(_ newBeatsPerBar: Int) {
         print("MetronomeState - updateBeatsPerBar: \(beatsPerBar) -> \(newBeatsPerBar)")
         if beatsPerBar == newBeatsPerBar { return }
@@ -209,18 +187,16 @@ class MetronomeState: ObservableObject {
         defaults.set(beatsPerBar, forKey: Keys.beatsPerBar)
         saveBeatStatuses()
         
-        // 如果正在播放，重新启动节拍器
-        if wasPlaying {
-            let currentBeatToUse = currentBeat >= newBeatsPerBar ? 0 : currentBeat
+        // // 如果正在播放，重新启动节拍器
+        // if wasPlaying {
+        //     // 先停止
+        //     metronomeTimer?.stop()
+        //     isPlaying = false
             
-            metronomeTimer?.stop()
-            metronomeTimer?.start(
-                tempo: tempo,
-                beatsPerBar: newBeatsPerBar,
-                beatStatuses: beatStatuses,
-                currentBeat: currentBeatToUse
-            )
-        }
+        //     // 然后重新开始
+        //     isPlaying = true
+        //     metronomeTimer?.start()
+        // }
     }
     
     func updateCurrentBeat(_ newCurrentBeat: Int) {
@@ -263,5 +239,13 @@ class MetronomeState: ObservableObject {
             }
         }
         return "\(beatsPerBar)/\(beatUnit): \(statusInts.map {String($0)}.joined(separator: ","))"
+    }
+    
+    // 清理资源
+    func cleanup() {
+        metronomeTimer?.stop()
+        audioEngine.stop()
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
     }
 }
