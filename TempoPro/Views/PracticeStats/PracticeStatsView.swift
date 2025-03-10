@@ -27,7 +27,7 @@ struct PracticeStatsView: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: 20) {
                     // Header
                     HStack {
                         Button(action: {
@@ -63,20 +63,15 @@ struct PracticeStatsView: View {
                     // Share Stats Button
                     Button(action: {}) {
                         HStack(spacing: 10) {
-                            Image(systemName: "square.and.arrow.up")
-                                .font(.custom("MiSansLatin-Regular", size: 16))
-                                .foregroundColor(theme.backgroundColor)
-                            
                             Text("SHARE PROGRESS")
                                 .font(.custom("MiSansLatin-Semibold", size: 16))
-                                .foregroundColor(theme.backgroundColor)
+                                .foregroundColor(theme.beatBarColor)
                         }
+                        .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .padding(.horizontal, 20)
-                        .background(theme.primaryColor.opacity(0.7))
+                        .background(theme.backgroundColor.opacity(0.9))
                         .cornerRadius(12)
                     }
-                    .padding(.top, 8)
                     
                 }
                 .padding(.horizontal, 20)

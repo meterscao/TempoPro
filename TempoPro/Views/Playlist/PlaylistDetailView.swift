@@ -290,6 +290,9 @@ struct SongRowCard: View {
         .padding(16)
         .background(theme.backgroundColor)
         .cornerRadius(16)
+        .onTapGesture {
+            onPlay()
+        }
     }
 }
 

@@ -132,70 +132,38 @@ class CoreDataPlaylistManager: ObservableObject {
     }
     
     // 创建示例歌单
+    // Create sample playlists
     private func createSamplePlaylists() {
         // Classical Music
         let classicalPlaylist = createPlaylist(name: "Classical Masterpieces", color: "#8B4513")
-        _ = addSong(to: classicalPlaylist, name: "Beethoven - Symphony No. 5", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Mozart - Eine Kleine Nachtmusik", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Bach - Air on the G String", bpm: 60, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Vivaldi - The Four Seasons", bpm: 104, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Chopin - Nocturne Op. 9 No. 2", bpm: 72, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Debussy - Clair de Lune", bpm: 66, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Tchaikovsky - 1812 Overture", bpm: 120, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Handel - Messiah: Hallelujah", bpm: 100, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Brahms - Hungarian Dance No. 5", bpm: 132, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: classicalPlaylist, name: "Wagner - Ride of the Valkyries", bpm: 92, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        
-        // Rock Classics
-        let rockPlaylist = createPlaylist(name: "Rock Legends", color: "#B22222")
-        _ = addSong(to: rockPlaylist, name: "Queen - Bohemian Rhapsody", bpm: 72, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "Led Zeppelin - Stairway to Heaven", bpm: 82, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "Pink Floyd - Comfortably Numb", bpm: 63, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "The Rolling Stones - Paint It Black", bpm: 100, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "AC/DC - Back in Black", bpm: 96, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "Eagles - Hotel California", bpm: 75, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "Guns N' Roses - Sweet Child O' Mine", bpm: 120, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "Nirvana - Smells Like Teen Spirit", bpm: 117, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "The Who - Baba O'Riley", bpm: 126, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: rockPlaylist, name: "Metallica - Enter Sandman", bpm: 123, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+        _ = addSong(to: classicalPlaylist, name: "Tchaikovsky - Waltz of the Flowers", bpm: 84, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 1, 2])
+        _ = addSong(to: classicalPlaylist, name: "Debussy - Clair de Lune", bpm: 66, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1])
+        _ = addSong(to: classicalPlaylist, name: "Holst - Mars, The Bringer of War", bpm: 100, beatsPerBar: 5, beatUnit: 4, beatStatuses: [0, 1, 2, 1, 2])
+        _ = addSong(to: classicalPlaylist, name: "Chopin - Fantaisie-Impromptu", bpm: 168, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+        _ = addSong(to: classicalPlaylist, name: "Bach - Prelude in C Major", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 0, 1])
         
         // Jazz Standards
         let jazzPlaylist = createPlaylist(name: "Jazz Essentials", color: "#191970")
         _ = addSong(to: jazzPlaylist, name: "Dave Brubeck - Take Five", bpm: 172, beatsPerBar: 5, beatUnit: 4, beatStatuses: [0, 2, 1, 2, 1])
-        _ = addSong(to: jazzPlaylist, name: "Miles Davis - So What", bpm: 136, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: jazzPlaylist, name: "John Coltrane - Giant Steps", bpm: 290, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: jazzPlaylist, name: "Duke Ellington - Take the A Train", bpm: 160, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: jazzPlaylist, name: "Thelonious Monk - Round Midnight", bpm: 60, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: jazzPlaylist, name: "Charles Mingus - Goodbye Pork Pie Hat", bpm: 72, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: jazzPlaylist, name: "Herbie Hancock - Cantaloupe Island", bpm: 112, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+        _ = addSong(to: jazzPlaylist, name: "Miles Davis - So What", bpm: 136, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1])
         _ = addSong(to: jazzPlaylist, name: "Bill Evans - Waltz for Debby", bpm: 120, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 2, 1])
-        _ = addSong(to: jazzPlaylist, name: "Dizzy Gillespie - A Night in Tunisia", bpm: 140, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: jazzPlaylist, name: "Louis Armstrong - What a Wonderful World", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+        _ = addSong(to: jazzPlaylist, name: "Thelonious Monk - Round Midnight", bpm: 60, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 0, 1])
+        _ = addSong(to: jazzPlaylist, name: "Charles Mingus - Goodbye Pork Pie Hat", bpm: 72, beatsPerBar: 12, beatUnit: 8, beatStatuses: [0, 1, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1])
         
-        // Electronic Music
-        let electronicPlaylist = createPlaylist(name: "Electronic Pioneers", color: "#4B0082")
-        _ = addSong(to: electronicPlaylist, name: "Daft Punk - One More Time", bpm: 123, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "Kraftwerk - The Model", bpm: 94, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "The Chemical Brothers - Block Rockin' Beats", bpm: 128, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "Aphex Twin - Windowlicker", bpm: 138, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "Fatboy Slim - Praise You", bpm: 125, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "Orbital - Halcyon and On and On", bpm: 127, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "Massive Attack - Teardrop", bpm: 79, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "Underworld - Born Slippy (NUXX)", bpm: 140, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "Moby - Porcelain", bpm: 96, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: electronicPlaylist, name: "Boards of Canada - Roygbiv", bpm: 85, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+        // Progressive Rock
+        let progRockPlaylist = createPlaylist(name: "Progressive Rock", color: "#B22222")
+        _ = addSong(to: progRockPlaylist, name: "Pink Floyd - Money", bpm: 126, beatsPerBar: 7, beatUnit: 4, beatStatuses: [0, 1, 2, 1, 0, 1, 2])
+        _ = addSong(to: progRockPlaylist, name: "Rush - Tom Sawyer", bpm: 88, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+        _ = addSong(to: progRockPlaylist, name: "Dream Theater - Stream of Consciousness", bpm: 132, beatsPerBar: 6, beatUnit: 8, beatStatuses: [0, 1, 0, 1, 2, 1])
+        _ = addSong(to: progRockPlaylist, name: "Tool - Schism", bpm: 92, beatsPerBar: 5, beatUnit: 8, beatStatuses: [0, 1, 2, 1, 0])
+        _ = addSong(to: progRockPlaylist, name: "King Crimson - 21st Century Schizoid Man", bpm: 114, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
         
-        // Funk & Soul
-        let funkPlaylist = createPlaylist(name: "Funk & Soul Grooves", color: "#9932CC")
-        _ = addSong(to: funkPlaylist, name: "James Brown - Get Up Offa That Thing", bpm: 106, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Stevie Wonder - Superstition", bpm: 101, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Earth Wind & Fire - September", bpm: 126, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Parliament - Give Up the Funk", bpm: 112, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Aretha Franklin - Respect", bpm: 115, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Marvin Gaye - What's Going On", bpm: 96, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Kool & The Gang - Celebration", bpm: 123, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Otis Redding - Sittin' On The Dock of the Bay", bpm: 96, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Sly & The Family Stone - Thank You", bpm: 103, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: funkPlaylist, name: "Curtis Mayfield - Move On Up", bpm: 116, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+        // World Music
+        let worldPlaylist = createPlaylist(name: "World Rhythms", color: "#20B2AA")
+        _ = addSong(to: worldPlaylist, name: "Indian Classical - Teentaal", bpm: 85, beatsPerBar: 16, beatUnit: 4, beatStatuses: [0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1])
+        _ = addSong(to: worldPlaylist, name: "Flamenco - Bulería", bpm: 110, beatsPerBar: 12, beatUnit: 8, beatStatuses: [0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2])
+        _ = addSong(to: worldPlaylist, name: "Balkan Folk - Daichovo Horo", bpm: 140, beatsPerBar: 9, beatUnit: 8, beatStatuses: [0, 1, 2, 0, 1, 2, 0, 1, 2])
+        _ = addSong(to: worldPlaylist, name: "West African - Kuku", bpm: 128, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
+        _ = addSong(to: worldPlaylist, name: "Turkish - Karsilama", bpm: 95, beatsPerBar: 9, beatUnit: 8, beatStatuses: [0, 1, 2, 0, 1, 2, 0, 1, 2])
     }
 }
