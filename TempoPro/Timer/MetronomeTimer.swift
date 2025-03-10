@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 class MetronomeTimer {
     // 弱引用 State，避免循环引用
@@ -23,24 +24,39 @@ class MetronomeTimer {
     func start() {
         guard let state = state else { return }
         
+        // 停止已有定时器
+        stop()
+        
         // 计算开始时间
         let startTime = Date().timeIntervalSince1970
         nextBeatTime = startTime
         
-        print("开始节拍器 - BPM: \(state.tempo), 拍号: \(state.beatsPerBar)/\(state.beatUnit), 间隔: \(60.0 / Double(state.tempo))秒")
-        print("首拍开始时间: \(startTime)")
-        
-        // 停止已有定时器
-        stop()
+        // 初始化音频引擎一次，避免反复调用
+        audioEngine.ensureEngineRunning()
         
         // 播放首拍
         playCurrentBeat()
         
-        // 计算下一拍的时间
+        // 计算下一拍时间
         nextBeatTime = startTime + (60.0 / Double(state.tempo))
         
-        // 调度下一拍
-        scheduleNextBeat()
+        // 使用单一长期运行的定时器替代一次性定时器
+        timer = DispatchSource.makeTimerSource(queue: timerQueue)
+        // 对于高精度需求，考虑使用更短的重复间隔进行校正
+        timer?.schedule(deadline: .now(), repeating: 0.01)  // 10ms检查一次
+        
+        timer?.setEventHandler { [weak self, weak state] in
+            guard let self = self, let state = state else { return }
+            
+            let now = Date().timeIntervalSince1970
+            // 只有当到达下一拍时间才执行
+            if now >= self.nextBeatTime {
+                // 关键改进：不必每次都回到主线程，只在必要时更新UI
+                self.handleBeat(at: now)
+            }
+        }
+        
+        timer?.resume()
     }
     
     // 停止定时器
@@ -96,7 +112,41 @@ class MetronomeTimer {
         }
     }
     
-    // 播放切分音符模式
+    // 新方法：处理节拍，减少主线程负担
+    private func handleBeat(at currentTime: TimeInterval) {
+        guard let state = state else { return }
+        
+        // 计算偏差
+        let deviation = currentTime - nextBeatTime
+        
+        // 取消所有切分音符定时器
+        cancelSubdivisionTimers()
+        isPlayingSubdivisions = false
+        
+        let nextBeatNumber = (state.currentBeat + 1) % state.beatsPerBar
+        
+        // 只有UI更新部分需要回到主线程
+        DispatchQueue.main.async {
+            // 更新当前拍号（UI操作）
+            state.updateCurrentBeat(nextBeatNumber)
+        }
+        
+        // 音频播放不需要主线程
+        let nextBeatStatus = nextBeatNumber < state.beatStatuses.count ? state.beatStatuses[nextBeatNumber] : .normal
+        if nextBeatStatus != .muted {
+            audioEngine.playBeat(status: nextBeatStatus)
+            
+            // 处理切分音符（优化：考虑改为一次性计算所有切分时间点）
+            if let subdivisionPattern = state.subdivisionPattern, subdivisionPattern.notes.count > 1 {
+                playSubdivisionPattern(subdivisionPattern, for: nextBeatStatus)
+            }
+        }
+        
+        // 计算下一拍的绝对时间（使用state中的最新tempo）
+        nextBeatTime += (60.0 / Double(state.tempo))
+    }
+    
+    // 改进切分音符播放，减少创建的定时器数量
     private func playSubdivisionPattern(_ pattern: SubdivisionPattern, for beatStatus: BeatStatus) {
         guard let state = state else { return }
         
@@ -116,6 +166,9 @@ class MetronomeTimer {
         if !pattern.notes.isEmpty && !pattern.notes[0].isMuted {
             audioEngine.playBeat(status: beatStatus)
         }
+        
+        // 考虑使用单一定时器和预先计算的时间点数组来处理所有切分
+        // 而不是为每个切分创建一个定时器
         
         // 调度剩余的音符
         var currentTime: TimeInterval = 0
@@ -148,49 +201,5 @@ class MetronomeTimer {
             subdivisionTimers.append(timer)
             timer.resume()
         }
-    }
-    
-    // 调度下一拍
-    private func scheduleNextBeat() {
-        guard let state = state else { return }
-        
-        // 计算到下一拍的时间间隔
-        let now = Date().timeIntervalSince1970
-        let timeUntilNextBeat = max(0.001, nextBeatTime - now)
-        
-        // 创建一次性定时器
-        timer = DispatchSource.makeTimerSource(queue: timerQueue)
-        timer?.schedule(deadline: .now() + timeUntilNextBeat)
-        
-        timer?.setEventHandler { [weak self, weak state] in
-            guard let self = self, let state = state else { return }
-            
-            DispatchQueue.main.async {
-                // 取消所有切分音符的定时器
-                self.cancelSubdivisionTimers()
-                self.isPlayingSubdivisions = false
-                
-                let currentTime = Date().timeIntervalSince1970
-                let nextBeatNumber = (state.currentBeat + 1) % state.beatsPerBar
-                let nextBeatStatus = nextBeatNumber < state.beatStatuses.count ? state.beatStatuses[nextBeatNumber] : .normal
-                
-                print("节拍更新 - 拍号: \(state.beatsPerBar)/\(state.beatUnit), 即将播放第 \(nextBeatNumber + 1) 拍, 重音类型: \(nextBeatStatus)")
-                print("节拍更新 - 计划时间: \(self.nextBeatTime), 实际时间: \(currentTime), 误差: \(currentTime - self.nextBeatTime)秒")
-                
-                // 更新当前拍号
-                state.updateCurrentBeat(nextBeatNumber) 
-                
-                // 播放当前拍
-                self.playCurrentBeat()
-                
-                // 计算下一拍的绝对时间（使用state中的最新tempo）
-                self.nextBeatTime += (60.0 / Double(state.tempo))
-                
-                // 调度下一拍
-                self.scheduleNextBeat()
-            }
-        }
-        
-        timer?.resume()
     }
 } 
