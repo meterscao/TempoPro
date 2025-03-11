@@ -61,7 +61,7 @@ struct ClockView: View {
     
     var body: some View {
         Text(timeString)
-            .font(.custom("MiSansLatin-Regular", size: 16))
+            .font(.custom("MiSansLatin-Semibold", size: 16))
             .foregroundColor(theme.primaryColor)
             // 每秒接收定时器事件,更新时间
             .onReceive(timer) { _ in
@@ -188,7 +188,7 @@ struct MetronomeInfoView: View {
                         Image("icon-setting")
                             .renderingMode(.template)
                             .resizable()
-                            .frame(width: 20, height: 20)
+                            .frame(width: 24, height: 24)
                             .foregroundColor(theme.primaryColor)
                     }
                 }
@@ -227,8 +227,10 @@ struct MetronomeInfoView: View {
 //                                    showingTimeSignature = true
 //                                }
                             HStack(spacing: 2) {
-                                
-                                Text("\(metronomeState.subdivisionPattern!.displayName)")
+                                // Text(metronomeState.subdivisionPattern!.name)
+                                Image(metronomeState.subdivisionPattern!.name)
+                                    .renderingMode(.template)
+                                    .foregroundStyle(theme.primaryColor)
                                 
                                     
                             }

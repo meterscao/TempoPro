@@ -92,7 +92,14 @@ struct TimeSignatureView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("切分音符")
                         .font(.headline)
-                    VStack(alignment: .leading, spacing: 8) {
+                    
+                     LazyVGrid(columns: [
+                         GridItem(.flexible()),
+                         GridItem(.flexible()),
+                         GridItem(.flexible()),
+                         GridItem(.flexible()),
+                         GridItem(.flexible())
+                     ], spacing: 10) {
                         let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
                         
                         if patterns.isEmpty {
@@ -105,34 +112,27 @@ struct TimeSignatureView: View {
                                     // 点击时更新切分音符
                                     metronomeState.updateSubdivisionPattern(pattern)
                                 }) {
-                                    HStack {
-                                        Text(pattern.displayName)
-                                            .font(.system(.body))
-                                        
-                                        Spacer()
-                                        
-                                        Text(pattern.description)
-                                            .font(.system(.caption))
-                                            .foregroundColor(.gray)
-                                    }
-                                    .padding(.vertical, 5)
-                                    .padding(.horizontal, 10)
-                                    .background(
-                                        // 检查当前选中的模式，高亮显示
-                                        metronomeState.subdivisionPattern?.name == pattern.name 
-                                            ? theme.primaryColor.opacity(0.2) 
-                                            : Color(UIColor.secondarySystemBackground)
-                                    )
-                                    .cornerRadius(5)
-                                    // 添加选中指示器
-                                    .overlay(
-                                        Group {
-                                            if metronomeState.subdivisionPattern?.name == pattern.name {
-                                                RoundedRectangle(cornerRadius: 5)
-                                                    .stroke(theme.primaryColor, lineWidth: 2)
+                                    Image(pattern.name)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .padding(.vertical, 5)
+                                        .padding(.horizontal, 10)
+                                        .background(
+                                            // 检查当前选中的模式，高亮显示
+                                            metronomeState.subdivisionPattern?.name == pattern.name 
+                                                ? theme.primaryColor.opacity(0.2) 
+                                                : Color(UIColor.secondarySystemBackground)
+                                        )
+                                        .cornerRadius(5)
+                                        // 添加选中指示器
+                                        .overlay(
+                                            Group {
+                                                if metronomeState.subdivisionPattern?.name == pattern.name {
+                                                    RoundedRectangle(cornerRadius: 5)
+                                                        .stroke(theme.primaryColor, lineWidth: 2)
+                                                }
                                             }
-                                        }
-                                    )
+                                        )
                                 }
                                 .buttonStyle(PlainButtonStyle()) // 使用PlainButtonStyle以避免默认按钮样式干扰
                             }

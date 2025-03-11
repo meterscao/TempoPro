@@ -16,22 +16,19 @@
 import SwiftUI
 
 struct SettingsView: View {
-    // 状态变量
-    @State private var selectedTheme = 0
-    @State private var soundEffectsEnabled = true
-    @State private var operationSoundEnabled = true
-    @State private var flashlightEnabled = false
-    @State private var screenFlashEnabled = true
-    @State private var rhythmVibrationEnabled = true
-    @State private var operationVibrationEnabled = false
-    @State private var selectedLanguage = 0
-    @State private var icloudSyncEnabled = false
+    // 使用 AppStorage 替换状态变量
+    @AppStorage(AppStorageKeys.Settings.operationSoundEnabled) private var operationSoundEnabled = true
+    @AppStorage(AppStorageKeys.Settings.flashlightEnabled) private var flashlightEnabled = false
+    @AppStorage(AppStorageKeys.Settings.screenFlashEnabled) private var screenFlashEnabled = true
+    @AppStorage(AppStorageKeys.Settings.rhythmVibrationEnabled) private var rhythmVibrationEnabled = true
+    @AppStorage(AppStorageKeys.Settings.operationVibrationEnabled) private var operationVibrationEnabled = false
+    @AppStorage(AppStorageKeys.Settings.selectedLanguage) private var selectedLanguage = 0
+    @AppStorage(AppStorageKeys.Settings.icloudSyncEnabled) private var icloudSyncEnabled = false
+    @AppStorage(AppStorageKeys.Settings.wheelScaleEnabled) private var wheelScaleEnabled = false
     
     // 添加环境变量用于关闭模态视图
     @Environment(\.dismiss) private var dismiss
     
-    // 主题选项
-    let themes = ["默认", "暗黑", "明亮", "蓝色", "绿色"]
     // 语言选项
     let languages = ["简体中文", "English", "日本語", "Español", "Français"]
     
@@ -56,13 +53,14 @@ struct SettingsView: View {
                     }
                     Toggle("节拍闪光灯", isOn: $flashlightEnabled)
                     Toggle("节拍屏幕闪光", isOn: $screenFlashEnabled)
-                    Toggle("节奏震动", isOn: $rhythmVibrationEnabled)
+                    Toggle("节拍震动", isOn: $rhythmVibrationEnabled)
                 }
                 
                 // 视觉设置
                 Section(header: Text("反馈")) {
                     Toggle("操作音效", isOn: $operationSoundEnabled)
                     Toggle("操作震动", isOn: $operationVibrationEnabled)
+                    Toggle("滚轮刻度", isOn: $wheelScaleEnabled)
                 }
                 
                 // 其他设置

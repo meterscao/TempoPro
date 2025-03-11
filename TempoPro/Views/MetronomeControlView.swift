@@ -24,6 +24,8 @@ struct MetronomeControlView: View {
     @State private var isDragging: Bool = false
     @State private var lastBPMInt: Int = 0 // 记录上一个整数BPM值
     @State private var lastFeedbackTime: Date = Date.distantPast // 记录上次震动的时间
+
+    @AppStorage(AppStorageKeys.Settings.wheelScaleEnabled) private var wheelScaleEnabled = true
     
     // 反馈生成器
     private let feedbackGeneratorHeavy = UIImpactFeedbackGenerator(style: .heavy)
@@ -138,7 +140,7 @@ struct MetronomeControlView: View {
                         let now = Date()
                         if currentBPMInt != lastBPMInt && 
                            now.timeIntervalSince(lastFeedbackTime) >= minimumFeedbackInterval {
-                            currentBPMInt % 10 == 0 ? feedbackGeneratorHeavy.impactOccurred() : feedbackGeneratorLight.impactOccurred()
+                            currentBPMInt % 10 == 0 && wheelScaleEnabled ? feedbackGeneratorHeavy.impactOccurred() : feedbackGeneratorLight.impactOccurred()
                             
                             lastFeedbackTime = now
                         }

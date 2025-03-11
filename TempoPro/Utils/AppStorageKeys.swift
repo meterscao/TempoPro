@@ -43,6 +43,33 @@ struct AppStorageKeys {
         static let currentTheme = key("currentTheme")
     }
     
+    // 设置相关键
+    struct Settings {
+        /// 操作音效开关
+        static let operationSoundEnabled = key("operationSoundEnabled")
+        
+        /// 节拍闪光灯开关
+        static let flashlightEnabled = key("flashlightEnabled")
+        
+        /// 节拍屏幕闪光开关
+        static let screenFlashEnabled = key("screenFlashEnabled")
+        
+        /// 节拍震动开关
+        static let rhythmVibrationEnabled = key("rhythmVibrationEnabled")
+        
+        /// 操作震动开关
+        static let operationVibrationEnabled = key("operationVibrationEnabled")
+        
+        /// 选择的语言索引
+        static let selectedLanguage = key("selectedLanguage")
+        
+        /// iCloud同步开关
+        static let icloudSyncEnabled = key("icloudSyncEnabled")
+        
+        /// 滚轮刻度开关
+        static let wheelScaleEnabled = key("wheelScaleEnabled")
+    }
+    
     // DispatchQueue标签
     struct QueueLabels {
         /// 节拍器定时器队列标签
