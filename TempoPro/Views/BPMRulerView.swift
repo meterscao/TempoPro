@@ -76,7 +76,7 @@ struct BPMRulerView: View {
                 // 渐变遮罩
                 HStack(spacing: 0) {
                     LinearGradient(
-                        gradient: Gradient(colors: [theme.backgroundColor, Color.black.opacity(0)]),
+                        gradient: Gradient(colors: [theme.backgroundColor, theme.backgroundColor.opacity(0)]),
                         startPoint: .leading,
                         endPoint: .trailing
                     )
@@ -85,12 +85,12 @@ struct BPMRulerView: View {
                     Spacer()
                     
                     LinearGradient(
-                        gradient: Gradient(colors: [Color.black.opacity(0), theme.backgroundColor]),
+                        gradient: Gradient(colors: [theme.backgroundColor.opacity(0), theme.backgroundColor]),
                         startPoint: .leading,
                         endPoint: .trailing
                     )
                     .frame(width: 10)
-                }
+                }.hidden()
             }
         }
         .frame(height: rulerHeight)

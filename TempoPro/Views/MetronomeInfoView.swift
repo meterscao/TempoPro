@@ -18,7 +18,7 @@ enum BeatStatus {
 
 // 为 BeatStatus 添加循环切换方法
 extension BeatStatus {
-    func next() -> BeatStatus {
+    func next(shouldLoop: Bool = false) -> BeatStatus {
         switch self {
         case .muted:
             return .normal
@@ -27,15 +27,15 @@ extension BeatStatus {
         case .medium:
             return .strong
         case .strong:
-            return .muted
+            return shouldLoop ? .muted : .strong
         }
     }
     
     // 添加向前循环切换方法（用于下滑）
-    func previous() -> BeatStatus {
+    func previous(shouldLoop: Bool = false) -> BeatStatus {
         switch self {
         case .muted:
-            return .strong
+            return shouldLoop ? .strong : .muted
         case .normal:
             return .muted
         case .medium:
@@ -43,6 +43,34 @@ extension BeatStatus {
         case .strong:
             return .medium
         }
+    }
+}
+struct ClockView: View {
+    @State private var currentTime = Date()
+    @Environment(\.metronomeTheme) var theme
+    
+    // 每秒更新一次的定时器
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    // 将 formatter 移到 body 外部或者使用计算属性
+    private var timeString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: currentTime)
+    }
+    
+    var body: some View {
+        Text(timeString)
+            .font(.custom("MiSansLatin-Regular", size: 16))
+            .foregroundColor(theme.primaryColor)
+            // 每秒接收定时器事件,更新时间
+            .onReceive(timer) { _ in
+                self.currentTime = Date() // 更新为当前时间
+            }
+            // 视图出现时初始化当前时间
+            .onAppear {
+                self.currentTime = Date()
+            }
     }
 }
 
@@ -54,7 +82,7 @@ struct BeatView: View {
     @Environment(\.metronomeTheme) var theme
     
     private func barColors() -> [Color] {
-        let baseColor = isPlaying && isCurrentBeat ?   .red : theme.beatBarColor 
+        let baseColor = isPlaying && isCurrentBeat ?   theme.beatBarHighlightColor : theme.beatBarColor 
         let accentBeatColor = baseColor
         let mutedBeatColor = baseColor.opacity(0.2)
         let colors: [Color] = switch status {
@@ -152,18 +180,15 @@ struct MetronomeInfoView: View {
             VStack(spacing: 10) {
 
                 HStack {
+                    ClockView()
+                    Spacer()
                     Button(action: {
-//                        showingThemeSettings = true
                         showSetting = true
                     }) {
                         Image("icon-setting")
                             .renderingMode(.template)
-                            .foregroundColor(theme.primaryColor)
-                    }
-                    Spacer()
-                    Button(action: {}) {
-                        Image("icon-timer")
-                            .renderingMode(.template) 
+                            .resizable()
+                            .frame(width: 20, height: 20)
                             .foregroundColor(theme.primaryColor)
                     }
                 }
@@ -306,7 +331,7 @@ struct MetronomeInfoView: View {
                     .onTapGesture {
                         // 保留点击切换功能
                         var updatedStatuses = safeStatuses
-                        updatedStatuses[beat] = updatedStatuses[beat].next()
+                        updatedStatuses[beat] = updatedStatuses[beat].next(shouldLoop: true)
                         metronomeState.updateBeatStatuses(updatedStatuses)
                         print("点击切换BeatView \(beat) 状态为: \(updatedStatuses[beat])")
                     }

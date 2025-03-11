@@ -25,7 +25,7 @@ struct SettingsView: View {
     @State private var rhythmVibrationEnabled = true
     @State private var operationVibrationEnabled = false
     @State private var selectedLanguage = 0
-    
+    @State private var icloudSyncEnabled = false
     
     // 添加环境变量用于关闭模态视图
     @Environment(\.dismiss) private var dismiss
@@ -43,6 +43,10 @@ struct SettingsView: View {
                 // 主题设置
                 Section(header: Text("主题")) {
                     ThemeSelectionView()
+                }
+
+                Section(header: Text("iCloud")) {
+                    Toggle("同步歌单与练习记录", isOn: $icloudSyncEnabled)
                 }
                 
                 // 音效设置
@@ -74,6 +78,7 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("设置")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {

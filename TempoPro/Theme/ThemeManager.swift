@@ -1,10 +1,3 @@
-//
-//  ThemeManager.swift
-//  TempoPro
-//
-//  Created by Meters on 28/2/2025.
-//
-
 // ThemeManager.swift
 import SwiftUI
 import Combine
@@ -28,7 +21,8 @@ class ThemeManager: ObservableObject {
     
     // 所有可用主题
     private var themes: [String: MetronomeTheme] = [
-        "green": .greenTheme,
+        // 现有主题
+        "green": .defaultTheme,
         "purple": .purpleTheme,
         "skyBlue": .skyBlueTheme,
         "coral": .coralTheme,
@@ -36,7 +30,19 @@ class ThemeManager: ObservableObject {
         "lavender": .lavenderTheme,
         "teal": .tealTheme,
         "roseGold": .roseGoldTheme,
-        "desert": .desertTheme
+        "desert": .desertTheme,
+        
+        // 新的复古科技风格主题
+        "retroTerminal": .retroTerminalTheme,
+        "cyberpunk": .cyberpunkTheme,
+        "techBlue": .techBlueTheme,
+        "amberRetro": .amberRetroTheme,
+        "vintageViolet": .vintageVioletTheme,
+        "neonFuture": .neonFutureTheme,
+        "rustTech": .rustTechTheme,
+        "militaryTech": .militaryTechTheme,
+        "circuitBoard": .circuitBoardTheme,
+        "deepSpace": .deepSpaceTheme
     ]
     
     // 可供选择的主题名称
@@ -48,7 +54,7 @@ class ThemeManager: ObservableObject {
         // 读取保存的主题
         let savedThemeName = UserDefaults.standard.string(forKey: "selectedTheme") ?? "green"
         self.currentThemeName = savedThemeName
-        self.currentTheme = themes[savedThemeName] ?? .greenTheme
+        self.currentTheme = themes[savedThemeName] ?? .defaultTheme
     }
     
     // 切换主题
@@ -62,10 +68,11 @@ class ThemeManager: ObservableObject {
         themes[name] = theme
     }
 
-    // 在 ThemeManager 类中添加此方法
+    // 获取主题颜色
     func themeColor(for themeName: String) -> Color {
         switch themeName.lowercased() {
-        case "green": return MetronomeTheme.greenTheme.primaryColor
+        // 现有主题
+        case "green": return MetronomeTheme.defaultTheme.primaryColor
         case "purple": return MetronomeTheme.purpleTheme.primaryColor
         case "skyblue": return MetronomeTheme.skyBlueTheme.primaryColor
         case "coral": return MetronomeTheme.coralTheme.primaryColor
@@ -74,6 +81,19 @@ class ThemeManager: ObservableObject {
         case "teal": return MetronomeTheme.tealTheme.primaryColor
         case "rosegold": return MetronomeTheme.roseGoldTheme.primaryColor
         case "desert": return MetronomeTheme.desertTheme.primaryColor
+        
+        // 新的复古科技风格主题
+        case "retroterminal": return MetronomeTheme.retroTerminalTheme.primaryColor
+        case "cyberpunk": return MetronomeTheme.cyberpunkTheme.primaryColor
+        case "techblue": return MetronomeTheme.techBlueTheme.primaryColor
+        case "amberretro": return MetronomeTheme.amberRetroTheme.primaryColor
+        case "vintageviolet": return MetronomeTheme.vintageVioletTheme.primaryColor
+        case "neonfuture": return MetronomeTheme.neonFutureTheme.primaryColor
+        case "rusttech": return MetronomeTheme.rustTechTheme.primaryColor
+        case "militarytech": return MetronomeTheme.militaryTechTheme.primaryColor
+        case "circuitboard": return MetronomeTheme.circuitBoardTheme.primaryColor
+        case "deepspace": return MetronomeTheme.deepSpaceTheme.primaryColor
+        
         default: return .gray
         }
     }

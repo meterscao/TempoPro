@@ -32,7 +32,7 @@ struct ThemeSelectionView: View {
                                     
                             }
                         }
-                    }
+                    }.buttonStyle(.plain)
                 }
             }
             .frame(alignment: .leading)
