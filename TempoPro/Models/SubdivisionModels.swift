@@ -379,8 +379,8 @@ struct SubdivisionManager {
         displayName: "四分-休止",
         type: .resteighth,
         notes: [
+            SubdivisionNote(length: 0.5, isMuted: true, noteValue: 4),
             SubdivisionNote(length: 0.5, isMuted: false, noteValue: 4),
-            SubdivisionNote(length: 0.5, isMuted: true, noteValue: 4)
         ],
         beatUnit: 2,
         order: 2
@@ -588,12 +588,12 @@ struct SubdivisionManager {
         
         // 3. 16分音符加16分休止符
         SubdivisionPattern(
-            name: "eighth_sixteenth_rest",
+            name: "eighth_resteighth",
             displayName: "十六分-休止",
             type: .resteighth,
             notes: [
-                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 16),
-                SubdivisionNote(length: 0.5, isMuted: true, noteValue: 16)
+                SubdivisionNote(length: 0.5, isMuted: true, noteValue: 16),
+                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 16)
             ],
             beatUnit: 8,
             order: 2
@@ -700,7 +700,7 @@ struct SubdivisionManager {
         
         // 11. 16分音符加两个32分音符
         SubdivisionPattern(
-            name: "eighth_sixteenth_two_thirtysecond",
+            name: "eighth_eighth_two_sixteenth",
             displayName: "十六分-两三十二分",
             type: .eighthTwoSixteenth,
             notes: [
@@ -714,7 +714,7 @@ struct SubdivisionManager {
         
         // 12. 两个32分音符加16分音符
         SubdivisionPattern(
-            name: "eighth_two_thirtysecond_sixteenth",
+            name: "eighth_two_sixteenth_eighth",
             displayName: "两三十二分-十六分",
             type: .twoSixteenthEighth,
             notes: [
@@ -728,7 +728,7 @@ struct SubdivisionManager {
         
         // 13. 16分音符加附点16分音符
         SubdivisionPattern(
-            name: "eighth_sixteenth_dotted_sixteenth",
+            name: "eighth_eighth_dotted_sixteenth",
             displayName: "十六分-附点十六分",
             type: .eighthDottedSixteenth,
             notes: [
@@ -755,7 +755,7 @@ struct SubdivisionManager {
         
         // 15. 附点16分音符加16分音符
         SubdivisionPattern(
-            name: "eighth_dotted_sixteenth_sixteenth",
+            name: "eighth_sixteenth_eighth_dotted",
             displayName: "附点十六分-十六分",
             type: .sixteenthEighthDotted,
             notes: [
