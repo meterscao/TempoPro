@@ -73,6 +73,9 @@ struct SubdivisionPattern{
 struct SubdivisionManager {
     // 全局配置词典，按拍号单位组织所有可能的切分音符配置
     private static let globalSubdivisionPatterns: [Int: [SubdivisionPattern]] = [
+        // 全音符拍号单位的切分模式
+        1: fullNotePatterns,
+
         // 4分音符拍号单位的切分模式
         4: quarterNotePatterns,
         
@@ -126,6 +129,7 @@ struct SubdivisionManager {
         // 根据拍号单位确定前缀
         let prefix: String
         switch beatUnit {
+        case 1: prefix = "full"
         case 2: prefix = "half"
         case 4: prefix = "quarter"
         case 8: prefix = "eighth"
@@ -763,6 +767,213 @@ struct SubdivisionManager {
                 SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16)
             ],
             beatUnit: 8,
+            order: 14
+        )
+    ]
+
+    private static let fullNotePatterns: [SubdivisionPattern] = [
+        // 1. 基本4分音符 (不切分) - Frame 12
+        SubdivisionPattern(
+            name: "full_whole",
+            displayName: "整拍",
+            type: .whole,
+            notes: [
+                SubdivisionNote(length: 1.0, isMuted: false, noteValue: 4)
+            ],
+            beatUnit: 4,
+            order: 0
+        ),
+        
+        // 2. 二等分 (2个8分音符) - Frame 3
+        SubdivisionPattern(
+            name: "full_duple",
+            displayName: "二等分",
+            type: .duple,
+            notes: [
+                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 1
+        ),
+        
+        // 3. 8分音符加8分休止符 - Frame 22
+        SubdivisionPattern(
+            name: "full_resteighth",
+            displayName: "八分-休止",
+            type: .resteighth,
+            notes: [
+                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.5, isMuted: true, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 2
+        ),
+        
+        // 4. 三连音 (3个8分音符三连音) - Frame 36
+        SubdivisionPattern(
+            name: "full_triplet",
+            displayName: "三连音",
+            type: .triplet,
+            notes: [
+                SubdivisionNote(length: 0.33, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.33, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.34, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 3
+        ),
+        
+        // 5. 三连音-开头休止符 - Frame 15
+        SubdivisionPattern(
+            name: "full_triplet_rest_begin",
+            displayName: "三连音-首休",
+            type: .tripletRestBegin,
+            notes: [
+                SubdivisionNote(length: 0.33, isMuted: true, noteValue: 8),
+                SubdivisionNote(length: 0.33, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.34, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 4
+        ),
+        
+        // 6. 三连音-中间休止符 - Frame 16
+        SubdivisionPattern(
+            name: "full_triplet_rest_middle",
+            displayName: "三连音-中休",
+            type: .tripletRestMiddle,
+            notes: [
+                SubdivisionNote(length: 0.33, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.33, isMuted: true, noteValue: 8),
+                SubdivisionNote(length: 0.34, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 5
+        ),
+        
+        // 7. 三连音-末尾休止符 - Frame 17
+        SubdivisionPattern(
+            name: "full_triplet_rest_end",
+            displayName: "三连音-尾休",
+            type: .tripletRestEnd,
+            notes: [
+                SubdivisionNote(length: 0.33, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.33, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.34, isMuted: true, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 6
+        ),
+        
+        // 8. 三连音-两端休止符 - Frame 23
+        SubdivisionPattern(
+            name: "full_triplet_rest_surround",
+            displayName: "三连音-双休",
+            type: .tripletRestSurround,
+            notes: [
+                SubdivisionNote(length: 0.33, isMuted: true, noteValue: 8),
+                SubdivisionNote(length: 0.33, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.34, isMuted: true, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 7
+        ),
+        
+        // 9. 四等分 (4个16分音符) - Frame 4
+        SubdivisionPattern(
+            name: "full_quadruplet",
+            displayName: "四等分",
+            type: .quadruplet,
+            notes: [
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16)
+            ],
+            beatUnit: 4,
+            order: 8
+        ),
+        
+        // 10. 双休止符十六分音符 - Frame 24
+        SubdivisionPattern(
+            name: "full_double_rest_sixteenth",
+            displayName: "双休-十六分",
+            type: .doubleRestSixteenth,
+            notes: [
+                SubdivisionNote(length: 0.25, isMuted: true, noteValue: 16),
+                SubdivisionNote(length: 0.25, isMuted: true, noteValue: 16),
+                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 9
+        ),
+        
+        // 11. 八分音符加两个十六分音符 - Frame 18
+        SubdivisionPattern(
+            name: "full_eighth_two_sixteenth",
+            displayName: "八分-两十六分",
+            type: .eighthTwoSixteenth,
+            notes: [
+                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16)
+            ],
+            beatUnit: 4,
+            order: 10
+        ),
+        
+        // 12. 两个十六分音符加八分音符 - Frame 19
+        SubdivisionPattern(
+            name: "full_two_sixteenth_eighth",
+            displayName: "两十六分-八分",
+            type: .twoSixteenthEighth,
+            notes: [
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
+                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 11
+        ),
+        
+        // 13. 八分音符加附点八分音符 - Frame 20
+        SubdivisionPattern(
+            name: "full_eighth_dotted_sixteenth",
+            displayName: "八分-附点-十六分",
+            type: .eighthDottedSixteenth,
+            notes: [
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.75, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 12
+        ),
+        
+        // 14. 八分音符加八分音符加八分音符 - Frame 21
+        SubdivisionPattern(
+            name: "full_sixteenth_eighth_sixteenth",
+            displayName: "十六分-八分-十六分",
+            type: .sixteenthEighthSixteenth,
+            notes: [
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
+            order: 13
+        ),
+        
+        // 15. 附点八分音符加八分音符 - Frame 13
+        SubdivisionPattern(
+            name: "full_sixteenth_eighth_dotted",
+            displayName: "附点八分-八分",
+            type: .sixteenthEighthDotted,
+            notes: [
+                SubdivisionNote(length: 0.75, isMuted: false, noteValue: 8),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8)
+            ],
+            beatUnit: 4,
             order: 14
         )
     ]
