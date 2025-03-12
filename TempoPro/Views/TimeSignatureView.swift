@@ -13,7 +13,7 @@ struct TimeSignatureView: View {
     @Environment(\.metronomeTheme) var theme
     
     // 可选的拍号单位
-    private let availableBeatUnits = [1, 2, 4, 8, 16]
+    private let availableBeatUnits = [1, 2, 4, 8]
     
     var body: some View {
         ScrollView{
@@ -116,7 +116,7 @@ struct TimeSignatureView: View {
                                         .resizable()
                                         .scaledToFit()
                                         .padding(.vertical, 5)
-                                        .padding(.horizontal, 10)
+                                        .padding(.horizontal, 5)
                                         .background(
                                             // 检查当前选中的模式，高亮显示
                                             metronomeState.subdivisionPattern?.name == pattern.name 
@@ -141,22 +141,6 @@ struct TimeSignatureView: View {
                 }
                 .padding(.horizontal)
                 
-                Spacer()
-                
-                // 返回按钮
-                Button(action: {
-                    dismiss()
-                }) {
-                    Text("返回")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(theme.primaryColor)
-                        .cornerRadius(10)
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 20)
             }
             .padding(20)
         }

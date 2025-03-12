@@ -176,8 +176,8 @@ struct SubdivisionManager {
             displayName: "八分-休止",
             type: .resteighth,
             notes: [
+                SubdivisionNote(length: 0.5, isMuted: true, noteValue: 8),
                 SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8),
-                SubdivisionNote(length: 0.5, isMuted: true, noteValue: 8)
             ],
             beatUnit: 4,
             order: 2
@@ -275,8 +275,9 @@ struct SubdivisionManager {
             type: .doubleRestSixteenth,
             notes: [
                 SubdivisionNote(length: 0.25, isMuted: true, noteValue: 16),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
                 SubdivisionNote(length: 0.25, isMuted: true, noteValue: 16),
-                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8)
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
             ],
             beatUnit: 4,
             order: 9
@@ -316,8 +317,8 @@ struct SubdivisionManager {
             displayName: "八分-附点-十六分",
             type: .eighthDottedSixteenth,
             notes: [
+                SubdivisionNote(length: 0.75, isMuted: false, noteValue: 8),
                 SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8),
-                SubdivisionNote(length: 0.75, isMuted: false, noteValue: 8)
             ],
             beatUnit: 4,
             order: 12
@@ -343,8 +344,8 @@ struct SubdivisionManager {
             displayName: "附点八分-八分",
             type: .sixteenthEighthDotted,
             notes: [
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8),
                 SubdivisionNote(length: 0.75, isMuted: false, noteValue: 8),
-                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8)
             ],
             beatUnit: 4,
             order: 14
@@ -482,8 +483,9 @@ struct SubdivisionManager {
         type: .doubleRestSixteenth,
         notes: [
             SubdivisionNote(length: 0.25, isMuted: true, noteValue: 8),
+            SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8),
             SubdivisionNote(length: 0.25, isMuted: true, noteValue: 8),
-            SubdivisionNote(length: 0.5, isMuted: false, noteValue: 4)
+            SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8),
         ],
         beatUnit: 2,
         order: 9
@@ -523,8 +525,8 @@ struct SubdivisionManager {
         displayName: "四分-附点四分",
         type: .eighthDottedSixteenth,
         notes: [
+            SubdivisionNote(length: 0.75, isMuted: false, noteValue: 4),
             SubdivisionNote(length: 0.25, isMuted: false, noteValue: 4),
-            SubdivisionNote(length: 0.75, isMuted: false, noteValue: 4)
         ],
         beatUnit: 2,
         order: 12
@@ -550,8 +552,8 @@ struct SubdivisionManager {
         displayName: "附点四分-四分",
         type: .sixteenthEighthDotted,
         notes: [
+            SubdivisionNote(length: 0.25, isMuted: false, noteValue: 4),
             SubdivisionNote(length: 0.75, isMuted: false, noteValue: 4),
-            SubdivisionNote(length: 0.25, isMuted: false, noteValue: 4)
         ],
         beatUnit: 2,
         order: 14
@@ -695,8 +697,10 @@ struct SubdivisionManager {
             type: .doubleRestSixteenth,
             notes: [
                 SubdivisionNote(length: 0.25, isMuted: true, noteValue: 32),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 32),
                 SubdivisionNote(length: 0.25, isMuted: true, noteValue: 32),
-                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 16)
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 32),
+                
             ],
             beatUnit: 8,
             order: 9
@@ -736,8 +740,8 @@ struct SubdivisionManager {
             displayName: "十六分-附点十六分",
             type: .eighthDottedSixteenth,
             notes: [
+                SubdivisionNote(length: 0.75, isMuted: false, noteValue: 16),
                 SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
-                SubdivisionNote(length: 0.75, isMuted: false, noteValue: 16)
             ],
             beatUnit: 8,
             order: 12
@@ -763,8 +767,8 @@ struct SubdivisionManager {
             displayName: "附点十六分-十六分",
             type: .sixteenthEighthDotted,
             notes: [
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
                 SubdivisionNote(length: 0.75, isMuted: false, noteValue: 16),
-                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16)
             ],
             beatUnit: 8,
             order: 14
@@ -803,8 +807,8 @@ struct SubdivisionManager {
             displayName: "八分-休止",
             type: .resteighth,
             notes: [
+                SubdivisionNote(length: 0.5, isMuted: true, noteValue: 8),
                 SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8),
-                SubdivisionNote(length: 0.5, isMuted: true, noteValue: 8)
             ],
             beatUnit: 4,
             order: 2
@@ -902,8 +906,9 @@ struct SubdivisionManager {
             type: .doubleRestSixteenth,
             notes: [
                 SubdivisionNote(length: 0.25, isMuted: true, noteValue: 16),
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
                 SubdivisionNote(length: 0.25, isMuted: true, noteValue: 16),
-                SubdivisionNote(length: 0.5, isMuted: false, noteValue: 8)
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 16),
             ],
             beatUnit: 4,
             order: 9
@@ -943,8 +948,8 @@ struct SubdivisionManager {
             displayName: "八分-附点-十六分",
             type: .eighthDottedSixteenth,
             notes: [
+                SubdivisionNote(length: 0.75, isMuted: false, noteValue: 8),
                 SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8),
-                SubdivisionNote(length: 0.75, isMuted: false, noteValue: 8)
             ],
             beatUnit: 4,
             order: 12
@@ -970,8 +975,8 @@ struct SubdivisionManager {
             displayName: "附点八分-八分",
             type: .sixteenthEighthDotted,
             notes: [
+                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8),
                 SubdivisionNote(length: 0.75, isMuted: false, noteValue: 8),
-                SubdivisionNote(length: 0.25, isMuted: false, noteValue: 8)
             ],
             beatUnit: 4,
             order: 14
