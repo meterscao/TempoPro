@@ -134,11 +134,13 @@ class MetronomeTimer {
         // 音频播放不需要主线程
         let nextBeatStatus = nextBeatNumber < state.beatStatuses.count ? state.beatStatuses[nextBeatNumber] : .normal
         if nextBeatStatus != .muted {
-            audioEngine.playBeat(status: nextBeatStatus)
-            
-            // 处理切分音符（优化：考虑改为一次性计算所有切分时间点）
+            // 检查是否有切分模式
             if let subdivisionPattern = state.subdivisionPattern, subdivisionPattern.notes.count > 1 {
+                // 播放切分音符
                 playSubdivisionPattern(subdivisionPattern, for: nextBeatStatus)
+            } else {
+                // 没有切分模式，直接播放整拍
+                audioEngine.playBeat(status: nextBeatStatus)
             }
         }
         
