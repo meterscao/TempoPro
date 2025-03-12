@@ -27,7 +27,7 @@ struct ContentView: View {
 
             MetronomeControlView()
                 .environmentObject(metronomeState)
-                .aspectRatio(10/9, contentMode: .fit)
+                .aspectRatio(15/14, contentMode: .fit)
             
             MetronomeToolbarView()
                 .environmentObject(playlistManager) // 确保传递 CoreDataPlaylistManager

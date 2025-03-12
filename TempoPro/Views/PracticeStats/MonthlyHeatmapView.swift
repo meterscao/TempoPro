@@ -74,7 +74,8 @@ struct MonthlyHeatmapView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // 月份导航栏
+           VStack(spacing: 0){
+             // 月份导航栏
             HStack {
                 Text("\(currentYear) \(monthNames[currentMonth-1])")
                     .font(.custom("MiSansLatin-Semibold", size: 20))
@@ -102,61 +103,8 @@ struct MonthlyHeatmapView: View {
                     }
                 }
             }
-            .padding(.bottom, 8)
             
-            // 星期几标题
-            HStack(spacing: 8) {
-                ForEach(weekdaySymbols, id: \.self) { symbol in
-                    Text(symbol)
-                        .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.primaryColor.opacity(0.7))
-                        .frame(maxWidth: .infinity)
-                }
-            }
-            .padding(.bottom, 8)
             
-            // 热图主体
-            VStack(spacing: 8) {
-                ForEach(0..<monthlyData.count, id: \.self) { weekIndex in
-                    let week = monthlyData[weekIndex]
-                    
-                    HStack(spacing: 8) {
-                        ForEach(0..<week.count, id: \.self) { dayIndex in
-                            let day = week[dayIndex]
-                            
-                            // 热图单元格
-                            ZStack {
-                                Rectangle()
-                                    .fill(colorForPracticeTime(minutes: day.duration, isDisabled: day.disabled))
-                                    .cornerRadius(8)
-                                    .aspectRatio(1, contentMode: .fit)
-                                
-                                // 当天日期
-                                // if !day.disabled {
-                                //     let dayNumber = Calendar.current.component(.day, from: day.date)
-                                //     Text("\(dayNumber)")
-                                //         .font(.custom("MiSansLatin-Regular", size: 10))
-                                //         .foregroundColor(day.duration > 60 ? Color.white : theme.primaryColor.opacity(0.7))
-                                // }
-                            }
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(selectedDay?.dateString == day.dateString ? theme.primaryColor : Color.clear, lineWidth: 2)
-                            )
-                            .onTapGesture {
-                                if !day.disabled {
-                                    if selectedDay?.dateString == day.dateString {
-                                        selectedDay = nil
-                                    } else {
-                                        selectDay(day)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-            }
             
             // 统计信息展示 - 使用预计算的信息
             VStack(alignment: .leading, spacing: 8) {
@@ -205,7 +153,63 @@ struct MonthlyHeatmapView: View {
                     }
                 }
             }
-            .padding(.top, 8)
+           }
+            
+            
+            // 热图主体
+            VStack(spacing: 8) {
+                ForEach(0..<monthlyData.count, id: \.self) { weekIndex in
+                    let week = monthlyData[weekIndex]
+                    
+                    HStack(spacing: 8) {
+                        ForEach(0..<week.count, id: \.self) { dayIndex in
+                            let day = week[dayIndex]
+                            
+                            // 热图单元格
+                            ZStack {
+                                Rectangle()
+                                    .fill(colorForPracticeTime(minutes: day.duration, isDisabled: day.disabled))
+                                    .cornerRadius(8)
+                                    .aspectRatio(1, contentMode: .fit)
+                                
+                                // 当天日期
+                                // if !day.disabled {
+                                //     let dayNumber = Calendar.current.component(.day, from: day.date)
+                                //     Text("\(dayNumber)")
+                                //         .font(.custom("MiSansLatin-Regular", size: 10))
+                                //         .foregroundColor(day.duration > 60 ? Color.white : theme.primaryColor.opacity(0.7))
+                                // }
+                            }
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(selectedDay?.dateString == day.dateString ? theme.primaryColor : Color.clear, lineWidth: 2)
+                            )
+                            .onTapGesture {
+                                if !day.disabled {
+                                    if selectedDay?.dateString == day.dateString {
+                                        selectedDay = nil
+                                    } else {
+                                        selectDay(day)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+
+            // 星期几标题
+            HStack(spacing: 8) {
+                ForEach(weekdaySymbols, id: \.self) { symbol in
+                    Text(symbol)
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.beatBarColor)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            
+            
         }
         .padding(20)
         .background(theme.backgroundColor)

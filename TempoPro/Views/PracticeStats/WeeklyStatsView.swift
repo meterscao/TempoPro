@@ -37,7 +37,8 @@ struct WeeklyStatsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
+            VStack(spacing: 0){
+                HStack {
                 Text(getWeekRangeText())
                     .font(.custom("MiSansLatin-Semibold", size: 20))
                     .foregroundColor(theme.primaryColor)
@@ -63,9 +64,67 @@ struct WeeklyStatsView: View {
                     }
                 }
             }
-            .padding(.bottom, 8)
             
             
+            // 统计信息展示 - 根据选中状态变化
+            HStack {
+                if let selectedIndex = selectedWeekdayIndex, selectedIndex < formattedWeekData.count {
+                    // 显示选中日期的信息
+                    let selectedItem = formattedWeekData[selectedIndex]
+                    let dataPoint = selectedItem.dataPoint
+                    
+                    // 显示日期而非星期几
+                    Text(selectedItem.date)
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.primaryColor)
+                    
+                    Spacer()
+                    
+                    // 显示会话数量
+                    if dataPoint.sessionCount > 0 {
+                        Text("\(dataPoint.sessionCount)次练习")
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(theme.primaryColor.opacity(0.8))
+                            .padding(.trailing, 8)
+                    }
+                    
+                    // 格式化练习时间
+                    if dataPoint.duration > 0 {
+                        Text(practiceManager.formatDuration(minutes: dataPoint.duration))
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(theme.primaryColor)
+                    } else {
+                        Text("无练习记录")
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(theme.primaryColor.opacity(0.7))
+                    }
+                } else {
+                    // 显示周统计信息
+                    // 计算有练习记录的天数
+                    let practiceDays = weeklyData.filter { !$0.isEmpty && !$0.disabled }.count
+                    // 计算总练习时间
+                    let totalMinutes = weeklyData.filter { !$0.disabled }.map { $0.duration }.reduce(0, +)
+                    
+                    // 显示有练习的天数
+                    Text("\(practiceDays)天练习")
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(theme.primaryColor.opacity(0.9))
+                    
+                    Spacer()
+                    
+                    // 显示总练习时间
+                    if totalMinutes > 0 {
+                        Text(practiceManager.formatDuration(minutes: totalMinutes))
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(theme.primaryColor.opacity(0.9))
+                    } else {
+                        Text("无练习记录")
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(theme.primaryColor.opacity(0.7))
+                    }
+                }
+            }
+            }
             // Bar chart - expanding to fill width
             GeometryReader { geometry in
                 VStack(spacing: 16) {
@@ -127,64 +186,7 @@ struct WeeklyStatsView: View {
                         }
                         .frame(maxHeight: .infinity, alignment: .bottom)
                         
-                        // 统计信息展示 - 根据选中状态变化
-                        HStack {
-                            if let selectedIndex = selectedWeekdayIndex, selectedIndex < formattedWeekData.count {
-                                // 显示选中日期的信息
-                                let selectedItem = formattedWeekData[selectedIndex]
-                                let dataPoint = selectedItem.dataPoint
-                                
-                                // 显示日期而非星期几
-                                Text(selectedItem.date)
-                                    .font(.custom("MiSansLatin-Regular", size: 12))
-                                    .foregroundColor(theme.primaryColor)
-                                
-                                Spacer()
-                                
-                                // 显示会话数量
-                                if dataPoint.sessionCount > 0 {
-                                    Text("\(dataPoint.sessionCount)次练习")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.8))
-                                        .padding(.trailing, 8)
-                                }
-                                
-                                // 格式化练习时间
-                                if dataPoint.duration > 0 {
-                                    Text(practiceManager.formatDuration(minutes: dataPoint.duration))
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor)
-                                } else {
-                                    Text("无练习记录")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.7))
-                                }
-                            } else {
-                                // 显示周统计信息
-                                // 计算有练习记录的天数
-                                let practiceDays = weeklyData.filter { !$0.isEmpty && !$0.disabled }.count
-                                // 计算总练习时间
-                                let totalMinutes = weeklyData.filter { !$0.disabled }.map { $0.duration }.reduce(0, +)
-                                
-                                // 显示有练习的天数
-                                Text("\(practiceDays)天练习")
-                                    .font(.custom("MiSansLatin-Regular", size: 12))
-                                    .foregroundColor(theme.primaryColor.opacity(0.9))
-                                
-                                Spacer()
-                                
-                                // 显示总练习时间
-                                if totalMinutes > 0 {
-                                    Text(practiceManager.formatDuration(minutes: totalMinutes))
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.9))
-                                } else {
-                                    Text("无练习记录")
-                                        .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(theme.primaryColor.opacity(0.7))
-                                }
-                            }
-                        }
+                        
                     }
                 }
                 .padding(.top, 20)

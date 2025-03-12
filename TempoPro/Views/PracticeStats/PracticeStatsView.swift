@@ -25,29 +25,9 @@ struct PracticeStatsView: View {
     @State private var selectedWeekdayIndex: Int? = nil
     
     var body: some View {
-        ZStack {
+        NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Header
-                    HStack {
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Image(systemName: "arrow.left")
-                                .font(.custom("MiSansLatin-Regular", size: 20))
-                                .foregroundColor(theme.backgroundColor)
-                        }
-                        
-                        Spacer()
-                        
-                        Text("PRACTICE STATS")
-                            .font(.custom("MiSansLatin-Semibold", size: 24))
-                            .foregroundColor(theme.backgroundColor)
-                        
-                        Spacer()
-                        
-                    }
-                    
                     // Stats Summary - 替换为新的组件
                     StatsSummaryView()
                     
@@ -77,17 +57,42 @@ struct PracticeStatsView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
             }
-            .background(
-                Image("bg-noise")
-                    .resizable(resizingMode: .tile)
-                    .opacity(0.06)
-                    .ignoresSafeArea()
-            )
-            .background(theme.primaryColor.ignoresSafeArea())
+            // .background(
+            //     Image("bg-noise")
+            //         .resizable(resizingMode: .tile)
+            //         .opacity(0.06)
+            //         .ignoresSafeArea()
+            // )
+            .background(Color.black.ignoresSafeArea())
             .onAppear {
                 // 加载数据已移至各独立组件
             }
-        }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(theme.primaryColor)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Stats")
+            .navigationBarTitleDisplayMode(.inline)
+            .listStyle(InsetGroupedListStyle())
+            .background(theme.backgroundColor)
+            .scrollContentBackground(.hidden)
+            .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .preferredColorScheme(.dark)
+            }
+        .navigationViewStyle(StackNavigationViewStyle())
+        .accentColor(theme.primaryColor)
+        .preferredColorScheme(.dark)
+        
     }
 }
 

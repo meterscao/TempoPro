@@ -7,14 +7,23 @@
 
 import SwiftUI
 
+
 struct CircularButtonStyle: ViewModifier {
     @Environment(\.metronomeTheme) var theme
     func body(content: Content) -> some View {
         content
-            .padding(14)
-            .foregroundStyle(theme.primaryColor)
-            .frame(width: 60, height: 60)
-            .background(RoundedRectangle(cornerRadius: 18).fill(theme.backgroundColor))
+            .foregroundStyle(theme.backgroundColor)
+            .padding(0)
+            .frame(width: 62, height: 62, alignment: .center)
+            
+            .cornerRadius(100)
+            .overlay(
+                RoundedRectangle(cornerRadius: 100)
+                    .stroke(theme.backgroundColor, lineWidth: 2)
+                    
+                    
+            )
+            
     }
 }
 
