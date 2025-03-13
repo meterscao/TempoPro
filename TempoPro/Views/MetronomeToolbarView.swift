@@ -36,10 +36,13 @@ extension View {
 struct MetronomeToolbarView: View {
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager
     @State private var showingStatsView = false
+    @State private var showingSetTimerView = false
     
     var body: some View {
         HStack() {
-            Button(action: {}) {
+            Button(action: {
+                showingSetTimerView = true
+            }) {
                 Image("icon-timer")
                     .renderingMode(.template)
                     .circularButton()
@@ -72,12 +75,19 @@ struct MetronomeToolbarView: View {
         .font(.title2)
         .padding(.horizontal,30)
         .frame(maxWidth: .infinity)
-        .fullScreenCover(isPresented: $playlistManager.showPlaylistsSheet) {
+        .sheet(isPresented: $playlistManager.showPlaylistsSheet) {
             PlaylistListView()
                 .environmentObject(playlistManager)
+                .presentationDetents([.medium])
         }
-        .fullScreenCover(isPresented: $showingStatsView) {
+        .sheet(isPresented: $showingStatsView) {
             PracticeStatsView()
+                .presentationDetents([.medium])
+        }
+        .sheet(isPresented: $showingSetTimerView) {
+                SetTimerView()
+                    .presentationDetents([.medium])
+            
         }
     }
 }

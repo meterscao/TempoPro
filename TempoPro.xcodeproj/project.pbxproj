@@ -45,6 +45,7 @@
 		3AD042E52D7CB146002EAB55 /* clock_mid.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3AD042E02D7CB146002EAB55 /* clock_mid.wav */; };
 		3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */; };
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
+		C7727DF12D829E7C00D1DC8E /* SetTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7727DF02D829E7C00D1DC8E /* SetTimerView.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
 		F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */; };
 		F71AF6B42D716E6500ADBC17 /* ThemeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */; };
@@ -135,6 +136,7 @@
 		3AD042E22D7CB146002EAB55 /* clock_low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clock_low.wav; sourceTree = "<group>"; };
 		3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubdivisionModels.swift; sourceTree = "<group>"; };
 		3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayCornerRadius.swift; sourceTree = "<group>"; };
+		C7727DF02D829E7C00D1DC8E /* SetTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetTimerView.swift; sourceTree = "<group>"; };
 		F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTheme.swift; sourceTree = "<group>"; };
 		F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEnvironment.swift; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				3AA1E5502D6F7371002D9615 /* BPMKeypadView.swift */,
 				F7FF3F222D7078E900390C16 /* TimeSignatureView.swift */,
 				F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */,
+				C7727DF02D829E7C00D1DC8E /* SetTimerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -601,6 +604,7 @@
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
 				F75EC5672D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift in Sources */,
 				F792941C2D7B12B000A2D91C /* WeeklyStatsView.swift in Sources */,
+				C7727DF12D829E7C00D1DC8E /* SetTimerView.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,

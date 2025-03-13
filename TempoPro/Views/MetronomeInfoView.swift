@@ -215,26 +215,19 @@ struct MetronomeInfoView: View {
                                 Text("\(metronomeState.beatUnit)")
                                     
                             }
-                            .font(.custom("MiSansLatin-Regular", size: 22))
+                            .font(.custom("MiSansLatin-Semibold", size: 22))
                             .onTapGesture {
                                 showingTimeSignature = true
                             }
                             Spacer()
-//                            Image("icon-time-signature")
-//                                .renderingMode(.template)
-//                                .foregroundStyle(theme.primaryColor)
-//                                .onTapGesture {
-//                                    showingTimeSignature = true
-//                                }
                             HStack(spacing: 2) {
                                 // Text(metronomeState.subdivisionPattern!.name)
                                 Image(metronomeState.subdivisionPattern!.name)
                                     .renderingMode(.template)
                                     .foregroundStyle(theme.primaryColor)
-                                
+                                    .frame(width: 44, height: 44)
                                     
                             }
-                            .font(.custom("MiSansLatin-Regular", size: 22))
                             .onTapGesture {
                                 showingTimeSignature = true
                             }
@@ -242,11 +235,11 @@ struct MetronomeInfoView: View {
                         
                         // BPM 显示
                         Text("\(Int(metronomeState.tempo))")
-                            .font(.custom("MiSansLatin-Semibold", size: 46))
+                            .font(.custom("MiSansLatin-Semibold", size: 52))
                             .onTapGesture {
                                 showingKeypad = true
                             }
-                            .frame(height:52)
+                            .frame(height:60)
                     }
                     Text(getTempoTerm(metronomeState.tempo))
                         .font(.custom("MiSansLatin-Regular", size: 12))
@@ -258,6 +251,7 @@ struct MetronomeInfoView: View {
                         }
                 }
                 .foregroundStyle(theme.primaryColor)
+                .padding(.vertical,5)
                 // 新增加的 BPMRulerView
                 BPMRulerView()
             }
@@ -282,7 +276,8 @@ struct MetronomeInfoView: View {
             
         }
         
-        .padding(8)
+        .padding(.top,8)
+        .padding(.horizontal,8)
         .frame(maxHeight: .infinity)
         .ignoresSafeArea() // 忽略所有安全区域
         
@@ -307,7 +302,7 @@ struct MetronomeInfoView: View {
             
         }
         
-        .fullScreenCover(isPresented: $showSetting) {
+        .sheet(isPresented: $showSetting) {
             SettingsView()
         }
     }

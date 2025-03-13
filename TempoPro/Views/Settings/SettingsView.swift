@@ -89,7 +89,7 @@ struct SettingsView: View {
                 }
                 .listRowBackground(theme.primaryColor.opacity(0.1))
             }
-            .navigationTitle("设置")
+            .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             
             

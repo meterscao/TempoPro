@@ -15,7 +15,7 @@ struct MetronomeControlView: View {
     @EnvironmentObject var metronomeState: MetronomeState
     
     
-    let wheelSizeRatio:Double = 0.72
+    let wheelSizeRatio:Double = 0.75
     
     @State private var rotation: Double = 0
     @State private var lastAngle: Double = 0
@@ -51,114 +51,116 @@ struct MetronomeControlView: View {
     var body: some View {
         GeometryReader { geometry in
             let wheelSize = geometry.size.width * wheelSizeRatio
-            ZStack {
-                Color.clear
-                    .contentShape(Rectangle())
-                
-                ZStack() {
-                    Image("bg-noise")
-                        .resizable(resizingMode: .tile)
-                        .opacity(0.06)
-                        .clipShape(
-                            .circle
-                        )
-                        .frame(width: wheelSize, height: wheelSize)
-                        .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
-                    Image("bg-knob")
-                        .renderingMode(.template)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(theme.backgroundColor)
-                        .frame(width: wheelSize, height: wheelSize)
-                    Image(metronomeState.isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
-                    .offset(x: wheelSize * 0.5 * 0.75, y: 0)
-                }
-                
-                .rotationEffect(.degrees(rotation))
-                
-                Button(action: {
-                    metronomeState.togglePlayback()
-                }) {
-                    Image(systemName: metronomeState.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                        .renderingMode(.template)
-                        .resizable()
-                        .foregroundColor(theme.backgroundColor)
-                        
-                        .frame(width: 80, height: 80)
-                        
-                }
-
-               
+            ZStack{
+                ZStack {
+                    Color.clear
+                        .contentShape(Rectangle())
                     
-            }
-            
-            .ignoresSafeArea()
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        if !isDragging {
-                            isDragging = true
+                    ZStack() {
+                        Image("bg-noise")
+                            .resizable(resizingMode: .tile)
+                            .opacity(0.06)
+                            .clipShape(
+                                .circle
+                            )
+                            .frame(width: wheelSize, height: wheelSize)
+                            .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
+                        Image("bg-knob")
+                            .renderingMode(.template)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(theme.backgroundColor)
+                            .frame(width: wheelSize, height: wheelSize)
+                        Image(metronomeState.isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
+                        .offset(x: wheelSize * 0.5 * 0.75, y: 0)
+                    }
+                    
+                    .rotationEffect(.degrees(rotation))
+                    
+                    Button(action: {
+                        metronomeState.togglePlayback()
+                    }) {
+                        Image(systemName: metronomeState.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                            .renderingMode(.template)
+                            .resizable()
+                            .foregroundColor(theme.backgroundColor)
+                            
+                            .frame(width: 80, height: 80)
+                            
+                    }
+
+                
+                        
+                }
+                .frame(width: wheelSize, height: wheelSize)
+                .ignoresSafeArea()
+                .contentShape(Circle())
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            if !isDragging {
+                                isDragging = true
+                                let frame = CGRect(
+                                    x: (geometry.size.width - wheelSize) / 2,
+                                    y: (geometry.size.height - wheelSize) / 2,
+                                    width: wheelSize,
+                                    height: wheelSize
+                                )
+                                lastAngle = calculateAngle(location: value.location, in: frame)
+                                startTempo = metronomeState.tempo
+                                lastBPMInt = metronomeState.tempo // 初始化上一个BPM值
+                                feedbackGeneratorLight.prepare() // 准备反馈生成器
+                                feedbackGeneratorHeavy.prepare()
+                                print("开始拖动 - 初始角度: \(lastAngle)°, 初始速度: \(startTempo)")
+                            }
+                            
                             let frame = CGRect(
                                 x: (geometry.size.width - wheelSize) / 2,
                                 y: (geometry.size.height - wheelSize) / 2,
                                 width: wheelSize,
                                 height: wheelSize
                             )
-                            lastAngle = calculateAngle(location: value.location, in: frame)
-                            startTempo = metronomeState.tempo
-                            lastBPMInt = metronomeState.tempo // 初始化上一个BPM值
-                            feedbackGeneratorLight.prepare() // 准备反馈生成器
-                            feedbackGeneratorHeavy.prepare()
-                            print("开始拖动 - 初始角度: \(lastAngle)°, 初始速度: \(startTempo)")
-                        }
-                        
-                        let frame = CGRect(
-                            x: (geometry.size.width - wheelSize) / 2,
-                            y: (geometry.size.height - wheelSize) / 2,
-                            width: wheelSize,
-                            height: wheelSize
-                        )
-                        let currentAngle = calculateAngle(location: value.location, in: frame)
-                        
-                        var angleDiff = currentAngle - lastAngle
-                        
-                        if angleDiff > 180 {
-                            angleDiff -= 360
-                        } else if angleDiff < -180 {
-                            angleDiff += 360
-                        }
-                        
-                        totalRotation += angleDiff
-                        rotation += angleDiff
-                        
-                        let tempoChange = Int(round(totalRotation / sensitivity))
-                        let targetTempo = max(30, min(320, startTempo + tempoChange))
-                        
-                        // 检查BPM是否变化了整数单位，并提供震动反馈
-                        let currentBPMInt = targetTempo
-                        let now = Date()
-                        if currentBPMInt != lastBPMInt && 
-                           now.timeIntervalSince(lastFeedbackTime) >= minimumFeedbackInterval {
-                            currentBPMInt % 10 == 0 && wheelScaleEnabled ? feedbackGeneratorHeavy.impactOccurred() : feedbackGeneratorLight.impactOccurred()
+                            let currentAngle = calculateAngle(location: value.location, in: frame)
                             
-                            lastFeedbackTime = now
+                            var angleDiff = currentAngle - lastAngle
+                            
+                            if angleDiff > 180 {
+                                angleDiff -= 360
+                            } else if angleDiff < -180 {
+                                angleDiff += 360
+                            }
+                            
+                            totalRotation += angleDiff
+                            rotation += angleDiff
+                            
+                            let tempoChange = Int(round(totalRotation / sensitivity))
+                            let targetTempo = max(30, min(320, startTempo + tempoChange))
+                            
+                            // 检查BPM是否变化了整数单位，并提供震动反馈
+                            let currentBPMInt = targetTempo
+                            let now = Date()
+                            if currentBPMInt != lastBPMInt && 
+                            now.timeIntervalSince(lastFeedbackTime) >= minimumFeedbackInterval {
+                                currentBPMInt % 10 == 0 && wheelScaleEnabled ? feedbackGeneratorHeavy.impactOccurred() : feedbackGeneratorLight.impactOccurred()
+                                
+                                lastFeedbackTime = now
+                            }
+                            lastBPMInt = currentBPMInt
+                            
+                            metronomeState.updateTempo(targetTempo)
+                            print("拖动中 - 当前角度: \(currentAngle)°, 角度差: \(angleDiff)°, 总旋转: \(totalRotation)°, 实际旋转: \(rotation)°, 目标速度: \(targetTempo)")
+                            lastAngle = currentAngle
                         }
-                        lastBPMInt = currentBPMInt
-                        
-                        metronomeState.updateTempo(targetTempo)
-                        print("拖动中 - 当前角度: \(currentAngle)°, 角度差: \(angleDiff)°, 总旋转: \(totalRotation)°, 实际旋转: \(rotation)°, 目标速度: \(targetTempo)")
-                        lastAngle = currentAngle
-                    }
-                    .onEnded { _ in
-                        isDragging = false
-                        print("结束拖动 - 最终旋转: \(rotation)°, 最终速度: \(metronomeState.tempo)")
-                        totalRotation = 0
-                    }
-            )
-            
-            
+                        .onEnded { _ in
+                            isDragging = false
+                            print("结束拖动 - 最终旋转: \(rotation)°, 最终速度: \(metronomeState.tempo)")
+                            totalRotation = 0
+                        }
+                )
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        
     }
 }
 

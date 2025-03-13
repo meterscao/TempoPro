@@ -16,135 +16,188 @@ struct TimeSignatureView: View {
     private let availableBeatUnits = [1, 2, 4, 8]
     
     var body: some View {
-        ScrollView{
-            VStack(spacing: 20) {
-                
-                // 拍号设置（横向排列）
-                HStack(spacing: 0) {
-                    // 每小节拍数
-                    VStack(alignment: .center, spacing: 5) {
-                        Text("每小节拍数")
-                            .font(.headline)
-                        
-                        HStack(spacing: 15) {
-                            Button(action: {
-                                if metronomeState.beatsPerBar > 1 {
-                                    metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar - 1)
-                                }
-                            }) {
-                                Image(systemName: "minus.circle.fill")
-                                    .font(.title3)
+        NavigationStack {
+            List {
+                // 拍号设置
+                Section(header: Text("拍号设置").foregroundColor(theme.primaryColor)) {
+                    // 使用非交互的 Section 内容包装器，让按钮可以正常工作
+                    ZStack {
+                        HStack(spacing: 0) {
+                            // 每小节拍数
+                            VStack(alignment: .center, spacing: 10) {
+                                Text("每小节拍数")
+                                    .font(.custom("MiSansLatin-Regular", size: 16))
                                     .foregroundColor(theme.primaryColor)
-                            }
-                            
-                            Text("\(metronomeState.beatsPerBar)")
-                                .font(.system(size: 28, weight: .medium))
-                            
-                            Button(action: {
-                                if metronomeState.beatsPerBar < 12 {
-                                    metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar + 1)
+                                
+                                HStack(spacing: 20) {
+                                    // 使用明确的 buttonStyle 和足够大的点击区域
+                                    Button {
+                                        if metronomeState.beatsPerBar > 1 {
+                                            metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar - 1)
+                                        }
+                                    } label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .font(.title2)
+                                            .foregroundColor(theme.primaryColor)
+                                            .frame(width: 44, height: 44) // 增大点击区域
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Text("\(metronomeState.beatsPerBar)")
+                                        .font(.custom("MiSansLatin-Semibold", size: 28))
+                                        .foregroundColor(theme.primaryColor)
+                                    
+                                    Button {
+                                        if metronomeState.beatsPerBar < 12 {
+                                            metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar + 1)
+                                        }
+                                    } label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .font(.title2)
+                                            .foregroundColor(theme.primaryColor)
+                                            .frame(width: 44, height: 44) // 增大点击区域
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                            }) {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(.title3)
-                                    .foregroundColor(theme.primaryColor)
                             }
+                            .frame(maxWidth: .infinity)
+                            
+                            Divider()
+                                .background(theme.primaryColor.opacity(0.3))
+                                .frame(height: 40)
+                                .padding(.horizontal, 8)
+                            
+                            // 拍号单位
+                            VStack(alignment: .center, spacing: 10) {
+                                Text("拍号单位")
+                                    .font(.custom("MiSansLatin-Regular", size: 16))
+                                    .foregroundColor(theme.primaryColor)
+                                
+                                HStack(spacing: 20) {
+                                    Button {
+                                        if let index = availableBeatUnits.firstIndex(of: metronomeState.beatUnit),
+                                           index > 0 {
+                                            metronomeState.updateBeatUnit(availableBeatUnits[index - 1])
+                                        }
+                                    } label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .font(.title2)
+                                            .foregroundColor(theme.primaryColor)
+                                            .frame(width: 44, height: 44) // 增大点击区域
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Text("\(metronomeState.beatUnit)")
+                                        .font(.custom("MiSansLatin-Semibold", size: 28))
+                                        .foregroundColor(theme.primaryColor)
+                                    
+                                    Button {
+                                        if let index = availableBeatUnits.firstIndex(of: metronomeState.beatUnit),
+                                           index < availableBeatUnits.count - 1 {
+                                            metronomeState.updateBeatUnit(availableBeatUnits[index + 1])
+                                        }
+                                    } label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .font(.title2)
+                                            .foregroundColor(theme.primaryColor)
+                                            .frame(width: 44, height: 44) // 增大点击区域
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
                         }
-                    }
-                    .frame(maxWidth: .infinity)
-                    
-                    // 拍号单位
-                    VStack(alignment: .center, spacing: 5) {
-                        Text("拍号单位")
-                            .font(.headline)
-                        
-                        HStack(spacing: 15) {
-                            Button(action: {
-                                if let index = availableBeatUnits.firstIndex(of: metronomeState.beatUnit),
-                                   index > 0 {
-                                    metronomeState.updateBeatUnit(availableBeatUnits[index - 1])
-                                }
-                            }) {
-                                Image(systemName: "minus.circle.fill")
-                                    .font(.title3)
-                                    .foregroundColor(theme.primaryColor)
-                            }
-                            
-                            Text("\(metronomeState.beatUnit)")
-                                .font(.system(size: 28, weight: .medium))
-                            
-                            Button(action: {
-                                if let index = availableBeatUnits.firstIndex(of: metronomeState.beatUnit),
-                                   index < availableBeatUnits.count - 1 {
-                                    metronomeState.updateBeatUnit(availableBeatUnits[index + 1])
-                                }
-                            }) {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(.title3)
-                                    .foregroundColor(theme.primaryColor)
-                            }
-                        }
+                        .padding(.vertical, 12)
                     }
                     .frame(maxWidth: .infinity)
                 }
+                .listRowBackground(theme.primaryColor.opacity(0.1))
                 
-                // 显示当前拍号单位下所有可用的切分音符
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("切分音符")
-                        .font(.headline)
+                // 切分音符部分
+                Section(header: Text("切分音符").foregroundColor(theme.primaryColor)) {
+                    let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
                     
-                     LazyVGrid(columns: [
-                         GridItem(.flexible()),
-                         GridItem(.flexible()),
-                         GridItem(.flexible()),
-                         GridItem(.flexible()),
-                         GridItem(.flexible())
-                     ], spacing: 10) {
-                        let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
-                        
-                        if patterns.isEmpty {
-                            Text("当前拍号单位没有预设的切分音符")
-                                .foregroundColor(.gray)
-                                .padding(.vertical, 5)
-                        } else {
-                            ForEach(patterns, id: \.name) { pattern in
-                                Button(action: {
-                                    // 点击时更新切分音符
-                                    metronomeState.updateSubdivisionPattern(pattern)
-                                }) {
-                                    Image(pattern.name)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding(.vertical, 5)
-                                        .padding(.horizontal, 5)
-                                        .background(
-                                            // 检查当前选中的模式，高亮显示
-                                            metronomeState.subdivisionPattern?.name == pattern.name 
-                                                ? theme.primaryColor.opacity(0.2) 
-                                                : Color(UIColor.secondarySystemBackground)
-                                        )
-                                        .cornerRadius(5)
-                                        // 添加选中指示器
-                                        .overlay(
-                                            Group {
-                                                if metronomeState.subdivisionPattern?.name == pattern.name {
-                                                    RoundedRectangle(cornerRadius: 5)
-                                                        .stroke(theme.primaryColor, lineWidth: 2)
-                                                }
-                                            }
-                                        )
+                    if patterns.isEmpty {
+                        Text("当前拍号单位没有预设的切分音符")
+                            .font(.custom("MiSansLatin-Regular", size: 14))
+                            .foregroundColor(theme.primaryColor.opacity(0.7))
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 10)
+                    } else {
+                        VStack(spacing: 16) {
+                            LazyVGrid(columns: [
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                            ], spacing: 16) {
+                                ForEach(patterns, id: \.name) { pattern in
+                                    Button {
+                                        metronomeState.updateSubdivisionPattern(pattern)
+                                    } label: {
+                                        Image(pattern.name)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .padding(6)
+                                            .frame(height: 60)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(metronomeState.subdivisionPattern?.name == pattern.name 
+                                                        ? theme.primaryColor.opacity(0.3) 
+                                                        : theme.backgroundColor)
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(
+                                                        metronomeState.subdivisionPattern?.name == pattern.name 
+                                                            ? theme.primaryColor 
+                                                            : theme.primaryColor.opacity(0.2),
+                                                        lineWidth: metronomeState.subdivisionPattern?.name == pattern.name ? 2 : 1
+                                                    )
+                                            )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle()) // 使用PlainButtonStyle以避免默认按钮样式干扰
+                            }
+                            
+                            if let currentPattern = metronomeState.subdivisionPattern {
+                                HStack {
+                                    Text("当前选择:")
+                                        .font(.custom("MiSansLatin-Regular", size: 14))
+                                        .foregroundColor(theme.primaryColor.opacity(0.7))
+                                    
+                                    Text(currentPattern.displayName)
+                                        .font(.custom("MiSansLatin-Semibold", size: 14))
+                                        .foregroundColor(theme.primaryColor)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, 4)
                             }
                         }
+                        .padding(.vertical, 10)
                     }
                 }
-                .padding(.horizontal)
-                
+                .listRowBackground(theme.primaryColor.opacity(0.1))
             }
-            .padding(20)
+            .navigationTitle("拍号设置")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(theme.primaryColor)
+                    }
+                }
+            }
+            .listStyle(InsetGroupedListStyle())
+            .background(theme.backgroundColor)
+            .scrollContentBackground(.hidden)
+            .toolbarBackground(theme.backgroundColor, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .preferredColorScheme(.dark)
         }
-        .background(Color(UIColor.systemBackground))
     }
 }
 
