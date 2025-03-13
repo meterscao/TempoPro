@@ -3,10 +3,9 @@ import SwiftUI
 struct PlaylistDetailView: View {
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 更改类型
+    @EnvironmentObject var playlistManager: CoreDataPlaylistManager
     @EnvironmentObject var metronomeState: MetronomeState
     
-    // 修改为使用 CoreData Playlist 实体
     @ObservedObject var playlist: Playlist
     
     @State private var showingSongForm = false
@@ -24,102 +23,76 @@ struct PlaylistDetailView: View {
     @State private var songToEdit: Song?
     
     var body: some View {
-        ZStack {
-            // 使用与PracticeStatsView相同的背景
-            theme.primaryColor.ignoresSafeArea()
-            // 添加噪声背景
-            Image("bg-noise")
-                .resizable(resizingMode: .tile)
-                .opacity(0.06)
-                .ignoresSafeArea()
-            
-            ScrollView {
-                VStack(spacing: 28) {
-                    // Header
-                    HStack {
+        NavigationStack {
+            List {
+                // 歌曲列表
+                let songs = playlist.songs?.allObjects as? [Song] ?? []
+                
+                    if songs.isEmpty {
+                        VStack(spacing: 20) {
+                            Image(systemName: "music.note")
+                                .font(.custom("MiSansLatin-Regular", size: 50))
+                                .foregroundColor(theme.primaryColor.opacity(0.7))
+                            
+                            Text("暂无歌曲")
+                                .font(.custom("MiSansLatin-Regular", size: 16))
+                                .foregroundColor(theme.primaryColor)
+                        }
+                        .padding(.top, 40)
+                    } else {
+                        ForEach(songs, id: \.id) { song in
+                            SongRowCard(song: song, onEdit: {
+                                prepareEditSong(song)
+                            }, onDelete: {
+                                songToDelete = song
+                                showingDeleteAlert = true
+                            }, onPlay: {
+                                playSong(song)
+                            })
+                            .listRowBackground(theme.primaryColor.opacity(0.1))
+                        }
+                    }
+                
+            }
+            .navigationTitle(playlist.name ?? "未命名歌单")
+            .navigationBarTitleDisplayMode(.inline)
+            .background(theme.backgroundColor)
+            .scrollContentBackground(.hidden)
+            .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .preferredColorScheme(.dark)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
                         Button(action: {
+                            resetSongForm()
+                            isEditMode = false
+                            showingSongForm = true
+                        }) {
+                            Label("添加歌曲", systemImage: "plus.circle")
+                        }
+                        Button(action: {
+                            editPlaylistName = playlist.name ?? ""
+                            editPlaylistColor = Color(hex: playlist.color ?? "#0000FF") ?? .blue
+                            showingEditPlaylist = true
+                        }) {
+                            Label("编辑歌单", systemImage: "pencil")
+                        }
+                        
+                        Button(role: .destructive, action: {
+                            playlistManager.deletePlaylist(playlist)
                             dismiss()
                         }) {
-                            Image(systemName: "arrow.left")
-                                .font(.custom("MiSansLatin-Regular", size: 20))
-                                .foregroundColor(theme.backgroundColor)
+                            Label("删除歌单", systemImage: "trash")
                         }
-                        
-                        Spacer()
-                        
-                        Text(playlist.name ?? "未命名歌单")
-                            .font(.custom("MiSansLatin-Semibold", size: 24))
-                            .foregroundColor(theme.backgroundColor)
-                        
-                        Spacer()
-                        
-                        Menu {
-                            Button(action: {
-                                resetSongForm()
-                                isEditMode = false
-                                showingSongForm = true
-                                
-                            }) {
-                                Label("添加歌曲", systemImage: "plus.circle")
-                            }
-                            Button(action: {
-                                // 准备编辑信息
-                                editPlaylistName = playlist.name ?? ""
-                                editPlaylistColor = Color(hex: playlist.color ?? "#0000FF") ?? .blue
-                                showingEditPlaylist = true
-                            }) {
-                                Label("编辑歌单", systemImage: "pencil")
-                            }
-                            
-                            Button(role: .destructive, action: {
-                                // 删除整个歌单
-                                playlistManager.deletePlaylist(playlist)
-                                dismiss()
-                            }) {
-                                Label("删除歌单", systemImage: "trash")
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis.circle")
-                                .font(.custom("MiSansLatin-Regular", size: 20))
-                                .foregroundColor(theme.backgroundColor)
-                        }
-                    }
-                    
-                    // 歌曲列表
-                    let songs = playlist.songs?.allObjects as? [Song] ?? []
-                    VStack(spacing: 16) {
-                        if songs.isEmpty {
-                            VStack(spacing: 20) {
-                                Image(systemName: "music.note")
-                                    .font(.custom("MiSansLatin-Regular", size: 50))
-                                    .foregroundColor(theme.backgroundColor.opacity(0.7))
-                                
-                                Text("暂无歌曲")
-                                    .font(.custom("MiSansLatin-Regular", size: 16))
-                                    .foregroundColor(theme.backgroundColor)
-                            }
-                            .padding(.top, 40)
-                        } else {
-                            VStack(spacing: 16) {
-                                ForEach(songs, id: \.id) { song in
-                                    SongRowCard(song: song, onEdit: {
-                                        prepareEditSong(song)
-                                    }, onDelete: {
-                                        songToDelete = song
-                                        showingDeleteAlert = true
-                                    }, onPlay: {
-                                        playSong(song)
-                                    })
-                                }
-                            }
-                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .foregroundColor(theme.primaryColor)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
             }
         }
-        .navigationBarHidden(true)
         .sheet(isPresented: $showingSongForm) {
             EditSongView(
                 isPresented: $showingSongForm,
@@ -251,7 +224,7 @@ struct PlaylistDetailView: View {
     }
 }
 
-// 新的歌曲卡片组件
+// 修改歌曲卡片组件样式以匹配
 struct SongRowCard: View {
     @Environment(\.metronomeTheme) var theme
     let song: Song
@@ -264,34 +237,36 @@ struct SongRowCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(song.name ?? "未命名歌曲")
                     .font(.custom("MiSansLatin-Semibold", size: 18))
-                    .foregroundColor(theme.beatBarColor)
+                    .foregroundColor(theme.primaryColor)
                 
                 Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit))")
                     .font(.custom("MiSansLatin-Regular", size: 14))
-                    .foregroundColor(theme.primaryColor)
+                    .foregroundColor(theme.primaryColor.opacity(0.8))
             }
             
             Spacer()
             
-            HStack(spacing: 16) {
-                Button(action: onEdit) {
-                    Image(systemName: "pencil")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(theme.beatBarColor)
-                }
-                
-                Button(action: onDelete) {
-                    Image(systemName: "trash")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(theme.beatBarColor)
-                }
+            // 播放按钮
+            Button(action: onPlay) {
+                Image(systemName: "play.circle.fill")
+                    .font(.system(size: 28))
+                    .foregroundColor(theme.primaryColor)
             }
         }
-        .padding(16)
-        .background(theme.backgroundColor)
-        .cornerRadius(16)
+        .contentShape(Rectangle()) // 确保整个区域可点击
         .onTapGesture {
             onPlay()
+        }
+        
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            Button(role: .destructive, action: onDelete) {
+                Label("删除", systemImage: "trash")
+            }
+            
+            Button(action: onEdit) {
+                Label("编辑", systemImage: "pencil")
+            }
+            .tint(.blue)
         }
     }
 }

@@ -12,23 +12,24 @@ struct PlaylistListView: View {
     var body: some View {
         NavigationStack {
             List {
-                    // 歌单列表 - 改为使用 CoreData 并采用卡片式设计
-                    let playlists = playlistManager.fetchPlaylists()
-                    VStack(spacing: 16) {
-                        if playlists.isEmpty {
-                            Text("暂无歌单")
-                                .font(.custom("MiSansLatin-Regular", size: 16))
-                                .foregroundColor(theme.backgroundColor)
-                                .padding(.top, 40)
-                        } else {
-                            ForEach(playlists) { playlist in
-                                NavigationLink(destination: PlaylistDetailView(playlist: playlist)) {
-                                    PlaylistRowCard(playlist: playlist)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
+                // 直接在List中使用ForEach，不要嵌套VStack
+                let playlists = playlistManager.fetchPlaylists()
+                if playlists.isEmpty {
+                    Text("暂无歌单")
+                        .font(.custom("MiSansLatin-Regular", size: 16))
+                        .foregroundColor(theme.backgroundColor)
+                        .padding(.top, 40)
+                        .listRowBackground(Color.clear)
+                } else {
+                    ForEach(playlists) { playlist in
+                        NavigationLink {
+                            PlaylistDetailView(playlist: playlist)
+                        } label: {
+                            PlaylistRowCard(playlist: playlist)
                         }
                     }
+                    .listRowBackground(theme.primaryColor.opacity(0.1))
+                }
             }
                 
             // 使用Sheet展示添加歌单视图
@@ -94,6 +95,7 @@ struct PlaylistRowCard: View {
                 .font(.custom("MiSansLatin-Regular", size: 14))
                 .foregroundColor(theme.primaryColor.opacity(0.8))
         }
+        
         
     }
 }
