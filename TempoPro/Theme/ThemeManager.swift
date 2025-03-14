@@ -69,32 +69,32 @@ class ThemeManager: ObservableObject {
     }
 
     // 获取主题颜色
-    func themeColor(for themeName: String) -> Color {
+    func themeSets(for themeName: String) -> MetronomeTheme {
         switch themeName.lowercased() {
         // 现有主题
-        case "green": return MetronomeTheme.defaultTheme.primaryColor
-        case "purple": return MetronomeTheme.purpleTheme.primaryColor
-        case "skyblue": return MetronomeTheme.skyBlueTheme.primaryColor
-        case "coral": return MetronomeTheme.coralTheme.primaryColor
-        case "amber": return MetronomeTheme.amberTheme.primaryColor
-        case "lavender": return MetronomeTheme.lavenderTheme.primaryColor
-        case "teal": return MetronomeTheme.tealTheme.primaryColor
-        case "rosegold": return MetronomeTheme.roseGoldTheme.primaryColor
-        case "desert": return MetronomeTheme.desertTheme.primaryColor
+        case "green": return MetronomeTheme.defaultTheme
+        case "purple": return MetronomeTheme.purpleTheme
+        case "skyblue": return MetronomeTheme.skyBlueTheme
+        case "coral": return MetronomeTheme.coralTheme
+        case "amber": return MetronomeTheme.amberTheme
+        case "lavender": return MetronomeTheme.lavenderTheme
+        case "teal": return MetronomeTheme.tealTheme
+        case "rosegold": return MetronomeTheme.roseGoldTheme
+        case "desert": return MetronomeTheme.desertTheme
         
         // 新的复古科技风格主题
-        case "retroterminal": return MetronomeTheme.retroTerminalTheme.primaryColor
-        case "cyberpunk": return MetronomeTheme.cyberpunkTheme.primaryColor
-        case "techblue": return MetronomeTheme.techBlueTheme.primaryColor
-        case "amberretro": return MetronomeTheme.amberRetroTheme.primaryColor
-        case "vintageviolet": return MetronomeTheme.vintageVioletTheme.primaryColor
-        case "neonfuture": return MetronomeTheme.neonFutureTheme.primaryColor
-        case "rusttech": return MetronomeTheme.rustTechTheme.primaryColor
-        case "militarytech": return MetronomeTheme.militaryTechTheme.primaryColor
-        case "circuitboard": return MetronomeTheme.circuitBoardTheme.primaryColor
-        case "deepspace": return MetronomeTheme.deepSpaceTheme.primaryColor
+        case "retroterminal": return MetronomeTheme.retroTerminalTheme
+        case "cyberpunk": return MetronomeTheme.cyberpunkTheme
+        case "techblue": return MetronomeTheme.techBlueTheme
+        case "amberretro": return MetronomeTheme.amberRetroTheme
+        case "vintageviolet": return MetronomeTheme.vintageVioletTheme
+        case "neonfuture": return MetronomeTheme.neonFutureTheme
+        case "rusttech": return MetronomeTheme.rustTechTheme
+        case "militarytech": return MetronomeTheme.militaryTechTheme
+        case "circuitboard": return MetronomeTheme.circuitBoardTheme
+        case "deepspace": return MetronomeTheme.deepSpaceTheme
         
-        default: return .gray
+        default: return MetronomeTheme.defaultTheme
         }
     }
 }

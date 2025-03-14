@@ -14,6 +14,8 @@
 //
 
 import SwiftUI
+import RevenueCat
+import RevenueCatUI
 
 struct SettingsView: View {
     // 使用 AppStorage 替换状态变量
@@ -33,10 +35,21 @@ struct SettingsView: View {
     
     // 语言选项
     let languages = ["简体中文", "English", "日本語", "Español", "Français"]
+    @State private var displayPaywall = false
     
     var body: some View {
         NavigationView {
             List {
+
+                Button(action: {
+                    displayPaywall = true
+                }) {
+                    Text("订阅")
+                        .foregroundColor(theme.primaryColor)
+                }
+                .listRowBackground(theme.primaryColor.opacity(0.1))
+
+                
                 // 主题设置
                 Section(header: Text("主题").foregroundColor(theme.primaryColor)) {
                     ThemeSelectionView()
@@ -116,6 +129,10 @@ struct SettingsView: View {
         .navigationViewStyle(StackNavigationViewStyle())
         .accentColor(theme.primaryColor)
         .preferredColorScheme(.dark)
+
+        .sheet(isPresented: self.$displayPaywall) {
+                PaywallView(displayCloseButton: true)
+            }
     }
 }
 

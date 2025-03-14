@@ -7,6 +7,8 @@
 
 import SwiftUI
 import UIKit
+import RevenueCat
+
 @main
 struct TempoProApp: App {
     @StateObject private var themeManager = ThemeManager()
@@ -39,6 +41,9 @@ struct TempoProApp: App {
         
         // 创建示例数据（如果需要）
         manager.createSampleDataIfNeeded()
+        
+        Purchases.logLevel = .debug
+      Purchases.configure(withAPIKey: "appl_dAQzpTOdlfPEjSFkQNwqPYxfnvj")
     }
     
     var body: some Scene {
@@ -52,6 +57,7 @@ struct TempoProApp: App {
                 .onChange(of: themeManager.currentThemeName) { _ in
                     // 通过主题名称变化来触发环境更新
                 }
+            
         }
         .onChange(of: scenePhase) { newPhase in
             switch newPhase {
