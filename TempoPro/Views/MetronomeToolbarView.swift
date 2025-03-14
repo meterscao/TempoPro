@@ -79,15 +79,17 @@ struct MetronomeToolbarView: View {
             PlaylistListView()
                 .environmentObject(playlistManager)
                 .presentationDetents([.medium])
+                .presentationDragIndicator(.hidden)
         }
         .sheet(isPresented: $showingStatsView) {
             PracticeStatsView()
                 .presentationDetents([.medium])
+                .presentationDragIndicator(.hidden)
         }
         .sheet(isPresented: $showingSetTimerView) {
                 SetTimerView()
                     .presentationDetents([.medium])
-            
+                    .presentationDragIndicator(.hidden)
         }
     }
 }

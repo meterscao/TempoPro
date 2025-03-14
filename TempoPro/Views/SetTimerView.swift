@@ -64,9 +64,15 @@ struct SetTimerView: View {
                     Button(action: {
                         dismiss()
                     }) {
-                        Image(systemName: "chevron.left")
+                        Image("icon-x")
+                            .renderingMode(.template)
                             .foregroundColor(theme.primaryColor)
                     }
+                    .buttonStyle(.plain)
+                    .padding(5)
+                    .contentShape(Rectangle())
+                    
+                    
                 }
             }
             .background(theme.backgroundColor)

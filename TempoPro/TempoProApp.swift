@@ -29,21 +29,37 @@ struct TempoProApp: App {
         // 应用启动时就禁用屏幕熄屏
         UIApplication.shared.isIdleTimerDisabled = true
         
-        // 初始化CoreDataPlaylistManager
+        
+        // 初始化 Playlist 的 manager
         let manager = CoreDataPlaylistManager(context: PersistenceController.shared.viewContext)
         self._coreDataPlaylistManager = StateObject(wrappedValue: manager)
+        manager.createSampleDataIfNeeded()
         
         // 初始化CoreDataPracticeManager
         let practiceManager = CoreDataPracticeManager(context: PersistenceController.shared.viewContext)
         self._practiceManager = StateObject(wrappedValue: practiceManager)
-
         practiceManager.generateRandomHistoricalData()
-        
-        // 创建示例数据（如果需要）
-        manager.createSampleDataIfNeeded()
-        
+
+        initRevenueCat()
+
+        hideNavigationBarBottomBorder()
+    }
+    
+    func initRevenueCat() {
         Purchases.logLevel = .debug
-      Purchases.configure(withAPIKey: "appl_dAQzpTOdlfPEjSFkQNwqPYxfnvj")
+        Purchases.configure(withAPIKey: "appl_dAQzpTOdlfPEjSFkQNwqPYxfnvj")
+    }
+
+    func hideNavigationBarBottomBorder() {
+        let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.shadowColor = .clear // 移除底部线条阴影
+            // 或者完全设置为透明背景
+            // appearance.configureWithTransparentBackground()
+            
+            UINavigationBar.appearance().standardAppearance = appearance
+            UINavigationBar.appearance().compactAppearance = appearance
+            UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
     
     var body: some Scene {

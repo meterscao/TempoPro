@@ -283,22 +283,16 @@ struct MetronomeInfoView: View {
         
         .sheet(isPresented: $showingTimeSignature) {
             TimeSignatureView()
-                .presentationDetents([.height(400)])
-                .presentationDragIndicator(.visible)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.hidden)
         }
-        
-        .sheet(isPresented: $showingThemeSettings) {
-            ThemeSelectionView()
-                .presentationDetents([.height(150)])
-                .presentationDragIndicator(.visible)
-        }
-        
         
         
         .sheet(isPresented: $showingKeypad) {
             BPMKeypadView()
             .ignoresSafeArea()
-            .presentationDetents([.height(400)])
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.hidden)
             
         }
         

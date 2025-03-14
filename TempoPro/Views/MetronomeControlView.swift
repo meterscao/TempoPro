@@ -25,6 +25,9 @@ struct MetronomeControlView: View {
     @State private var lastBPMInt: Int = 0 // 记录上一个整数BPM值
     @State private var lastFeedbackTime: Date = Date.distantPast // 记录上次震动的时间
 
+    @State private var playButtonSize: CGFloat = 90
+
+
     @AppStorage(AppStorageKeys.Settings.wheelScaleEnabled) private var wheelScaleEnabled = true
     
     // 反馈生成器
@@ -78,17 +81,40 @@ struct MetronomeControlView: View {
                     
                     .rotationEffect(.degrees(rotation))
                     
-                    Button(action: {
-                        metronomeState.togglePlayback()
-                    }) {
-                        Image(systemName: metronomeState.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                            .renderingMode(.template)
+                    ZStack{
+                        Image(metronomeState.isPlaying ? "icon-pause" : "icon-play")
                             .resizable()
+                            .renderingMode(.template)
                             .foregroundColor(theme.backgroundColor)
-                            
-                            .frame(width: 80, height: 80)
-                            
+                            .frame(width: 28, height: 28)
                     }
+                    .overlay(
+                        Circle()
+                            .stroke(Color.black, lineWidth: 2)
+                            .frame(width: playButtonSize, height: playButtonSize)
+                    )   
+                    .frame(width: playButtonSize, height: playButtonSize)
+                    .background(
+                            Image("bg-noise")
+                            .resizable(resizingMode: .tile)
+                            .opacity(0.06)
+                            .background(
+                                .clear.shadow(.inner(color:.white,radius: 1,x:1,y: 1))
+                            )
+                            .background(
+                                Circle().fill(theme.primaryColor).frame(width: playButtonSize,height: playButtonSize)
+                            )
+                            .clipShape(
+                                .circle
+                            )
+                            
+                            
+                    )
+                    
+                    .contentShape(Circle())
+                    .onTapGesture {
+                        metronomeState.togglePlayback()
+                    }   
 
                 
                         

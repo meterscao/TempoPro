@@ -111,11 +111,13 @@ struct SettingsView: View {
                     Button(action: {
                         dismiss()
                     }) {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(theme.primaryColor)
-                        }
+                        Image("icon-x")
+                            .renderingMode(.template)
+                            .foregroundColor(theme.primaryColor)
                     }
+                    .buttonStyle(.plain)
+                    .padding(5)
+                    .contentShape(Rectangle())
                 }
             }
             .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
