@@ -52,6 +52,7 @@ struct MetronomeControlView: View {
         GeometryReader { geometry in
             let wheelSize = geometry.size.width * wheelSizeRatio
             ZStack{
+                // 使用一个单独的ZStack容纳整个控制器
                 ZStack {
                     Color.clear
                         .contentShape(Rectangle())
@@ -93,6 +94,7 @@ struct MetronomeControlView: View {
                         
                 }
                 .frame(width: wheelSize, height: wheelSize)
+                .position(x: geometry.size.width/2, y: geometry.size.height/2) // 明确定位在GeometryReader中心
                 .ignoresSafeArea()
                 .contentShape(Circle())
                 .gesture(
@@ -100,27 +102,18 @@ struct MetronomeControlView: View {
                         .onChanged { value in
                             if !isDragging {
                                 isDragging = true
-                                let frame = CGRect(
-                                    x: (geometry.size.width - wheelSize) / 2,
-                                    y: (geometry.size.height - wheelSize) / 2,
-                                    width: wheelSize,
-                                    height: wheelSize
-                                )
-                                lastAngle = calculateAngle(location: value.location, in: frame)
+                                // 使用GeometryReader的中心点而不是构建新的frame
+                                let centerPoint = CGPoint(x: geometry.size.width/2, y: geometry.size.height/2)
+                                lastAngle = calculateAngle(location: value.location, in: CGRect(origin: .zero, size: geometry.size))
                                 startTempo = metronomeState.tempo
-                                lastBPMInt = metronomeState.tempo // 初始化上一个BPM值
-                                feedbackGeneratorLight.prepare() // 准备反馈生成器
+                                lastBPMInt = metronomeState.tempo
+                                feedbackGeneratorLight.prepare()
                                 feedbackGeneratorHeavy.prepare()
-                                print("开始拖动 - 初始角度: \(lastAngle)°, 初始速度: \(startTempo)")
+                                print("开始拖动 - 初始位置: \(value.location), 初始角度: \(lastAngle)°, 初始速度: \(startTempo), 中心点: \(centerPoint)")
                             }
                             
-                            let frame = CGRect(
-                                x: (geometry.size.width - wheelSize) / 2,
-                                y: (geometry.size.height - wheelSize) / 2,
-                                width: wheelSize,
-                                height: wheelSize
-                            )
-                            let currentAngle = calculateAngle(location: value.location, in: frame)
+                            // 不再构建新frame，直接使用GeometryReader的尺寸
+                            let currentAngle = calculateAngle(location: value.location, in: CGRect(origin: .zero, size: geometry.size))
                             
                             var angleDiff = currentAngle - lastAngle
                             
@@ -148,7 +141,7 @@ struct MetronomeControlView: View {
                             lastBPMInt = currentBPMInt
                             
                             metronomeState.updateTempo(targetTempo)
-                            print("拖动中 - 当前角度: \(currentAngle)°, 角度差: \(angleDiff)°, 总旋转: \(totalRotation)°, 实际旋转: \(rotation)°, 目标速度: \(targetTempo)")
+                            print("拖动中 - 当前位置: \(value.location), 当前角度: \(currentAngle)°, 角度差: \(angleDiff)°, 总旋转: \(totalRotation)°, 实际旋转: \(rotation)°, 目标速度: \(targetTempo)")
                             lastAngle = currentAngle
                         }
                         .onEnded { _ in
