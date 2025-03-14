@@ -131,7 +131,7 @@ struct SettingsView: View {
         .preferredColorScheme(.dark)
 
         .sheet(isPresented: self.$displayPaywall) {
-                PaywallView(displayCloseButton: true)
+                SubscriptionView()
             }
     }
 }
