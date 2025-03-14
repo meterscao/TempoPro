@@ -21,7 +21,7 @@ class CoreDataPlaylistManager: ObservableObject {
         self.viewContext = context
     }
     
-    // 获取所有歌单
+    // 获取所有曲库
     func fetchPlaylists() -> [Playlist] {
         let request = NSFetchRequest<Playlist>(entityName: "Playlist")
         request.sortDescriptors = [NSSortDescriptor(keyPath: \Playlist.createdDate, ascending: false)]
@@ -29,12 +29,12 @@ class CoreDataPlaylistManager: ObservableObject {
         do {
             return try viewContext.fetch(request)
         } catch {
-            print("获取歌单失败: \(error.localizedDescription)")
+            print("获取曲库失败: \(error.localizedDescription)")
             return []
         }
     }
     
-    // 创建新歌单
+    // 创建新曲库
     func createPlaylist(name: String, color: String) -> Playlist {
         let newPlaylist = Playlist(context: viewContext)
         newPlaylist.id = UUID()
@@ -46,7 +46,7 @@ class CoreDataPlaylistManager: ObservableObject {
         return newPlaylist
     }
     
-    // 添加歌曲到歌单
+    // 添加歌曲到曲库
     func addSong(to playlist: Playlist, name: String, bpm: Int, beatsPerBar: Int, beatUnit: Int, beatStatuses: [Int]) -> Song {
         let newSong = Song(context: viewContext)
         newSong.id = UUID()
@@ -62,7 +62,7 @@ class CoreDataPlaylistManager: ObservableObject {
         return newSong
     }
     
-    // 更新歌单
+    // 更新曲库
     func updatePlaylist(_ playlist: Playlist, name: String, color: String) {
         playlist.name = name
         playlist.color = color
@@ -79,7 +79,7 @@ class CoreDataPlaylistManager: ObservableObject {
         saveContext()
     }
     
-    // 删除歌单
+    // 删除曲库
     func deletePlaylist(_ playlist: Playlist) {
         viewContext.delete(playlist)
         saveContext()
@@ -105,12 +105,12 @@ class CoreDataPlaylistManager: ObservableObject {
         }
     }
     
-    // 打开歌单列表
+    // 打开曲库列表
     func openPlaylistsSheet() {
         showPlaylistsSheet = true
     }
     
-    // 关闭歌单列表
+    // 关闭曲库列表
     func closePlaylistsSheet() {
         showPlaylistsSheet = false
     }
@@ -123,15 +123,15 @@ class CoreDataPlaylistManager: ObservableObject {
         do {
             let count = try viewContext.count(for: request)
             if count == 0 {
-                // 创建示例歌单
+                // 创建示例曲库
                 createSamplePlaylists()
             }
         } catch {
-            print("检查歌单失败: \(error.localizedDescription)")
+            print("检查曲库失败: \(error.localizedDescription)")
         }
     }
     
-    // 创建示例歌单
+    // 创建示例曲库
     // Create sample playlists
     private func createSamplePlaylists() {
         // Classical Music

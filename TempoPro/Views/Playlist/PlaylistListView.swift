@@ -15,7 +15,7 @@ struct PlaylistListView: View {
                 // 直接在List中使用ForEach，不要嵌套VStack
                 let playlists = playlistManager.fetchPlaylists()
                 if playlists.isEmpty {
-                    Text("暂无歌单")
+                    Text("暂无曲库")
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(theme.backgroundColor)
                         .padding(.top, 40)
@@ -32,14 +32,14 @@ struct PlaylistListView: View {
                 }
             }
                 
-            // 使用Sheet展示添加歌单视图
+            // 使用Sheet展示添加曲库视图
             .sheet(isPresented: $showingAddPlaylist) {
                 AddPlaylistView(
                     isPresented: $showingAddPlaylist,
                     playlistName: $newPlaylistName,
                     selectedColor: $selectedPlaylistColor,
                     onSave: { name, color in
-                        // 使用 CoreDataPlaylistManager 创建歌单
+                        // 使用 CoreDataPlaylistManager 创建曲库
                         _ = playlistManager.createPlaylist(
                             name: name,
                             color: color.toHex() ?? "#0000FF"
@@ -52,7 +52,7 @@ struct PlaylistListView: View {
             }
 
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading  ) {
                     Button(action: {
                         dismiss()
                     }) {
@@ -63,6 +63,17 @@ struct PlaylistListView: View {
                     .buttonStyle(.plain)
                     .padding(5)
                     .contentShape(Rectangle())
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action:{
+                        showingAddPlaylist = true
+                    }){
+                        Text("Add Library")
+                            .foregroundStyle(theme.primaryColor)
+                    }
+                    .padding(.horizontal,10)
+                    .padding(.vertical,5)
+                    .background(theme.primaryColor.opacity(0.1))
                 }
             }
             .navigationTitle("Library")
@@ -81,7 +92,7 @@ struct PlaylistListView: View {
     }
 }
 
-// 重新设计的歌单行卡片
+// 重新设计的曲库行卡片
 struct PlaylistRowCard: View {
     @Environment(\.metronomeTheme) var theme
     let playlist: Playlist
@@ -89,7 +100,7 @@ struct PlaylistRowCard: View {
     var body: some View {
             
         VStack(alignment: .leading, spacing: 6) {
-            Text(playlist.name ?? "未命名歌单")
+            Text(playlist.name ?? "未命名曲库")
                 .font(.custom("MiSansLatin-Semibold", size: 18))
                 .foregroundColor(theme.primaryColor)
             

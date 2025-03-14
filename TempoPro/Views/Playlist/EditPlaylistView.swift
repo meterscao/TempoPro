@@ -36,12 +36,12 @@ struct EditPlaylistView: View {
                 ScrollView {
                     VStack(spacing:28) {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("歌单名称")
+                            Text("曲库名称")
                                 .font(.custom("MiSansLatin-Semibold", size: 18))
                                 .foregroundColor(theme.backgroundColor)
                                 .padding(.leading, 4)
                             
-                            TextField("输入歌单名称", text: $playlistName)
+                            TextField("输入曲库名称", text: $playlistName)
                                 .font(.custom("MiSansLatin-Regular", size: 16))
                                 .padding()
                                 .background(theme.backgroundColor)
@@ -110,7 +110,7 @@ struct EditPlaylistView: View {
                     .padding(.bottom, 30)
                 }
             }
-            .navigationBarTitle("编辑歌单", displayMode: .inline)
+            .navigationBarTitle("编辑曲库", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
@@ -123,7 +123,7 @@ struct EditPlaylistView: View {
                 }
                 
                 ToolbarItem(placement: .principal) {
-                    Text("编辑歌单")
+                    Text("编辑曲库")
                         .font(.custom("MiSansLatin-Semibold", size: 20))
                         .foregroundColor(theme.backgroundColor)
                 }

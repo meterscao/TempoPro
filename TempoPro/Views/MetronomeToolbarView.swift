@@ -49,7 +49,7 @@ struct MetronomeToolbarView: View {
             }
             Spacer()
             Button(action: {
-                // 打开歌单列表
+                // 打开曲库列表
                 playlistManager.openPlaylistsSheet()
             }) {
                 Image("icon-play-list")

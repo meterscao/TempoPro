@@ -59,10 +59,10 @@ struct PersistenceController {
         // 创建预览数据
         let viewContext = controller.container.viewContext
         
-        // 创建示例歌单
+        // 创建示例曲库
         let samplePlaylist = Playlist(context: viewContext)
         samplePlaylist.id = UUID()
-        samplePlaylist.name = "示例歌单"
+        samplePlaylist.name = "示例曲库"
         samplePlaylist.color = "#4682B4"
         samplePlaylist.createdDate = Date()
         

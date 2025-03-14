@@ -36,12 +36,12 @@ struct AddPlaylistView: View {
                 ScrollView {
                     VStack(spacing: 28) {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("歌单名称")
+                            Text("曲库名称")
                                 .font(.custom("MiSansLatin-Semibold", size: 18))
                                 .foregroundColor(theme.backgroundColor)
                                 .padding(.leading, 4)
                             
-                            TextField("输入歌单名称", text: $playlistName)
+                            TextField("输入曲库名称", text: $playlistName)
                                 .font(.custom("MiSansLatin-Regular", size: 16))
                                 .padding()
                                 .background(theme.backgroundColor)
@@ -91,7 +91,7 @@ struct AddPlaylistView: View {
                                     .font(.custom("MiSansLatin-Regular", size: 16))
                                     .foregroundColor(theme.backgroundColor)
                                 
-                                Text("保存歌单")
+                                Text("保存曲库")
                                     .font(.custom("MiSansLatin-Semibold", size: 16))
                                     .foregroundColor(theme.backgroundColor)
                             }
@@ -110,7 +110,7 @@ struct AddPlaylistView: View {
                     .padding(.bottom, 30)
                 }
             }
-            .navigationBarTitle("新建歌单", displayMode: .inline)
+            .navigationBarTitle("新建曲库", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
@@ -123,7 +123,7 @@ struct AddPlaylistView: View {
                 }
                 
                 ToolbarItem(placement: .principal) {
-                    Text("新建歌单")
+                    Text("新建曲库")
                         .font(.custom("MiSansLatin-Semibold", size: 20))
                         .foregroundColor(theme.backgroundColor)
                 }

@@ -57,7 +57,7 @@ struct SettingsView: View {
                 .listRowBackground(theme.primaryColor.opacity(0.1))
 
                 Section(header: Text("iCloud").foregroundColor(theme.primaryColor)) {
-                    Toggle("同步歌单与练习记录", isOn: $icloudSyncEnabled)
+                    Toggle("同步曲库与练习记录", isOn: $icloudSyncEnabled)
                         .foregroundColor(theme.primaryColor)
                 }
                 .listRowBackground(theme.primaryColor.opacity(0.1))

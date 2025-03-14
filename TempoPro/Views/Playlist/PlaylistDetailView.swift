@@ -54,7 +54,7 @@ struct PlaylistDetailView: View {
                     }
                 
             }
-            .navigationTitle(playlist.name ?? "未命名歌单")
+            .navigationTitle(playlist.name ?? "未命名曲库")
             .navigationBarTitleDisplayMode(.inline)
             .background(theme.backgroundColor)
             .scrollContentBackground(.hidden)
@@ -77,14 +77,14 @@ struct PlaylistDetailView: View {
                             editPlaylistColor = Color(hex: playlist.color ?? "#0000FF") ?? .blue
                             showingEditPlaylist = true
                         }) {
-                            Label("编辑歌单", systemImage: "pencil")
+                            Label("编辑曲库", systemImage: "pencil")
                         }
                         
                         Button(role: .destructive, action: {
                             playlistManager.deletePlaylist(playlist)
                             dismiss()
                         }) {
-                            Label("删除歌单", systemImage: "trash")
+                            Label("删除曲库", systemImage: "trash")
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
@@ -145,7 +145,7 @@ struct PlaylistDetailView: View {
                 playlistName: $editPlaylistName,
                 selectedColor: $editPlaylistColor,
                 onSave: { name, color in
-                    // 更新歌单
+                    // 更新曲库
                     playlistManager.updatePlaylist(
                         playlist,
                         name: name,
