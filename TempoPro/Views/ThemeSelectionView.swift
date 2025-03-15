@@ -43,16 +43,13 @@ struct ThemeSelectionView: View {
                                         
                                 }
                             }
-
                             .frame(width: 60, height: 60)
-                            .padding(4)
+                            
                             
                     }.buttonStyle(.plain)
                 }
             }
             .frame(alignment: .leading)
-            .padding()
-        
     }
 }
 

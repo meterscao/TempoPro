@@ -44,7 +44,7 @@ struct TimeSignatureView: View {
                                     .buttonStyle(PlainButtonStyle())
                                     
                                     Text("\(metronomeState.beatsPerBar)")
-                                        .font(.custom("MiSansLatin-Semibold", size: 28))
+                                        .font(.custom("MiSansLatin-Semibold", size: 32))
                                         .foregroundColor(theme.primaryColor)
                                     
                                     Button {
@@ -88,7 +88,7 @@ struct TimeSignatureView: View {
                                     .buttonStyle(PlainButtonStyle())
                                     
                                     Text("\(metronomeState.beatUnit)")
-                                        .font(.custom("MiSansLatin-Semibold", size: 28))
+                                        .font(.custom("MiSansLatin-Semibold", size: 32))
                                         .foregroundColor(theme.primaryColor)
                                     
                                     Button {
@@ -107,7 +107,6 @@ struct TimeSignatureView: View {
                             }
                             .frame(maxWidth: .infinity)
                         }
-                        .padding(.vertical, 12)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -124,53 +123,44 @@ struct TimeSignatureView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical, 10)
                     } else {
-                        VStack(spacing: 16) {
+                        VStack(spacing: 0) {
                             LazyVGrid(columns: [
                                 GridItem(.flexible()),
                                 GridItem(.flexible()),
                                 GridItem(.flexible()),
-                            ], spacing: 16) {
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                            ], spacing: 8) {
                                 ForEach(patterns, id: \.name) { pattern in
                                     Button {
                                         metronomeState.updateSubdivisionPattern(pattern)
                                     } label: {
                                         Image(pattern.name)
                                             .resizable()
+                                            .renderingMode(.template)
                                             .scaledToFit()
                                             .padding(6)
                                             .frame(height: 60)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .fill(metronomeState.subdivisionPattern?.name == pattern.name 
-                                                        ? theme.primaryColor.opacity(0.3) 
-                                                        : theme.backgroundColor)
+                                                    .fill(metronomeState.subdivisionPattern?.name == pattern.name ?
+                                                          theme.primaryColor : theme.primaryColor.opacity(0.1)
+                                                         )
                                             )
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .stroke(
-                                                        metronomeState.subdivisionPattern?.name == pattern.name 
-                                                            ? theme.primaryColor 
-                                                            : theme.primaryColor.opacity(0.2),
-                                                        lineWidth: metronomeState.subdivisionPattern?.name == pattern.name ? 2 : 1
-                                                    )
-                                            )
+                                            
+                                            .foregroundStyle(metronomeState.subdivisionPattern?.name == pattern.name ?
+                                                             theme.backgroundColor : theme.primaryColor )
+//                                            .overlay(
+//                                                RoundedRectangle(cornerRadius: 8)
+//                                                    .stroke(
+//                                                        metronomeState.subdivisionPattern?.name == pattern.name ?
+//                                                        theme.primaryColor : theme.primaryColor.opacity(0),
+//                                                        lineWidth: 1
+//                                                    )
+//                                            )
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }
-                            }
-                            
-                            if let currentPattern = metronomeState.subdivisionPattern {
-                                HStack {
-                                    Text("当前选择:")
-                                        .font(.custom("MiSansLatin-Regular", size: 14))
-                                        .foregroundColor(theme.primaryColor.opacity(0.7))
-                                    
-                                    Text(currentPattern.displayName)
-                                        .font(.custom("MiSansLatin-Semibold", size: 14))
-                                        .foregroundColor(theme.primaryColor)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, 4)
                             }
                         }
                         .padding(.vertical, 10)

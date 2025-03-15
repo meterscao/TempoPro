@@ -33,9 +33,9 @@ struct ContentView: View {
                 .environmentObject(playlistManager) // 确保传递 CoreDataPlaylistManager
                 
         }
-        .ignoresSafeArea(edges: .top)
+        .ignoresSafeArea(edges: .all)
         .statusBar(hidden: true)
-        .preferredColorScheme(.light)
+        .persistentSystemOverlays(.hidden)
         .background(
             Image("bg-noise")
                 .resizable(resizingMode: .tile)

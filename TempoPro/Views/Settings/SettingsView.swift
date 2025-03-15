@@ -15,7 +15,6 @@
 
 import SwiftUI
 import RevenueCat
-import RevenueCatUI
 
 struct SettingsView: View {
     // 使用 AppStorage 替换状态变量

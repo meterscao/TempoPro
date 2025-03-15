@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SetTimerView: View {
     // 时间选项（分钟）
-    private let timeOptions = [1, 2, 5, 10, 20, 30, 45, 60, 90, 120]
+    private let timeOptions = [1, 2, 5, 10, 15, 20, 30, 45, 60, 90, 120]
     
     // 状态变量
     @State private var selectedTimeIndex = 2 // 默认选择5分钟
@@ -127,6 +127,7 @@ struct SetTimerView: View {
         let columns = [
             GridItem(.flexible()),
             GridItem(.flexible()),
+            GridItem(.flexible()),
             GridItem(.flexible())
         ]
         
@@ -139,16 +140,13 @@ struct SetTimerView: View {
                 }) {
                     Text("\(timeOption)分钟")
                         .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(selectedTimeIndex == index ? .white : theme.primaryColor)
+                        .foregroundStyle(selectedTimeIndex == index ?
+                                         theme.backgroundColor : theme.primaryColor )
                         .frame(height: 40)
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(selectedTimeIndex == index ? theme.primaryColor : theme.backgroundColor)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(theme.primaryColor.opacity(0.3), lineWidth: 1)
+                                .fill(selectedTimeIndex == index ? theme.primaryColor : theme.primaryColor.opacity(0.1))
                         )
                 }.buttonStyle(.plain)
             }

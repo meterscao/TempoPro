@@ -15,7 +15,7 @@ struct MetronomeControlView: View {
     @EnvironmentObject var metronomeState: MetronomeState
     
     
-    let wheelSizeRatio:Double = 0.75
+    let wheelSizeRatio:Double = 0.8
     
     @State private var rotation: Double = 0
     @State private var lastAngle: Double = 0
