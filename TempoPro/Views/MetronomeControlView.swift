@@ -25,7 +25,7 @@ struct MetronomeControlView: View {
     @State private var lastBPMInt: Int = 0 // 记录上一个整数BPM值
     @State private var lastFeedbackTime: Date = Date.distantPast // 记录上次震动的时间
 
-    @State private var playButtonSize: CGFloat = 90
+    @State private var playButtonSize: CGFloat = 100
 
 
     @AppStorage(AppStorageKeys.Settings.wheelScaleEnabled) private var wheelScaleEnabled = true

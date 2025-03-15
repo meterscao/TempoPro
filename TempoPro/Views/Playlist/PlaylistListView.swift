@@ -71,9 +71,10 @@ struct PlaylistListView: View {
                         Text("Add Library")
                             .foregroundStyle(theme.primaryColor)
                     }
-                    .padding(.horizontal,10)
-                    .padding(.vertical,5)
+//                    .padding(.horizontal,10)
+//                    .padding(.vertical,5)
                     .background(theme.primaryColor.opacity(0.1))
+//                    .clipShape(RoundedRectangle(cornerRadius: 5))
                 }
             }
             .navigationTitle("Library")

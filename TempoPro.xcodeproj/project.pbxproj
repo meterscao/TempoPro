@@ -47,7 +47,6 @@
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
 		C7727DF12D829E7C00D1DC8E /* SetTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7727DF02D829E7C00D1DC8E /* SetTimerView.swift */; };
 		C7879CB82D8430DC00B52E59 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = C7879CB72D8430DC00B52E59 /* RevenueCat */; };
-		C7879CBA2D8430DC00B52E59 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = C7879CB92D8430DC00B52E59 /* RevenueCatUI */; };
 		C7879CBD2D84345100B52E59 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7879CBC2D84345100B52E59 /* StoreKit.framework */; };
 		C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
@@ -179,7 +178,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C7879CBD2D84345100B52E59 /* StoreKit.framework in Frameworks */,
-				C7879CBA2D8430DC00B52E59 /* RevenueCatUI in Frameworks */,
 				C7879CB82D8430DC00B52E59 /* RevenueCat in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1033,11 +1031,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C7879CB62D8430DC00B52E59 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCat;
-		};
-		C7879CB92D8430DC00B52E59 /* RevenueCatUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C7879CB62D8430DC00B52E59 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
-			productName = RevenueCatUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 
