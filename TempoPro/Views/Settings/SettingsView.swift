@@ -34,14 +34,14 @@ struct SettingsView: View {
     
     // 语言选项
     let languages = ["简体中文", "English", "日本語", "Español", "Français"]
-    @State private var displayPaywall = false
+    @State private var displaySubscriptionView = false
     
     var body: some View {
         NavigationView {
             List {
 
                 Button(action: {
-                    displayPaywall = true
+                    displaySubscriptionView = true
                 }) {
                     Text("订阅")
                         .foregroundColor(theme.primaryColor)
@@ -67,35 +67,18 @@ struct SettingsView: View {
                         Text("节奏音效")
                             .foregroundColor(theme.primaryColor)
                     }
-                    Toggle("节拍闪光灯", isOn: $flashlightEnabled)
-                        .foregroundColor(theme.primaryColor)
-                    Toggle("节拍屏幕闪光", isOn: $screenFlashEnabled)
-                        .foregroundColor(theme.primaryColor)
-                    Toggle("节拍震动", isOn: $rhythmVibrationEnabled)
-                        .foregroundColor(theme.primaryColor)
+                    
                 }
                 .listRowBackground(theme.primaryColor.opacity(0.1))
                 
-                // 视觉设置
-                Section(header: Text("反馈").foregroundColor(theme.primaryColor)) {
-                    Toggle("操作音效", isOn: $operationSoundEnabled)
-                        .foregroundColor(theme.primaryColor)
-                    Toggle("操作震动", isOn: $operationVibrationEnabled)
-                        .foregroundColor(theme.primaryColor)
-                    Toggle("滚轮刻度", isOn: $wheelScaleEnabled)
-                        .foregroundColor(theme.primaryColor)
-                }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                
                 
                 // 其他设置
                 Section(header: Text("其他").foregroundColor(theme.primaryColor)) {
-                    NavigationLink(destination: LanguageSettingsView(selectedLanguage: $selectedLanguage, languages: languages)) {
+                    NavigationLink(destination: SettingsAdvanceView()) {
                         HStack {
-                            Text("语言设置")
+                            Text("高级设置")
                                 .foregroundColor(theme.primaryColor)
-                            Spacer()
-                            Text(languages[selectedLanguage])
-                                .foregroundColor(.gray)
                         }
                     }
                 }
@@ -103,8 +86,6 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
-            
-            
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
@@ -131,49 +112,13 @@ struct SettingsView: View {
         .accentColor(theme.primaryColor)
         .preferredColorScheme(.dark)
 
-        .sheet(isPresented: self.$displayPaywall) {
+        .sheet(isPresented: self.$displaySubscriptionView) {
                 SubscriptionView()
             }
     }
 }
 
-// 语言设置视图
-struct LanguageSettingsView: View {
-    @Environment(\.metronomeTheme) var theme
-    @Binding var selectedLanguage: Int
-    
-    let languages: [String]
-    
-    var body: some View {
-        List {
-            ForEach(0..<languages.count, id: \.self) { index in
-                Button(action: {
-                    selectedLanguage = index
-                }) {
-                    HStack {
-                        Text(languages[index])
-                            .foregroundColor(theme.primaryColor)
-                        Spacer()
-                        if selectedLanguage == index {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
-                        }
-                    }
-                }
-                .foregroundColor(theme.primaryColor)
-                .listRowBackground(theme.primaryColor.opacity(0.1))
-            }
-        }
-        .navigationTitle("语言设置")
-        .listStyle(InsetGroupedListStyle())
-        .background(theme.backgroundColor)
-        .scrollContentBackground(.hidden)
-        .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
-        .preferredColorScheme(.dark)
-    }
-}
+
 
 #Preview {
     SettingsView()

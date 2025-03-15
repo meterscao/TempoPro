@@ -177,24 +177,29 @@ struct MetronomeInfoView: View {
     
     var body: some View {
         ZStack {
-            VStack(spacing: 10) {
+            VStack(spacing: 0) {
 
                 HStack {
                     ClockView()
                     Spacer()
-                    Button(action: {
-                        showSetting = true
-                    }) {
-                        Image("icon-setting")
+                    VStack() {
+                        Image("icon-sliders-horizontal")
                             .renderingMode(.template)
                             .resizable()
-                            .frame(width: 24, height: 24)
+                            .frame(width: 20, height: 20)
                             .foregroundColor(theme.primaryColor)
                     }
+                    .frame(maxHeight:.infinity)
+                    .padding(10)
+//                    .background(.red)
+                    .onTapGesture {
+                        showSetting = true
+                    }
                 }
-                .padding(.top,10)
+//                .padding(.top,10)
                 .frame(height: 50)
                 .padding(.horizontal,20)
+//                .background(.blue)
                 
                 // 节拍显示区域和滑动控制区域
                 VStack(spacing: 8) {
@@ -251,7 +256,7 @@ struct MetronomeInfoView: View {
                         }
                 }
                 .foregroundStyle(theme.primaryColor)
-                .padding(.vertical,5)
+                .padding(.vertical,15)
                 // 新增加的 BPMRulerView
                 BPMRulerView()
             }

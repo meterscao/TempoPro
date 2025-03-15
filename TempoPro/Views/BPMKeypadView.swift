@@ -35,11 +35,7 @@ struct BPMKeypadView: View {
                                 if row < 3 {
                                     ForEach(1...3, id: \.self) { col in
                                         let number = row * 3 + col
-                                        Button(action: {
-                                            if inputValue.count < 3 {
-                                                inputValue += "\(number)"
-                                            }
-                                        }) {
+                                        VStack() {
                                             Text("\(number)")
                                                 
                                                 .frame(maxWidth: .infinity)
@@ -47,13 +43,15 @@ struct BPMKeypadView: View {
                                                 .foregroundColor(theme.backgroundColor)
                                                 .background(theme.primaryColor)
                                                 .cornerRadius(10)
-                                        }
+                                        }.onTapGesture {
+                                            if inputValue.count < 3 {
+                                                inputValue += "\(number)"
+                                            }
+                                        }   
                                         
                                     }
                                 } else {
-                                    Button(action: {
-                                        inputValue = ""
-                                    }) {
+                                    VStack() {
                                         Text("CLEAR")
                                             
                                             .frame(maxWidth: .infinity)
@@ -62,13 +60,11 @@ struct BPMKeypadView: View {
                                             .background(theme.primaryColor)
                                             .font(.custom("MiSansLatin-Semibold", size: 18))
                                             .cornerRadius(10)
-                                    }
+                                    }.onTapGesture {
+                                        inputValue = ""
+                                    }   
                                     
-                                    Button(action: {
-                                        if inputValue.count < 3 {
-                                            inputValue += "0"
-                                        }
-                                    }) {
+                                    VStack() {
                                         Text("0")
                                             
                                             .frame(maxWidth: .infinity)
@@ -76,16 +72,15 @@ struct BPMKeypadView: View {
                                             .foregroundColor(theme.backgroundColor)
                                             .background(theme.primaryColor)
                                             .cornerRadius(10)
-                                    }
-                                    
-                                    Button(action: {
-                                        if let value = Int(inputValue) {
-                                            
-                                            let tempo = max(30, min(240, value))
-                                            metronomeState.updateTempo(tempo)
+                                    }.onTapGesture {
+                                        
+                                        if inputValue.count < 3 {
+                                            inputValue += "0"
                                         }
-                                        dismiss()
-                                    }) {
+                                    }
+
+                                    
+                                    VStack() {
                                         Text("SET")
                                             
                                             .frame(maxWidth: .infinity)
@@ -94,6 +89,14 @@ struct BPMKeypadView: View {
                                             .background(theme.primaryColor)
                                             .foregroundColor(theme.backgroundColor)
                                             .cornerRadius(10)
+                                    }
+                                    .onTapGesture{
+                                        if let value = Int(inputValue) {
+                                            
+                                            let tempo = max(30, min(240, value))
+                                            metronomeState.updateTempo(tempo)
+                                        }
+                                        dismiss()
                                     }
                                 }
                             }
