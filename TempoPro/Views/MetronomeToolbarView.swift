@@ -42,19 +42,39 @@ struct MetronomeToolbarView: View {
             let toolbarHeight = buttonWidth + 2 // 按钮高度 + 上边框高度
             
             VStack(spacing: 0) {
-                // 上边框
-                Rectangle()
-                    .fill(Color.black)
-                    .frame(height: 2)
+                // 上边框带阴影
+                ZStack(alignment: .top) {
+                    // 黑色边框
+                    Rectangle()
+                        .fill(Color.black)
+                        .frame(height: 2)
+                    
+                    // 白色阴影（位于边框下方）
+                    Rectangle()
+                        .fill(Color.white.opacity(0.5))
+                        .frame(height: 1)
+                        .offset(y: 2) // 放在边框正下方
+                }
+                .frame(height: 2) // 为阴影留出空间
                 
                 // 工具栏内容
                 HStack(spacing: 0) {
                     ForEach(Array(buttons.enumerated()), id: \.element.id) { index, button in
                         if index > 0 {
-                            // 分隔线
-                            Rectangle()
-                                .fill(Color.black)
-                                .frame(width: 2)
+                            // 分隔线带阴影
+                            ZStack(alignment:.leading) {
+                                // 黑色分隔线
+                                Rectangle()
+                                    .fill(Color.black)
+                                    .frame(width: 2)
+                                
+                                // 白色阴影（位于分隔线右侧）
+                                Rectangle()
+                                    .fill(Color.white.opacity(0.4))
+                                    .frame(width: 1)
+                                    .offset(x: 2) // 放在分隔线右侧
+                            }
+                            .frame(width: 2) // 为阴影留出空间
                         }
                         
                         // 按钮
@@ -70,7 +90,7 @@ struct MetronomeToolbarView: View {
             }
             .frame(height: toolbarHeight)
         }
-        .frame(height: computeToolbarHeight()) // 设置整个GeometryReader的精确高度
+        .frame(height: computeToolbarHeight())
         .sheet(isPresented: $playlistManager.showPlaylistsSheet) {
             PlaylistListView()
                 .environmentObject(playlistManager)
@@ -92,14 +112,14 @@ struct MetronomeToolbarView: View {
     private func computeToolbarHeight() -> CGFloat {
         let screenWidth = UIScreen.main.bounds.width
         let buttonWidth = (screenWidth - CGFloat(buttons.count - 1) * 2) / CGFloat(buttons.count)
-        return buttonWidth + 2 // 按钮高度 + 上边框高度
+        return buttonWidth + 2 // 按钮高度 + 上边框高度（包括阴影）
     }
     
     struct ToolbarButton: View {
         let image: String
         let action: () -> Void
         
-        @State private var backgroundColor: Color = Color.clear
+        @State private var isPressed = false
         
         var body: some View {
             VStack {
@@ -110,12 +130,19 @@ struct MetronomeToolbarView: View {
                     .frame(width: 24, height: 24)
                     .foregroundColor(.black)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity) // 填充整个分配的空间
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
-            .background(backgroundColor)
-            .onTapGesture {
-                action()
-            }
+            .background(isPressed ? Color.black.opacity(0.1) : Color.clear)
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in
+                        isPressed = true
+                    }
+                    .onEnded { _ in
+                        isPressed = false
+                        action()
+                    }
+            )
         }
     }
 }
