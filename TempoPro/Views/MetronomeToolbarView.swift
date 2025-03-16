@@ -16,9 +16,7 @@ struct MetronomeToolbarView: View {
     // 按钮数据
     private var buttons: [ToolbarButtonItem] {
         [
-            ToolbarButtonItem(image: "icon-wheel") {
-                playlistManager.openPlaylistsSheet()
-            },
+            
             ToolbarButtonItem(image: "icon-timer") {
                 showingSetTimerView = true
             },
@@ -26,10 +24,12 @@ struct MetronomeToolbarView: View {
             ToolbarButtonItem(image: "icon-play-list") {
                 playlistManager.openPlaylistsSheet()
             },
-            ToolbarButtonItem(image: "icon-clap") {
-                // 拍手动作
+            
+            ToolbarButtonItem(image: "icon-stairs-arrow-up-right") {
+                showingStatsView = true
             },
-            ToolbarButtonItem(image: "icon-analysis") {
+            
+            ToolbarButtonItem(image: "icon-calendar-days") {
                 showingStatsView = true
             }
         ]
@@ -46,12 +46,12 @@ struct MetronomeToolbarView: View {
                 ZStack(alignment: .top) {
                     // 黑色边框
                     Rectangle()
-                        .fill(Color.black)
+                        .fill(theme.backgroundColor)
                         .frame(height: 2)
                     
                     // 白色阴影（位于边框下方）
                     Rectangle()
-                        .fill(Color.white.opacity(0.5))
+                        .fill(Color.white.opacity(0.4))
                         .frame(height: 1)
                         .offset(y: 2) // 放在边框正下方
                 }
@@ -65,12 +65,12 @@ struct MetronomeToolbarView: View {
                             ZStack(alignment:.leading) {
                                 // 黑色分隔线
                                 Rectangle()
-                                    .fill(Color.black)
+                                    .fill(theme.backgroundColor)
                                     .frame(width: 2)
                                 
                                 // 白色阴影（位于分隔线右侧）
                                 Rectangle()
-                                    .fill(Color.white.opacity(0.4))
+                                    .fill(Color.white.opacity(0.3))
                                     .frame(width: 1)
                                     .offset(x: 2) // 放在分隔线右侧
                             }

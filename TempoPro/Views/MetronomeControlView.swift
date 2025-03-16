@@ -15,7 +15,7 @@ struct MetronomeControlView: View {
     @EnvironmentObject var metronomeState: MetronomeState
     
     
-    let wheelSizeRatio:Double = 0.8
+    let wheelSizeRatio:Double = 0.83
     
     @State private var rotation: Double = 0
     @State private var lastAngle: Double = 0
@@ -25,7 +25,7 @@ struct MetronomeControlView: View {
     @State private var lastBPMInt: Int = 0 // 记录上一个整数BPM值
     @State private var lastFeedbackTime: Date = Date.distantPast // 记录上次震动的时间
 
-    @State private var playButtonSize: CGFloat = 90
+    @State private var playButtonSize: CGFloat = 96
 
 
     @AppStorage(AppStorageKeys.Settings.wheelScaleEnabled) private var wheelScaleEnabled = true
@@ -36,7 +36,7 @@ struct MetronomeControlView: View {
     // 最小震动间隔(秒)
     private let minimumFeedbackInterval: TimeInterval = 0.06
     
-
+    @State private var isPlayButtonPressed = false
     
     private func calculateAngle(location: CGPoint, in frame: CGRect) -> Double {
         let centerX = frame.midX
@@ -81,6 +81,7 @@ struct MetronomeControlView: View {
                     
                     .rotationEffect(.degrees(rotation))
                     
+                    // 播放/停止按钮，添加点击效果
                     ZStack{
                         Image(metronomeState.isPlaying ? "icon-pause" : "icon-play")
                             .resizable()
@@ -90,34 +91,47 @@ struct MetronomeControlView: View {
                     }
                     .overlay(
                         Circle()
-                            .stroke(Color.black, lineWidth: 2)
-                            .frame(width: playButtonSize, height: playButtonSize)
-                    )   
-                    .frame(width: playButtonSize, height: playButtonSize)
-                    .background(
-                            Image("bg-noise")
-                            .resizable(resizingMode: .tile)
-                            .opacity(0.06)
-                            .background(
-                                .clear.shadow(.inner(color:.white,radius: 1,x:1,y: 1))
-                            )
-                            .background(
-                                Circle().fill(theme.primaryColor).frame(width: playButtonSize,height: playButtonSize)
-                            )
-                            .clipShape(
-                                .circle
-                            )
-                            
-                            
+                            .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                            .frame(width: playButtonSize - 2, height: playButtonSize - 2)
+                            .offset(x:1,y:1)
                     )
+                    .overlay(
+                        Circle()
+                            .stroke(Color.black, lineWidth: 2)
+                            .frame(width: playButtonSize-2, height: playButtonSize-2)
+                    )
+                    .frame(width: playButtonSize, height: playButtonSize)
                     
+                    .background(
+                        ZStack {
+                            // 背景
+                            Circle().fill(theme.primaryColor)
+                            
+                            // 点击效果半透明遮罩
+                            Circle().fill(isPlayButtonPressed ? Color.black.opacity(0.1) : Color.clear)
+                            
+                            // 噪点图案
+                            Image("bg-noise")
+                                .resizable(resizingMode: .tile)
+                                .opacity(0.06)
+                                .clipShape(Circle())
+                                .background(
+                                    .clear.shadow(.inner(color:.white,radius: 1,x:1,y: 1))
+                                )
+                        }
+                    )
                     .contentShape(Circle())
-                    .onTapGesture {
-                        metronomeState.togglePlayback()
-                    }   
-
-                
-                        
+                    .clipShape(Circle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { _ in
+                                isPlayButtonPressed = true
+                            }
+                            .onEnded { _ in
+                                isPlayButtonPressed = false
+                                metronomeState.togglePlayback()
+                            }
+                    )
                 }
                 .frame(width: wheelSize, height: wheelSize)
                 .position(x: geometry.size.width/2, y: geometry.size.height/2) // 明确定位在GeometryReader中心
