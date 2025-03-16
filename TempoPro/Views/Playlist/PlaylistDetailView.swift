@@ -219,8 +219,8 @@ struct PlaylistDetailView: View {
         metronomeState.updateBeatStatuses(statuses)
         
         // 返回主界面并启动节拍器
-        metronomeState.togglePlayback()
-        dismiss()
+        metronomeState.play()
+        // dismiss()
     }
 }
 

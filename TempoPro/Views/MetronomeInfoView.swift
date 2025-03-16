@@ -61,7 +61,7 @@ struct ClockView: View {
     
     var body: some View {
         Text(timeString)
-            .font(.custom("MiSansLatin-Semibold", size: 16))
+            .font(.custom("MiSansLatin-Semibold", size: 17))
             .foregroundColor(theme.primaryColor)
             // 每秒接收定时器事件,更新时间
             .onReceive(timer) { _ in
@@ -185,13 +185,10 @@ struct MetronomeInfoView: View {
                     VStack() {
                         Image("icon-sliders-horizontal")
                             .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 20, height: 20)
                             .foregroundColor(theme.primaryColor)
                     }
                     .frame(maxHeight:.infinity)
                     .padding(10)
-//                    .background(.red)
                     .onTapGesture {
                         showSetting = true
                     }

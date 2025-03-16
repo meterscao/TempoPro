@@ -171,25 +171,40 @@ class MetronomeState: ObservableObject {
     
     // 播放控制方法
     func togglePlayback() {
-        isPlaying.toggle()
+        
         
         if isPlaying {
-            // 确保当前切分模式已更新
-            updateCurrentSubdivisionPattern()
+            stop()
+        } else {
             
+            play()
+        }
+    }
+
+    func play() {
+        print("MetronomeState - play")
+
+        isPlaying = true
+        // 确保当前切分模式已更新
+        updateCurrentSubdivisionPattern()
+        
             // 开始练习会话
             practiceManager?.startPracticeSession(bpm: tempo)
             
             // 直接启动定时器
             metronomeTimer?.start()
-        } else {
-            // 结束练习会话
-            practiceManager?.endPracticeSession()
-            
-            // 停止定时器
-            metronomeTimer?.stop()
-        }
-    }
+    }   
+
+    func stop() {
+        print("MetronomeState - stop")
+
+        isPlaying = false
+        // 结束练习会话
+        practiceManager?.endPracticeSession()
+        
+        // 停止定时器
+        metronomeTimer?.stop()
+    }   
     
     // 使用切分类型更新切分模式
     func updateSubdivisionType(_ type: SubdivisionType) {

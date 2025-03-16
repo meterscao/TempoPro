@@ -79,7 +79,6 @@ struct MetronomeToolbarView: View {
         }
         .sheet(isPresented: $showingStatsView) {
             PracticeStatsView()
-                .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
         }
         .sheet(isPresented: $showingSetTimerView) {
