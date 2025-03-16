@@ -169,4 +169,20 @@ struct MetronomeTheme: Equatable {
         beatBarColor: Color(red: 0.9, green: 0.5, blue: 0.0),       // 橙色对比
         beatBarHighlightColor: Color(red: 0.0, green: 1.0, blue: 0.8) // 青绿色高亮
     )
+
+    static let silverTheme = MetronomeTheme(
+        primaryColor: Color(red: 0.8, green: 0.8, blue: 0.8),
+        backgroundColor: Color(red: 0.05, green: 0.05, blue: 0.05),
+        textColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        beatBarColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        beatBarHighlightColor: Color(red: 0.1, green: 0.1, blue: 0.1)
+    )   
+
+    static let deepGrayTheme = MetronomeTheme(
+        primaryColor: Color(red: 0.2, green: 0.2, blue: 0.2),
+        backgroundColor: Color(red: 0.05, green: 0.05, blue: 0.05),
+        textColor: Color(red: 0.8, green: 0.8, blue: 0.8),
+        beatBarColor: Color(red: 0.8, green: 0.8, blue: 0.8),
+        beatBarHighlightColor: Color(red: 0.8, green: 0.8, blue: 0.8)
+    )   
 }

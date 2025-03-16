@@ -42,7 +42,9 @@ class ThemeManager: ObservableObject {
         "rustTech": .rustTechTheme,
         "militaryTech": .militaryTechTheme,
         "circuitBoard": .circuitBoardTheme,
-        "deepSpace": .deepSpaceTheme
+        "deepSpace": .deepSpaceTheme,
+        "silver": .silverTheme,
+        "deepGray": .deepGrayTheme
     ]
     
     // 可供选择的主题名称
@@ -93,7 +95,8 @@ class ThemeManager: ObservableObject {
         case "militarytech": return MetronomeTheme.militaryTechTheme
         case "circuitboard": return MetronomeTheme.circuitBoardTheme
         case "deepspace": return MetronomeTheme.deepSpaceTheme
-        
+        case "silver": return MetronomeTheme.silverTheme
+        case "deepgray": return MetronomeTheme.deepGrayTheme
         default: return MetronomeTheme.defaultTheme
         }
     }
