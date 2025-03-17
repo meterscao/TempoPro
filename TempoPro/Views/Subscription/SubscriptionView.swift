@@ -100,7 +100,7 @@ struct SubscriptionOption: View {
 
 struct SubscriptionOptionsView: View {
     let offerings: Offerings?
-    @State private var selectedOption = 1 // 默认选中年度
+    @State private var selectedOption = 2 // 默认选中年度
     @State private var isPurchasing = false
     
     var body: some View {
@@ -120,23 +120,7 @@ struct SubscriptionOptionsView: View {
             // 选项选择器
             VStack(spacing: 12) {
                 if let standardOffering = offerings?.current {
-                    // 月度选项
-                    SubscriptionOption(
-                        title: "月度订阅",
-                        price: standardOffering.monthly?.localizedPriceString ?? "¥??",
-                        description: "每月自动续费",
-                        isSelected: selectedOption == 0,
-                        action: { selectedOption = 0 }
-                    )
                     
-                    // 年度选项
-                    SubscriptionOption(
-                        title: "年度订阅",
-                        price: standardOffering.annual?.localizedPriceString ?? "¥??",
-                        description: "每年自动续费，相比月度更划算",
-                        isSelected: selectedOption == 1,
-                        action: { selectedOption = 1 }
-                    )
                     
                     // 终身选项
                     SubscriptionOption(
