@@ -120,7 +120,7 @@ struct MetronomeToolbarView: View {
         let action: () -> Void
         
         @State private var isPressed = false
-        
+        @Environment(\.scenePhase) private var scenePhase
         var body: some View {
             VStack {
                 Image(image)
@@ -143,6 +143,11 @@ struct MetronomeToolbarView: View {
                         action()
                     }
             )
+            .onChange(of: scenePhase) { newPhase in
+            if newPhase != .active {
+                isPressed = false
+            }
+        }
         }
     }
 }

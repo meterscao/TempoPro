@@ -13,6 +13,7 @@ struct MetronomeControlView: View {
     private let sensitivity: Double = 12.0 // 旋转灵敏度
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var metronomeState: MetronomeState
+    @Environment(\.scenePhase) private var scenePhase
     
     
     let wheelSizeRatio:Double = 0.83

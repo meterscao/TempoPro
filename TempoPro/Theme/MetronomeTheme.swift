@@ -174,7 +174,7 @@ struct MetronomeTheme: Equatable {
         primaryColor: Color(red: 0.8, green: 0.8, blue: 0.8),
         backgroundColor: Color(red: 0.05, green: 0.05, blue: 0.05),
         textColor: Color(red: 0.1, green: 0.1, blue: 0.1),
-        beatBarColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        beatBarColor: Color(red: 0.95, green: 0.95, blue: 0.1), // 亮黄色，紫色的对比色
         beatBarHighlightColor: Color(red: 0.1, green: 0.1, blue: 0.1)
     )   
 
