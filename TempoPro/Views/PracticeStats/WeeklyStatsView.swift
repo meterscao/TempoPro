@@ -195,7 +195,7 @@ struct WeeklyStatsView: View {
             .frame(height: 200, alignment: .bottom)
         }
         .padding(20)
-        .background(theme.backgroundColor)
+        .background(Color("backgroundSecondaryColor"))
         .cornerRadius(16)
         .onAppear {
             // 首先计算当前周的周一日期

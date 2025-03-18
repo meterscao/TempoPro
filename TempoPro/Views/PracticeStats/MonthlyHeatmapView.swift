@@ -212,7 +212,7 @@ struct MonthlyHeatmapView: View {
             
         }
         .padding(20)
-        .background(theme.backgroundColor)
+        .background(Color("backgroundSecondaryColor"))
         .cornerRadius(16)
         .onAppear {
             loadMonthData()

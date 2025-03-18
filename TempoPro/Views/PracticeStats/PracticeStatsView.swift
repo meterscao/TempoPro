@@ -63,10 +63,8 @@ struct PracticeStatsView: View {
             //         .opacity(0.06)
             //         .ignoresSafeArea()
             // )
-            .background(Color.black.ignoresSafeArea())
-            .onAppear {
-                // 加载数据已移至各独立组件
-            }
+            .background(Color("backgroundPrimaryColor"))
+            
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
@@ -74,7 +72,7 @@ struct PracticeStatsView: View {
                     }) {
                         Image("icon-x") 
                             .renderingMode(.template)
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(Color.textPrimary)
                     }
                     .buttonStyle(.plain)
                     .padding(5)
@@ -84,15 +82,15 @@ struct PracticeStatsView: View {
             .navigationTitle("Stats")
             .navigationBarTitleDisplayMode(.inline)
             .listStyle(InsetGroupedListStyle())
-            .background(theme.backgroundColor)
+            .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
-            .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .preferredColorScheme(.dark)
             }
         .navigationViewStyle(StackNavigationViewStyle())
-        .accentColor(theme.primaryColor)
+        .accentColor(.textPrimary)
         .preferredColorScheme(.dark)
         
     }
