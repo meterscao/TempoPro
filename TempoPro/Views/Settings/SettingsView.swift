@@ -52,7 +52,9 @@ struct SettingsView: View {
                 // 主题设置
                 Section(header: Text("主题").foregroundColor(theme.primaryColor)) {
                     ThemeSelectionView()
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
+                
                 .listRowBackground(theme.primaryColor.opacity(0.1))
 
                 Section(header: Text("iCloud").foregroundColor(theme.primaryColor)) {

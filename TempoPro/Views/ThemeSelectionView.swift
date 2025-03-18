@@ -11,45 +11,55 @@ struct ThemeSelectionView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.dismiss) var dismiss
     
-    // 定义网格布局
-    // 创建一个自适应网格布局,每个网格项的最小和最大宽度都是48点,网格项之间的间距是10点
-    // 这样可以让网格根据屏幕宽度自动调整每行显示的主题数量
-    let columns = [
-        GridItem(.adaptive(minimum: 60, maximum: 60), spacing: 10)
-    ]
-    
     var body: some View {
-            LazyVGrid(columns: columns, spacing: 10) {
-                ForEach(themeManager.availableThemes, id: \.self) { themeName in
-                    Button(action: {
-                        themeManager.switchTheme(to: themeName)
-                    }) {
-                        ZStack(alignment: .bottomTrailing) {
-                            themeManager.themeSets(for: themeName).primaryColor
-                            .cornerRadius(8)
-                            
-
-                            VStack (alignment: .leading){
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(themeManager.themeSets(for: themeName).beatBarColor)
-                                    .frame(width: 20, height: 20)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(themeManager.availableThemes, id: \.self) { themeName in
+                        Button(action: {
+                            themeManager.switchTheme(to: themeName)
+                        }) {
+                            ZStack(alignment:.top) {
+                                Image("icon-app-primary")
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .foregroundStyle(themeManager.themeSets(for: themeName).primaryColor)
+                                    .frame(maxWidth: .infinity,maxHeight: .infinity)
                                 
-                            }
-                            .background(themeManager.themeSets(for: themeName).backgroundColor  )
-                            .cornerRadius(8)
-                            if themeName == themeManager.currentThemeName {
+                                Image("icon-app-black")
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .foregroundStyle(themeManager.themeSets(for: themeName).backgroundColor)
+                                    .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                
+                                Image("icon-app-beat-default")
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .foregroundStyle(themeManager.themeSets(for: themeName).beatBarColor)
+                                    .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                
+                                Image("icon-app-beat-mute")
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .foregroundStyle(themeManager.themeSets(for: themeName).beatBarColor.opacity(0.4))
+                                    .frame(maxWidth: .infinity,maxHeight: .infinity)    
+                                    
+                                
+                                if themeName == themeManager.currentThemeName {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(.white)
-                                        
                                 }
                             }
-                            .frame(width: 60, height: 60)
-                            
-                            
-                    }.buttonStyle(.plain)
+                            .frame(width: 64, height: 64)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
+                .padding()
             }
-            .frame(alignment: .leading)
     }
 }
 
+#Preview {
+    ThemeSelectionView()
+        .environmentObject(ThemeManager()) // 添加 ThemeManager 环境对象
+}

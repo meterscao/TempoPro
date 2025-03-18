@@ -14,15 +14,7 @@ struct AddPlaylistView: View {
     @Binding var selectedColor: Color
     var onSave: (String, Color) -> Void
     
-    let colors: [Color] = [
-        .blue, .red, .green, .orange, .purple, .pink,
-        Color(hex: "#1E90FF") ?? .blue,
-        Color(hex: "#8B4513") ?? .brown,
-        Color(hex: "#2E8B57") ?? .green,
-        Color(hex: "#9932CC") ?? .purple,
-        Color(hex: "#FF6347") ?? .red,
-        Color(hex: "#4682B4") ?? .blue
-    ]
+    
     
     var body: some View {
         NavigationView {
@@ -49,36 +41,7 @@ struct AddPlaylistView: View {
                                 .foregroundColor(theme.beatBarColor)
                         }
                         
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("选择颜色")
-                                .font(.custom("MiSansLatin-Semibold", size: 18))
-                                .foregroundColor(theme.backgroundColor)
-                                .padding(.leading, 4)
-                            
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 60, maximum: 70))], spacing: 20) {
-                                ForEach(colors, id: \.self) { color in
-                                    Circle()
-                                        .fill(color)
-                                        .frame(width: 60, height: 60)
-                                        .overlay(
-                                            ZStack {
-                                                if selectedColor == color {
-                                                    Circle()
-                                                        .stroke(theme.backgroundColor, lineWidth: 3)
-                                                    
-                                                    Image(systemName: "checkmark")
-                                                        .font(.custom("MiSansLatin-Bold", size: 24))
-                                                        .foregroundColor(theme.backgroundColor)
-                                                }
-                                            }
-                                        )
-                                        .onTapGesture {
-                                            selectedColor = color
-                                        }
-                                }
-                            }
-                            .padding(8)
-                        }
+                        
                         
                         Button(action: {
                             if !playlistName.isEmpty {
