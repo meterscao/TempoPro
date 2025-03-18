@@ -10,49 +10,162 @@ import SwiftUI
 import RevenueCat
 
 struct SubscriptionView: View {
-    @State private var offerings: Offerings?
-    @State private var isLoading = true
-    @State private var customerInfo: CustomerInfo?
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var subscriptionManager: SubscriptionManager
     
     var body: some View {
         VStack {
-            if isLoading {
+            if subscriptionManager.isLoading {
                 ProgressView()
+            } else if subscriptionManager.purchaseSuccess || subscriptionManager.isProUser {
+                // 购买成功视图
+                PurchaseSuccessView {
+                    dismiss()
+                }
             } else {
                 // 自定义订阅UI
-                SubscriptionOptionsView(offerings: offerings)
+                SubscriptionOptionsView(offerings: subscriptionManager.offerings)
+                    .environmentObject(subscriptionManager)
             }
         }
         .onAppear {
-            loadOfferings()
-            checkSubscriptionStatus()
+            subscriptionManager.checkSubscriptionStatus()
+            subscriptionManager.loadOfferings()
         }
     }
+}
+
+// 新增购买成功视图
+struct PurchaseSuccessView: View {
+    @Environment(\.metronomeTheme) var theme
+    var onDismiss: () -> Void
     
-    func loadOfferings() {
-        isLoading = true
-        Purchases.shared.getOfferings { offerings, error in
-            self.offerings = offerings
-            isLoading = false
+    var body: some View {
+        VStack(spacing: 30) {
+            Image(systemName: "checkmark.circle.fill")
+                .resizable()
+                .frame(width: 100, height: 100)
+                .foregroundColor(.green)
+                .padding(.top, 40)
+            
+            Text("购买成功！")
+                .font(.largeTitle)
+                .bold()
+                .foregroundColor(theme.primaryColor)
+            
+            Text("感谢您成为高级会员！\n您现在可以使用所有高级功能了。")
+                .font(.title3)
+                .multilineTextAlignment(.center)
+                .foregroundColor(theme.primaryColor)
+                .padding(.horizontal)
+            
+            Spacer()
+            
+            Button(action: onDismiss) {
+                Text("开始使用")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(theme.primaryColor)
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+            }
+            .padding(.bottom, 40)
         }
     }
+}
+
+struct SubscriptionOptionsView: View {
+    @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var subscriptionManager: SubscriptionManager
+    let offerings: Offerings?
+    @State private var selectedOption = 2 // 默认选中终身会员
     
-    func checkSubscriptionStatus() {
-        Purchases.shared.getCustomerInfo { info, error in
-            self.customerInfo = info
+    var body: some View {
+        VStack(spacing: 24) {
+            Text("升级到Premium会员")
+                .font(.title)
+                .bold()
+                .foregroundColor(theme.primaryColor)
+            
+            // 会员特权展示
+            VStack(alignment: .leading, spacing: 10) {
+                FeatureRow(text: "无限访问所有高级功能")
+                FeatureRow(text: "无广告体验")
+                FeatureRow(text: "优先客户支持")
+            }
+            .padding(.vertical)
+            
+            // 选项选择器
+            VStack(spacing: 12) {
+                if let standardOffering = offerings?.current {
+                    // 终身选项
+                    SubscriptionOption(
+                        title: "终身会员",
+                        price: standardOffering.lifetime?.localizedPriceString ?? "¥??",
+                        description: "一次性付款，永久有效",
+                        isSelected: selectedOption == 2,
+                        action: { selectedOption = 2 }
+                    )
+                }
+            }
+            
+            // 订阅按钮
+            Button(action: {
+                if let package = getSelectedPackage() {
+                    subscriptionManager.purchasePackage(package: package)
+                }
+            }) {
+                Text(subscriptionManager.isPurchasing ? "处理中..." : "立即订阅")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(theme.primaryColor)
+                    .cornerRadius(10)
+            }
+            .disabled(subscriptionManager.isPurchasing)
+            
+            // 条款说明
+            Text("订阅会在到期前自动续费，可随时在账户设置中取消")
+                .font(.caption)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .padding()
+    }
+    
+    // 辅助方法获取选中的套餐
+    private func getSelectedPackage() -> Package? {
+        guard let offering = offerings?.current else { return nil }
+        
+        switch selectedOption {
+        case 0:
+            return offering.monthly
+        case 1:
+            return offering.annual
+        case 2:
+            return offering.lifetime
+        default:
+            return nil
         }
     }
 }
 
 struct FeatureRow: View {
+    @Environment(\.metronomeTheme) var theme
     let text: String
     
     var body: some View {
         HStack {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green)
+                .foregroundColor(theme.primaryColor)
             Text(text)
                 .font(.body)
+                .foregroundColor(theme.primaryColor)
             Spacer()
         }
     }
@@ -95,106 +208,6 @@ struct SubscriptionOption: View {
         }
         
         .buttonStyle(PlainButtonStyle())
-    }
-}
-
-struct SubscriptionOptionsView: View {
-    let offerings: Offerings?
-    @State private var selectedOption = 2 // 默认选中年度
-    @State private var isPurchasing = false
-    
-    var body: some View {
-        VStack(spacing: 24) {
-            Text("升级到Premium会员")
-                .font(.title)
-                .bold()
-            
-            // 会员特权展示
-            VStack(alignment: .leading, spacing: 10) {
-                FeatureRow(text: "无限访问所有高级功能")
-                FeatureRow(text: "无广告体验")
-                FeatureRow(text: "优先客户支持")
-            }
-            .padding(.vertical)
-            
-            // 选项选择器
-            VStack(spacing: 12) {
-                if let standardOffering = offerings?.current {
-                    
-                    
-                    // 终身选项
-                    SubscriptionOption(
-                        title: "终身会员",
-                        price: standardOffering.lifetime?.localizedPriceString ?? "¥??",
-                        description: "一次性付款，永久有效",
-                        isSelected: selectedOption == 2,
-                        action: { selectedOption = 2 }
-                    )
-                }
-            }
-            
-            // 订阅按钮
-            Button(action: {
-                purchaseSelectedOption()
-            }) {
-                Text(isPurchasing ? "处理中..." : "立即订阅")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
-            }
-            .disabled(isPurchasing)
-            
-            // 条款说明
-            Text("订阅会在到期前自动续费，可随时在账户设置中取消")
-                .font(.caption)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-        }
-        .padding()
-    }
-    
-    func purchaseSelectedOption() {
-        guard let offering = offerings?.current else { return }
-        
-        var packageToPurchase: Package?
-        
-        switch selectedOption {
-        case 0:
-            packageToPurchase = offering.monthly
-        case 1:
-            packageToPurchase = offering.annual
-        case 2:
-            packageToPurchase = offering.lifetime
-        default:
-            return
-        }
-        
-        guard let package = packageToPurchase else { return }
-        
-        isPurchasing = true
-        Purchases.shared.purchase(package: package) { transaction, customerInfo, error, userCancelled in
-            isPurchasing = false
-            
-            if let error = error {
-                print("购买错误: \(error.localizedDescription)")
-                return
-            }
-            
-            if userCancelled {
-                print("用户取消了购买")
-                return
-            }
-            
-            // 购买成功
-            if customerInfo?.entitlements["Premium"]?.isActive == true {
-                print("Premium权益已激活")
-                // 处理成功购买后的UI更新
-            }
-        }
     }
 }
 

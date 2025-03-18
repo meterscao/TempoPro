@@ -32,22 +32,27 @@ struct SettingsView: View {
 
     @Environment(\.metronomeTheme) var theme
     
+    
+    // 获取订阅管理器
+    @EnvironmentObject var subscriptionManager: SubscriptionManager
+    
     // 语言选项
     let languages = ["简体中文", "English", "日本語", "Español", "Français"]
     @State private var displaySubscriptionView = false
     
+    
     var body: some View {
         NavigationView {
             List {
-
+                
                 Button(action: {
                     displaySubscriptionView = true
                 }) {
-                    Text("订阅")
+                    Text(subscriptionManager.isProUser ? "已订阅" : "订阅")
                         .foregroundColor(theme.primaryColor)
                 }
                 .listRowBackground(theme.primaryColor.opacity(0.1))
-
+                
                 
                 // 主题设置
                 Section(header: Text("主题").foregroundColor(theme.primaryColor)) {
@@ -115,8 +120,10 @@ struct SettingsView: View {
         .preferredColorScheme(.dark)
 
         .sheet(isPresented: self.$displaySubscriptionView) {
-                SubscriptionView()
-            }
+            SubscriptionView()
+        }
+        
+       
     }
 }
 

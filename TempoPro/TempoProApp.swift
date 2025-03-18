@@ -22,8 +22,13 @@ struct TempoProApp: App {
     // 在TempoProApp结构体中添加
     @StateObject private var practiceManager: CoreDataPracticeManager
     
+    // 引用订阅管理器
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
+    
     // 应用生命周期事件观察
     @Environment(\.scenePhase) private var scenePhase
+    
+    
     
     init() {
         // 应用启动时就禁用屏幕熄屏
@@ -40,15 +45,10 @@ struct TempoProApp: App {
         self._practiceManager = StateObject(wrappedValue: practiceManager)
         // practiceManager.generateRandomHistoricalData()
 
-        initRevenueCat()
-
         hideNavigationBarBottomBorder()
     }
     
-    func initRevenueCat() {
-        Purchases.logLevel = .debug
-        Purchases.configure(withAPIKey: "appl_dAQzpTOdlfPEjSFkQNwqPYxfnvj")
-    }
+    
 
     func hideNavigationBarBottomBorder() {
         let appearance = UINavigationBarAppearance()
@@ -68,6 +68,7 @@ struct TempoProApp: App {
                 .environmentObject(themeManager)
                 .environmentObject(coreDataPlaylistManager) // 使用CoreDataPlaylistManager
                 .environmentObject(practiceManager) // 添加PracticeManager
+                .environmentObject(subscriptionManager) // 将订阅管理器作为环境对象提供给所有视图
                 .environment(\.metronomeTheme, themeManager.currentTheme)
                 .environment(\.managedObjectContext, persistenceController.viewContext)
                 .onChange(of: themeManager.currentThemeName) { _ in

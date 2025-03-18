@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A011FF42D89CEDC00F2853F /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A011FF32D89CEDC00F2853F /* SubscriptionManager.swift */; };
 		3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C889F2D6F728A004CFD88 /* TempoProApp.swift */; };
 		3A9C88A22D6F728A004CFD88 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C88A12D6F728A004CFD88 /* ContentView.swift */; };
 		3A9C88A42D6F728B004CFD88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A9C88A32D6F728B004CFD88 /* Assets.xcassets */; };
@@ -97,6 +98,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3A011FF32D89CEDC00F2853F /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		3A9C889C2D6F728A004CFD88 /* Tempo Pro, Metronome Beats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tempo Pro, Metronome Beats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9C889F2D6F728A004CFD88 /* TempoProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempoProApp.swift; sourceTree = "<group>"; };
 		3A9C88A12D6F728A004CFD88 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 		F7FF3F182D7074CA00390C16 /* State */ = {
 			isa = PBXGroup;
 			children = (
+				3A011FF32D89CEDC00F2853F /* SubscriptionManager.swift */,
 				F7FF3F172D7074CA00390C16 /* MetronomeState.swift */,
 			);
 			path = State;
@@ -639,6 +642,7 @@
 				C7727DF12D829E7C00D1DC8E /* SetTimerView.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */,
+				3A011FF42D89CEDC00F2853F /* SubscriptionManager.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
 				C7DB2F532D85939B0063508C /* SettingsAdvanceView.swift in Sources */,
 				F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */,
