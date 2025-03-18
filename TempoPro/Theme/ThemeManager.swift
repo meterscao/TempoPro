@@ -19,44 +19,83 @@ class ThemeManager: ObservableObject {
         }
     }
     
-    // 所有可用主题
-    private var themes: [String: MetronomeTheme] = [
+    // 定义一个有序的主题名称数组
+    private let themeNames: [String] = [
         // 现有主题
-        "green": .defaultTheme,
-        "purple": .purpleTheme,
-        "skyBlue": .skyBlueTheme,
-        "coral": .coralTheme,
-        "amber": .amberTheme,
-        "lavender": .lavenderTheme,
-        "teal": .tealTheme,
-        "roseGold": .roseGoldTheme,
-        "desert": .desertTheme,
+        "green",
+        "purple",
+        "skyBlue",
+        "coral",
+        "amber",
+        "lavender",
+        "teal",
+        "roseGold",
+        "desert",
         
-        // 新的复古科技风格主题
-        "retroTerminal": .retroTerminalTheme,
-        "cyberpunk": .cyberpunkTheme,
-        "techBlue": .techBlueTheme,
-        "amberRetro": .amberRetroTheme,
-        "vintageViolet": .vintageVioletTheme,
-        "neonFuture": .neonFutureTheme,
-        "rustTech": .rustTechTheme,
-        "militaryTech": .militaryTechTheme,
-        "circuitBoard": .circuitBoardTheme,
-        "deepSpace": .deepSpaceTheme,
-        "silver": .silverTheme,
-        "deepGray": .deepGrayTheme
+        // 复古科技风格主题
+        "retroTerminal",
+        "cyberpunk",
+        "techBlue",
+        "amberRetro",
+        "vintageViolet",
+        "neonFuture",
+        "rustTech",
+        "militaryTech",
+        "circuitBoard",
+        "deepSpace",
+        "silver",
+        "deepGray"
     ]
     
-    // 可供选择的主题名称
+    // 所有可用主题
+    private var themes: [String: MetronomeTheme] = [:]
+    
+    // 可供选择的主题名称（有序）
     var availableThemes: [String] {
-        return Array(themes.keys)
+        return themeNames
     }
     
     init() {
+        // 先设置一个默认主题，确保所有属性都被初始化
+        self.currentTheme = .defaultTheme
+        
+        // 初始化主题字典
+        setupThemes()
+        
         // 读取保存的主题
         let savedThemeName = UserDefaults.standard.string(forKey: "selectedTheme") ?? "green"
         self.currentThemeName = savedThemeName
-        self.currentTheme = themes[savedThemeName] ?? .defaultTheme
+        if let theme = themes[savedThemeName] {
+            self.currentTheme = theme
+        }
+    }
+    
+    // 设置所有主题
+    private func setupThemes() {
+        // 现有主题
+        themes["green"] = .defaultTheme
+        themes["purple"] = .purpleTheme
+        themes["skyBlue"] = .skyBlueTheme
+        themes["coral"] = .coralTheme
+        themes["amber"] = .amberTheme
+        themes["lavender"] = .lavenderTheme
+        themes["teal"] = .tealTheme
+        themes["roseGold"] = .roseGoldTheme
+        themes["desert"] = .desertTheme
+        
+        // 新的复古科技风格主题
+        themes["retroTerminal"] = .retroTerminalTheme
+        themes["cyberpunk"] = .cyberpunkTheme
+        themes["techBlue"] = .techBlueTheme
+        themes["amberRetro"] = .amberRetroTheme
+        themes["vintageViolet"] = .vintageVioletTheme
+        themes["neonFuture"] = .neonFutureTheme
+        themes["rustTech"] = .rustTechTheme
+        themes["militaryTech"] = .militaryTechTheme
+        themes["circuitBoard"] = .circuitBoardTheme
+        themes["deepSpace"] = .deepSpaceTheme
+        themes["silver"] = .silverTheme
+        themes["deepGray"] = .deepGrayTheme
     }
     
     // 切换主题
