@@ -6,13 +6,28 @@
 <rect x="34" y="257.333" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
 </g>
 <g clip-path="url(#clip2_477_6016)">
+<g opacity="0.4">
+<rect x="117.75" y="34" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
+</g>
+<g opacity="0.4">
+<rect x="117.75" y="145.667" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
+</g>
 <rect x="117.75" y="257.333" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
 </g>
 <g clip-path="url(#clip3_477_6016)">
+<g opacity="0.4">
+<rect x="201.5" y="34" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
+</g>
 <rect x="201.5" y="145.667" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
 <rect x="201.5" y="257.333" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
 </g>
 <g clip-path="url(#clip4_477_6016)">
+<g opacity="0.4">
+<rect x="285.25" y="34" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
+</g>
+<g opacity="0.4">
+<rect x="285.25" y="145.667" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
+</g>
 <rect x="285.25" y="257.333" width="80.75" height="108.667" rx="2" fill="#F57B52"/>
 </g>
 </g>

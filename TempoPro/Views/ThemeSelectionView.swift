@@ -18,38 +18,34 @@ struct ThemeSelectionView: View {
                         Button(action: {
                             themeManager.switchTheme(to: themeName)
                         }) {
-                            ZStack(alignment:.top) {
-                                Image("icon-app-primary")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .foregroundStyle(themeManager.themeSets(for: themeName).primaryColor)
-                                    .frame(maxWidth: .infinity,maxHeight: .infinity)
-                                
-                                Image("icon-app-black")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .foregroundStyle(themeManager.themeSets(for: themeName).backgroundColor)
-                                    .frame(maxWidth: .infinity,maxHeight: .infinity)
-                                
-                                Image("icon-app-beat-default")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .foregroundStyle(themeManager.themeSets(for: themeName).beatBarColor)
-                                    .frame(maxWidth: .infinity,maxHeight: .infinity)
-                                
-                                Image("icon-app-beat-mute")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .foregroundStyle(themeManager.themeSets(for: themeName).beatBarColor.opacity(0.4))
-                                    .frame(maxWidth: .infinity,maxHeight: .infinity)    
+                            VStack(spacing:5){
+                                ZStack(alignment:.top) {
+                                    Image("icon-app-primary")
+                                        .resizable()
+                                        .renderingMode(.template)
+                                        .foregroundStyle(themeManager.themeSets(for: themeName).primaryColor)
+                                        .frame(maxWidth: .infinity,maxHeight: .infinity)
                                     
-                                
-                                if themeName == themeManager.currentThemeName {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.white)
+                                    Image("icon-app-black")
+                                        .resizable()
+                                        .renderingMode(.template)
+                                        .foregroundStyle(themeManager.themeSets(for: themeName).backgroundColor)
+                                        .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                    
+                                    Image("icon-app-beats")
+                                        .resizable()
+                                        .renderingMode(.template)
+                                        .foregroundStyle(themeManager.themeSets(for: themeName).beatBarColor)
+                                        .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                    
+                                    
                                 }
+                                .frame(width: 64, height: 64)
+                                Circle().fill(themeName == themeManager.currentThemeName ? .green : .clear).frame(width:5,height:5)
                             }
-                            .frame(width: 64, height: 64)
+                            .frame(width: 64, height: 64,alignment: .top)
+                            
+                            
                         }
                         .buttonStyle(.plain)
                     }

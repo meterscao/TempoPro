@@ -19,14 +19,14 @@ struct TimeSignatureView: View {
         NavigationStack {
             List {
                 // 拍号设置
-                Section(header: Text("拍号设置").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("拍号")) {
                     // 使用非交互的 Section 内容包装器，让按钮可以正常工作
                     ZStack {
                         HStack(spacing: 0) {
                             // 每小节拍数
-                            VStack(alignment: .center, spacing: 10) {
-                                Text("每小节拍数")
-                                    .font(.custom("MiSansLatin-Regular", size: 16))
+                            VStack(alignment: .center, spacing: 5) {
+                                Text("拍数")
+                                    .font(.custom("MiSansLatin-Semibold", size: 14))
                                     .foregroundColor(theme.primaryColor)
                                 
                                 HStack(spacing: 20) {
@@ -64,13 +64,13 @@ struct TimeSignatureView: View {
                             
                             Divider()
                                 .background(theme.primaryColor.opacity(0.3))
-                                .frame(height: 40)
+                                .frame(maxHeight:.infinity)
                                 .padding(.horizontal, 8)
                             
                             // 拍号单位
-                            VStack(alignment: .center, spacing: 10) {
-                                Text("拍号单位")
-                                    .font(.custom("MiSansLatin-Regular", size: 16))
+                            VStack(alignment: .center, spacing: 5) {
+                                Text("拍号")
+                                    .font(.custom("MiSansLatin-Semibold", size: 14))
                                     .foregroundColor(theme.primaryColor)
                                 
                                 HStack(spacing: 20) {
@@ -108,12 +108,14 @@ struct TimeSignatureView: View {
                             .frame(maxWidth: .infinity)
                         }
                     }
+                    
                     .frame(maxWidth: .infinity)
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                
+                .listRowBackground(Color("backgroundSecondaryColor"))
                 
                 // 切分音符部分
-                Section(header: Text("切分音符").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("切分音符")) {
                     let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
                     
                     if patterns.isEmpty {
@@ -125,12 +127,12 @@ struct TimeSignatureView: View {
                     } else {
                         VStack(spacing: 0) {
                             LazyVGrid(columns: [
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                            ], spacing: 8) {
+                                GridItem(.flexible(),spacing:2),
+                                GridItem(.flexible(),spacing:2),
+                                GridItem(.flexible(),spacing:2),
+                                GridItem(.flexible(),spacing:2),
+                                GridItem(.flexible(),spacing:2),
+                            ], spacing: 2) {
                                 ForEach(patterns, id: \.name) { pattern in
                                     Button {
                                         metronomeState.updateSubdivisionPattern(pattern)
@@ -141,33 +143,26 @@ struct TimeSignatureView: View {
                                             .scaledToFit()
                                             .padding(6)
                                             .frame(height: 60)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .fill(metronomeState.subdivisionPattern?.name == pattern.name ?
-                                                          theme.primaryColor : theme.primaryColor.opacity(0.1)
-                                                         )
-                                            )
-                                            
                                             .foregroundStyle(metronomeState.subdivisionPattern?.name == pattern.name ?
-                                                             theme.backgroundColor : theme.primaryColor )
-//                                            .overlay(
-//                                                RoundedRectangle(cornerRadius: 8)
-//                                                    .stroke(
-//                                                        metronomeState.subdivisionPattern?.name == pattern.name ?
-//                                                        theme.primaryColor : theme.primaryColor.opacity(0),
-//                                                        lineWidth: 1
-//                                                    )
-//                                            )
+                                                             Color("backgroundSecondaryColor") : theme.primaryColor )
                                     }
+                                    .frame(maxWidth:.infinity)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(metronomeState.subdivisionPattern?.name == pattern.name ?
+                                                  theme.primaryColor : Color("backgroundSecondaryColor")
+                                                 )
+                                    )
                                     .buttonStyle(PlainButtonStyle())
                                 }
                             }
                         }
-                        .padding(.vertical, 10)
+                        .listRowInsets(.init())
                     }
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color.clear)
             }
+            .foregroundColor(Color("textPrimaryColor"))
             .navigationTitle("拍号设置")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -177,7 +172,7 @@ struct TimeSignatureView: View {
                     }) {
                         Image("icon-x")
                             .renderingMode(.template)
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(Color("textPrimaryColor"))
                     }
                     .buttonStyle(.plain)
                     .padding(5)
@@ -185,9 +180,9 @@ struct TimeSignatureView: View {
                 }
             }
             .listStyle(InsetGroupedListStyle())
-            .background(theme.backgroundColor)
+            .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
-            .toolbarBackground(theme.backgroundColor, for: .navigationBar)
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .preferredColorScheme(.dark)
