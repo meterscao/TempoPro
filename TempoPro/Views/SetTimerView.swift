@@ -72,7 +72,7 @@ struct SetTimerView: View {
                 }
             }
             .background(theme.backgroundColor)
-            .toolbarBackground(theme.backgroundColor, for: .navigationBar)
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .preferredColorScheme(.dark)
@@ -81,7 +81,7 @@ struct SetTimerView: View {
     
     // 设置视图
     private var setupView: some View {
-        VStack {
+        VStack(spacing: 15) {
             
                 HStack(spacing: 10) {
                     // 小时
@@ -98,7 +98,7 @@ struct SetTimerView: View {
                         
                         Text("小时")
                             .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(Color("textSecondaryColor"))
                             .offset(x: -5)
                     }
                     
@@ -116,7 +116,7 @@ struct SetTimerView: View {
                         
                         Text("分钟")
                             .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(Color("textSecondaryColor"))
                             .offset(x: -5)
                     }
                     
@@ -134,16 +134,10 @@ struct SetTimerView: View {
                         
                         Text("秒")
                             .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(Color("textSecondaryColor"))
                             .offset(x: -5)
                     }
                 }
-                .padding(.horizontal)
-            .padding(.vertical, 20)
-            .frame(height: 200)
-                
-            
-            
             
             
             
@@ -151,11 +145,8 @@ struct SetTimerView: View {
             Toggle(isOn: $isLoopEnabled) {
                 Text("循环计时")
                     .font(.custom("MiSansLatin-Regular", size: 16))
-                    .foregroundColor(theme.primaryColor)
+                    .foregroundColor(Color("textPrimaryColor"))
             }
-            .toggleStyle(SwitchToggleStyle(tint: theme.primaryColor))
-            .padding(.horizontal, 20)
-            
             
             
             // 开始按钮
@@ -169,13 +160,15 @@ struct SetTimerView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(theme.primaryColor)
                     )
-                    .padding(.horizontal)
+                    
             }
             .padding(.bottom, 40)
             .disabled(totalSeconds == 0)
             .opacity(totalSeconds == 0 ? 0.5 : 1)
         }
-        .background(theme.backgroundColor)
+        .padding(20)
+        .frame(maxWidth:.infinity,maxHeight:.infinity, alignment: .top)
+        .background(Color("backgroundPrimaryColor"))
     }
     
     // 计时视图
