@@ -77,8 +77,39 @@ struct MonthlyHeatmapView: View {
            VStack(spacing: 0){
              // 月份导航栏
             HStack {
+
+                 // 统计信息展示 - 使用预计算的信息
+            VStack(alignment: .leading, spacing: 5) {
+
                 Text("\(currentYear) \(monthNames[currentMonth-1])")
                     .font(.custom("MiSansLatin-Semibold", size: 20))
+
+                if selectedDay != nil {
+                    // 使用预先计算的信息
+                    let info = selectedDayInfo
+                    
+                    HStack(spacing: 20) {
+                        Text(info.dateString)
+                        if info.hasPractice {
+                            Text("共 \(info.sessionCount) 次练习")
+                            Text(info.durationText)
+                        } else {
+                            Text("无练习记录")
+                        }
+                    }.font(.custom("MiSansLatin-Regular", size: 14))
+
+                } else {
+                    // 显示月度统计信息 - 使用预计算的数据
+                    HStack(spacing: 10) {
+                        Text("共 \(monthlyStatsData.days) 天练习")
+                        
+                        Text(practiceManager.formatDuration(minutes: monthlyStatsData.totalMinutes))
+                            
+                            
+                    }.font(.custom("MiSansLatin-Regular", size: 14))
+                }
+            }
+                
                     
                 
                 Spacer()
@@ -88,8 +119,10 @@ struct MonthlyHeatmapView: View {
                         // 切换到上一个月
                         moveMonth(by: -1)
                     }) {
-                        Image(systemName: "chevron.left")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
+                        Image("icon-circle-chevron-left")
+                            .renderingMode(.template)
+                            .foregroundColor(Color("textSecondaryColor"))
+                            
                             
                     }
                     
@@ -97,8 +130,9 @@ struct MonthlyHeatmapView: View {
                         // 切换到下一个月
                         moveMonth(by: 1)
                     }) {
-                        Image(systemName: "chevron.right")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
+                        Image("icon-circle-chevron-right")
+                            .renderingMode(.template)
+                            .foregroundColor(Color("textSecondaryColor"))
                             
                     }
                 }
@@ -106,51 +140,7 @@ struct MonthlyHeatmapView: View {
             
             
             
-            // 统计信息展示 - 使用预计算的信息
-            VStack(alignment: .leading, spacing: 8) {
-                if selectedDay != nil {
-                    // 使用预先计算的信息
-                    let info = selectedDayInfo
-                    
-                    HStack {
-                        Text(info.dateString)
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            
-                        
-                        Spacer()
-                        
-                        if info.hasPractice {
-                            Text("\(info.sessionCount)次练习")
-                                .font(.custom("MiSansLatin-Regular", size: 14))
-                                .padding(.trailing, 8)
-                            
-                            Text(info.durationText)
-                                .font(.custom("MiSansLatin-Regular", size: 14))
-                                
-                        } else {
-                            Text("无练习记录")
-                                .font(.custom("MiSansLatin-Regular", size: 14))
-                        }
-                    }
-                } else {
-                    // 显示月度统计信息 - 使用预计算的数据
-                    HStack {
-                        Text("本月共练习")
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            
-                        
-                        Text("\(monthlyStatsData.days)天")
-                            .font(.custom("MiSansLatin-Semibold", size: 14))
-                            
-                        
-                        Spacer()
-                        
-                        Text(practiceManager.formatDuration(minutes: monthlyStatsData.totalMinutes))
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            
-                    }
-                }
-            }
+           
            }
             
             

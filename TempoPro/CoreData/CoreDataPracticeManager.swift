@@ -447,11 +447,11 @@ class CoreDataPracticeManager: ObservableObject {
     // 格式化时长（分钟转为小时分钟）
     func formatDuration(minutes: Double) -> String {
         if minutes < 60 {
-            return String(format: "%.0f分钟", minutes)
+            return String(format: "%.0f 分钟", minutes)
         } else {
             let hours = Int(minutes) / 60
             let mins = Int(minutes) % 60
-            return "\(hours)小时\(mins)分钟"
+            return "\(hours) 小时 \(mins) 分钟"
         }
     }
 
