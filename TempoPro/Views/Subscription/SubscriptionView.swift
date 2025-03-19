@@ -127,13 +127,26 @@ struct SubscriptionOptionsView: View {
                     .cornerRadius(10)
             }
             .disabled(subscriptionManager.isPurchasing)
-            
-            // 条款说明
-            Text("订阅会在到期前自动续费，可随时在账户设置中取消")
-                .font(.caption)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
+
+            HStack {
+                HStack(spacing: 10) {
+
+                    Button(action: {}){
+                        Text("使用协议")
+                    }
+
+                    Button(action: {}){
+                        Text("隐私政策")
+                    }
+
+                }
+                Spacer()
+                Button(action: {
+                    subscriptionManager.restorePurchase()
+                }) {
+                    Text("恢复购买")
+                }
+            }   
         }
         .padding()
     }

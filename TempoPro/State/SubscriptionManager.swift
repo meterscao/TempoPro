@@ -41,8 +41,8 @@ class SubscriptionManager: NSObject, ObservableObject {
             guard let self = self else { return }
             
             if let customerInfo = customerInfo {
-                // 检查"Pro Access"权限
-                let isActive = customerInfo.entitlements["Pro Access"]?.isActive == true
+                // 检查"Premium Access"权限
+                let isActive = customerInfo.entitlements["Premium Access"]?.isActive == true
                 
                 // 在主线程更新状态
                 DispatchQueue.main.async {
@@ -87,7 +87,7 @@ class SubscriptionManager: NSObject, ObservableObject {
                 }
                 
                 // 购买成功
-                if customerInfo?.entitlements["Pro Access"]?.isActive == true {
+                if customerInfo?.entitlements["Premium Access"]?.isActive == true {
                     self.isProUser = true
                     self.purchaseSuccess = true
                     print("Premium权益已激活")
@@ -95,13 +95,31 @@ class SubscriptionManager: NSObject, ObservableObject {
             }
         }
     }
+
+    func restorePurchase() {
+
+        isPurchasing = true
+        purchaseSuccess = false
+
+        Purchases.shared.restorePurchases { customerInfo, error in
+            self.isPurchasing = false
+            
+            // ... check customerInfo to see if entitlement is now active
+            if customerInfo?.entitlements["Premium Access"]?.isActive == true {
+                self.isProUser = true
+                self.purchaseSuccess = true
+                print("Premium权益已激活")
+            }   
+        }
+    }
+
 }
 
 // 实现PurchasesDelegate
 extension SubscriptionManager: PurchasesDelegate {
     func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo) {
-        // 订阅状态更新时，检查Pro Access权限
-        let isActive = customerInfo.entitlements["Pro Access"]?.isActive == true
+        // 订阅状态更新时，检查Premium Access权限
+        let isActive = customerInfo.entitlements["Premium Access"]?.isActive == true
         
         // 在主线程更新状态
         DispatchQueue.main.async {

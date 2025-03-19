@@ -233,7 +233,7 @@ struct StatsSummaryCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(theme.backgroundColor)
+        .background(Color("backgroundSecondaryColor"))
         .cornerRadius(12)
     }
 }
