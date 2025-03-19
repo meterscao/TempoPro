@@ -82,10 +82,8 @@ struct SetTimerView: View {
     // 设置视图
     private var setupView: some View {
         VStack {
-            // 时间选择器
-            ZStack {
-                
-                HStack(spacing: 0) {
+            
+                HStack(spacing: 10) {
                     // 小时
                     HStack(spacing: 0) {
                         Picker("", selection: $selectedHours) {
@@ -95,7 +93,7 @@ struct SetTimerView: View {
                             }
                         }
                         .pickerStyle(.wheel)
-                        .frame(width: 60)
+                        .frame(width: 80)
                         .clipped()
                         
                         Text("小时")
@@ -113,7 +111,7 @@ struct SetTimerView: View {
                             }
                         }
                         .pickerStyle(.wheel)
-                        .frame(width: 60)
+                        .frame(width: 80)
                         .clipped()
                         
                         Text("分钟")
@@ -131,7 +129,7 @@ struct SetTimerView: View {
                             }
                         }
                         .pickerStyle(.wheel)
-                        .frame(width: 60)
+                        .frame(width: 80)
                         .clipped()
                         
                         Text("秒")
@@ -140,11 +138,12 @@ struct SetTimerView: View {
                             .offset(x: -5)
                     }
                 }
-                .padding(.horizontal, 24)
-            }
-            .padding(.horizontal)
+                .padding(.horizontal)
             .padding(.vertical, 20)
             .frame(height: 200)
+                
+            
+            
             
             
             
@@ -157,7 +156,7 @@ struct SetTimerView: View {
             .toggleStyle(SwitchToggleStyle(tint: theme.primaryColor))
             .padding(.horizontal, 20)
             
-            Spacer()
+            
             
             // 开始按钮
             Button(action: startTimer) {
