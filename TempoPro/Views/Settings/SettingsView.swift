@@ -93,7 +93,7 @@ struct SettingsView: View {
             }
             .foregroundColor(Color("textPrimaryColor"))
             .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
+            
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
@@ -108,21 +108,23 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
             }
-            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            
             .listStyle(InsetGroupedListStyle())
+            .navigationBarTitleDisplayMode(.inline)
             .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             
         }
-        .navigationViewStyle(StackNavigationViewStyle())
-        .accentColor(Color("textPrimaryColor"))
-        .preferredColorScheme(.dark)
+        
+        
 
         .sheet(isPresented: self.$displaySubscriptionView) {
             SubscriptionView()
         }
+        
         
        
     }

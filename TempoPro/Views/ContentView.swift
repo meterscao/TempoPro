@@ -46,6 +46,8 @@ struct ContentView: View {
         .onAppear {
                     // 连接practiceManager到metronomeState
                     metronomeState.practiceManager = practiceManager
+
+                    
                 }
         .onDisappear {
             metronomeState.cleanup()
