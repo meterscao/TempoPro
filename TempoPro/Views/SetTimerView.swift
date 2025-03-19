@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct SetTimerView: View {
-    // 时间选项（分钟）
-    private let timeOptions = [1, 2, 5, 10, 15, 20, 30, 45, 60, 90, 120]
+    // 添加新的时间状态变量
+    @State private var selectedHours = 0
+    @State private var selectedMinutes = 5 // 默认5分钟
+    @State private var selectedSeconds = 0
     
-    // 状态变量
-    @State private var selectedTimeIndex = 2 // 默认选择5分钟
     @State private var isLoopEnabled = false
     @State private var isTimerRunning = false
     @State private var elapsedSeconds = 0
@@ -23,12 +23,8 @@ struct SetTimerView: View {
     @Environment(\.dismiss) var dismiss
     
     // 计算属性
-    private var selectedMinutes: Int {
-        return timeOptions[selectedTimeIndex]
-    }
-    
     private var totalSeconds: Int {
-        return selectedMinutes * 60
+        return (selectedHours * 3600) + (selectedMinutes * 60) + selectedSeconds
     }
     
     private var remainingSeconds: Int {
@@ -36,7 +32,7 @@ struct SetTimerView: View {
     }
     
     private var progress: CGFloat {
-        return CGFloat(elapsedSeconds) / CGFloat(totalSeconds)
+        return totalSeconds > 0 ? CGFloat(elapsedSeconds) / CGFloat(totalSeconds) : 0
     }
     
     // 时间格式化
@@ -85,83 +81,102 @@ struct SetTimerView: View {
     
     // 设置视图
     private var setupView: some View {
-        List {
-            // 时间选择
-            Section(header: Text("选择时长").foregroundColor(theme.primaryColor)) {
-                timeSelectionView
+        VStack {
+            // 时间选择器
+            ZStack {
+                
+                HStack(spacing: 0) {
+                    // 小时
+                    HStack(spacing: 0) {
+                        Picker("", selection: $selectedHours) {
+                            ForEach(0...23, id: \.self) { hour in
+                                Text("\(hour)")
+                                    .tag(hour)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(width: 60)
+                        .clipped()
+                        
+                        Text("小时")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(theme.primaryColor)
+                            .offset(x: -5)
+                    }
+                    
+                    // 分钟
+                    HStack(spacing: 0) {
+                        Picker("", selection: $selectedMinutes) {
+                            ForEach(0...59, id: \.self) { minute in
+                                Text("\(minute)")
+                                    .tag(minute)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(width: 60)
+                        .clipped()
+                        
+                        Text("分钟")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(theme.primaryColor)
+                            .offset(x: -5)
+                    }
+                    
+                    // 秒
+                    HStack(spacing: 0) {
+                        Picker("", selection: $selectedSeconds) {
+                            ForEach(0...59, id: \.self) { second in
+                                Text("\(second)")
+                                    .tag(second)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(width: 60)
+                        .clipped()
+                        
+                        Text("秒")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(theme.primaryColor)
+                            .offset(x: -5)
+                    }
+                }
+                .padding(.horizontal, 24)
             }
-            .listRowBackground(theme.primaryColor.opacity(0.1))
+            .padding(.horizontal)
+            .padding(.vertical, 20)
+            .frame(height: 200)
+            
+            
             
             // 循环选项
-            Section {
-                loopToggleView
+            Toggle(isOn: $isLoopEnabled) {
+                Text("循环计时")
+                    .font(.custom("MiSansLatin-Regular", size: 16))
+                    .foregroundColor(theme.primaryColor)
             }
-            .listRowBackground(theme.primaryColor.opacity(0.1))
+            .toggleStyle(SwitchToggleStyle(tint: theme.primaryColor))
+            .padding(.horizontal, 20)
+            
+            Spacer()
             
             // 开始按钮
-            Section {
-                Button(action: startTimer) {
-                    HStack {
-                        
-                        Text("开始练习")
-                            .font(.custom("MiSansLatin-Semibold", size: 18))
-                            .foregroundColor(.white)
-                            .padding(.vertical, 12)
-                        
-                    }
+            Button(action: startTimer) {
+                Text("开始计时")
+                    .font(.custom("MiSansLatin-Semibold", size: 18))
+                    .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .background(theme.primaryColor)
-                    .cornerRadius(12)
-                }
-                .buttonStyle(PlainButtonStyle())
-                .listRowBackground(Color.clear)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(theme.primaryColor)
+                    )
+                    .padding(.horizontal)
             }
-            .listRowBackground(theme.primaryColor.opacity(0.1))
+            .padding(.bottom, 40)
+            .disabled(totalSeconds == 0)
+            .opacity(totalSeconds == 0 ? 0.5 : 1)
         }
-        .listStyle(InsetGroupedListStyle())
-        .scrollContentBackground(.hidden)
-    }
-    
-    // 时间选择视图
-    private var timeSelectionView: some View {
-        let columns = [
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-            GridItem(.flexible())
-        ]
-        
-        return LazyVGrid(columns: columns, spacing: 12) {
-            ForEach(0..<timeOptions.count, id: \.self) { index in
-                let timeOption = timeOptions[index]
-                
-                Button(action: {
-                    selectedTimeIndex = index
-                }) {
-                    Text("\(timeOption)分钟")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundStyle(selectedTimeIndex == index ?
-                                         theme.backgroundColor : theme.primaryColor )
-                        .frame(height: 40)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(selectedTimeIndex == index ? theme.primaryColor : theme.primaryColor.opacity(0.1))
-                        )
-                }.buttonStyle(.plain)
-            }
-        }
-        .padding(.vertical, 8)
-    }
-    
-    // 循环开关视图
-    private var loopToggleView: some View {
-        Toggle(isOn: $isLoopEnabled) {
-            Text("循环计时")
-                .font(.custom("MiSansLatin-Regular", size: 16))
-                .foregroundColor(theme.primaryColor)
-        }
-        .toggleStyle(SwitchToggleStyle(tint: theme.primaryColor))
+        .background(theme.backgroundColor)
     }
     
     // 计时视图

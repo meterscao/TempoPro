@@ -91,7 +91,7 @@ struct MonthlyHeatmapView: View {
                     HStack(spacing: 20) {
                         Text(info.dateString)
                         if info.hasPractice {
-                            Text("共 \(info.sessionCount) 次练习")
+                            Text("\(info.sessionCount) 次练习")
                             Text(info.durationText)
                         } else {
                             Text("无练习记录")
@@ -101,7 +101,7 @@ struct MonthlyHeatmapView: View {
                 } else {
                     // 显示月度统计信息 - 使用预计算的数据
                     HStack(spacing: 10) {
-                        Text("共 \(monthlyStatsData.days) 天练习")
+                        Text("\(monthlyStatsData.days) 天练习")
                         
                         Text(practiceManager.formatDuration(minutes: monthlyStatsData.totalMinutes))
                             
@@ -119,7 +119,7 @@ struct MonthlyHeatmapView: View {
                         // 切换到上一个月
                         moveMonth(by: -1)
                     }) {
-                        Image("icon-circle-chevron-left")
+                        Image("icon-chevron-left")
                             .renderingMode(.template)
                             .foregroundColor(Color("textSecondaryColor"))
                             
@@ -130,7 +130,7 @@ struct MonthlyHeatmapView: View {
                         // 切换到下一个月
                         moveMonth(by: 1)
                     }) {
-                        Image("icon-circle-chevron-right")
+                        Image("icon-chevron-right")
                             .renderingMode(.template)
                             .foregroundColor(Color("textSecondaryColor"))
                             

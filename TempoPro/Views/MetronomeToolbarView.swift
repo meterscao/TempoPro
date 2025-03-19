@@ -35,6 +35,7 @@ struct MetronomeToolbarView: View {
         ]
     }
     
+    
     var body: some View {
         GeometryReader { geometry in
             // 计算按钮尺寸
@@ -96,6 +97,7 @@ struct MetronomeToolbarView: View {
                 .environmentObject(playlistManager)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
+                
         }
         .sheet(isPresented: $showingStatsView) {
             PracticeStatsView()
@@ -105,6 +107,7 @@ struct MetronomeToolbarView: View {
             SetTimerView()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
+                
         }
     }
     
