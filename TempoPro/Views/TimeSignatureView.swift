@@ -35,7 +35,7 @@ struct TimeSignatureView: View {
                                             metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar - 1)
                                         }
                                     } label: {
-                                        Image("icon-plus")
+                                        Image("icon-minus")
                                             .renderingMode(.template)
                                             .foregroundStyle(Color("textSecondaryColor"))
                                             .frame(width: 44, height: 44) // 增大点击区域

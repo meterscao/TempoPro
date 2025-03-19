@@ -21,12 +21,12 @@ struct BPMKeypadView: View {
                 theme.backgroundColor
         
                 VStack(spacing: gridSpacing) {
-                    Text(inputValue.isEmpty ? "0" : inputValue)
+                    Text(inputValue.isEmpty ? "\(metronomeState.tempo)"  : inputValue)
                         .font(.custom("MiSansLatin-Semibold", size: 36))
                         .frame(maxWidth: .infinity)
                         .frame(height: buttonHeight)
-                        .foregroundColor(theme.backgroundColor)
-                        .background(theme.primaryColor)
+                        .foregroundColor(inputValue.isEmpty ? Color("textSecondaryColor").opacity(0.5)   : Color("textPrimaryColor"))
+                        .background(Color("backgroundSecondaryColor"))
                         .cornerRadius(10)
                     
                     VStack(spacing: gridSpacing) {
@@ -40,8 +40,8 @@ struct BPMKeypadView: View {
                                                 
                                                 .frame(maxWidth: .infinity)
                                                 .frame(height: buttonHeight)
-                                                .foregroundColor(theme.backgroundColor)
-                                                .background(theme.primaryColor)
+                                                .foregroundColor(Color("textPrimaryColor"))
+                                                .background(Color("backgroundSecondaryColor"))
                                                 .cornerRadius(10)
                                         }.onTapGesture {
                                             if inputValue.count < 3 {
@@ -56,8 +56,8 @@ struct BPMKeypadView: View {
                                             
                                             .frame(maxWidth: .infinity)
                                             .frame(height: buttonHeight)
-                                            .foregroundColor(theme.backgroundColor)
-                                            .background(theme.primaryColor)
+                                            .background(Color("textSecondaryColor"))
+                                            .foregroundColor(Color("backgroundPrimaryColor"))
                                             .font(.custom("MiSansLatin-Semibold", size: 18))
                                             .cornerRadius(10)
                                     }.onTapGesture {
@@ -69,8 +69,8 @@ struct BPMKeypadView: View {
                                             
                                             .frame(maxWidth: .infinity)
                                             .frame(height: buttonHeight)
-                                            .foregroundColor(theme.backgroundColor)
-                                            .background(theme.primaryColor)
+                                            .foregroundColor(Color("textPrimaryColor"))
+                                            .background(Color("backgroundSecondaryColor"))
                                             .cornerRadius(10)
                                     }.onTapGesture {
                                         
@@ -86,8 +86,8 @@ struct BPMKeypadView: View {
                                             .frame(maxWidth: .infinity)
                                             .frame(height: buttonHeight)
                                             .font(.custom("MiSansLatin-Semibold", size: 18))
-                                            .background(theme.primaryColor)
-                                            .foregroundColor(theme.backgroundColor)
+                                            .background(Color("textSecondaryColor"))
+                                            .foregroundColor(Color("backgroundPrimaryColor"))
                                             .cornerRadius(10)
                                     }
                                     .onTapGesture{

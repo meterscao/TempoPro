@@ -100,7 +100,7 @@ struct PlaylistRowCard: View {
     
     var body: some View {
             
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 3) {
             Text(playlist.name ?? "未命名曲库")
                 .font(.custom("MiSansLatin-Semibold", size: 17))
                 .foregroundColor(Color("textPrimaryColor"))
