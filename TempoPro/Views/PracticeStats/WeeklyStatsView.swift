@@ -41,7 +41,7 @@ struct WeeklyStatsView: View {
                 HStack {
                 Text(getWeekRangeText())
                     .font(.custom("MiSansLatin-Semibold", size: 20))
-                    .foregroundColor(theme.primaryColor)
+                    
                 
                 Spacer()
                 HStack(spacing: 16) {
@@ -51,7 +51,7 @@ struct WeeklyStatsView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.primaryColor)
+                            
                     }
                     
                     Button(action: {
@@ -60,7 +60,7 @@ struct WeeklyStatsView: View {
                     }) {
                         Image(systemName: "chevron.right")
                             .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.primaryColor)
+                            
                     }
                 }
             }
@@ -76,7 +76,7 @@ struct WeeklyStatsView: View {
                     // 显示日期而非星期几
                     Text(selectedItem.date)
                         .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.primaryColor)
+                        
                     
                     Spacer()
                     
@@ -84,7 +84,6 @@ struct WeeklyStatsView: View {
                     if dataPoint.sessionCount > 0 {
                         Text("\(dataPoint.sessionCount)次练习")
                             .font(.custom("MiSansLatin-Regular", size: 12))
-                            .foregroundColor(theme.primaryColor.opacity(0.8))
                             .padding(.trailing, 8)
                     }
                     
@@ -92,11 +91,10 @@ struct WeeklyStatsView: View {
                     if dataPoint.duration > 0 {
                         Text(practiceManager.formatDuration(minutes: dataPoint.duration))
                             .font(.custom("MiSansLatin-Regular", size: 12))
-                            .foregroundColor(theme.primaryColor)
+                            
                     } else {
                         Text("无练习记录")
                             .font(.custom("MiSansLatin-Regular", size: 12))
-                            .foregroundColor(theme.primaryColor.opacity(0.7))
                     }
                 } else {
                     // 显示周统计信息
@@ -108,7 +106,7 @@ struct WeeklyStatsView: View {
                     // 显示有练习的天数
                     Text("\(practiceDays)天练习")
                         .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.primaryColor.opacity(0.9))
+                        
                     
                     Spacer()
                     
@@ -116,11 +114,10 @@ struct WeeklyStatsView: View {
                     if totalMinutes > 0 {
                         Text(practiceManager.formatDuration(minutes: totalMinutes))
                             .font(.custom("MiSansLatin-Regular", size: 12))
-                            .foregroundColor(theme.primaryColor.opacity(0.9))
                     } else {
                         Text("无练习记录")
                             .font(.custom("MiSansLatin-Regular", size: 12))
-                            .foregroundColor(theme.primaryColor.opacity(0.7))
+                            
                     }
                 }
             }
@@ -130,7 +127,7 @@ struct WeeklyStatsView: View {
                 VStack(spacing: 16) {
                     if weeklyData.isEmpty {
                         Text("本周无练习数据")
-                            .foregroundColor(theme.primaryColor.opacity(0.7))
+                            
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         HStack(alignment: .bottom, spacing: 0) {
@@ -147,11 +144,9 @@ struct WeeklyStatsView: View {
                                 // 根据选中状态和禁用状态设置颜色
                                 let isSelected = selectedWeekdayIndex == index
                                 let isDisabled = dataPoint.disabled
-                                let barColor = isSelected ? theme.primaryColor : (
-                                    dataPoint.duration > 0 ? 
-                                    (isDisabled ? theme.beatBarColor.opacity(0.3) : theme.beatBarColor) : 
-                                    theme.beatBarColor.opacity(0.1)
-                                )
+                                let barColor = 
+                                    dataPoint.duration > 0 ?  theme.primaryColor :  theme.primaryColor.opacity(0.1)
+                                
                                 
                                 VStack(spacing: 8) {
                                     RoundedRectangle(cornerRadius: 8)
@@ -165,8 +160,7 @@ struct WeeklyStatsView: View {
                                     
                                     Text(item.weekday)
                                         .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(isSelected ? theme.primaryColor : 
-                                                        (isDisabled ? theme.beatBarColor.opacity(0.5) : theme.beatBarColor))
+                                        .foregroundColor(isSelected ? theme.primaryColor : Color("textSecondaryColor"))
                                 }
                                 .onTapGesture {
                                     // 仅当不是禁用状态时才可点击

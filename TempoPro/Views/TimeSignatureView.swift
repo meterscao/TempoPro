@@ -19,7 +19,7 @@ struct TimeSignatureView: View {
         NavigationStack {
             List {
                 // 拍号设置
-                Section(header: Text("拍号")) {
+                Section() {
                     // 使用非交互的 Section 内容包装器，让按钮可以正常工作
                     ZStack {
                         HStack(spacing: 0) {
@@ -27,7 +27,6 @@ struct TimeSignatureView: View {
                             VStack(alignment: .center, spacing: 5) {
                                 Text("拍数")
                                     .font(.custom("MiSansLatin-Semibold", size: 14))
-                                    .foregroundColor(theme.primaryColor)
                                 
                                 HStack(spacing: 20) {
                                     // 使用明确的 buttonStyle 和足够大的点击区域
@@ -36,25 +35,24 @@ struct TimeSignatureView: View {
                                             metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar - 1)
                                         }
                                     } label: {
-                                        Image(systemName: "minus.circle.fill")
-                                            .font(.title2)
-                                            .foregroundColor(theme.primaryColor)
+                                        Image("icon-plus")
+                                            .renderingMode(.template)
+                                            .foregroundStyle(Color("textSecondaryColor"))
                                             .frame(width: 44, height: 44) // 增大点击区域
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                     
                                     Text("\(metronomeState.beatsPerBar)")
                                         .font(.custom("MiSansLatin-Semibold", size: 32))
-                                        .foregroundColor(theme.primaryColor)
                                     
                                     Button {
                                         if metronomeState.beatsPerBar < 12 {
                                             metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar + 1)
                                         }
                                     } label: {
-                                        Image(systemName: "plus.circle.fill")
-                                            .font(.title2)
-                                            .foregroundColor(theme.primaryColor)
+                                        Image("icon-plus")
+                                            .renderingMode(.template)
+                                            .foregroundStyle(Color("textSecondaryColor"))
                                             .frame(width: 44, height: 44) // 增大点击区域
                                     }
                                     .buttonStyle(PlainButtonStyle())
@@ -71,7 +69,6 @@ struct TimeSignatureView: View {
                             VStack(alignment: .center, spacing: 5) {
                                 Text("拍号")
                                     .font(.custom("MiSansLatin-Semibold", size: 14))
-                                    .foregroundColor(theme.primaryColor)
                                 
                                 HStack(spacing: 20) {
                                     Button {
@@ -80,16 +77,16 @@ struct TimeSignatureView: View {
                                             metronomeState.updateBeatUnit(availableBeatUnits[index - 1])
                                         }
                                     } label: {
-                                        Image(systemName: "minus.circle.fill")
-                                            .font(.title2)
-                                            .foregroundColor(theme.primaryColor)
+                                        Image("icon-minus")
+                                            .renderingMode(.template)
+                                            .foregroundStyle(Color("textSecondaryColor"))
+                                            
                                             .frame(width: 44, height: 44) // 增大点击区域
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                     
                                     Text("\(metronomeState.beatUnit)")
                                         .font(.custom("MiSansLatin-Semibold", size: 32))
-                                        .foregroundColor(theme.primaryColor)
                                     
                                     Button {
                                         if let index = availableBeatUnits.firstIndex(of: metronomeState.beatUnit),
@@ -97,9 +94,9 @@ struct TimeSignatureView: View {
                                             metronomeState.updateBeatUnit(availableBeatUnits[index + 1])
                                         }
                                     } label: {
-                                        Image(systemName: "plus.circle.fill")
-                                            .font(.title2)
-                                            .foregroundColor(theme.primaryColor)
+                                        Image("icon-plus")
+                                            .renderingMode(.template)
+                                            .foregroundStyle(Color("textSecondaryColor"))
                                             .frame(width: 44, height: 44) // 增大点击区域
                                     }
                                     .buttonStyle(PlainButtonStyle())
@@ -111,11 +108,11 @@ struct TimeSignatureView: View {
                     
                     .frame(maxWidth: .infinity)
                 }
-                
+                .foregroundColor(Color("textPrimaryColor"))
                 .listRowBackground(Color("backgroundSecondaryColor"))
                 
                 // 切分音符部分
-                Section(header: Text("切分音符")) {
+                Section() {
                     let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
                     
                     if patterns.isEmpty {
@@ -144,13 +141,13 @@ struct TimeSignatureView: View {
                                             .padding(6)
                                             .frame(height: 60)
                                             .foregroundStyle(metronomeState.subdivisionPattern?.name == pattern.name ?
-                                                             Color("backgroundSecondaryColor") : theme.primaryColor )
+                                                             Color("backgroundSecondaryColor") : Color("textSecondaryColor") )
                                     }
                                     .frame(maxWidth:.infinity)
                                     .background(
                                         RoundedRectangle(cornerRadius: 8)
                                             .fill(metronomeState.subdivisionPattern?.name == pattern.name ?
-                                                  theme.primaryColor : Color("backgroundSecondaryColor")
+                                                  Color("textPrimaryColor") : Color("backgroundSecondaryColor")
                                                  )
                                     )
                                     .buttonStyle(PlainButtonStyle())
@@ -160,6 +157,7 @@ struct TimeSignatureView: View {
                         .listRowInsets(.init())
                     }
                 }
+                .foregroundColor(Color("textPrimaryColor"))
                 .listRowBackground(Color.clear)
             }
             .foregroundColor(Color("textPrimaryColor"))

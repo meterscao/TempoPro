@@ -29,15 +29,16 @@ struct PlaylistDetailView: View {
                 let songs = playlist.songs?.allObjects as? [Song] ?? []
                 
                     if songs.isEmpty {
-                        VStack(spacing: 20) {
+                        VStack(alignment: .center, spacing: 20) {
                             Image(systemName: "music.note")
                                 .font(.custom("MiSansLatin-Regular", size: 50))
-                                .foregroundColor(theme.primaryColor.opacity(0.7))
+                                .foregroundColor(Color("textSecondaryColor"))
                             
                             Text("暂无歌曲")
                                 .font(.custom("MiSansLatin-Regular", size: 16))
-                                .foregroundColor(theme.primaryColor)
+                                .foregroundColor(Color("textPrimaryColor"))
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(.top, 40)
                     } else {
                         ForEach(songs, id: \.id) { song in
@@ -49,16 +50,16 @@ struct PlaylistDetailView: View {
                             }, onPlay: {
                                 playSong(song)
                             })
-                            .listRowBackground(theme.primaryColor.opacity(0.1))
+                            .listRowBackground(Color("backgroundSecondaryColor"))
                         }
                     }
                 
             }
             .navigationTitle(playlist.name ?? "未命名曲库")
             .navigationBarTitleDisplayMode(.inline)
-            .background(theme.backgroundColor)
+            .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
-            .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .preferredColorScheme(.dark)
@@ -70,25 +71,26 @@ struct PlaylistDetailView: View {
                             isEditMode = false
                             showingSongForm = true
                         }) {
-                            Label("添加歌曲", systemImage: "plus.circle")
+                            Label("添加歌曲",image: "icon-plus")
                         }
                         Button(action: {
                             editPlaylistName = playlist.name ?? ""
                             editPlaylistColor = Color(hex: playlist.color ?? "#0000FF") ?? .blue
                             showingEditPlaylist = true
                         }) {
-                            Label("编辑曲库", systemImage: "pencil")
+                            Label("编辑曲库", image: "icon-pencil")
                         }
                         
                         Button(role: .destructive, action: {
                             playlistManager.deletePlaylist(playlist)
                             dismiss()
                         }) {
-                            Label("删除曲库", systemImage: "trash")
+                            Label("删除曲库", image: "icon-trash-2")
                         }
                     } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .foregroundColor(theme.primaryColor)
+                        Image("icon-ellipsis")
+                            .renderingMode(.template)
+                            .foregroundColor(Color("textPrimaryColor"))
                     }
                 }
             }
@@ -234,14 +236,14 @@ struct SongRowCard: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(song.name ?? "未命名歌曲")
-                    .font(.custom("MiSansLatin-Semibold", size: 18))
-                    .foregroundColor(theme.primaryColor)
+                    .font(.custom("MiSansLatin-Semibold", size: 17))
+                    .foregroundColor(Color("textPrimaryColor"))
                 
                 Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit))")
                     .font(.custom("MiSansLatin-Regular", size: 14))
-                    .foregroundColor(theme.primaryColor.opacity(0.8))
+                    .foregroundColor(Color("textSecondaryColor"))
             }
             
             Spacer()
@@ -250,7 +252,7 @@ struct SongRowCard: View {
             Button(action: onPlay) {
                 Image(systemName: "play.circle.fill")
                     .font(.system(size: 28))
-                    .foregroundColor(theme.primaryColor)
+                    .foregroundColor(Color("textPrimaryColor"))
             }
         }
         .contentShape(Rectangle()) // 确保整个区域可点击

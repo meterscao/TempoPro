@@ -28,7 +28,7 @@ struct PlaylistListView: View {
                             PlaylistRowCard(playlist: playlist)
                         }
                     }
-                    .listRowBackground(theme.primaryColor.opacity(0.1))
+                    .listRowBackground(Color("backgroundSecondaryColor"))
                 }
             }
                 
@@ -58,7 +58,7 @@ struct PlaylistListView: View {
                     }) {
                         Image("icon-x")
                             .renderingMode(.template)
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(Color("textPrimaryColor"))
                     }
                     .buttonStyle(.plain)
                     .padding(5)
@@ -69,20 +69,20 @@ struct PlaylistListView: View {
                         showingAddPlaylist = true
                     }){
                         Text("Add Library")
-                            .foregroundStyle(theme.primaryColor)
+                            .foregroundStyle(Color("textPrimaryColor"))
                     }
 //                    .padding(.horizontal,10)
 //                    .padding(.vertical,5)
-                    .background(theme.primaryColor.opacity(0.1))
+                    .background(Color("backgroundSecondaryColor"))
 //                    .clipShape(RoundedRectangle(cornerRadius: 5))
                 }
             }
             .navigationTitle("Library")
             .navigationBarTitleDisplayMode(.inline)
             .listStyle(InsetGroupedListStyle())
-            .background(theme.backgroundColor)
+            .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
-            .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .preferredColorScheme(.dark)
@@ -102,12 +102,12 @@ struct PlaylistRowCard: View {
             
         VStack(alignment: .leading, spacing: 6) {
             Text(playlist.name ?? "未命名曲库")
-                .font(.custom("MiSansLatin-Semibold", size: 18))
-                .foregroundColor(theme.primaryColor)
+                .font(.custom("MiSansLatin-Semibold", size: 17))
+                .foregroundColor(Color("textPrimaryColor"))
             
             Text("\(playlist.songs?.count ?? 0) 首歌曲")
                 .font(.custom("MiSansLatin-Regular", size: 14))
-                .foregroundColor(theme.primaryColor.opacity(0.8))
+                .foregroundColor(Color("textSecondaryColor"))
         }
         
         

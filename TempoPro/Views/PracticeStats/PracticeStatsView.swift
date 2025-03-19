@@ -108,9 +108,9 @@ struct StatsSummaryView: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            StatsSummaryCard(value: "\(dayStreak)", label: "STREAK DAYS")
-            StatsSummaryCard(value: "\(daysThisMonth)", label: "DAYS THIS MONTH")
-            StatsSummaryCard(value: String(format: "%.1f", totalHours), label: "TOTAL HOURS")
+            StatsSummaryCard(value: "\(dayStreak)", label: "Streak Days")
+            StatsSummaryCard(value: "\(daysThisMonth)", label: "Total Days")
+            StatsSummaryCard(value: String(format: "%.1f", totalHours), label: "Total Hours")
         }
         .onAppear {
             loadSummaryData()
@@ -143,18 +143,18 @@ struct PerformanceInsightsView: View {
         VStack(alignment: .leading, spacing: 18) {
             Text("INSIGHTS")
                 .font(.custom("MiSansLatin-Semibold", size: 20))
-                .foregroundColor(theme.primaryColor)
+                .foregroundColor(Color("textPrimaryColor"))
             
             VStack(spacing: 22) {
                 HStack {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("MOST PRACTICED TEMPO")
                             .font(.custom("MiSansLatin-Regular", size: 12))
-                            .foregroundColor(theme.primaryColor.opacity(0.8))
+                            .foregroundColor(Color("textSecondaryColor"))
                         
                         Text(mostPracticedTempo)
                             .font(.custom("MiSansLatin-Semibold", size: 18))
-                            .foregroundColor(theme.beatBarColor)
+                            .foregroundColor(theme.primaryColor)
                     }
                     
                     Spacer()
@@ -174,11 +174,11 @@ struct PerformanceInsightsView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("LONGEST SESSION")
                             .font(.custom("MiSansLatin-Regular", size: 12))
-                            .foregroundColor(theme.primaryColor.opacity(0.8))
+                            .foregroundColor(Color("textSecondaryColor"))
                         
                         Text(longestSession)
                             .font(.custom("MiSansLatin-Semibold", size: 18))
-                            .foregroundColor(theme.beatBarColor)
+                            .foregroundColor(theme.primaryColor)
                     }
                     
                     Spacer()
@@ -196,7 +196,7 @@ struct PerformanceInsightsView: View {
             }
         }
         .padding(20)
-        .background(theme.backgroundColor)
+        .background(Color("backgroundSecondaryColor"))
         .cornerRadius(16)
         .onAppear {
             loadInsightsData()
@@ -223,12 +223,12 @@ struct StatsSummaryCard: View {
     var body: some View {
         VStack(spacing: 8) {
             Text(value)
-                .font(.custom("MiSansLatin-Semibold", size: 32))
-                .foregroundColor(theme.beatBarColor)
+                .font(.custom("MiSansLatin-Semibold", size: 28))
+                .foregroundColor(theme.primaryColor)
             
             Text(label)
                 .font(.custom("MiSansLatin-Regular", size: 11))
-                .foregroundColor(theme.primaryColor.opacity(0.7))
+                .foregroundColor(Color("textSecondaryColor"))
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)

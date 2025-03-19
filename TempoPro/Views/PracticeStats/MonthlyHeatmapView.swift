@@ -79,7 +79,7 @@ struct MonthlyHeatmapView: View {
             HStack {
                 Text("\(currentYear) \(monthNames[currentMonth-1])")
                     .font(.custom("MiSansLatin-Semibold", size: 20))
-                    .foregroundColor(theme.primaryColor)
+                    
                 
                 Spacer()
                 
@@ -90,7 +90,7 @@ struct MonthlyHeatmapView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.primaryColor)
+                            
                     }
                     
                     Button(action: {
@@ -99,7 +99,7 @@ struct MonthlyHeatmapView: View {
                     }) {
                         Image(systemName: "chevron.right")
                             .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.primaryColor)
+                            
                     }
                 }
             }
@@ -115,23 +115,21 @@ struct MonthlyHeatmapView: View {
                     HStack {
                         Text(info.dateString)
                             .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(theme.primaryColor)
+                            
                         
                         Spacer()
                         
                         if info.hasPractice {
                             Text("\(info.sessionCount)次练习")
                                 .font(.custom("MiSansLatin-Regular", size: 14))
-                                .foregroundColor(theme.primaryColor.opacity(0.8))
                                 .padding(.trailing, 8)
                             
                             Text(info.durationText)
                                 .font(.custom("MiSansLatin-Regular", size: 14))
-                                .foregroundColor(theme.primaryColor)
+                                
                         } else {
                             Text("无练习记录")
                                 .font(.custom("MiSansLatin-Regular", size: 14))
-                                .foregroundColor(theme.primaryColor.opacity(0.7))
                         }
                     }
                 } else {
@@ -139,17 +137,17 @@ struct MonthlyHeatmapView: View {
                     HStack {
                         Text("本月共练习")
                             .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(theme.primaryColor)
+                            
                         
                         Text("\(monthlyStatsData.days)天")
                             .font(.custom("MiSansLatin-Semibold", size: 14))
-                            .foregroundColor(theme.primaryColor)
+                            
                         
                         Spacer()
                         
                         Text(practiceManager.formatDuration(minutes: monthlyStatsData.totalMinutes))
                             .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(theme.primaryColor)
+                            
                     }
                 }
             }
@@ -204,7 +202,7 @@ struct MonthlyHeatmapView: View {
                 ForEach(weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
                         .font(.custom("MiSansLatin-Regular", size: 12))
-                        .foregroundColor(theme.beatBarColor)
+                        .foregroundColor(Color("textSecondaryColor"))
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -278,19 +276,19 @@ struct MonthlyHeatmapView: View {
         
         // 无数据使用非常浅的颜色
         if minutes == 0 {
-            return theme.beatBarColor.opacity(0.1)
+            return theme.primaryColor.opacity(0.1)
         }
         
         // 根据练习时长设置不同深度的颜色
         if minutes < 15 {
-            return theme.beatBarColor.opacity(0.3)
+            return theme.primaryColor.opacity(0.3)
         } else if minutes < 30 {
-            return theme.beatBarColor.opacity(0.6)
+            return theme.primaryColor.opacity(0.6)
         } else if minutes < 60 {
-            return theme.beatBarColor.opacity(0.8)
+            return theme.primaryColor.opacity(0.8)
         
         } else {
-            return theme.beatBarColor // 超过2小时使用完全不透明的颜色
+            return theme.primaryColor // 超过2小时使用完全不透明的颜色
         }
     }
 }

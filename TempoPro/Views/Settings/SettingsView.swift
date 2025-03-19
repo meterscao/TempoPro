@@ -49,48 +49,49 @@ struct SettingsView: View {
                     displaySubscriptionView = true
                 }) {
                     Text(subscriptionManager.isProUser ? "已订阅" : "订阅")
-                        .foregroundColor(theme.primaryColor)
+                        
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color("backgroundSecondaryColor"))
                 
                 
                 // 主题设置
-                Section(header: Text("主题").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("主题")) {
                     ThemeSelectionView()
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
                 
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color("backgroundSecondaryColor"))
 
-                Section(header: Text("iCloud").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("iCloud")) {
                     Toggle("同步曲库与练习记录", isOn: $icloudSyncEnabled)
-                        .foregroundColor(theme.primaryColor)
+                        
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color("backgroundSecondaryColor"))
                 
                 // 音效设置
-                Section(header: Text("音效").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("音效")) {
                     NavigationLink(destination: SoundEffectsView()) {
                         Text("节奏音效")
-                            .foregroundColor(theme.primaryColor)
+                            
                     }
                     
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color("backgroundSecondaryColor"))
                 
                 
                 
                 // 其他设置
-                Section(header: Text("其他").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("其他")) {
                     NavigationLink(destination: SettingsAdvanceView()) {
                         HStack {
                             Text("高级设置")
-                                .foregroundColor(theme.primaryColor)
+                                
                         }
                     }
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color("backgroundSecondaryColor"))
             }
+            .foregroundColor(Color("textPrimaryColor"))
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -100,23 +101,23 @@ struct SettingsView: View {
                     }) {
                         Image("icon-x")
                             .renderingMode(.template)
-                            .foregroundColor(theme.primaryColor)
+                            
                     }
                     .buttonStyle(.plain)
                     .padding(5)
                     .contentShape(Rectangle())
                 }
             }
-            .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .listStyle(InsetGroupedListStyle())
-            .background(theme.backgroundColor)
+            .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
-            .foregroundColor(theme.primaryColor)
+            
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .accentColor(theme.primaryColor)
+        .accentColor(Color("textPrimaryColor"))
         .preferredColorScheme(.dark)
 
         .sheet(isPresented: self.$displaySubscriptionView) {

@@ -37,8 +37,6 @@ struct ThemeSelectionView: View {
                                         .renderingMode(.template)
                                         .foregroundStyle(themeManager.themeSets(for: themeName).beatBarColor)
                                         .frame(maxWidth: .infinity,maxHeight: .infinity)
-                                    
-                                    
                                 }
                                 .frame(width: 64, height: 64)
                                 Circle().fill(themeName == themeManager.currentThemeName ? .green : .clear).frame(width:5,height:5)
