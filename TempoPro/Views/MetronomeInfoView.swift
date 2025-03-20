@@ -266,7 +266,6 @@ struct MetronomeInfoView: View {
                     endPoint: .bottom
                 ).ignoresSafeArea()
             )
-            .foregroundColor(theme.textColor)
             .clipShape(
                 .rect(
                     topLeadingRadius: max(15, DisplayCornerRadiusHelper.shared.getCornerRadius() - 7),
