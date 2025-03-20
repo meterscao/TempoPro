@@ -48,7 +48,7 @@ struct SettingsView: View {
                 Button(action: {
                     displaySubscriptionView = true
                 }) {
-                    Text(subscriptionManager.isProUser ? "已订阅" : "订阅")
+                    Text(subscriptionManager.isProUser ? "You are a Premium User" : "Upgrade to Premium")
                         
                 }
                 .listRowBackground(Color("backgroundSecondaryColor"))

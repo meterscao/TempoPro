@@ -25,8 +25,9 @@ struct TimeSignatureView: View {
                         HStack(spacing: 0) {
                             // 每小节拍数
                             VStack(alignment: .center, spacing: 5) {
-                                Text("拍数")
+                                Text("Beats")
                                     .font(.custom("MiSansLatin-Semibold", size: 14))
+                                    .foregroundColor(Color("textSecondaryColor"))
                                 
                                 HStack(spacing: 20) {
                                     // 使用明确的 buttonStyle 和足够大的点击区域
@@ -67,8 +68,9 @@ struct TimeSignatureView: View {
                             
                             // 拍号单位
                             VStack(alignment: .center, spacing: 5) {
-                                Text("拍号")
+                                Text("Time Signature")
                                     .font(.custom("MiSansLatin-Semibold", size: 14))
+                                    .foregroundColor(Color("textSecondaryColor"))
                                 
                                 HStack(spacing: 20) {
                                     Button {
@@ -161,7 +163,7 @@ struct TimeSignatureView: View {
                 .listRowBackground(Color.clear)
             }
             .foregroundColor(Color("textPrimaryColor"))
-            .navigationTitle("拍号设置")
+            .navigationTitle("Time Signature")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
