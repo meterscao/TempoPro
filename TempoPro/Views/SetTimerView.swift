@@ -17,6 +17,7 @@ struct SetTimerView: View {
     @State private var isTimerRunning = false
     @State private var elapsedSeconds = 0
     @State private var timer: Timer? = nil
+    @State private var isTimerCompleted = false // 跟踪计时器是否已完成
     
     // 环境变量
     @Environment(\.metronomeTheme) var theme
@@ -100,7 +101,7 @@ struct SetTimerView: View {
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
-                    Text("小时")
+                    Text("Hours")
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(Color("textSecondaryColor"))
                         .offset(x: -5)
@@ -119,7 +120,7 @@ struct SetTimerView: View {
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
-                    Text("分钟")
+                    Text("Minutes")
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(Color("textSecondaryColor"))
                         .offset(x: -5)
@@ -138,7 +139,7 @@ struct SetTimerView: View {
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
-                    Text("秒")
+                    Text("Seconds")
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(Color("textSecondaryColor"))
                         .offset(x: -5)
@@ -150,7 +151,7 @@ struct SetTimerView: View {
             
             // 循环选项
             Toggle(isOn: $isLoopEnabled) {
-                Text("循环计时")
+                Text("Loop")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textPrimaryColor"))
             }
@@ -163,18 +164,19 @@ struct SetTimerView: View {
                 HStack(spacing: 5) {
                     Image("icon-play")
                         .renderingMode(.template)
-                        .foregroundColor(.white)    
-                    Text("开始计时")
-                    .font(.custom("MiSansLatin-Semibold", size: 18))
+                        .resizable()
+                        .frame(width: 20, height: 20)   
+                    Text("Start")
+                    .font(.custom("MiSansLatin-Semibold", size: 17))
                 }
-                    .foregroundColor(.white)
-                    .frame(height:60)
-                    .frame(maxWidth: .infinity)
-                    
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(theme.primaryColor)
-                    )
+                .foregroundColor(.white)
+                .frame(height:52)
+                .frame(maxWidth: .infinity)
+                
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(theme.primaryColor)
+                )
                     
             }
             .disabled(totalSeconds == 0)
@@ -207,7 +209,7 @@ struct SetTimerView: View {
                             .font(.custom("MiSansLatin-Semibold", size: 40))
                             .foregroundColor(Color("textPrimaryColor"))
                         
-                        Text("总时长 \(formatTime(totalSeconds))")
+                        Text("Total Time \(formatTime(totalSeconds))")
                             .font(.custom("MiSansLatin-Regular", size: 16))
                             .foregroundColor(Color("textSecondaryColor"))
                     }
@@ -230,36 +232,59 @@ struct SetTimerView: View {
             Spacer()
             
             if isLoopEnabled {
-                Text("循环模式已开启")
+                Text("Loop Mode")
                     .font(.custom("MiSansLatin-Regular", size: 14))
                     .foregroundColor(Color("textSecondaryColor"))
             }
             // 控制按钮
             HStack(spacing: 15) {
-                // 暂停/继续按钮
-                Button(action: togglePause) {
-                    Image(timer == nil ? "icon-play" : "icon-pause")
-                        .renderingMode(.template)
-                        .foregroundColor(.white)
-                        .frame( height: 60)
-                        .frame(maxWidth:.infinity)
-                        .background(theme.primaryColor)
+                // 暂停/继续/重新开始按钮
+                Button(action: {
+                    if isTimerCompleted {
+                        // 重新开始
+                        elapsedSeconds = 0
+                        isTimerCompleted = false
+                        startTimerTick()
+                        metronomeState.play()
+                    } else {
+                        // 暂停或继续
+                        togglePause()
+                    }
+                }) {
+                    HStack(spacing: 5) {
+                        Image(isTimerCompleted ? "icon-replay" : (timer == nil ? "icon-play" : "icon-pause"))
+                            .renderingMode(.template)   
+                            .resizable()
+                            .frame(width: 20, height: 20)   
+                            
+                        Text(isTimerCompleted ? "Replay" : (timer == nil ? "Continue" : "Pause"))
+                            .font(.custom("MiSansLatin-Semibold", size: 17))
+                    }
+                    .foregroundColor(.white)
+                    .frame(height: 52)
+                    .frame(maxWidth:.infinity)
+                    .background(theme.primaryColor)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                 .contentShape(Rectangle())
                 
                 // 停止按钮
                 Button(action: stopTimer) {
-                    Image("icon-stop")
-                        .renderingMode(.template)
+                        HStack(spacing: 5) {
+                            Image("icon-stop")
+                                .renderingMode(.template)
+                                .resizable()
+                                .frame(width: 20, height: 20)   
+                                
+                            Text("Stop")
+                                .font(.custom("MiSansLatin-Semibold", size: 17))
+                        }   
                         .foregroundColor(.white)
                         .frame(maxWidth:.infinity)
-                        .frame(height: 60)
+                        .frame(height: 52)
                         .background(Color.red.opacity(0.8))
                 }
-                
                 .contentShape(Rectangle())
-                
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                 
             }
@@ -276,12 +301,16 @@ struct SetTimerView: View {
     private func startTimer() {
         isTimerRunning = true
         elapsedSeconds = 0
+        _ = remainingSeconds
+
         startTimerTick()
         metronomeState.play()
     }
     
     // 开始计时器滴答
     private func startTimerTick() {
+        isTimerCompleted = false // 重置完成状态
+        
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if elapsedSeconds < totalSeconds {
                 elapsedSeconds += 1
@@ -289,10 +318,12 @@ struct SetTimerView: View {
                 // 计时结束
                 timer?.invalidate()
                 timer = nil
+                isTimerCompleted = true // 设置为已完成
                 
                 // 如果启用了循环，重新开始计时
                 if isLoopEnabled {
                     elapsedSeconds = 0
+                    isTimerCompleted = false // 重置完成状态
                     startTimerTick()
                 }
                 else {
@@ -321,6 +352,7 @@ struct SetTimerView: View {
         timer = nil
         isTimerRunning = false
         elapsedSeconds = 0
+        isTimerCompleted = false // 重置完成状态
     }
 }
 
