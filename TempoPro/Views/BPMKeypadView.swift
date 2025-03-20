@@ -17,8 +17,8 @@ struct BPMKeypadView: View {
     private let gridSpacing: CGFloat = 10    
     
     var body: some View {
-            ZStack {
-                theme.backgroundColor
+            ScrollView {
+                
         
                 VStack(spacing: gridSpacing) {
                     Text(inputValue.isEmpty ? "\(metronomeState.tempo)"  : inputValue)
@@ -103,10 +103,11 @@ struct BPMKeypadView: View {
                         }
                     }
                 }
-            .ignoresSafeArea()
-            .font(.custom("MiSansLatin-Regular", size: 22))
-            .padding(20)
+                .background(Color("backgroundPrimaryColor"))
+                .font(.custom("MiSansLatin-Regular", size: 22))
+                .padding(20)
             }
+            .background(Color("backgroundPrimaryColor"))
             
     }
 }

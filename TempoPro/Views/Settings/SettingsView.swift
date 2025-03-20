@@ -55,23 +55,23 @@ struct SettingsView: View {
                 
                 
                 // 主题设置
-                Section(header: Text("主题")) {
+                Section(header: Text("Theme").foregroundColor(Color("textSecondaryColor"))) {
                     ThemeSelectionView()
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
                 
                 .listRowBackground(Color("backgroundSecondaryColor"))
 
-                Section(header: Text("iCloud")) {
-                    Toggle("同步曲库与练习记录", isOn: $icloudSyncEnabled)
+                Section(header: Text("iCloud").foregroundColor(Color("textSecondaryColor"))) {
+                    Toggle("Sync Library and Practice Records", isOn: $icloudSyncEnabled)
                         
                 }
                 .listRowBackground(Color("backgroundSecondaryColor"))
                 
                 // 音效设置
-                Section(header: Text("音效")) {
+                Section(header: Text("Sound Effects").foregroundColor(Color("textSecondaryColor"))) {
                     NavigationLink(destination: SoundEffectsView()) {
-                        Text("节奏音效")
+                        Text("Rhythm Sound")
                             
                     }
                     
@@ -81,10 +81,10 @@ struct SettingsView: View {
                 
                 
                 // 其他设置
-                Section(header: Text("其他")) {
+                Section(header: Text("Other").foregroundColor(Color("textSecondaryColor"))) {
                     NavigationLink(destination: SettingsAdvanceView()) {
                         HStack {
-                            Text("高级设置")
+                            Text("Advanced Settings")
                                 
                         }
                     }

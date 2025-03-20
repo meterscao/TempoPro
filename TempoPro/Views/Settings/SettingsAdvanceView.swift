@@ -34,51 +34,51 @@ struct SettingsAdvanceView: View {
                 
                 
                 // 音效设置
-                Section(header: Text("音效").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("音效").foregroundColor(Color("textSecondaryColor"))) {
                     
                     Toggle("节拍闪光灯", isOn: $flashlightEnabled)
-                        .foregroundColor(theme.primaryColor)
+                        
                     Toggle("节拍屏幕闪光", isOn: $screenFlashEnabled)
-                        .foregroundColor(theme.primaryColor)
+                        
                     Toggle("节拍震动", isOn: $rhythmVibrationEnabled)
-                        .foregroundColor(theme.primaryColor)
+                        
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color("backgroundSecondaryColor"))
                 
                 // 视觉设置
-                Section(header: Text("反馈").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("反馈").foregroundColor(Color("textSecondaryColor"))) {
                     Toggle("操作音效", isOn: $operationSoundEnabled)
-                        .foregroundColor(theme.primaryColor)
+                        
                     Toggle("操作震动", isOn: $operationVibrationEnabled)
-                        .foregroundColor(theme.primaryColor)
+                        
                     Toggle("滚轮刻度", isOn: $wheelScaleEnabled)
-                        .foregroundColor(theme.primaryColor)
+                        
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color("backgroundSecondaryColor"))
                 
                 // 其他设置
-                Section(header: Text("其他").foregroundColor(theme.primaryColor)) {
+                Section(header: Text("其他").foregroundColor(Color("textSecondaryColor"))) {
                     NavigationLink(destination: LanguageSettingsView(selectedLanguage: $selectedLanguage, languages: languages)) {
                         HStack {
                             Text("语言设置")
-                                .foregroundColor(theme.primaryColor)
+                                .foregroundColor(Color("textPrimaryColor"))
                             Spacer()
                             Text(languages[selectedLanguage])
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color("textSecondaryColor"))
                         }
                     }
                 }
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .listRowBackground(Color("backgroundSecondaryColor"))
             }
+            .foregroundColor(Color("textPrimaryColor"))
             .navigationTitle("Advanced Settings")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .listStyle(InsetGroupedListStyle())
-            .background(theme.backgroundColor)
+            .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
-            .foregroundColor(theme.primaryColor)
     }
 }
 
