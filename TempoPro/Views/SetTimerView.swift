@@ -101,7 +101,7 @@ struct SetTimerView: View {
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
-                    Text("Hours")
+                    Text("hours")
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(Color("textSecondaryColor"))
                         .offset(x: -5)
@@ -120,7 +120,7 @@ struct SetTimerView: View {
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
-                    Text("Minutes")
+                    Text("min")
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(Color("textSecondaryColor"))
                         .offset(x: -5)
@@ -139,7 +139,7 @@ struct SetTimerView: View {
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
-                    Text("Seconds")
+                    Text("sec")
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(Color("textSecondaryColor"))
                         .offset(x: -5)
