@@ -81,7 +81,7 @@ struct SetTimerView: View {
     
     // 设置视图
     private var setupView: some View {
-        VStack(spacing: 15) {
+        VStack(spacing: 20) {
             
                 HStack(spacing: 10) {
                     // 小时
@@ -94,6 +94,7 @@ struct SetTimerView: View {
                         }
                         .pickerStyle(.wheel)
                         .frame(width: 80)
+                        .frame(maxHeight:.infinity)
                         .clipped()
                         
                         Text("小时")
@@ -112,6 +113,7 @@ struct SetTimerView: View {
                         }
                         .pickerStyle(.wheel)
                         .frame(width: 80)
+                        .frame(maxHeight:.infinity)
                         .clipped()
                         
                         Text("分钟")
@@ -130,6 +132,7 @@ struct SetTimerView: View {
                         }
                         .pickerStyle(.wheel)
                         .frame(width: 80)
+                        .frame(maxHeight:.infinity)
                         .clipped()
                         
                         Text("秒")
@@ -140,6 +143,7 @@ struct SetTimerView: View {
                 }
             
             
+            Spacer()
             
             // 循环选项
             Toggle(isOn: $isLoopEnabled) {
@@ -149,20 +153,22 @@ struct SetTimerView: View {
             }
             
             
+            
+            
             // 开始按钮
             Button(action: startTimer) {
                 Text("开始计时")
                     .font(.custom("MiSansLatin-Semibold", size: 18))
                     .foregroundColor(.white)
+                    .frame(height:60)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
+                    
                     .background(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(theme.primaryColor)
                     )
                     
             }
-            .padding(.bottom, 40)
             .disabled(totalSeconds == 0)
             .opacity(totalSeconds == 0 ? 0.5 : 1)
         }
@@ -173,68 +179,81 @@ struct SetTimerView: View {
     
     // 计时视图
     private var timerView: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: 20) {
             // 进度环
             ZStack {
                 // 背景圆环
-                Circle()
-                    .stroke(lineWidth: 20)
-                    .opacity(0.1)
-                    .foregroundColor(theme.primaryColor)
+                RoundedRectangle(cornerRadius: 40)
+                    .stroke(lineWidth: 15)
+                    .foregroundColor(theme.primaryColor.opacity(0.3))
+                    .frame(maxWidth:.infinity,maxHeight: .infinity)
                 
                 // 进度圆环
-                Circle()
+                RoundedRectangle(cornerRadius: 40)
                     .trim(from: 0.0, to: progress)
-                    .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round, lineJoin: .round))
+                    .stroke(style: StrokeStyle(lineWidth: 15, lineCap: .round, lineJoin: .round))
                     .foregroundColor(theme.primaryColor)
-                    .rotationEffect(Angle(degrees: 270.0))
+                    .rotationEffect(Angle(degrees: 0.0))
                     .animation(.linear(duration: 1.0), value: progress)
+                    .frame(maxWidth:.infinity,maxHeight: .infinity)
                 
                 // 时间文本
-                VStack(spacing: 8) {
+                VStack() {
                     Text(formatTime(remainingSeconds))
                         .font(.custom("MiSansLatin-Semibold", size: 40))
-                        .foregroundColor(theme.primaryColor)
+                        .foregroundColor(Color("textPrimaryColor"))
                     
                     Text("总时长 \(formatTime(totalSeconds))")
                         .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(theme.primaryColor.opacity(0.7))
+                        .foregroundColor(Color("textSecondaryColor"))
                 }
             }
-            .frame(width: 250, height: 250)
-            .padding()
+            .frame(maxWidth:.infinity,maxHeight: .infinity)
             
+            
+            Spacer()
+            
+            if isLoopEnabled {
+                Text("循环模式已开启")
+                    .font(.custom("MiSansLatin-Regular", size: 14))
+                    .foregroundColor(Color("textSecondaryColor"))
+            }
             // 控制按钮
-            HStack(spacing: 30) {
+            HStack(spacing: 15) {
                 // 暂停/继续按钮
                 Button(action: togglePause) {
                     Image(systemName: timer == nil ? "play.fill" : "pause.fill")
                         .font(.system(size: 24))
                         .foregroundColor(.white)
-                        .frame(width: 64, height: 64)
+                        .frame( height: 60)
+                        .frame(maxWidth:.infinity)
                         .background(theme.primaryColor)
-                        .clipShape(Circle())
                 }
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .contentShape(Rectangle())
                 
                 // 停止按钮
                 Button(action: stopTimer) {
                     Image(systemName: "stop.fill")
                         .font(.system(size: 24))
                         .foregroundColor(.white)
-                        .frame(width: 64, height: 64)
+                        .frame(maxWidth:.infinity)
+                        .frame(height: 60)
                         .background(Color.red.opacity(0.8))
-                        .clipShape(Circle())
                 }
+                
+                .contentShape(Rectangle())
+                
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                
             }
             
-            if isLoopEnabled {
-                Text("循环模式已开启")
-                    .font(.custom("MiSansLatin-Regular", size: 14))
-                    .foregroundColor(theme.primaryColor.opacity(0.6))
-                    .padding(.top, 20)
-            }
+            
         }
-        .padding()
+        .padding(20)
+        .frame(maxWidth:.infinity,maxHeight: .infinity)
+        .background(Color("backgroundPrimaryColor"))
+        
     }
     
     // 开始计时器
