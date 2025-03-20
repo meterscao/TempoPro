@@ -98,7 +98,7 @@ struct MetronomeControlView: View {
                     )
                     .overlay(
                         Circle()
-                            .stroke(Color.black, lineWidth: 2)
+                            .stroke(theme.backgroundColor, lineWidth: 2)
                             .frame(width: playButtonSize-2, height: playButtonSize-2)
                     )
                     .frame(width: playButtonSize, height: playButtonSize)
@@ -109,7 +109,7 @@ struct MetronomeControlView: View {
                             Circle().fill(theme.primaryColor)
                             
                             // 点击效果半透明遮罩
-                            Circle().fill(isPlayButtonPressed ? Color.black.opacity(0.1) : Color.clear)
+                            Circle().fill(isPlayButtonPressed ? theme.backgroundColor.opacity(0.1) : Color.clear)
                             
                             // 噪点图案
                             Image("bg-noise")

@@ -124,6 +124,7 @@ struct MetronomeToolbarView: View {
         
         @State private var isPressed = false
         @Environment(\.scenePhase) private var scenePhase
+        @Environment(\.metronomeTheme) var theme
         var body: some View {
             VStack {
                 Image(image)
@@ -131,11 +132,11 @@ struct MetronomeToolbarView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 24, height: 24)
-                    .foregroundColor(.black)
+                    .foregroundColor(theme.backgroundColor)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
-            .background(isPressed ? Color.black.opacity(0.1) : Color.clear)
+            .background(isPressed ? theme.backgroundColor.opacity(0.1) : Color.clear)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
