@@ -21,6 +21,7 @@ struct SetTimerView: View {
     // 环境变量
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var metronomeState: MetronomeState
     
     // 计算属性
     private var totalSeconds: Int {
@@ -32,7 +33,7 @@ struct SetTimerView: View {
     }
     
     private var progress: CGFloat {
-        return totalSeconds > 0 ? CGFloat(elapsedSeconds) / CGFloat(totalSeconds) : 0
+        return totalSeconds > 0 ? CGFloat(elapsedSeconds) / CGFloat(totalSeconds) : 0.01
     }
     
     // 时间格式化
@@ -62,7 +63,7 @@ struct SetTimerView: View {
                     }) {
                         Image("icon-x")
                             .renderingMode(.template)
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(Color("textPrimaryColor"))
                     }
                     .buttonStyle(.plain)
                     .padding(5)
@@ -83,64 +84,66 @@ struct SetTimerView: View {
     private var setupView: some View {
         VStack(spacing: 20) {
             
-                HStack(spacing: 10) {
-                    // 小时
-                    HStack(spacing: 0) {
-                        Picker("", selection: $selectedHours) {
-                            ForEach(0...23, id: \.self) { hour in
-                                Text("\(hour)")
-                                    .tag(hour)
-                            }
+            Spacer()
+            
+            HStack(spacing: 10) {
+                // 小时
+                HStack(spacing: 0) {
+                    Picker("", selection: $selectedHours) {
+                        ForEach(0...23, id: \.self) { hour in
+                            Text("\(hour)")
+                                .tag(hour)
                         }
-                        .pickerStyle(.wheel)
-                        .frame(width: 80)
-                        .frame(maxHeight:.infinity)
-                        .clipped()
-                        
-                        Text("小时")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .offset(x: -5)
                     }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .frame(maxHeight:.infinity)
+                    .clipped()
                     
-                    // 分钟
-                    HStack(spacing: 0) {
-                        Picker("", selection: $selectedMinutes) {
-                            ForEach(0...59, id: \.self) { minute in
-                                Text("\(minute)")
-                                    .tag(minute)
-                            }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(width: 80)
-                        .frame(maxHeight:.infinity)
-                        .clipped()
-                        
-                        Text("分钟")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .offset(x: -5)
-                    }
-                    
-                    // 秒
-                    HStack(spacing: 0) {
-                        Picker("", selection: $selectedSeconds) {
-                            ForEach(0...59, id: \.self) { second in
-                                Text("\(second)")
-                                    .tag(second)
-                            }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(width: 80)
-                        .frame(maxHeight:.infinity)
-                        .clipped()
-                        
-                        Text("秒")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .offset(x: -5)
-                    }
+                    Text("小时")
+                        .font(.custom("MiSansLatin-Regular", size: 16))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .offset(x: -5)
                 }
+                
+                // 分钟
+                HStack(spacing: 0) {
+                    Picker("", selection: $selectedMinutes) {
+                        ForEach(0...59, id: \.self) { minute in
+                            Text("\(minute)")
+                                .tag(minute)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .frame(maxHeight:.infinity)
+                    .clipped()
+                    
+                    Text("分钟")
+                        .font(.custom("MiSansLatin-Regular", size: 16))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .offset(x: -5)
+                }
+                
+                // 秒
+                HStack(spacing: 0) {
+                    Picker("", selection: $selectedSeconds) {
+                        ForEach(0...59, id: \.self) { second in
+                            Text("\(second)")
+                                .tag(second)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .frame(maxHeight:.infinity)
+                    .clipped()
+                    
+                    Text("秒")
+                        .font(.custom("MiSansLatin-Regular", size: 16))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .offset(x: -5)
+                }
+            }
             
             
             Spacer()
@@ -157,8 +160,13 @@ struct SetTimerView: View {
             
             // 开始按钮
             Button(action: startTimer) {
-                Text("开始计时")
+                HStack(spacing: 5) {
+                    Image("icon-play")
+                        .renderingMode(.template)
+                        .foregroundColor(.white)    
+                    Text("开始计时")
                     .font(.custom("MiSansLatin-Semibold", size: 18))
+                }
                     .foregroundColor(.white)
                     .frame(height:60)
                     .frame(maxWidth: .infinity)
@@ -179,37 +187,45 @@ struct SetTimerView: View {
     
     // 计时视图
     private var timerView: some View {
-        VStack(spacing: 20) {
-            // 进度环
-            ZStack {
-                // 背景圆环
-                RoundedRectangle(cornerRadius: 40)
-                    .stroke(lineWidth: 15)
-                    .foregroundColor(theme.primaryColor.opacity(0.3))
-                    .frame(maxWidth:.infinity,maxHeight: .infinity)
-                
-                // 进度圆环
-                RoundedRectangle(cornerRadius: 40)
-                    .trim(from: 0.0, to: progress)
-                    .stroke(style: StrokeStyle(lineWidth: 15, lineCap: .round, lineJoin: .round))
-                    .foregroundColor(theme.primaryColor)
-                    .rotationEffect(Angle(degrees: 0.0))
-                    .animation(.linear(duration: 1.0), value: progress)
-                    .frame(maxWidth:.infinity,maxHeight: .infinity)
-                
-                // 时间文本
-                VStack() {
-                    Text(formatTime(remainingSeconds))
-                        .font(.custom("MiSansLatin-Semibold", size: 40))
-                        .foregroundColor(Color("textPrimaryColor"))
+
+        let lineWidth: CGFloat = 16
+
+        return VStack(spacing: 20) {
+            
+            Spacer()
+            
+            GeometryReader { geometry in// 进度环
+                ZStack {
+
+                    RoundedRectangle(cornerRadius: 40)
+                        .stroke(lineWidth: lineWidth)
+                        .foregroundColor(theme.primaryColor.opacity(0.3))
                     
-                    Text("总时长 \(formatTime(totalSeconds))")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(Color("textSecondaryColor"))
+                    // 时间文本
+                    VStack() {
+                        Text(formatTime(remainingSeconds))
+                            .font(.custom("MiSansLatin-Semibold", size: 40))
+                            .foregroundColor(Color("textPrimaryColor"))
+                        
+                        Text("总时长 \(formatTime(totalSeconds))")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(Color("textSecondaryColor"))
+                    }
                 }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 40)
+                        .trim(from: 0, to: progress)
+                        .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+                        .foregroundColor(theme.primaryColor)
+                        .rotationEffect(Angle(degrees: -90.0))
+                        .animation(.linear(duration: 1.0), value: progress)
+                        .frame(width:geometry.size.height,height: geometry.size.width)
+                )   
+                
+
             }
             .frame(maxWidth:.infinity,maxHeight: .infinity)
-            
+            .padding(lineWidth/2)
             
             Spacer()
             
@@ -222,8 +238,8 @@ struct SetTimerView: View {
             HStack(spacing: 15) {
                 // 暂停/继续按钮
                 Button(action: togglePause) {
-                    Image(systemName: timer == nil ? "play.fill" : "pause.fill")
-                        .font(.system(size: 24))
+                    Image(timer == nil ? "icon-play" : "icon-pause")
+                        .renderingMode(.template)
                         .foregroundColor(.white)
                         .frame( height: 60)
                         .frame(maxWidth:.infinity)
@@ -234,8 +250,8 @@ struct SetTimerView: View {
                 
                 // 停止按钮
                 Button(action: stopTimer) {
-                    Image(systemName: "stop.fill")
-                        .font(.system(size: 24))
+                    Image("icon-stop")
+                        .renderingMode(.template)
                         .foregroundColor(.white)
                         .frame(maxWidth:.infinity)
                         .frame(height: 60)
@@ -261,6 +277,7 @@ struct SetTimerView: View {
         isTimerRunning = true
         elapsedSeconds = 0
         startTimerTick()
+        metronomeState.play()
     }
     
     // 开始计时器滴答
@@ -278,6 +295,9 @@ struct SetTimerView: View {
                     elapsedSeconds = 0
                     startTimerTick()
                 }
+                else {
+                    metronomeState.stop()
+                }   
             }
         }
     }
@@ -296,6 +316,7 @@ struct SetTimerView: View {
     
     // 停止计时器
     private func stopTimer() {
+        metronomeState.stop()
         timer?.invalidate()
         timer = nil
         isTimerRunning = false
@@ -305,4 +326,5 @@ struct SetTimerView: View {
 
 #Preview {
     SetTimerView()
+        .environmentObject(MetronomeState())
 }
