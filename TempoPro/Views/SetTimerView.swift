@@ -97,7 +97,7 @@ struct SetTimerView: View {
                         }
                     }
                     .pickerStyle(.wheel)
-                    .frame(width: 80)
+                    .frame(width: 76)
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
@@ -116,7 +116,7 @@ struct SetTimerView: View {
                         }
                     }
                     .pickerStyle(.wheel)
-                    .frame(width: 80)
+                    .frame(width: 76)
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
@@ -135,7 +135,7 @@ struct SetTimerView: View {
                         }
                     }
                     .pickerStyle(.wheel)
-                    .frame(width: 80)
+                    .frame(width: 76)
                     .frame(maxHeight:.infinity)
                     .clipped()
                     
@@ -190,7 +190,7 @@ struct SetTimerView: View {
     // 计时视图
     private var timerView: some View {
 
-        let lineWidth: CGFloat = 16
+        let lineWidth: CGFloat = 14
 
         return VStack(spacing: 20) {
             
@@ -209,9 +209,18 @@ struct SetTimerView: View {
                             .font(.custom("MiSansLatin-Semibold", size: 40))
                             .foregroundColor(Color("textPrimaryColor"))
                         
-                        Text("Total Time \(formatTime(totalSeconds))")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(Color("textSecondaryColor"))
+                        
+                        HStack(){
+                            Text("\(formatTime(totalSeconds))")
+                                .font(.custom("MiSansLatin-Regular", size: 14))
+                                .foregroundColor(Color("textSecondaryColor"))
+                            if isLoopEnabled {
+                                Text("Loop Mode")
+                                    .font(.custom("MiSansLatin-Regular", size: 14))
+                                    .foregroundColor(Color("textSecondaryColor"))
+                            }
+                        }
+                        
                     }
                 }
                 .overlay(
@@ -231,11 +240,7 @@ struct SetTimerView: View {
             
             Spacer()
             
-            if isLoopEnabled {
-                Text("Loop Mode")
-                    .font(.custom("MiSansLatin-Regular", size: 14))
-                    .foregroundColor(Color("textSecondaryColor"))
-            }
+            
             // 控制按钮
             HStack(spacing: 15) {
                 // 暂停/继续/重新开始按钮
@@ -294,6 +299,7 @@ struct SetTimerView: View {
         .padding(20)
         .frame(maxWidth:.infinity,maxHeight: .infinity)
         .background(Color("backgroundPrimaryColor"))
+        
         
     }
     

@@ -15,7 +15,6 @@ struct SettingsAdvanceView: View {
     @AppStorage(AppStorageKeys.Settings.rhythmVibrationEnabled) private var rhythmVibrationEnabled = true
     @AppStorage(AppStorageKeys.Settings.operationVibrationEnabled) private var operationVibrationEnabled = false
     @AppStorage(AppStorageKeys.Settings.selectedLanguage) private var selectedLanguage = 0
-    @AppStorage(AppStorageKeys.Settings.icloudSyncEnabled) private var icloudSyncEnabled = false
     @AppStorage(AppStorageKeys.Settings.wheelScaleEnabled) private var wheelScaleEnabled = false
 
     // 添加环境变量用于关闭模态视图

@@ -97,16 +97,19 @@ struct MetronomeToolbarView: View {
                 .environmentObject(playlistManager)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
+                .compatibleCornerRadius(15)
                 
         }
         .sheet(isPresented: $showingStatsView) {
             PracticeStatsView()
                 .presentationDragIndicator(.hidden)
+                .compatibleCornerRadius(15)
         }
         .sheet(isPresented: $showingSetTimerView) {
             SetTimerView()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
+                .compatibleCornerRadius(15)
                 
         }
     }

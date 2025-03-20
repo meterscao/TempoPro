@@ -286,6 +286,7 @@ struct MetronomeInfoView: View {
             TimeSignatureView()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
+                .compatibleCornerRadius(15)
         }
         
         
@@ -294,11 +295,13 @@ struct MetronomeInfoView: View {
             .ignoresSafeArea()
             .presentationDetents([.medium])
             .presentationDragIndicator(.hidden)
+            .compatibleCornerRadius(15)
             
         }
         
         .sheet(isPresented: $showSetting) {
             SettingsView()
+                .compatibleCornerRadius(15)
         }
     }
     

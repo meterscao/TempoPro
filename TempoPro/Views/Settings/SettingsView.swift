@@ -17,15 +17,9 @@ import SwiftUI
 import RevenueCat
 
 struct SettingsView: View {
-    // 使用 AppStorage 替换状态变量
-    @AppStorage(AppStorageKeys.Settings.operationSoundEnabled) private var operationSoundEnabled = true
-    @AppStorage(AppStorageKeys.Settings.flashlightEnabled) private var flashlightEnabled = false
-    @AppStorage(AppStorageKeys.Settings.screenFlashEnabled) private var screenFlashEnabled = true
-    @AppStorage(AppStorageKeys.Settings.rhythmVibrationEnabled) private var rhythmVibrationEnabled = true
-    @AppStorage(AppStorageKeys.Settings.operationVibrationEnabled) private var operationVibrationEnabled = false
-    @AppStorage(AppStorageKeys.Settings.selectedLanguage) private var selectedLanguage = 0
+    
     @AppStorage(AppStorageKeys.Settings.icloudSyncEnabled) private var icloudSyncEnabled = false
-    @AppStorage(AppStorageKeys.Settings.wheelScaleEnabled) private var wheelScaleEnabled = false
+    
     
     // 添加环境变量用于关闭模态视图
     @Environment(\.dismiss) private var dismiss
@@ -71,9 +65,8 @@ struct SettingsView: View {
                 
                 .listRowBackground(Color("backgroundSecondaryColor"))
 
-                Section(header: Text("iCloud").foregroundColor(Color("textSecondaryColor"))) {
-                    Toggle("Sync Library and Practice Records", isOn: $icloudSyncEnabled)
-                        
+                Section(header: Text("iCloud Sync").foregroundColor(Color("textSecondaryColor"))) {
+                    Toggle("Libraries and Practice Records", isOn: $icloudSyncEnabled)
                 }
                 .listRowBackground(Color("backgroundSecondaryColor"))
                 
