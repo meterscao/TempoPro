@@ -10,10 +10,11 @@ import UIKit
 
 struct ContentView: View {
     @Environment(\.metronomeTheme) var theme
+    @EnvironmentObject var metronomeState: MetronomeState
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 类型改为 CoreDataPlaylistManager
     @EnvironmentObject var practiceManager: CoreDataPracticeManager // 添加这一行
-    @StateObject private var metronomeState = MetronomeState()
+    
     
     // 在ContentView.swift中添加状态变量
     @State private var showingCompletionView = false
@@ -26,7 +27,6 @@ struct ContentView: View {
             .frame(maxHeight: .infinity)
 
             MetronomeControlView()
-                .environmentObject(metronomeState)
                 .aspectRatio(16/16, contentMode: .fit)
             
             MetronomeToolbarView()

@@ -106,7 +106,7 @@ struct MetronomeToolbarView: View {
                 .compatibleCornerRadius(15)
         }
         .sheet(isPresented: $showingSetTimerView) {
-            SetTimerView()
+            SetPracticeTimerView()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15) 

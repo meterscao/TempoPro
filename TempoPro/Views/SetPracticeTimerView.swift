@@ -7,19 +7,8 @@
 
 import SwiftUI
 
-struct SetTimerView: View {
-    // 添加新的时间状态变量
-    @State private var selectedHours = 0
-    @State private var selectedMinutes = 5 // 默认5分钟
-    @State private var selectedSeconds = 0
-    
-    @State private var isLoopEnabled = false
-    @State private var isTimerRunning = false
-    @State private var elapsedSeconds = 0
-    @State private var timer: Timer? = nil
-    @State private var isTimerCompleted = false // 跟踪计时器是否已完成
-    
-    // 环境变量
+struct SetPracticeTimerView: View {
+    @EnvironmentObject var practiceTimerState: PracticeTimerState
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var metronomeState: MetronomeState
@@ -29,30 +18,10 @@ struct SetTimerView: View {
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
     }
     
-    // 计算属性
-    private var totalSeconds: Int {
-        return (selectedHours * 3600) + (selectedMinutes * 60) + selectedSeconds
-    }
-    
-    private var remainingSeconds: Int {
-        return max(0, totalSeconds - elapsedSeconds)
-    }
-    
-    private var progress: CGFloat {
-        return totalSeconds > 0 ? CGFloat(elapsedSeconds) / CGFloat(totalSeconds) : 0.01
-    }
-    
-    // 时间格式化
-    private func formatTime(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, remainingSeconds)
-    }
-    
     var body: some View {
         NavigationStack {
             VStack {
-                if !isTimerRunning {
+                if !practiceTimerState.isTimerRunning {
                     // 默认状态 - 设置视图
                     setupView
                 } else {
@@ -60,7 +29,6 @@ struct SetTimerView: View {
                     timerView
                 }
             }
-            
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -74,8 +42,6 @@ struct SetTimerView: View {
                     .buttonStyle(.plain)
                     .padding(5)
                     .contentShape(Rectangle())
-                    
-                    
                 }
             }
             .background(theme.backgroundColor)
@@ -86,13 +52,12 @@ struct SetTimerView: View {
     // 设置视图
     private var setupView: some View {
         VStack(spacing: 20) {
-            
             Spacer()
             
             HStack(spacing: 10) {
                 // 小时
                 HStack(spacing: 0) {
-                    Picker("", selection: $selectedHours) {
+                    Picker("", selection: $practiceTimerState.selectedHours) {
                         ForEach(0...23, id: \.self) { hour in
                             Text("\(hour)")
                                 .tag(hour)
@@ -112,7 +77,7 @@ struct SetTimerView: View {
                 
                 // 分钟
                 HStack(spacing: 0) {
-                    Picker("", selection: $selectedMinutes) {
+                    Picker("", selection: $practiceTimerState.selectedMinutes) {
                         ForEach(0...59, id: \.self) { minute in
                             Text("\(minute)")
                                 .tag(minute)
@@ -132,7 +97,7 @@ struct SetTimerView: View {
                 
                 // 秒
                 HStack(spacing: 0) {
-                    Picker("", selection: $selectedSeconds) {
+                    Picker("", selection: $practiceTimerState.selectedSeconds) {
                         ForEach(0...59, id: \.self) { second in
                             Text("\(second)")
                                 .tag(second)
@@ -151,41 +116,38 @@ struct SetTimerView: View {
                 }
             }
             
-            
             Spacer()
             
             // 循环选项
-            Toggle(isOn: $isLoopEnabled) {
+            Toggle(isOn: $practiceTimerState.isLoopEnabled) {
                 Text("Loop")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textPrimaryColor"))
             }
             
-            
-            
-            
             // 开始按钮
-            Button(action: startTimer) {
+            Button(action: {
+                practiceTimerState.startTimer()
+                metronomeState.play()
+            }) {
                 HStack(spacing: 5) {
                     Image("icon-play")
                         .renderingMode(.template)
                         .resizable()
                         .frame(width: 20, height: 20)   
                     Text("Start")
-                    .font(.custom("MiSansLatin-Semibold", size: 17))
+                        .font(.custom("MiSansLatin-Semibold", size: 17))
                 }
                 .foregroundColor(.white)
                 .frame(height:52)
                 .frame(maxWidth: .infinity)
-                
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(theme.primaryColor)
                 )
-                    
             }
-            .disabled(totalSeconds == 0)
-            .opacity(totalSeconds == 0 ? 0.5 : 1)
+            .disabled(practiceTimerState.totalSeconds == 0)
+            .opacity(practiceTimerState.totalSeconds == 0 ? 0.5 : 1)
         }
         .padding(20)
         .frame(maxWidth:.infinity,maxHeight:.infinity, alignment: .top)
@@ -194,78 +156,67 @@ struct SetTimerView: View {
     
     // 计时视图
     private var timerView: some View {
-
         let lineWidth: CGFloat = 14
 
         return VStack(spacing: 20) {
-            
-            GeometryReader { geometry in// 进度环
+            GeometryReader { geometry in
                 ZStack {
-
                     RoundedRectangle(cornerRadius: 40)
                         .stroke(lineWidth: lineWidth)
                         .foregroundColor(theme.primaryColor.opacity(0.3))
                     
-                    // 时间文本
                     VStack() {
-                        Text(formatTime(remainingSeconds))
+                        Text(practiceTimerState.formatTime(practiceTimerState.remainingSeconds))
                             .font(.custom("MiSansLatin-Semibold", size: 40))
                             .foregroundColor(Color("textPrimaryColor"))
                         
-                        
                         HStack(){
-                            Text("\(formatTime(totalSeconds))")
+                            Text("\(practiceTimerState.formatTime(practiceTimerState.totalSeconds))")
                                 .font(.custom("MiSansLatin-Regular", size: 14))
                                 .foregroundColor(Color("textSecondaryColor"))
-                            if isLoopEnabled {
+                            if practiceTimerState.isLoopEnabled {
                                 Text("Loop Mode")
                                     .font(.custom("MiSansLatin-Regular", size: 14))
                                     .foregroundColor(Color("textSecondaryColor"))
                             }
                         }
-                        
                     }
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 40)
-                        .trim(from: 0, to: progress)
+                        .trim(from: 0, to: practiceTimerState.progress)
                         .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
                         .foregroundColor(theme.primaryColor)
                         .rotationEffect(Angle(degrees: -90.0))
-                        .animation(.linear(duration: 1.0), value: progress)
+                        .animation(.linear(duration: 1.0), value: practiceTimerState.progress)
                         .frame(width:geometry.size.height,height: geometry.size.width)
                 )   
-                
-
             }
             .frame(maxWidth:.infinity,maxHeight: .infinity)
             .padding(lineWidth/2)
             
             Spacer()
             
-            
             // 控制按钮
             HStack(spacing: 15) {
                 // 暂停/继续/重新开始按钮
                 Button(action: {
-                    if isTimerCompleted {
-                        // 重新开始
-                        elapsedSeconds = 0
-                        isTimerCompleted = false
-                        startTimerTick()
+                    if practiceTimerState.isTimerCompleted {
+                        practiceTimerState.elapsedSeconds = 0
+                        practiceTimerState.isTimerCompleted = false
+                        practiceTimerState.startTimerTick()
                         metronomeState.play()
                     } else {
-                        // 暂停或继续
-                        togglePause()
+                        practiceTimerState.togglePause()
                     }
                 }) {
                     HStack(spacing: 5) {
-                        Image(isTimerCompleted ? "icon-replay" : (timer == nil ? "icon-play" : "icon-pause"))
+                        Image(practiceTimerState.isTimerCompleted ? "icon-replay" : (practiceTimerState.timer == nil ? "icon-play" : "icon-pause"))
                             .renderingMode(.template)   
                             .resizable()
                             .frame(width: 20, height: 20)   
                             
-                        Text(isTimerCompleted ? "Replay" : (timer == nil ? "Continue" : "Pause"))
+                        Text(practiceTimerState.isTimerCompleted ? "Replay" : (practiceTimerState.timer == nil ? "Continue" : "Pause"))
                             .font(.custom("MiSansLatin-Semibold", size: 17))
                     }
                     .foregroundColor(.white)
@@ -277,95 +228,36 @@ struct SetTimerView: View {
                 .contentShape(Rectangle())
                 
                 // 停止按钮
-                Button(action: stopTimer) {
-                        HStack(spacing: 5) {
-                            Image("icon-stop")
-                                .renderingMode(.template)
-                                .resizable()
-                                .frame(width: 20, height: 20)   
-                                
-                            Text("Stop")
-                                .font(.custom("MiSansLatin-Semibold", size: 17))
-                        }   
-                        .foregroundColor(.white)
-                        .frame(maxWidth:.infinity)
-                        .frame(height: 52)
-                        .background(Color.red.opacity(0.8))
+                Button(action: {
+                    practiceTimerState.stopTimer()
+                    metronomeState.stop()
+                }) {
+                    HStack(spacing: 5) {
+                        Image("icon-stop")
+                            .renderingMode(.template)
+                            .resizable()
+                            .frame(width: 20, height: 20)   
+                            
+                        Text("Stop")
+                            .font(.custom("MiSansLatin-Semibold", size: 17))
+                    }   
+                    .foregroundColor(.white)
+                    .frame(maxWidth:.infinity)
+                    .frame(height: 52)
+                    .background(Color.red.opacity(0.8))
                 }
                 .contentShape(Rectangle())
                 .clipShape(RoundedRectangle(cornerRadius: 15))
-                
             }
-            
-            
         }
         .padding(20)
         .frame(maxWidth:.infinity,maxHeight: .infinity)
         .background(Color("backgroundPrimaryColor"))
-        
-        
-    }
-    
-    // 开始计时器
-    private func startTimer() {
-        isTimerRunning = true
-        elapsedSeconds = 0
-        _ = remainingSeconds
-
-        startTimerTick()
-        metronomeState.play()
-    }
-    
-    // 开始计时器滴答
-    private func startTimerTick() {
-        isTimerCompleted = false // 重置完成状态
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if elapsedSeconds < totalSeconds {
-                elapsedSeconds += 1
-            } else {
-                // 计时结束
-                timer?.invalidate()
-                timer = nil
-                isTimerCompleted = true // 设置为已完成
-                
-                // 如果启用了循环，重新开始计时
-                if isLoopEnabled {
-                    elapsedSeconds = 0
-                    isTimerCompleted = false // 重置完成状态
-                    startTimerTick()
-                }
-                else {
-                    metronomeState.stop()
-                }   
-            }
-        }
-    }
-    
-    // 暂停/继续计时器
-    private func togglePause() {
-        if timer == nil {
-            // 继续计时
-            startTimerTick()
-        } else {
-            // 暂停计时
-            timer?.invalidate()
-            timer = nil
-        }
-    }
-    
-    // 停止计时器
-    private func stopTimer() {
-        metronomeState.stop()
-        timer?.invalidate()
-        timer = nil
-        isTimerRunning = false
-        elapsedSeconds = 0
-        isTimerCompleted = false // 重置完成状态
     }
 }
 
 #Preview {
-    SetTimerView()
+    SetPracticeTimerView()
         .environmentObject(MetronomeState())
+        .environmentObject(PracticeTimerState())
 }

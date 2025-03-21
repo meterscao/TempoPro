@@ -12,6 +12,8 @@ import RevenueCat
 @main
 struct TempoProApp: App {
     @StateObject private var themeManager = ThemeManager()
+    @StateObject private var practiceTimerState = PracticeTimerState()
+    @StateObject private var metronomeState = MetronomeState()
     
     // 注入PersistenceController
     let persistenceController = PersistenceController.shared
@@ -65,10 +67,12 @@ struct TempoProApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(metronomeState) // 添加 MetronomeState
                 .environmentObject(themeManager)
                 .environmentObject(coreDataPlaylistManager) // 使用CoreDataPlaylistManager
                 .environmentObject(practiceManager) // 添加PracticeManager
                 .environmentObject(subscriptionManager) // 将订阅管理器作为环境对象提供给所有视图
+                .environmentObject(practiceTimerState) // 添加 PracticeTimerState
                 .environment(\.metronomeTheme, themeManager.currentTheme)
                 .environment(\.managedObjectContext, persistenceController.viewContext)
                 .onChange(of: themeManager.currentThemeName) { _ in
