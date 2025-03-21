@@ -63,12 +63,6 @@ struct SetTimerView: View {
             
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                
-//                ToolbarItem(placement: .principal) {
-//                        Text("Timer")
-//                        .font(.custom("MiSansLatin-Semibold", size: 17))
-//                        .foregroundColor(Color("textPrimaryColor"))
-//                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         dismiss()
@@ -85,11 +79,7 @@ struct SetTimerView: View {
                 }
             }
             .background(theme.backgroundColor)
-            
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
-//
-            
-            
         }
     }
     

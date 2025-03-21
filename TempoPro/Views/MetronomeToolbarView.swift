@@ -95,7 +95,7 @@ struct MetronomeToolbarView: View {
         .sheet(isPresented: $playlistManager.showPlaylistsSheet) {
             PlaylistListView()
                 .environmentObject(playlistManager)
-                .presentationDetents([.medium])
+                // .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15)
                 

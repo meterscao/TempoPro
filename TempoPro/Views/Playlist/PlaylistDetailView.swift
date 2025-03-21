@@ -71,21 +71,43 @@ struct PlaylistDetailView: View {
                             isEditMode = false
                             showingSongForm = true
                         }) {
-                            Label("添加歌曲",image: "icon-plus")
+                            Label {
+                                Text("添加歌曲")
+                                    .foregroundColor(Color("textPrimaryColor"))
+                            } icon: {
+                                Image("icon-plus-s")
+                                    .renderingMode(.template)
+                                    .foregroundColor(Color("textPrimaryColor"))
+                            }
                         }
+                        
                         Button(action: {
                             editPlaylistName = playlist.name ?? ""
                             editPlaylistColor = Color(hex: playlist.color ?? "#0000FF") ?? .blue
                             showingEditPlaylist = true
                         }) {
-                            Label("编辑曲库", image: "icon-pencil")
+                            Label {
+                                Text("编辑曲库")
+                                    .foregroundColor(Color("textPrimaryColor"))
+                            } icon: {
+                                Image("icon-pencil-s")
+                                    .renderingMode(.template)
+                                    .foregroundColor(Color("textPrimaryColor"))
+                            }
                         }
                         
                         Button(role: .destructive, action: {
                             playlistManager.deletePlaylist(playlist)
                             dismiss()
                         }) {
-                            Label("删除曲库", image: "icon-trash-2")
+                            Label {
+                                Text("删除曲库")
+                                    .foregroundColor(Color("textPrimaryColor"))
+                            } icon: {
+                                Image("icon-trash-2-s")
+                                    .renderingMode(.template)
+                                    .foregroundColor(Color("textPrimaryColor"))
+                            }
                         }
                     } label: {
                         Image("icon-ellipsis")

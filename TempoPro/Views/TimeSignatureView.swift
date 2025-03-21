@@ -146,7 +146,7 @@ struct TimeSignatureView: View {
                                                 .renderingMode(.template)
                                                 .scaledToFit()
                                                 .padding(6)
-                                                .frame(height: 60)
+                                                .frame(height: 64)
                                                 .foregroundStyle(metronomeState.subdivisionPattern?.name == pattern.name ?
                                                                  Color("backgroundSecondaryColor") : Color("textSecondaryColor") )
                                         }
