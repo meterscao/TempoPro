@@ -209,8 +209,6 @@ struct SetTimerView: View {
 
         return VStack(spacing: 20) {
             
-            Spacer()
-            
             GeometryReader { geometry in// 进度环
                 ZStack {
 

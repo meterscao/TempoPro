@@ -43,10 +43,15 @@ struct SoundEffectsView: View {
                         metronomeState.updateSoundSet(soundSet)
                     }) {
                         HStack {
-                            if selectedSoundKey == soundSet.key {
-                                Image(systemName: "checkmark")
+                            ZStack(){
+                                if selectedSoundKey == soundSet.key {
+                                    Image("icon-check-s")
+                                    .renderingMode(.template)
                                     .foregroundColor(Color("textPrimaryColor"))
+                                    
+                                }
                             }
+                            .frame(width: 20, height: 20)
                             
                             Text(soundSet.displayName)
                                 .font(.custom("MiSansLatin-Regular", size: 16))
@@ -57,7 +62,8 @@ struct SoundEffectsView: View {
                                 // 播放音效预览
                                 audioEngine.previewSoundSet(soundSet)
                             }) {
-                                Image(systemName: "play.circle")
+                                Image("icon-circle-play-s")
+                                    .renderingMode(.template)
                                     .foregroundColor(Color("textPrimaryColor"))
                             }
                         }

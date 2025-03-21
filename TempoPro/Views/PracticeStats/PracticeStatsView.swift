@@ -45,7 +45,7 @@ struct PracticeStatsView: View {
                     // Performance Insights
                     PerformanceInsightsView()
                 }
-                .padding(.top,10)
+                .padding(.top,20)
                 .padding(.horizontal, 20)
             }
             .foregroundStyle(Color("textPrimaryColor"))
@@ -93,9 +93,9 @@ struct StatsSummaryView: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            StatsSummaryCard(value: "\(dayStreak)", label: "Streak Days")
-            StatsSummaryCard(value: "\(daysThisMonth)", label: "Total Days")
-            StatsSummaryCard(value: String(format: "%.1f", totalHours), label: "Total Hours")
+            StatsSummaryCard(value: "\(dayStreak)", label: "STREAK DAYS")
+            StatsSummaryCard(value: "\(daysThisMonth)", label: "TOTAL DAYS")
+            StatsSummaryCard(value: String(format: "%.1f", totalHours), label: "TOTAL HOURS")
         }
         .onAppear {
             loadSummaryData()
@@ -146,12 +146,14 @@ struct PerformanceInsightsView: View {
                     
                     ZStack {
                         Circle()
-                            .fill(theme.primaryColor.opacity(0.6))
-                            .frame(width: 48, height: 48)
+                            .fill(theme.primaryColor.opacity(0.1))
+                            .frame(width: 32, height: 32)
                         
-                        Image(systemName: "waveform.path")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.backgroundColor)
+                        Image("icon-circle-gauge-s")
+                            .renderingMode(.template)
+                            .resizable()
+                            .frame(width: 16,height: 16)
+                            .foregroundColor(Color("backgroundSecondaryColor")) 
                     }
                 }
                 
@@ -170,12 +172,15 @@ struct PerformanceInsightsView: View {
                     
                     ZStack {
                         Circle()
-                            .fill(theme.primaryColor.opacity(0.6))
-                            .frame(width: 48, height: 48)
+                            .fill(theme.primaryColor.opacity(0.1))
+                            
+                            .frame(width: 32, height: 32)
                         
-                        Image(systemName: "timer")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.backgroundColor)
+                        Image("icon-clock-s")
+                            .renderingMode(.template)
+                            .resizable()
+                            .frame(width: 16,height: 16)
+                            .foregroundColor(Color("backgroundSecondaryColor")) 
                     }
                 }
             }
@@ -212,7 +217,7 @@ struct StatsSummaryCard: View {
                 .foregroundColor(theme.primaryColor)
             
             Text(label)
-                .font(.custom("MiSansLatin-Regular", size: 11))
+                .font(.custom("MiSansLatin-Regular", size: 12))
                 .foregroundColor(Color("textSecondaryColor"))
                 .multilineTextAlignment(.center)
         }

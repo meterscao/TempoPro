@@ -236,13 +236,13 @@ struct SongRowCard: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(song.name ?? "未命名歌曲")
                     .font(.custom("MiSansLatin-Semibold", size: 17))
                     .foregroundColor(Color("textPrimaryColor"))
                 
                 Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit))")
-                    .font(.custom("MiSansLatin-Regular", size: 14))
+                    .font(.custom("MiSansLatin-Regular", size: 13))
                     .foregroundColor(Color("textSecondaryColor"))
             }
             
@@ -250,8 +250,10 @@ struct SongRowCard: View {
             
             // 播放按钮
             Button(action: onPlay) {
-                Image(systemName: "play.circle.fill")
-                    .font(.system(size: 28))
+                Image("icon-play")
+                    .renderingMode(.template)   
+                    .resizable()
+                    .frame(width: 20, height: 20)
                     .foregroundColor(Color("textPrimaryColor"))
             }
         }

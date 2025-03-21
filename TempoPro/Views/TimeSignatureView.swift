@@ -165,7 +165,7 @@ struct TimeSignatureView: View {
                     }
                 }
                 .padding(.horizontal,20)
-                .padding(.top,5)
+                .padding(.top,20)
             }
             .foregroundColor(Color("textPrimaryColor"))
             .navigationBarTitleDisplayMode(.inline)

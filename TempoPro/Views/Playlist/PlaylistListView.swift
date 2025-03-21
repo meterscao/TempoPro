@@ -32,7 +32,7 @@ struct PlaylistListView: View {
                             PlaylistDetailView(playlist: playlist)
                         } label: {
                             PlaylistRowCard(playlist: playlist)
-                        }
+                        }.foregroundStyle(Color("textSecondaryColor"))
                     }
                     .listRowBackground(Color("backgroundSecondaryColor"))
                 }
@@ -104,15 +104,30 @@ struct PlaylistRowCard: View {
     
     var body: some View {
             
-        VStack(alignment: .leading, spacing: 3) {
-            Text(playlist.name ?? "未命名曲库")
-                .font(.custom("MiSansLatin-Semibold", size: 17))
-                .foregroundColor(Color("textPrimaryColor"))
-            
-            Text("\(playlist.songs?.count ?? 0) 首歌曲")
-                .font(.custom("MiSansLatin-Regular", size: 14))
-                .foregroundColor(Color("textSecondaryColor"))
+        HStack(){
+            ZStack(){
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color("textPrimaryColor").opacity(0.1))
+                    .frame(width: 40, height: 40)
+                
+                Image("icon-gallery-vertical-end-s")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(Color("textPrimaryColor"))
+            }   
+            VStack(alignment: .leading, spacing: 0) {
+                Text(playlist.name ?? "未命名曲库")
+                    .font(.custom("MiSansLatin-Semibold", size: 17))
+                    .foregroundColor(Color("textPrimaryColor"))
+                
+                Text("\(playlist.songs?.count ?? 0) songs")
+                    .font(.custom("MiSansLatin-Regular", size: 13))
+                    .foregroundColor(Color("textSecondaryColor"))
+            }
+            Spacer()
         }
+        
         
         
     }
