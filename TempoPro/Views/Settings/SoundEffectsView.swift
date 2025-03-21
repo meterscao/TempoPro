@@ -20,39 +20,57 @@ struct SoundEffectsView: View {
     
     // 初始状态使用 MetronomeState 中当前的音效设置
     @State private var selectedSoundKey: String = ""
+    // 环境变量
+    @Environment(\.metronomeTheme) var theme
+    @Environment(\.dismiss) var dismiss
     
+    init(){
+        UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+    }
 
     
     var body: some View {
         List {
-            ForEach(soundOptions, id: \.key) { soundSet in
-                Button(action: {
-                    // 更新选中的音效键
-                    selectedSoundKey = soundSet.key
-                    
-                    // 更新 MetronomeState 中的音效设置
-                    metronomeState.updateSoundSet(soundSet)
-                }) {
-                    HStack {
-                        Text(soundSet.displayName)
-                        Spacer()
-                        if selectedSoundKey == soundSet.key {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
-                        }
-                        Button(action: {
-                            // 播放音效预览
-                            audioEngine.previewSoundSet(soundSet)
-                        }) {
-                            Image(systemName: "play.circle")
-                                .foregroundColor(.blue)
+            
+            Section(){
+                ForEach(soundOptions, id: \.key) { soundSet in
+                    Button(action: {
+                        // 更新选中的音效键
+                        selectedSoundKey = soundSet.key
+                        
+                        // 更新 MetronomeState 中的音效设置
+                        metronomeState.updateSoundSet(soundSet)
+                    }) {
+                        HStack {
+                            if selectedSoundKey == soundSet.key {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(Color("textPrimaryColor"))
+                            }
+                            
+                            Text(soundSet.displayName)
+                                .font(.custom("MiSansLatin-Regular", size: 16))
+                                .foregroundColor(Color("textPrimaryColor"))
+                            Spacer()
+                            
+                            Button(action: {
+                                // 播放音效预览
+                                audioEngine.previewSoundSet(soundSet)
+                            }) {
+                                Image(systemName: "play.circle")
+                                    .foregroundColor(Color("textPrimaryColor"))
+                            }
                         }
                     }
+                    .foregroundColor(Color("textPrimaryColor"))
                 }
-                .foregroundColor(.primary)
             }
+            .listRowBackground(Color("backgroundSecondaryColor"))
         }
-        .navigationTitle("节奏音效")
+        
+        .background(theme.backgroundColor)
+        .scrollContentBackground(.hidden)
+        .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
         .onAppear {
             // 确保音频引擎已初始化
             audioEngine.initialize()

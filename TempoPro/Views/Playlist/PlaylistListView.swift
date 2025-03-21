@@ -82,19 +82,14 @@ struct PlaylistListView: View {
                         Text("Add Library")
                             .foregroundStyle(Color("textPrimaryColor"))
                     }
-//                    .padding(.horizontal,10)
-//                    .padding(.vertical,5)
                     .background(Color("backgroundSecondaryColor"))
-//                    .clipShape(RoundedRectangle(cornerRadius: 5))
                 }
             }
-            
-            
             .navigationBarTitleDisplayMode(.inline)
             .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
-            
             .navigationDestination(for: Playlist.self) { playlist in
                 PlaylistDetailView(playlist: playlist)
             }

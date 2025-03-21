@@ -42,32 +42,15 @@ struct PracticeStatsView: View {
                     // Monthly Heatmap
                     MonthlyHeatmapView()
                     
-                    // Performance Insights - 替换为新的组件
+                    // Performance Insights
                     PerformanceInsightsView()
-                    
-                    // Share Stats Button
-                    Button(action: {}) {
-                        HStack(spacing: 10) {
-                            Text("SHARE PROGRESS")
-                                .font(.custom("MiSansLatin-Semibold", size: 16))
-                                .foregroundColor(theme.beatBarColor)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(theme.backgroundColor.opacity(0.9))
-                        .cornerRadius(12)
-                    }
-                    
                 }
+                .padding(.top,10)
                 .padding(.horizontal, 20)
-                .padding(.vertical, 16)
             }
-            // .background(
-            //     Image("bg-noise")
-            //         .resizable(resizingMode: .tile)
-            //         .opacity(0.06)
-            //         .ignoresSafeArea()
-            // )
+            .foregroundStyle(Color("textPrimaryColor"))
+            .navigationBarTitleDisplayMode(.inline)
+            
             .background(Color("backgroundPrimaryColor"))
             
             .toolbar {
@@ -91,12 +74,10 @@ struct PracticeStatsView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color("backgroundPrimaryColor"))
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
-            }
-        .navigationViewStyle(StackNavigationViewStyle())
-        
-        
-        
+            
+        }
     }
 }
 
@@ -225,7 +206,7 @@ struct StatsSummaryCard: View {
     let label: String
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 5) {
             Text(value)
                 .font(.custom("MiSansLatin-Semibold", size: 28))
                 .foregroundColor(theme.primaryColor)
@@ -236,7 +217,7 @@ struct StatsSummaryCard: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical,15)
         .background(Color("backgroundSecondaryColor"))
         .cornerRadius(12)
     }

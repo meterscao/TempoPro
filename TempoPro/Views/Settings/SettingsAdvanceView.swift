@@ -26,6 +26,10 @@ struct SettingsAdvanceView: View {
     let languages = ["简体中文", "English", "日本語", "Español", "Français"]
     @State private var displaySubscriptionView = false
 
+    init(){
+        UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+    }
 
     var body: some View {
         List {
@@ -72,12 +76,12 @@ struct SettingsAdvanceView: View {
             .foregroundColor(Color("textPrimaryColor"))
             .navigationTitle("Advanced Settings")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .listStyle(InsetGroupedListStyle())
             .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
+            
+            
+            
     }
 }
 
@@ -114,8 +118,8 @@ struct LanguageSettingsView: View {
         .scrollContentBackground(.hidden)
         .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
-        .preferredColorScheme(.dark)
+        
+        
     }
 }
 

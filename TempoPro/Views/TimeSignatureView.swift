@@ -105,7 +105,7 @@ struct TimeSignatureView: View {
                                             Image("icon-plus")
                                                 .renderingMode(.template)
                                                 .foregroundStyle(Color("textSecondaryColor"))
-                                                .frame(width: 44, height: 44) // 增大点击区域
+                                                .frame(width: 44, height: 44)
                                         }
                                         .buttonStyle(PlainButtonStyle())
                                     }
@@ -117,14 +117,11 @@ struct TimeSignatureView: View {
                         .padding(15)
                         .background(Color("backgroundSecondaryColor"))
                         .cornerRadius(15)
-                        
                     }
-                    
                     
                     // 切分音符部分
                     VStack() {
                         let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
-                        
                         if patterns.isEmpty {
                             Text("当前拍号单位没有预设的切分音符")
                                 .font(.custom("MiSansLatin-Regular", size: 14))
@@ -164,14 +161,11 @@ struct TimeSignatureView: View {
                                     }
                                 }
                             }
-                            
                         }
                     }
                 }
                 .padding(.horizontal,20)
                 .padding(.top,5)
-                
-                
             }
             .foregroundColor(Color("textPrimaryColor"))
             .navigationBarTitleDisplayMode(.inline)
@@ -197,6 +191,7 @@ struct TimeSignatureView: View {
             .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             
         }
