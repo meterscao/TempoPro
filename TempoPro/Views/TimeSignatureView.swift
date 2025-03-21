@@ -122,6 +122,10 @@ struct TimeSignatureView: View {
                     // 切分音符部分
                     VStack() {
                         let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
+                        Text("Subdivision")
+                            .font(.custom("MiSansLatin-Semibold", size: 14))
+                            .foregroundColor(Color("textSecondaryColor"))
+
                         if patterns.isEmpty {
                             Text("当前拍号单位没有预设的切分音符")
                                 .font(.custom("MiSansLatin-Regular", size: 14))
@@ -194,9 +198,10 @@ struct TimeSignatureView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             
+            }
         }
     }
-}
+
 
 #Preview {
     TimeSignatureView()

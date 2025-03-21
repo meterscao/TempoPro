@@ -135,35 +135,12 @@ class CoreDataPlaylistManager: ObservableObject {
     // Create sample playlists
     private func createSamplePlaylists() {
         // Classical Music
-        let classicalPlaylist = createPlaylist(name: "Classical Masterpieces", color: "#8B4513")
+        let classicalPlaylist = createPlaylist(name: "Default Library", color: "#8B4513")
         _ = addSong(to: classicalPlaylist, name: "Tchaikovsky - Waltz of the Flowers", bpm: 84, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 1, 2])
         _ = addSong(to: classicalPlaylist, name: "Debussy - Clair de Lune", bpm: 66, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1])
         _ = addSong(to: classicalPlaylist, name: "Holst - Mars, The Bringer of War", bpm: 100, beatsPerBar: 5, beatUnit: 4, beatStatuses: [0, 1, 2, 1, 2])
         _ = addSong(to: classicalPlaylist, name: "Chopin - Fantaisie-Impromptu", bpm: 168, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
         _ = addSong(to: classicalPlaylist, name: "Bach - Prelude in C Major", bpm: 70, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 0, 1])
         
-        // Jazz Standards
-        let jazzPlaylist = createPlaylist(name: "Jazz Essentials", color: "#191970")
-        _ = addSong(to: jazzPlaylist, name: "Dave Brubeck - Take Five", bpm: 172, beatsPerBar: 5, beatUnit: 4, beatStatuses: [0, 2, 1, 2, 1])
-        _ = addSong(to: jazzPlaylist, name: "Miles Davis - So What", bpm: 136, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1])
-        _ = addSong(to: jazzPlaylist, name: "Bill Evans - Waltz for Debby", bpm: 120, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 2, 1])
-        _ = addSong(to: jazzPlaylist, name: "Thelonious Monk - Round Midnight", bpm: 60, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 0, 1])
-        _ = addSong(to: jazzPlaylist, name: "Charles Mingus - Goodbye Pork Pie Hat", bpm: 72, beatsPerBar: 12, beatUnit: 8, beatStatuses: [0, 1, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1])
-        
-        // Progressive Rock
-        let progRockPlaylist = createPlaylist(name: "Progressive Rock", color: "#B22222")
-        _ = addSong(to: progRockPlaylist, name: "Pink Floyd - Money", bpm: 126, beatsPerBar: 7, beatUnit: 4, beatStatuses: [0, 1, 2, 1, 0, 1, 2])
-        _ = addSong(to: progRockPlaylist, name: "Rush - Tom Sawyer", bpm: 88, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: progRockPlaylist, name: "Dream Theater - Stream of Consciousness", bpm: 132, beatsPerBar: 6, beatUnit: 8, beatStatuses: [0, 1, 0, 1, 2, 1])
-        _ = addSong(to: progRockPlaylist, name: "Tool - Schism", bpm: 92, beatsPerBar: 5, beatUnit: 8, beatStatuses: [0, 1, 2, 1, 0])
-        _ = addSong(to: progRockPlaylist, name: "King Crimson - 21st Century Schizoid Man", bpm: 114, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        
-        // World Music
-        let worldPlaylist = createPlaylist(name: "World Rhythms", color: "#20B2AA")
-        _ = addSong(to: worldPlaylist, name: "Indian Classical - Teentaal", bpm: 85, beatsPerBar: 16, beatUnit: 4, beatStatuses: [0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1])
-        _ = addSong(to: worldPlaylist, name: "Flamenco - Bulería", bpm: 110, beatsPerBar: 12, beatUnit: 8, beatStatuses: [0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2])
-        _ = addSong(to: worldPlaylist, name: "Balkan Folk - Daichovo Horo", bpm: 140, beatsPerBar: 9, beatUnit: 8, beatStatuses: [0, 1, 2, 0, 1, 2, 0, 1, 2])
-        _ = addSong(to: worldPlaylist, name: "West African - Kuku", bpm: 128, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 2, 1, 2])
-        _ = addSong(to: worldPlaylist, name: "Turkish - Karsilama", bpm: 95, beatsPerBar: 9, beatUnit: 8, beatStatuses: [0, 1, 2, 0, 1, 2, 0, 1, 2])
     }
 }

@@ -15,9 +15,6 @@ struct ContentView: View {
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 类型改为 CoreDataPlaylistManager
     @EnvironmentObject var practiceManager: CoreDataPracticeManager // 添加这一行
     
-    
-    // 在ContentView.swift中添加状态变量
-    @State private var showingCompletionView = false
     @State private var completionDuration: TimeInterval = 0
     @State private var completionTempo: Int = 0
     
@@ -44,26 +41,13 @@ struct ContentView: View {
         )
         .background(theme.primaryColor.ignoresSafeArea())
         .onAppear {
-                    // 连接practiceManager到metronomeState
-                    metronomeState.practiceManager = practiceManager
-
-                    
-                }
+            // 连接practiceManager到metronomeState
+            metronomeState.practiceManager = practiceManager
+        }
         .onDisappear {
             metronomeState.cleanup()
         }
-        // 在ContentView的body中添加
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowPracticeCompletion"))) { notification in
-            if let duration = notification.userInfo?["duration"] as? TimeInterval,
-               let tempo = notification.userInfo?["tempo"] as? Int {
-                completionDuration = duration
-                completionTempo = tempo
-                showingCompletionView = true
-            }
-        }
-        .sheet(isPresented: $showingCompletionView) {
-            PracticeCompletionView(duration: completionDuration, tempo: completionTempo)
-        }
+        
         .environmentObject(metronomeState)
     }
 }

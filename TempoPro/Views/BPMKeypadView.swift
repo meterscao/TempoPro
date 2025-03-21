@@ -13,10 +13,16 @@ struct BPMKeypadView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var inputValue: String = ""
+    @State private var pressedButton: Int? = nil // 用于跟踪当前按下的按钮
+    @State private var isClearPressed = false // 用于清除按钮
+    @State private var isZeroPressed = false // 用于0按钮
+    @State private var isSetPressed = false // 用于设置按钮
+    
     private let buttonHeight: CGFloat = 60
     private let gridSpacing: CGFloat = 10    
     
     var body: some View {
+        NavigationStack {
             ScrollView {
                 
         
@@ -43,12 +49,24 @@ struct BPMKeypadView: View {
                                                 .foregroundColor(Color("textPrimaryColor"))
                                                 .background(Color("backgroundSecondaryColor"))
                                                 .cornerRadius(10)
-                                        }.onTapGesture {
+                                                .opacity(pressedButton == number ? 0.6 : 1.0)
+                                        }
+                                        .onTapGesture {
                                             if inputValue.count < 3 {
-                                                inputValue += "\(number)"
+                                                // 设置按下状态
+                                                pressedButton = number
+                                                
+                                                // 添加触觉反馈
+                                                let generator = UIImpactFeedbackGenerator(style: .light)
+                                                generator.impactOccurred()
+                                                
+                                                // 延迟恢复状态
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                                    pressedButton = nil
+                                                    inputValue += "\(number)"
+                                                }
                                             }
-                                        }   
-                                        
+                                        }
                                     }
                                 } else {
                                     VStack() {
@@ -60,9 +78,22 @@ struct BPMKeypadView: View {
                                             .foregroundColor(Color("backgroundPrimaryColor"))
                                             .font(.custom("MiSansLatin-Semibold", size: 18))
                                             .cornerRadius(10)
-                                    }.onTapGesture {
-                                        inputValue = ""
-                                    }   
+                                            .opacity(isClearPressed ? 0.6 : 1.0)
+                                    }
+                                    .onTapGesture {
+                                        // 设置按下状态
+                                        isClearPressed = true
+                                        
+                                        // 添加触觉反馈
+                                        let generator = UIImpactFeedbackGenerator(style: .light)
+                                        generator.impactOccurred()
+                                        
+                                        // 延迟恢复状态
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            isClearPressed = false
+                                            inputValue = ""
+                                        }
+                                    }
                                     
                                     VStack() {
                                         Text("0")
@@ -72,10 +103,22 @@ struct BPMKeypadView: View {
                                             .foregroundColor(Color("textPrimaryColor"))
                                             .background(Color("backgroundSecondaryColor"))
                                             .cornerRadius(10)
-                                    }.onTapGesture {
-                                        
+                                            .opacity(isZeroPressed ? 0.6 : 1.0)
+                                    }
+                                    .onTapGesture {
                                         if inputValue.count < 3 {
-                                            inputValue += "0"
+                                            // 设置按下状态
+                                            isZeroPressed = true
+                                            
+                                            // 添加触觉反馈
+                                            let generator = UIImpactFeedbackGenerator(style: .light)
+                                            generator.impactOccurred()
+                                            
+                                            // 延迟恢复状态
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                                isZeroPressed = false
+                                                inputValue += "0"
+                                            }
                                         }
                                     }
 
@@ -89,14 +132,26 @@ struct BPMKeypadView: View {
                                             .background(Color("textSecondaryColor"))
                                             .foregroundColor(Color("backgroundPrimaryColor"))
                                             .cornerRadius(10)
+                                            .opacity(isSetPressed ? 0.6 : 1.0)
                                     }
                                     .onTapGesture{
-                                        if let value = Int(inputValue) {
+                                        // 设置按下状态
+                                        isSetPressed = true
+                                        
+                                        // 添加触觉反馈
+                                        let generator = UIImpactFeedbackGenerator(style: .light)
+                                        generator.impactOccurred()
+                                        
+                                        // 延迟恢复状态
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            isSetPressed = false
                                             
-                                            let tempo = max(30, min(240, value))
-                                            metronomeState.updateTempo(tempo)
+                                            if let value = Int(inputValue) {
+                                                let tempo = max(30, min(240, value))
+                                                metronomeState.updateTempo(tempo)
+                                            }
+                                            dismiss()
                                         }
-                                        dismiss()
                                     }
                                 }
                             }
@@ -107,8 +162,33 @@ struct BPMKeypadView: View {
                 .font(.custom("MiSansLatin-Regular", size: 22))
                 .padding(20)
             }
+            .foregroundColor(Color("textPrimaryColor"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Set BPM")
+                        .font(.custom("MiSansLatin-Semibold", size: 16))
+                        .foregroundColor(Color("textPrimaryColor"))
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image("icon-x")
+                            .renderingMode(.template)
+                            .foregroundColor(Color("textPrimaryColor"))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(5)
+                    .contentShape(Rectangle())
+                }
+            }
             .background(Color("backgroundPrimaryColor"))
-            
+            .scrollContentBackground(.hidden)
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
     }
 }
 
