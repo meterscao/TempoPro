@@ -10,6 +10,11 @@ struct PlaylistListView: View {
     @State private var newPlaylistName = ""
     @State private var selectedPlaylistColor = Color.blue
     
+    init(){
+        UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+    }
+    
     var body: some View {
         NavigationStack {
             List {
@@ -65,6 +70,11 @@ struct PlaylistListView: View {
                     .padding(5)
                     .contentShape(Rectangle())
                 }
+                ToolbarItem(placement: .principal) {
+                        Text("Libraries")
+                        .font(.custom("MiSansLatin-Semibold", size: 16))
+                        .foregroundColor(Color("textPrimaryColor"))
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action:{
                         showingAddPlaylist = true
@@ -78,15 +88,13 @@ struct PlaylistListView: View {
 //                    .clipShape(RoundedRectangle(cornerRadius: 5))
                 }
             }
-            .navigationTitle("Library")
+            
+            
             .navigationBarTitleDisplayMode(.inline)
-            .listStyle(InsetGroupedListStyle())
             .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
-            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .preferredColorScheme(.dark)
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
+            
             .navigationDestination(for: Playlist.self) { playlist in
                 PlaylistDetailView(playlist: playlist)
             }

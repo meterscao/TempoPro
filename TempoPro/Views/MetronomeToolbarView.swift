@@ -109,7 +109,7 @@ struct MetronomeToolbarView: View {
             SetTimerView()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
-                .compatibleCornerRadius(15)
+                .compatibleCornerRadius(15) 
                 
         }
     }

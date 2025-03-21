@@ -24,6 +24,11 @@ struct SetTimerView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var metronomeState: MetronomeState
     
+    init(){
+        UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+    }
+    
     // 计算属性
     private var totalSeconds: Int {
         return (selectedHours * 3600) + (selectedMinutes * 60) + selectedSeconds
@@ -55,9 +60,15 @@ struct SetTimerView: View {
                     timerView
                 }
             }
-            .navigationTitle("Timer")
+            
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                
+//                ToolbarItem(placement: .principal) {
+//                        Text("Timer")
+//                        .font(.custom("MiSansLatin-Semibold", size: 17))
+//                        .foregroundColor(Color("textPrimaryColor"))
+//                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         dismiss()
@@ -74,10 +85,11 @@ struct SetTimerView: View {
                 }
             }
             .background(theme.backgroundColor)
+            
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .preferredColorScheme(.dark)
+//
+            
+            
         }
     }
     
@@ -94,6 +106,7 @@ struct SetTimerView: View {
                         ForEach(0...23, id: \.self) { hour in
                             Text("\(hour)")
                                 .tag(hour)
+                                .foregroundStyle(Color("textPrimaryColor"))
                         }
                     }
                     .pickerStyle(.wheel)
@@ -113,6 +126,7 @@ struct SetTimerView: View {
                         ForEach(0...59, id: \.self) { minute in
                             Text("\(minute)")
                                 .tag(minute)
+                                .foregroundStyle(Color("textPrimaryColor"))
                         }
                     }
                     .pickerStyle(.wheel)
@@ -132,6 +146,7 @@ struct SetTimerView: View {
                         ForEach(0...59, id: \.self) { second in
                             Text("\(second)")
                                 .tag(second)
+                                .foregroundStyle(Color("textPrimaryColor"))
                         }
                     }
                     .pickerStyle(.wheel)
