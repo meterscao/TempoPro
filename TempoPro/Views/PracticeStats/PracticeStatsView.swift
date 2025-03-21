@@ -24,6 +24,11 @@ struct PracticeStatsView: View {
     // 添加选中的周视图日期索引
     @State private var selectedWeekdayIndex: Int? = nil
     
+    init(){
+        UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+    }
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -66,6 +71,11 @@ struct PracticeStatsView: View {
             .background(Color("backgroundPrimaryColor"))
             
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                        Text("Stats")
+                        .font(.custom("MiSansLatin-Semibold", size: 16))
+                        .foregroundColor(Color("textPrimaryColor"))
+                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         dismiss()
@@ -79,19 +89,13 @@ struct PracticeStatsView: View {
                     .contentShape(Rectangle())
                 }
             }
-            .navigationTitle("Stats")
-            .navigationBarTitleDisplayMode(.inline)
-            .listStyle(InsetGroupedListStyle())
-            .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
+            .background(Color("backgroundPrimaryColor"))
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .preferredColorScheme(.dark)
             }
         .navigationViewStyle(StackNavigationViewStyle())
-        .accentColor(.textPrimary)
-        .preferredColorScheme(.dark)
+        
+        
         
     }
 }
