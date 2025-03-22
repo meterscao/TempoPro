@@ -103,7 +103,7 @@ struct SettingsView: View {
                     }) {
                         Image("icon-x")
                             .renderingMode(.template)
-                            
+                            .foregroundColor(Color("textSecondaryColor"))
                     }
                     .buttonStyle(.plain)
                     .padding(5)

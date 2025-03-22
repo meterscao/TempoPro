@@ -11,6 +11,8 @@ struct SetPracticeTimerView: View {
     @EnvironmentObject var practiceTimerState: PracticeTimerState
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
+
+    @State private var selectedTimerType : String = "time" // time or bar
     
     init(){
         UINavigationBar.appearance().shadowImage = UIImage()
@@ -36,11 +38,19 @@ struct SetPracticeTimerView: View {
                     }) {
                         Image("icon-x")
                             .renderingMode(.template)
-                            .foregroundColor(Color("textPrimaryColor"))
+                            .foregroundColor(Color("textSecondaryColor"))
                     }
                     .buttonStyle(.plain)
                     .padding(5)
                     .contentShape(Rectangle())
+                }
+                ToolbarItem(placement:.principal) {
+                    Picker("", selection: $selectedTimerType) {
+                        Text("By Time").tag("time")
+                        Text("By Bar").tag("bar")
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 200)
                 }
             }
             .background(theme.backgroundColor)

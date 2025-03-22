@@ -65,7 +65,7 @@ struct PracticeStatsView: View {
                     }) {
                         Image("icon-x") 
                             .renderingMode(.template)
-                            .foregroundColor(Color.textPrimary)
+                            .foregroundColor(Color("textSecondaryColor"))
                     }
                     .buttonStyle(.plain)
                     .padding(5)

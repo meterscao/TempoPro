@@ -196,7 +196,7 @@ struct BPMKeypadView: View {
                     }) {
                         Image("icon-x")
                             .renderingMode(.template)
-                            .foregroundColor(Color("textPrimaryColor"))
+                            .foregroundColor(Color("textSecondaryColor"))
                     }
                     .buttonStyle(.plain)
                     .padding(5)
