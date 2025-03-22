@@ -26,6 +26,7 @@ class MetronomeState: ObservableObject {
     @Published private(set) var subdivisionPattern: SubdivisionPattern?
     @Published private(set) var soundSet: SoundSet = SoundSetManager.getDefaultSoundSet()
     @Published var practiceManager: CoreDataPracticeManager?
+    @Published private(set) var completedBars: Int = 0
     
     // 直接使用单例引擎
     private let audioEngine = MetronomeAudioEngine.shared
@@ -185,14 +186,16 @@ class MetronomeState: ObservableObject {
         print("MetronomeState - play")
 
         isPlaying = true
+        completedBars = 0 // 重置小节计数
+        
         // 确保当前切分模式已更新
         updateCurrentSubdivisionPattern()
         
-            // 开始练习会话
-            practiceManager?.startPracticeSession(bpm: tempo)
-            
-            // 直接启动定时器
-            metronomeTimer?.start()
+        // 开始练习会话
+        practiceManager?.startPracticeSession(bpm: tempo)
+        
+        // 直接启动定时器
+        metronomeTimer?.start()
     }   
 
     func stop() {
@@ -343,5 +346,10 @@ class MetronomeState: ObservableObject {
     // 获取当前切分模式的类型（兼容现有代码）
     var subdivisionType: SubdivisionType {
         return subdivisionPattern?.type ?? .whole
+    }
+    
+    func incrementCompletedBar() {
+        completedBars += 1
+        objectWillChange.send()
     }
 }

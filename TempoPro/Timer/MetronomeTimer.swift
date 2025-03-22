@@ -125,6 +125,14 @@ class MetronomeTimer {
         
         let nextBeatNumber = (state.currentBeat + 1) % state.beatsPerBar
         
+        // 检测小节完成：当节拍回到第一拍(0)，且当前不是第一拍，说明完成了一个小节
+        if nextBeatNumber == 0 && state.currentBeat > 0 {
+            // 增加已完成小节计数
+            DispatchQueue.main.async {
+                state.incrementCompletedBar()
+            }
+        }
+        
         // 只有UI更新部分需要回到主线程
         DispatchQueue.main.async {
             // 更新当前拍号（UI操作）
