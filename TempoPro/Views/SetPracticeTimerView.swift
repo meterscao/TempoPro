@@ -11,7 +11,6 @@ struct SetPracticeTimerView: View {
     @EnvironmentObject var practiceTimerState: PracticeTimerState
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var metronomeState: MetronomeState
     
     init(){
         UINavigationBar.appearance().shadowImage = UIImage()
@@ -128,7 +127,6 @@ struct SetPracticeTimerView: View {
             // 开始按钮
             Button(action: {
                 practiceTimerState.startTimer()
-                metronomeState.play()
             }) {
                 HStack(spacing: 5) {
                     Image("icon-play")
@@ -205,7 +203,6 @@ struct SetPracticeTimerView: View {
                         practiceTimerState.elapsedSeconds = 0
                         practiceTimerState.isTimerCompleted = false
                         practiceTimerState.startTimerTick()
-                        metronomeState.play()
                     } else {
                         practiceTimerState.togglePause()
                     }
@@ -230,7 +227,6 @@ struct SetPracticeTimerView: View {
                 // 停止按钮
                 Button(action: {
                     practiceTimerState.stopTimer()
-                    metronomeState.stop()
                 }) {
                     HStack(spacing: 5) {
                         Image("icon-stop")
@@ -256,8 +252,3 @@ struct SetPracticeTimerView: View {
     }
 }
 
-#Preview {
-    SetPracticeTimerView()
-        .environmentObject(MetronomeState())
-        .environmentObject(PracticeTimerState())
-}

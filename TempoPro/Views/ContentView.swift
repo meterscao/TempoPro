@@ -14,6 +14,8 @@ struct ContentView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 类型改为 CoreDataPlaylistManager
     @EnvironmentObject var practiceManager: CoreDataPracticeManager // 添加这一行
+
+    @StateObject var practiceTimerState = PracticeTimerState()
     
     @State private var completionDuration: TimeInterval = 0
     @State private var completionTempo: Int = 0
@@ -43,12 +45,14 @@ struct ContentView: View {
         .onAppear {
             // 连接practiceManager到metronomeState
             metronomeState.practiceManager = practiceManager
+            practiceTimerState.setMetronomeState(metronomeState)
         }
         .onDisappear {
             metronomeState.cleanup()
         }
-        
+        .environmentObject(practiceTimerState)
         .environmentObject(metronomeState)
+
     }
 }
 

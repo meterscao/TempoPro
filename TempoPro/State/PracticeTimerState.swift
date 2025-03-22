@@ -17,8 +17,13 @@ class PracticeTimerState: ObservableObject {
     @Published var elapsedSeconds = 0
     @Published var isTimerCompleted = false
     
+    // 引用MetronomeState
+    private weak var metronomeState: MetronomeState?
+    
     var timer: Timer? = nil
     
+    
+
     var totalSeconds: Int {
         return (selectedHours * 3600) + (selectedMinutes * 60) + selectedSeconds
     }
@@ -31,6 +36,13 @@ class PracticeTimerState: ObservableObject {
         return totalSeconds > 0 ? CGFloat(elapsedSeconds) / CGFloat(totalSeconds) : 0.01
     }
     
+    
+    
+    // 设置MetronomeState引用方法
+    func setMetronomeState(_ metronomeState: MetronomeState) {
+        self.metronomeState = metronomeState
+    }
+    
     func formatTime(_ seconds: Int) -> String {
         let minutes = seconds / 60
         let remainingSeconds = seconds % 60
@@ -41,6 +53,9 @@ class PracticeTimerState: ObservableObject {
         isTimerRunning = true
         elapsedSeconds = 0
         startTimerTick()
+        
+        // 启动节拍器
+        metronomeState?.play()
     }
     
     func startTimerTick() {
@@ -60,6 +75,9 @@ class PracticeTimerState: ObservableObject {
                     self.elapsedSeconds = 0
                     self.isTimerCompleted = false
                     self.startTimerTick()
+                } else {
+                    // 计时结束时停止节拍器
+                    self.metronomeState?.stop()
                 }
             }
         }
@@ -68,9 +86,12 @@ class PracticeTimerState: ObservableObject {
     func togglePause() {
         if timer == nil {
             startTimerTick()
+            // 重新开始时启动节拍器
+            metronomeState?.play()
         } else {
             timer?.invalidate()
             timer = nil
+            // 暂停时不停止节拍器，保持一致性
         }
     }
     
@@ -80,5 +101,8 @@ class PracticeTimerState: ObservableObject {
         isTimerRunning = false
         elapsedSeconds = 0
         isTimerCompleted = false
+        
+        // 停止节拍器
+        metronomeState?.stop()
     }
 }
