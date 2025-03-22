@@ -27,13 +27,38 @@ struct BPMKeypadView: View {
                 
         
                 VStack(spacing: gridSpacing) {
-                    Text(inputValue.isEmpty ? "\(metronomeState.tempo)"  : inputValue)
+                    ZStack(alignment: .trailing) {
+                        Text(inputValue.isEmpty ? "\(metronomeState.tempo)"  : inputValue)
                         .font(.custom("MiSansLatin-Semibold", size: 36))
                         .frame(maxWidth: .infinity)
                         .frame(height: buttonHeight)
                         .foregroundColor(inputValue.isEmpty ? Color("textSecondaryColor").opacity(0.5)   : Color("textPrimaryColor"))
                         .background(Color("backgroundSecondaryColor"))
                         .cornerRadius(10)
+
+                        if !inputValue.isEmpty {
+                            Button(action: {
+
+                                if !inputValue.isEmpty {
+                                    inputValue.removeLast()
+                                    // 添加触觉反馈
+                                    let generator = UIImpactFeedbackGenerator(style: .light)
+                                    generator.impactOccurred()
+
+
+                                }
+                            }) {
+                                Image("icon-delete")
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .scaledToFit()
+                                    .frame(width: 24, height: 24)
+                                    .foregroundColor(Color("textSecondaryColor"))
+                            }
+                            .padding(.trailing, 20)
+                        }
+                    }
+                    
                     
                     VStack(spacing: gridSpacing) {
                         ForEach(0..<4) { row in
@@ -70,8 +95,7 @@ struct BPMKeypadView: View {
                                     }
                                 } else {
                                     VStack() {
-                                        Text("CLEAR")
-                                            
+                                        Text("TAP")
                                             .frame(maxWidth: .infinity)
                                             .frame(height: buttonHeight)
                                             .background(Color("textSecondaryColor"))
@@ -88,11 +112,7 @@ struct BPMKeypadView: View {
                                         let generator = UIImpactFeedbackGenerator(style: .light)
                                         generator.impactOccurred()
                                         
-                                        // 延迟恢复状态
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            isClearPressed = false
-                                            inputValue = ""
-                                        }
+                                        
                                     }
                                     
                                     VStack() {
@@ -166,7 +186,7 @@ struct BPMKeypadView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Set BPM")
+                    Text("BPM")
                         .font(.custom("MiSansLatin-Semibold", size: 16))
                         .foregroundColor(Color("textPrimaryColor"))
                 }

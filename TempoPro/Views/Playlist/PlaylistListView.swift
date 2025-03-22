@@ -1,14 +1,13 @@
 import SwiftUI
 import UIKit
 
-
 struct PlaylistListView: View {
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 更改类型
-    @State private var showingAddPlaylist = false
+    @State private var showingAddAlert = false // 新的状态变量，控制弹窗显示
     @State private var newPlaylistName = ""
-    @State private var selectedPlaylistColor = Color.blue
+    
     
     init(){
         UINavigationBar.appearance().shadowImage = UIImage()
@@ -37,28 +36,29 @@ struct PlaylistListView: View {
                     .listRowBackground(Color("backgroundSecondaryColor"))
                 }
             }
-                
-            // 使用Sheet展示添加曲库视图
-            .sheet(isPresented: $showingAddPlaylist) {
-                AddPlaylistView(
-                    isPresented: $showingAddPlaylist,
-                    playlistName: $newPlaylistName,
-                    selectedColor: $selectedPlaylistColor,
-                    onSave: { name, color in
-                        // 使用 CoreDataPlaylistManager 创建曲库
+            
+            // 使用自定义的文本输入弹窗
+            .textFieldAlert(isPresented: $showingAddAlert, alert: TextFieldAlert(
+                title: "添加曲库",
+                message: "请输入新曲库的名称",
+                placeholder: "曲库名称",
+                text: newPlaylistName,
+                confirmText: "添加",
+                cancelText: "取消",
+                onConfirm: { name in
+                    if !name.isEmpty {
+                        // 创建新曲库
                         _ = playlistManager.createPlaylist(
                             name: name,
-                            color: color.toHex() ?? "#0000FF"
+                            color: "#0000FF" // 使用默认蓝色
                         )
-                        
-                        newPlaylistName = ""
-                        selectedPlaylistColor = .blue
                     }
-                )
-            }
-
+                },
+                onCancel: {}
+            ))
+            
             .toolbar {
-                ToolbarItem(placement: .topBarLeading  ) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button(action: {
                         dismiss()
                     }) {
@@ -71,13 +71,13 @@ struct PlaylistListView: View {
                     .contentShape(Rectangle())
                 }
                 ToolbarItem(placement: .principal) {
-                        Text("Libraries")
+                    Text("Libraries")
                         .font(.custom("MiSansLatin-Semibold", size: 16))
                         .foregroundColor(Color("textPrimaryColor"))
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action:{
-                        showingAddPlaylist = true
+                        showingAddAlert = true // 显示自定义弹窗
                     }){
                         Text("Add Library")
                             .foregroundStyle(Color("textPrimaryColor"))
