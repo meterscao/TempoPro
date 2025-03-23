@@ -4,7 +4,8 @@ struct MetronomeToolbarView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager
     @State private var showingStatsView = false
-    @State private var showingSetTimerView = false
+    @State private var showingCountDownTimerView = false
+    @State private var showingStepTimerView = false
     
     // 定义按钮数据模型
     struct ToolbarButtonItem: Identifiable {
@@ -18,15 +19,15 @@ struct MetronomeToolbarView: View {
         [
             
             ToolbarButtonItem(image: "icon-timer") {
-                showingSetTimerView = true
-            },
-            
-            ToolbarButtonItem(image: "icon-play-list") {
-                playlistManager.openPlaylistsSheet()
+                showingCountDownTimerView = true
             },
             
             ToolbarButtonItem(image: "icon-stairs-arrow-up-right") {
-                showingStatsView = true
+                showingStepTimerView = true
+            },
+
+            ToolbarButtonItem(image: "icon-play-list") {
+                playlistManager.openPlaylistsSheet()
             },
             
             ToolbarButtonItem(image: "icon-calendar-days") {
@@ -105,13 +106,20 @@ struct MetronomeToolbarView: View {
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15)
         }
-        .sheet(isPresented: $showingSetTimerView) {
-            SetPracticeTimerView()
+        .sheet(isPresented: $showingCountDownTimerView) {
+            CountDownTimerView()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15) 
                 
         }
+
+        .sheet(isPresented: $showingStepTimerView) {
+            StepTimerView()
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.hidden)
+                .compatibleCornerRadius(15)
+        }   
     }
     
     // 计算工具栏的精确高度

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3A011FF42D89CEDC00F2853F /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A011FF32D89CEDC00F2853F /* SubscriptionManager.swift */; };
 		3A25ED092D8DBCBA009261FA /* PracticeTimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A25ED082D8DBCBA009261FA /* PracticeTimerState.swift */; };
+		3A25ED0B2D904C7E009261FA /* StepTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A25ED0A2D904C7A009261FA /* StepTimerView.swift */; };
 		3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C889F2D6F728A004CFD88 /* TempoProApp.swift */; };
 		3A9C88A22D6F728A004CFD88 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C88A12D6F728A004CFD88 /* ContentView.swift */; };
 		3A9C88A42D6F728B004CFD88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A9C88A32D6F728B004CFD88 /* Assets.xcassets */; };
@@ -48,7 +49,7 @@
 		3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */; };
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
 		3AE469FE2D8C73DC00125F3D /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */; };
-		C7727DF12D829E7C00D1DC8E /* SetPracticeTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7727DF02D829E7C00D1DC8E /* SetPracticeTimerView.swift */; };
+		C7727DF12D829E7C00D1DC8E /* CountDownTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7727DF02D829E7C00D1DC8E /* CountDownTimerView.swift */; };
 		C7879CB82D8430DC00B52E59 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = C7879CB72D8430DC00B52E59 /* RevenueCat */; };
 		C7879CBD2D84345100B52E59 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7879CBC2D84345100B52E59 /* StoreKit.framework */; };
 		C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */; };
@@ -103,6 +104,7 @@
 /* Begin PBXFileReference section */
 		3A011FF32D89CEDC00F2853F /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		3A25ED082D8DBCBA009261FA /* PracticeTimerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeTimerState.swift; sourceTree = "<group>"; };
+		3A25ED0A2D904C7A009261FA /* StepTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepTimerView.swift; sourceTree = "<group>"; };
 		3A9C889C2D6F728A004CFD88 /* Tempo Pro, Metronome Beats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tempo Pro, Metronome Beats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9C889F2D6F728A004CFD88 /* TempoProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempoProApp.swift; sourceTree = "<group>"; };
 		3A9C88A12D6F728A004CFD88 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -147,7 +149,7 @@
 		3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubdivisionModels.swift; sourceTree = "<group>"; };
 		3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayCornerRadius.swift; sourceTree = "<group>"; };
 		3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
-		C7727DF02D829E7C00D1DC8E /* SetPracticeTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPracticeTimerView.swift; sourceTree = "<group>"; };
+		C7727DF02D829E7C00D1DC8E /* CountDownTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownTimerView.swift; sourceTree = "<group>"; };
 		C7879CBC2D84345100B52E59 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 		C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAdvanceView.swift; sourceTree = "<group>"; };
@@ -367,7 +369,8 @@
 				3AA1E5502D6F7371002D9615 /* BPMKeypadView.swift */,
 				F7FF3F222D7078E900390C16 /* TimeSignatureView.swift */,
 				F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */,
-				C7727DF02D829E7C00D1DC8E /* SetPracticeTimerView.swift */,
+				C7727DF02D829E7C00D1DC8E /* CountDownTimerView.swift */,
+				3A25ED0A2D904C7A009261FA /* StepTimerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -658,9 +661,10 @@
 				F75EC5672D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift in Sources */,
 				3A25ED092D8DBCBA009261FA /* PracticeTimerState.swift in Sources */,
 				F792941C2D7B12B000A2D91C /* WeeklyStatsView.swift in Sources */,
-				C7727DF12D829E7C00D1DC8E /* SetPracticeTimerView.swift in Sources */,
+				C7727DF12D829E7C00D1DC8E /* CountDownTimerView.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				3AE469FE2D8C73DC00125F3D /* ViewExtension.swift in Sources */,
+				3A25ED0B2D904C7E009261FA /* StepTimerView.swift in Sources */,
 				F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */,
 				3A011FF42D89CEDC00F2853F /* SubscriptionManager.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
