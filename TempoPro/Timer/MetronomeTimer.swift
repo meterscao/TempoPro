@@ -76,6 +76,61 @@ class MetronomeTimer {
         isPlayingSubdivisions = false
     }
     
+    // 暂停定时器 - 保留当前状态
+    func pause() {
+        if let timer = timer {
+            timer.cancel()
+            self.timer = nil
+        }
+        
+        // 取消所有切分音符的定时器
+        cancelSubdivisionTimers()
+        
+        // 不重置当前拍，保留当前小节状态
+        // 不重置isPlayingSubdivisions标志
+    }
+    
+    // 恢复定时器 - 从当前小节的第一拍开始
+    func resume() {
+        // 确保当前没有正在运行的定时器
+        if timer != nil {
+            timer?.cancel()
+            timer = nil
+        }
+        
+        // 重置当前拍到第一拍（小节的开始）
+        state?.updateCurrentBeat(0)
+        
+        // 计算开始时间
+        let startTime = Date().timeIntervalSince1970
+        nextBeatTime = startTime
+        
+        // 确保音频引擎正在运行
+        audioEngine.ensureEngineRunning()
+        
+        // 播放当前拍
+        playCurrentBeat()
+        
+        // 计算下一拍时间
+        guard let state = state else { return }
+        nextBeatTime = startTime + (60.0 / Double(state.tempo))
+        
+        // 创建新的定时器
+        timer = DispatchSource.makeTimerSource(queue: timerQueue)
+        timer?.schedule(deadline: .now(), repeating: 0.01)
+        
+        timer?.setEventHandler { [weak self, weak state] in
+            guard let self = self, let state = state else { return }
+            
+            let now = Date().timeIntervalSince1970
+            if now >= self.nextBeatTime {
+                self.handleBeat(at: now)
+            }
+        }
+        
+        timer?.resume()
+    }
+    
     // 取消所有切分音符的定时器
     private func cancelSubdivisionTimers() {
         for timer in subdivisionTimers {

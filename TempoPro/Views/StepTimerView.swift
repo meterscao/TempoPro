@@ -471,7 +471,7 @@ struct StepTimerView: View {
                         .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
                         .foregroundColor(theme.primaryColor)
                         .rotationEffect(Angle(degrees: -90.0))
-                        .animation(.linear(duration: 1.0), value: practiceTimerState.stepCycleProgress)
+                        .animation(practiceTimerState.isCompletingCycle ? .linear(duration: 0.5) : .linear(duration: 1.0), value: practiceTimerState.stepCycleProgress)
                         .frame(width: geometry.size.height, height: geometry.size.width)
                 )   
             }

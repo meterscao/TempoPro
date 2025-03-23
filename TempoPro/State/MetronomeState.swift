@@ -209,6 +209,44 @@ class MetronomeState: ObservableObject {
         metronomeTimer?.stop()
     }   
     
+    // 暂停节拍器 - 保留当前的小节计数和状态
+    func pause() {
+        print("MetronomeState - pause")
+        
+        if !isPlaying {
+            return // 如果没有在播放，则不需要暂停
+        }
+        
+        isPlaying = false
+        // 注意：不重置 completedBars，保留当前已完成的小节数
+        // 注意：不结束练习会话，只是暂停
+        
+        // 暂停定时器
+        metronomeTimer?.pause()
+        
+        // 通知观察者状态变化
+        objectWillChange.send()
+    }
+    
+    // 恢复节拍器 - 从当前小节的第一拍开始
+    func resume() {
+        print("MetronomeState - resume")
+        
+        if isPlaying {
+            return // 如果已经在播放，则不需要恢复
+        }
+        
+        isPlaying = true
+        // 重置当前拍回到第一拍（小节的开始）
+        currentBeat = 0
+        
+        // 恢复定时器
+        metronomeTimer?.resume()
+        
+        // 通知观察者状态变化
+        objectWillChange.send()
+    }
+    
     // 使用切分类型更新切分模式
     func updateSubdivisionType(_ type: SubdivisionType) {
         print("MetronomeState - updateSubdivisionType: \(type.rawValue)")

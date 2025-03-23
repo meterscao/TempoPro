@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 // 定义练习模式枚举
 enum PracticeMode {
@@ -81,6 +82,11 @@ class PracticeTimerState: ObservableObject {
     
     var timer: Timer? = nil
     
+    // 添加新属性用于处理进度条动画
+    @Published var isCompletingCycle: Bool = false // 标记是否正在完成一个循环
+    private var resetProgressTask: DispatchWorkItem? // 用于控制重置进度的任务
+    private var stepUpdateTask: DispatchWorkItem? // 用于 Step 模式 BPM 更新的任务
+    
     // ------- 通用计算属性 -------
     
     var isTimerRunning: Bool {
@@ -110,6 +116,11 @@ class PracticeTimerState: ObservableObject {
     
     // 在Step模式下，计算当前循环的进度（即距离下一次BPM变化的进度）
     var stepCycleProgress: CGFloat {
+        // 如果正在完成循环，返回100%
+        if isCompletingCycle {
+            return 1.0
+        }
+        
         if practiceMode != .step || timerStatus != .running {
             return 0.0
         }
@@ -129,6 +140,11 @@ class PracticeTimerState: ObservableObject {
     
     // 倒计时或小节计数的进度
     var progress: CGFloat {
+        // 如果正在完成循环，返回100%
+        if isCompletingCycle {
+            return 1.0
+        }
+        
         if practiceMode == .countdown {
             // 倒计时模式进度
             if activeTimerType == .time {
@@ -341,6 +357,9 @@ class PracticeTimerState: ObservableObject {
         
         isUpdatingBPM = true
         
+        // 取消之前的更新任务（如果有）
+        stepUpdateTask?.cancel()
+        
         guard let metronomeState = metronomeState,
               stepFromBPM != stepToBPM else {
             isUpdatingBPM = false
@@ -356,6 +375,7 @@ class PracticeTimerState: ObservableObject {
         // 检查是否已达到目标BPM
         if (isIncreasing && nextBPM >= stepToBPM) || 
            (!isIncreasing && nextBPM <= stepToBPM) {
+            // 已达到最终BPM
             currentBPM = stepToBPM
             
             // 安全地更新节拍器
@@ -371,16 +391,45 @@ class PracticeTimerState: ObservableObject {
                 self.isUpdatingBPM = false
             }
         } else {
-            // 更新到下一个BPM值
-            currentBPM = nextBPM
-            
-            // 安全地更新节拍器
-            DispatchQueue.main.async {
-                metronomeState.updateTempo(self.currentBPM)
-                
-                // 完成后重置标志
-                self.isUpdatingBPM = false
+            // 先使进度条动画到100%
+            withAnimation(.linear(duration: 0.5)) {
+                self.isCompletingCycle = true
             }
+            
+            // 创建延迟任务
+            let task = DispatchWorkItem { [weak self] in
+                guard let self = self else { return }
+                
+                // 无动画地重置进度并更新BPM
+                DispatchQueue.main.async {
+                    // 关闭动画重置进度
+                    withAnimation(nil) {
+                        self.isCompletingCycle = false
+                    }
+                    
+                    // 更新到下一个BPM值
+                    self.currentBPM = nextBPM
+                    
+                    // 记录当前更新时间点
+                    if self.activeTimerType == .time {
+                        self.lastBPMUpdateTime = self.elapsedSeconds
+                    } else {
+                        self.lastBPMUpdateBar = metronomeState.completedBars
+                    }
+                    
+                    // 更新节拍器
+                    metronomeState.updateTempo(self.currentBPM)
+                    
+                    // 完成后重置标志
+                    self.isUpdatingBPM = false
+                }
+            }
+            
+            // 存储任务引用
+            stepUpdateTask = task
+            
+            // 延迟0.5秒执行，与进度条动画时间一致
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: task)
         }
         
         print("DEBUG: 更新BPM到 \(currentBPM)")
@@ -390,16 +439,48 @@ class PracticeTimerState: ObservableObject {
     private func completeTimer() {
         self.timer?.invalidate()
         self.timer = nil
-        self.timerStatus = .completed
         
-        if self.practiceMode == .countdown {
-            if self.isLoopEnabled {
-                // 循环模式 - 重置计时器
-                self.elapsedSeconds = 0
-                self.previousCompletedBars = self.metronomeState?.completedBars ?? 0
-                self.timerStatus = .running
-                self.startTimerTick()
-            } else if self.isSyncStopEnabled {
+        if self.practiceMode == .countdown && self.isLoopEnabled {
+            // 循环模式 - 先显示完成状态，再重置计时器
+            self.timerStatus = .completed
+            
+            // 取消之前的重置任务（如果有）
+            resetProgressTask?.cancel()
+            
+            // 设置完成循环标志，使进度显示100%
+            withAnimation(.linear(duration: 0.5)) {
+                self.isCompletingCycle = true
+            }
+            
+            // 创建新的延迟任务
+            let task = DispatchWorkItem { [weak self] in
+                guard let self = self else { return }
+                
+                // 在主线程上无动画地重置进度
+                DispatchQueue.main.async {
+                    // 关闭动画
+                    withAnimation(nil) {
+                        self.isCompletingCycle = false
+                        self.elapsedSeconds = 0
+                        self.previousCompletedBars = self.metronomeState?.completedBars ?? 0
+                    }
+                    
+                    // 设置状态并重启计时器
+                    self.timerStatus = .running
+                    self.startTimerTick()
+                }
+            }
+            
+            // 存储任务引用
+            resetProgressTask = task
+            
+            // 延迟执行重置，给足够时间显示完成状态（1秒）
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: task)
+        } else {
+            // 非循环模式，直接完成
+            self.timerStatus = .completed
+            
+            if self.practiceMode == .countdown && self.isSyncStopEnabled {
                 // 计时结束时根据同步停止设置决定是否停止节拍器
                 self.metronomeState?.stop()
             }
@@ -428,57 +509,57 @@ class PracticeTimerState: ObservableObject {
             // 从暂停恢复
             timerStatus = .running
             
-            if activeTimerType == .bar {
-                // 计算恢复时需要调整的小节差值
-                let currentCompletedBars = metronomeState?.completedBars ?? 0
-                let drift = currentCompletedBars - pausedCompletedBars
-                
-                // 调整previousCompletedBars，确保继续时使用正确的剩余小节数
-                if drift > 0 {
-                    previousCompletedBars += drift
-                    print("DEBUG: 恢复时调整previousCompletedBars: +\(drift), 新值: \(previousCompletedBars)")
-                }
-            }
-            
             // 启动计时器
             startTimerTick()
             
-            // 恢复节拍器播放
-            metronomeState?.play()
+            // 恢复节拍器播放 - 使用新的resume方法
+            metronomeState?.resume()
         } else if timerStatus == .running {
             // 暂停
             timer?.invalidate()
             timer = nil
             timerStatus = .paused
-            
+
             // 记录当前状态
             if activeTimerType == .bar {
                 pausedCompletedBars = metronomeState?.completedBars ?? 0
                 print("DEBUG: 暂停时记录completedBars: \(pausedCompletedBars)")
             }
             
-            // 暂停节拍器
-            metronomeState?.stop()
+            // 暂停节拍器 - 使用新的pause方法
+            metronomeState?.pause()
         }
     }
     
     func stopTimer() {
         timer?.invalidate()
         timer = nil
+        resetProgressTask?.cancel()
+        resetProgressTask = nil
+        stepUpdateTask?.cancel()
+        stepUpdateTask = nil
+        
+        // 确保无动画重置所有状态
+        withAnimation(nil) {
+            isCompletingCycle = false
+        }
+        
         timerStatus = .standby
         elapsedSeconds = 0
         
-        // 在Countdown模式下根据同步停止设置决定是否停止节拍器
-        if practiceMode == .countdown && isSyncStopEnabled {
-            metronomeState?.stop()
-        }
-        // Step模式下不自动停止节拍器
+        
+        metronomeState?.stop()
+        
     }
     
     // 清理资源
     func cleanup() {
         timer?.invalidate()
         timer = nil
+        resetProgressTask?.cancel()
+        resetProgressTask = nil
+        stepUpdateTask?.cancel()
+        stepUpdateTask = nil
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
     }
