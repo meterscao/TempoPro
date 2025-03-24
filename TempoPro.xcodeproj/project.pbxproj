@@ -55,7 +55,6 @@
 		C7879CBD2D84345100B52E59 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7879CBC2D84345100B52E59 /* StoreKit.framework */; };
 		C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */; };
 		C7DB2F532D85939B0063508C /* SettingsAdvanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */; };
-		C7DCE9A72D8E662A0036EC02 /* TextFieldAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DCE9A62D8E662A0036EC02 /* TextFieldAlert.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
 		F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */; };
 		F71AF6B42D716E6500ADBC17 /* ThemeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */; };
@@ -155,7 +154,6 @@
 		C7879CBC2D84345100B52E59 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 		C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAdvanceView.swift; sourceTree = "<group>"; };
-		C7DCE9A62D8E662A0036EC02 /* TextFieldAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldAlert.swift; sourceTree = "<group>"; };
 		F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTheme.swift; sourceTree = "<group>"; };
 		F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEnvironment.swift; sourceTree = "<group>"; };
@@ -357,14 +355,6 @@
 			path = Subscription;
 			sourceTree = "<group>";
 		};
-		C7DCE9A52D8E66210036EC02 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				C7DCE9A62D8E662A0036EC02 /* TextFieldAlert.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
 		F71AF6AE2D716E1D00ADBC17 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
@@ -381,7 +371,6 @@
 				3A9C88A12D6F728A004CFD88 /* ContentView.swift */,
 				C75FB77F2D91466600AC8D61 /* InfoView */,
 				C75FB77C2D91463800AC8D61 /* Practice */,
-				C7DCE9A52D8E66210036EC02 /* Components */,
 				C7879CBE2D843B9000B52E59 /* Subscription */,
 				3AD042B32D7C7A64002EAB55 /* Settings */,
 				F75EC5652D7ABE86001CBAA4 /* PracticeStats */,
@@ -668,7 +657,6 @@
 				F71AF6B62D716E9B00ADBC17 /* ThemeSelectionView.swift in Sources */,
 				3AA1E5572D6F7372002D9615 /* MetronomeInfoView.swift in Sources */,
 				3AA1E5552D6F7372002D9615 /* MetronomeToolbarView.swift in Sources */,
-				C7DCE9A72D8E662A0036EC02 /* TextFieldAlert.swift in Sources */,
 				C75FB77B2D91414600AC8D61 /* PracticeCoordinator.swift in Sources */,
 				3AA1E5562D6F7372002D9615 /* MetronomeControlView.swift in Sources */,
 				F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */,

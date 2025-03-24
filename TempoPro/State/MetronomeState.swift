@@ -243,9 +243,9 @@ class MetronomeState: ObservableObject {
         }
         
         // 确保第一拍是强拍
-        if newBeatStatuses.count > 0 {
-            newBeatStatuses[0] = .strong
-        }
+        // if newBeatStatuses.count > 0 {
+        //     newBeatStatuses[0] = .strong
+        // }
         
         // 更新状态
         beatStatuses = newBeatStatuses

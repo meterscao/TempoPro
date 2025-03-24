@@ -35,27 +35,50 @@ struct PlaylistListView: View {
                     }
                     .listRowBackground(Color("backgroundSecondaryColor"))
                 }
+                
+                // 添加曲库的 cell
+                Button(action: {
+                    showingAddAlert = true
+                }) {
+                    HStack {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color("textPrimaryColor").opacity(0.1))
+                                .frame(width: 40, height: 40)
+                            
+                            Image("icon-plus-s")
+                                .renderingMode(.template)
+                                .foregroundStyle(Color("textPrimaryColor"))
+                        }
+                        
+                        Text("添加曲库")
+                            .font(.custom("MiSansLatin-Semibold", size: 17))
+                            .foregroundColor(Color("textPrimaryColor"))
+                        
+                        Spacer()
+                    }
+                }
+                .listRowBackground(Color("backgroundSecondaryColor"))
             }
-            
-            // // 使用自定义的文本输入弹窗
-            // .textFieldAlert(isPresented: $showingAddAlert, alert: TextFieldAlert(
-            //     title: "添加曲库",
-            //     message: "请输入新曲库的名称",
-            //     placeholder: "曲库名称",
-            //     text: newPlaylistName,
-            //     confirmText: "添加",
-            //     cancelText: "取消",
-            //     onConfirm: { name in
-            //         if !name.isEmpty {
-            //             // 创建新曲库
-            //             _ = playlistManager.createPlaylist(
-            //                 name: name,
-            //                 color: "#0000FF" // 使用默认蓝色
-            //             )
-            //         }
-            //     },
-            //     onCancel: {}
-            // ))
+
+            .alert("添加曲库", isPresented: $showingAddAlert) {
+                TextField("曲库名称", text: $newPlaylistName)
+                Button("取消", role: .cancel) { 
+                    newPlaylistName = ""
+                }
+                Button("添加") {
+                    if !newPlaylistName.isEmpty {
+                        // 创建新曲库
+                        _ = playlistManager.createPlaylist(
+                            name: newPlaylistName,
+                            color: "#0000FF" // 使用默认蓝色
+                        )
+                        newPlaylistName = ""
+                    }
+                }.disabled(newPlaylistName.isEmpty)
+            } message: {
+                Text("请输入新曲库的名称")
+            }
             
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -82,7 +105,7 @@ struct PlaylistListView: View {
                         Text("Add Library")
                             .foregroundStyle(Color("textPrimaryColor"))
                     }
-                    .background(Color("backgroundSecondaryColor"))
+                    
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
