@@ -9,11 +9,7 @@ import Foundation
 import Combine
 import SwiftUI
 
-// 定义练习模式枚举
-enum PracticeMode {
-    case countdown
-    case step
-}
+
 
 // 定义计时器类型枚举
 enum TimerType: String {
@@ -121,7 +117,7 @@ class PracticeTimerState: ObservableObject {
             return 1.0
         }
         
-        if practiceMode != .step || timerStatus != .running {
+        if practiceMode != .progressive || timerStatus != .running {
             return 0.0
         }
         
@@ -208,7 +204,7 @@ class PracticeTimerState: ObservableObject {
                             print("DEBUG: 提前检测到目标小节最后一拍，即将完成计时")
                             // 注：这里不立即完成，等待小节真正完成时再处理
                         }
-                    } else if self.practiceMode == .step && self.activeTimerType == .bar {
+                    } else if self.practiceMode == .progressive && self.activeTimerType == .bar {
                         // Step模式 - 小节计时
                         // 获取当前完成的小节数
                         let currentCompletedBars = metronomeState.completedBars
@@ -243,13 +239,7 @@ class PracticeTimerState: ObservableObject {
         print("DEBUG: 计时类型变更 - \(practiceMode) 模式切换到 \(type)")
     }
     
-    // ------- 倒计时功能 -------
     
-    func formatTime(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, remainingSeconds)
-    }
     
     // 获取已完成小节数
     var completedBars: Int {
@@ -263,7 +253,7 @@ class PracticeTimerState: ObservableObject {
             // 如果是倒计时模式，且已有计时器运行，则不允许启动
             print("DEBUG: 无法启动倒计时，已有其他练习正在进行")
             return
-        } else if isAnyTimerRunning() && practiceMode == .step {
+        } else if isAnyTimerRunning() && practiceMode == .progressive {
             // 如果是步进模式，且已有计时器运行，则不允许启动
             print("DEBUG: 无法启动渐进练习，已有其他练习正在进行")
             return
@@ -581,7 +571,7 @@ class PracticeTimerState: ObservableObject {
     
     // 计算Step模式下距离下一次BPM更新的剩余秒数
     func getRemainingSecondsToNextUpdate() -> Int {
-        if activeTimerType != .time || practiceMode != .step {
+        if activeTimerType != .time || practiceMode != .progressive {
             return 0
         }
         
@@ -591,7 +581,7 @@ class PracticeTimerState: ObservableObject {
     
     // 计算Step模式下距离下一次BPM更新的剩余小节数
     func getRemainingBarsToNextUpdate() -> Int {
-        if activeTimerType != .bar || practiceMode != .step {
+        if activeTimerType != .bar || practiceMode != .progressive {
             return 0
         }
         

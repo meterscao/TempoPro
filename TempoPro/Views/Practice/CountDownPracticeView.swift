@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct CountDownTimerView: View {
-    @EnvironmentObject var practiceTimerState: PracticeTimerState
+struct CountDownPracticeView: View {
+    @EnvironmentObject var practiceCoordinator: PracticeCoordinator
     @EnvironmentObject var metronomeState: MetronomeState
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
 
-    @State private var selectedTimerType : String = "time" // time or bar
+    @State private var selectedTimerType: String = "time" // time 或 bar
     @State private var showCannotStartAlert: Bool = false
     
     init(){
@@ -24,7 +24,7 @@ struct CountDownTimerView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                if practiceTimerState.timerStatus == .standby {
+                if practiceCoordinator.practiceStatus == .standby {
                     // 默认状态 - 设置视图
                     setupView
                 } else {
@@ -46,7 +46,7 @@ struct CountDownTimerView: View {
                     .padding(5)
                     .contentShape(Rectangle())
                 }
-                if(practiceTimerState.timerStatus == .standby){
+                if(practiceCoordinator.practiceStatus == .standby){
                 ToolbarItem(placement:.principal) {
                     Picker("", selection: $selectedTimerType) {
                         Text("By Time").tag("time")
@@ -56,9 +56,9 @@ struct CountDownTimerView: View {
                     .frame(width: 200)
                     .onChange(of: selectedTimerType) { newValue in
                         if newValue == "time" {
-                            practiceTimerState.setTimerType(.time)
+                            practiceCoordinator.countdownType = .time
                         } else {
-                            practiceTimerState.setTimerType(.bar)
+                            practiceCoordinator.countdownType = .bar
                         }
                     }
                     
@@ -70,33 +70,17 @@ struct CountDownTimerView: View {
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
         }
         .onAppear {
-            // 记录当前状态，以便在切换时保留
-            let wasRunning = practiceTimerState.isAnyTimerRunning()
-            let previousMode = practiceTimerState.practiceMode
-            
             // 设置为Countdown模式
-            if !wasRunning || previousMode == .countdown {
-                practiceTimerState.practiceMode = .countdown
-                
-                // 初始化选择类型
-                selectedTimerType = practiceTimerState.countdownTimerType.rawValue
-                
-                // 记录初始状态
-                print("DEBUG: SetPracticeTimerView出现 - timerType: \(practiceTimerState.activeTimerType), completedBars: \(metronomeState.completedBars), isPlaying: \(metronomeState.isPlaying)")
-                
-                // 如果metronomeState已有completedBars值且不处于播放状态，可能导致问题
-                if metronomeState.completedBars > 0 && !metronomeState.isPlaying {
-                    print("DEBUG: ⚠️ 警告 - metronomeState.completedBars未重置: \(metronomeState.completedBars)")
-                }
-            }
+            practiceCoordinator.setPracticeMode(.countdown)
+            
+            // 初始化选择类型
+            selectedTimerType = practiceCoordinator.countdownType == .time ? "time" : "bar"
         }
     }
     
     // 设置视图
     private var setupView: some View {
         VStack(spacing: 20) {
-            
-            
             if selectedTimerType == "time" {
                 // 时间选择器
                 timePickerView
@@ -105,36 +89,31 @@ struct CountDownTimerView: View {
                 barPickerView
             }
             
-            
-
             // 同步启动选项
-            Toggle(isOn: $practiceTimerState.isSyncStartEnabled) {
+            Toggle(isOn: $practiceCoordinator.isSyncStartEnabled) {
                 Text("同步启动节拍器")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textPrimaryColor"))
             }
             
             // 同步停止选项
-            Toggle(isOn: $practiceTimerState.isSyncStopEnabled) {
+            Toggle(isOn: $practiceCoordinator.isSyncStopEnabled) {
                 Text("同步停止节拍器")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textPrimaryColor"))
             }
             
             // 循环选项
-            Toggle(isOn: $practiceTimerState.isLoopEnabled) {
+            Toggle(isOn: $practiceCoordinator.isLoopEnabled) {
                 Text("循环")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textPrimaryColor"))
             }
-    
-    
             
             // 开始按钮
             Button(action: {
-                if practiceTimerState.canStartNewPractice(mode: .countdown) {
-                    print("DEBUG: 点击开始按钮 - 计时类型: \(selectedTimerType), 目标小节: \(practiceTimerState.targetBars)")
-                    practiceTimerState.startTimer()
+                if practiceCoordinator.activeMode == .none || practiceCoordinator.activeMode == .countdown {
+                    practiceCoordinator.startPractice()
                 } else {
                     // 显示警告
                     showCannotStartAlert = true
@@ -156,14 +135,14 @@ struct CountDownTimerView: View {
                         .fill(theme.primaryColor)
                 )
             }
-            .disabled((selectedTimerType == "time" && practiceTimerState.totalSeconds == 0) || 
-                     (selectedTimerType == "bar" && practiceTimerState.targetBars == 0))
-            .opacity((selectedTimerType == "time" && practiceTimerState.totalSeconds == 0) || 
-                    (selectedTimerType == "bar" && practiceTimerState.targetBars == 0) ? 0.5 : 1)
+            .disabled((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
+                     (selectedTimerType == "bar" && practiceCoordinator.targetBars == 0))
+            .opacity((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
+                    (selectedTimerType == "bar" && practiceCoordinator.targetBars == 0) ? 0.5 : 1)
             .alert(isPresented: $showCannotStartAlert) {
                 Alert(
                     title: Text("无法开始倒计时"),
-                    message: Text(practiceTimerState.getCannotStartMessage()),
+                    message: Text("渐进练习正在进行中，请先停止再开始新的倒计时"),
                     dismissButton: .default(Text("我知道了"))
                 )
             }
@@ -173,12 +152,40 @@ struct CountDownTimerView: View {
         .background(Color("backgroundPrimaryColor"))
     }
     
-    // 时间选择器视图
+    // 时间选择器视图 - 使用本地状态绑定到协调器
     private var timePickerView: some View {
-        HStack(spacing: 10) {
+        // 创建本地状态作为中介
+        let hours = Binding<Int>(
+            get: { self.targetTimeHours },
+            set: { newValue in
+                let mins = self.targetTimeMinutes
+                let secs = self.targetTimeSeconds
+                practiceCoordinator.targetTime = (newValue * 3600) + (mins * 60) + secs
+            }
+        )
+        
+        let minutes = Binding<Int>(
+            get: { self.targetTimeMinutes },
+            set: { newValue in
+                let hrs = self.targetTimeHours
+                let secs = self.targetTimeSeconds
+                practiceCoordinator.targetTime = (hrs * 3600) + (newValue * 60) + secs
+            }
+        )
+        
+        let seconds = Binding<Int>(
+            get: { self.targetTimeSeconds },
+            set: { newValue in
+                let hrs = self.targetTimeHours
+                let mins = self.targetTimeMinutes
+                practiceCoordinator.targetTime = (hrs * 3600) + (mins * 60) + newValue
+            }
+        )
+        
+        return HStack(spacing: 10) {
             // 小时
             HStack(spacing: 0) {
-                Picker("", selection: $practiceTimerState.selectedHours) {
+                Picker("", selection: hours) {
                     ForEach(0...23, id: \.self) { hour in
                         Text("\(hour)")
                             .tag(hour)
@@ -198,7 +205,7 @@ struct CountDownTimerView: View {
             
             // 分钟
             HStack(spacing: 0) {
-                Picker("", selection: $practiceTimerState.selectedMinutes) {
+                Picker("", selection: minutes) {
                     ForEach(0...59, id: \.self) { minute in
                         Text("\(minute)")
                             .tag(minute)
@@ -218,7 +225,7 @@ struct CountDownTimerView: View {
             
             // 秒
             HStack(spacing: 0) {
-                Picker("", selection: $practiceTimerState.selectedSeconds) {
+                Picker("", selection: seconds) {
                     ForEach(0...59, id: \.self) { second in
                         Text("\(second)")
                             .tag(second)
@@ -238,10 +245,23 @@ struct CountDownTimerView: View {
         }
     }
     
+    // 便捷计算属性 - 获取时分秒
+    private var targetTimeHours: Int {
+        practiceCoordinator.targetTime / 3600
+    }
+    
+    private var targetTimeMinutes: Int {
+        (practiceCoordinator.targetTime % 3600) / 60
+    }
+    
+    private var targetTimeSeconds: Int {
+        practiceCoordinator.targetTime % 60
+    }
+    
     // 小节选择器视图
     private var barPickerView: some View {
         HStack(spacing: 0) {
-            Picker("", selection: $practiceTimerState.targetBars) {
+            Picker("", selection: $practiceCoordinator.targetBars) {
                 ForEach(1...100, id: \.self) { bar in
                     Text("\(bar)")
                         .tag(bar)
@@ -252,7 +272,6 @@ struct CountDownTimerView: View {
             .frame(width: 100)
             .frame(maxHeight:.infinity)
             .clipped()
-            
             
             Text("bars")
                 .font(.custom("MiSansLatin-Regular", size: 16))
@@ -273,17 +292,17 @@ struct CountDownTimerView: View {
                         .foregroundColor(theme.primaryColor.opacity(0.3))
                     
                     VStack() {
-                        if practiceTimerState.activeTimerType == .time {
+                        if practiceCoordinator.countdownType == .time {
                             // 时间显示
-                            Text(practiceTimerState.formatTime(practiceTimerState.remainingSeconds))
+                            Text(practiceCoordinator.getCountdownDisplayText())
                                 .font(.custom("MiSansLatin-Semibold", size: 40))
                                 .foregroundColor(Color("textPrimaryColor"))
                             
                             HStack(){
-                                Text("\(practiceTimerState.formatTime(practiceTimerState.totalSeconds))")
+                                Text(practiceCoordinator.formatTime(practiceCoordinator.targetTime))
                                     .font(.custom("MiSansLatin-Regular", size: 14))
                                     .foregroundColor(Color("textSecondaryColor"))
-                                if practiceTimerState.isLoopEnabled {
+                                if practiceCoordinator.isLoopEnabled {
                                     Text("Loop Mode")
                                         .font(.custom("MiSansLatin-Regular", size: 14))
                                         .foregroundColor(Color("textSecondaryColor"))
@@ -291,25 +310,15 @@ struct CountDownTimerView: View {
                             }
                         } else {
                             // 小节显示
-                            let remainingBars = practiceTimerState.remainingBars
-                            
-                            Text("\(remainingBars)")
+                            Text("\(practiceCoordinator.remainingBars)")
                                 .font(.custom("MiSansLatin-Semibold", size: 40))
                                 .foregroundColor(Color("textPrimaryColor"))
-                                .onAppear {
-                                    print("DEBUG: 显示剩余小节 - remainingBars: \(remainingBars), targetBars: \(practiceTimerState.targetBars)")
-                                }
-                                #if os(iOS)
-                                .onChange(of: remainingBars) { newValue in
-                                    print("DEBUG: 剩余小节变更 - remainingBars: \(newValue), targetBars: \(practiceTimerState.targetBars)")
-                                }
-                                #endif
                             
                             HStack(){
-                                Text("\(practiceTimerState.targetBars) Bars")
+                                Text("\(practiceCoordinator.targetBars) Bars")
                                     .font(.custom("MiSansLatin-Regular", size: 14))
                                     .foregroundColor(Color("textSecondaryColor"))
-                                if practiceTimerState.isLoopEnabled {
+                                if practiceCoordinator.isLoopEnabled {
                                     Text("Loop Mode")
                                         .font(.custom("MiSansLatin-Regular", size: 14))
                                         .foregroundColor(Color("textSecondaryColor"))
@@ -320,11 +329,11 @@ struct CountDownTimerView: View {
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 40)
-                        .trim(from: 0, to: practiceTimerState.progress)
+                        .trim(from: 0, to: practiceCoordinator.progress)
                         .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
                         .foregroundColor(theme.primaryColor)
                         .rotationEffect(Angle(degrees: -90.0))
-                        .animation(practiceTimerState.isCompletingCycle ? .linear(duration: 0.5) : .linear(duration: 1.0), value: practiceTimerState.progress)
+                        .animation(practiceCoordinator.isCompletingCycle ? .linear(duration: 0.5) : .linear(duration: 1.0), value: practiceCoordinator.progress)
                         .frame(width:geometry.size.height,height: geometry.size.width)
                 )   
             }
@@ -337,22 +346,23 @@ struct CountDownTimerView: View {
             HStack(spacing: 15) {
                 // 暂停/继续/重新开始按钮
                 Button(action: {
-                    if practiceTimerState.timerStatus == .completed {
-                        practiceTimerState.elapsedSeconds = 0
-                        practiceTimerState.startTimerTick()
+                    if practiceCoordinator.practiceStatus == .completed {
+                        practiceCoordinator.startPractice()
+                    } else if practiceCoordinator.practiceStatus == .paused {
+                        practiceCoordinator.resumePractice()
                     } else {
-                        practiceTimerState.togglePause()
+                        practiceCoordinator.pausePractice()
                     }
                 }) {
                     HStack(spacing: 5) {
-                        Image(practiceTimerState.timerStatus == .completed ? "icon-replay" : 
-                              (practiceTimerState.timerStatus == .paused ? "icon-play" : "icon-pause"))
+                        Image(practiceCoordinator.practiceStatus == .completed ? "icon-replay" : 
+                              (practiceCoordinator.practiceStatus == .paused ? "icon-play" : "icon-pause"))
                             .renderingMode(.template)   
                             .resizable()
                             .frame(width: 20, height: 20)   
                             
-                        Text(practiceTimerState.timerStatus == .completed ? "重新播放" : 
-                             (practiceTimerState.timerStatus == .paused ? "继续" : "暂停"))
+                        Text(practiceCoordinator.practiceStatus == .completed ? "重新播放" : 
+                             (practiceCoordinator.practiceStatus == .paused ? "继续" : "暂停"))
                             .font(.custom("MiSansLatin-Semibold", size: 17))
                     }
                     .foregroundColor(.white)
@@ -365,16 +375,16 @@ struct CountDownTimerView: View {
                 
                 // 停止按钮
                 Button(action: {
-                    practiceTimerState.stopTimer()
+                    practiceCoordinator.stopPractice()
                 }) {
                     HStack(spacing: 5) {
-                        Image(practiceTimerState.timerStatus == .completed ? "icon-x" : "icon-stop")
+                        Image(practiceCoordinator.practiceStatus == .completed ? "icon-x" : "icon-stop")
                             .renderingMode(.template)
                             .resizable()
                             .frame(width: 20, height: 20)   
                             
                         Text(
-                            practiceTimerState.timerStatus == .completed ? "返回" : "停止")
+                            practiceCoordinator.practiceStatus == .completed ? "返回" : "停止")
                             .font(.custom("MiSansLatin-Semibold", size: 17))
                     }   
                     .foregroundColor(.white)
@@ -392,13 +402,13 @@ struct CountDownTimerView: View {
     }
 }
 
+
 #Preview {
     let metronomeState = MetronomeState()
-    let timerState = PracticeTimerState()
-    timerState.setMetronomeState(metronomeState)
+    let practiceCoordinator = PracticeCoordinator(metronomeState: metronomeState)
     
-    return CountDownTimerView()
-        .environmentObject(timerState)
+    return CountDownPracticeView()
+        .environmentObject(practiceCoordinator)
         .environmentObject(metronomeState)
 }
 

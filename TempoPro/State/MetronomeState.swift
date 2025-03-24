@@ -10,6 +10,13 @@ enum PlaybackState {
     case paused    // 暂停状态
 }
 
+// 节拍器播放委托协议 - 用于通知外部组件
+protocol MetronomePlaybackDelegate: AnyObject {
+    func metronomeDidChangePlaybackState(_ state: PlaybackState)
+    func metronomeDidCompleteBeat(beatIndex: Int, isLastBeat: Bool)
+    func metronomeDidCompleteBar(barCount: Int)
+}
+
 class MetronomeState: ObservableObject {
     // 定义引用的键
     private enum Keys {
@@ -54,6 +61,9 @@ class MetronomeState: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let defaults = UserDefaults.standard
     
+    // MARK: - 委托
+    private var delegates = [MetronomePlaybackDelegate]()
+    
     init() {
         // 从UserDefaults加载初始数据
         loadFromUserDefaults()
@@ -63,6 +73,17 @@ class MetronomeState: ObservableObject {
         
         // 创建节拍定时器，传入self引用
         metronomeTimer = MetronomeTimer(state: self, audioEngine: audioEngine)
+    }
+    
+    // MARK: - 委托管理
+    func addDelegate(_ delegate: MetronomePlaybackDelegate) {
+        if !delegates.contains(where: { $0 === delegate }) {
+            delegates.append(delegate)
+        }
+    }
+    
+    func removeDelegate(_ delegate: MetronomePlaybackDelegate) {
+        delegates.removeAll(where: { $0 === delegate })
     }
     
     // MARK: - 小节和拍子管理方法
@@ -443,6 +464,7 @@ class MetronomeState: ObservableObject {
         audioEngine.stop()
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
+        delegates.removeAll()
     }
     
     // 获取当前切分模式的类型（兼容现有代码）
@@ -464,5 +486,33 @@ class MetronomeState: ObservableObject {
             completedBars = 0
             objectWillChange.send()
         }
+    }
+    
+    // MARK: - 内部调用方法 (timer可以调用)
+    func onBeatCompleted(beatIndex: Int) {
+        currentBeat = beatIndex
+        let isLastBeat = beatIndex == beatsPerBar - 1
+        
+        // 通知委托
+        notifyBeatCompleted(beatIndex: beatIndex, isLastBeat: isLastBeat)
+    }
+    
+    func onBarCompleted() {
+        completedBars += 1
+        notifyBarCompleted(barCount: completedBars)
+        objectWillChange.send()
+    }
+    
+    // MARK: - 通知委托方法
+    private func notifyPlaybackStateChanged() {
+        delegates.forEach { $0.metronomeDidChangePlaybackState(playbackState) }
+    }
+    
+    private func notifyBeatCompleted(beatIndex: Int, isLastBeat: Bool) {
+        delegates.forEach { $0.metronomeDidCompleteBeat(beatIndex: beatIndex, isLastBeat: isLastBeat) }
+    }
+    
+    private func notifyBarCompleted(barCount: Int) {
+        delegates.forEach { $0.metronomeDidCompleteBar(barCount: barCount) }
     }
 }

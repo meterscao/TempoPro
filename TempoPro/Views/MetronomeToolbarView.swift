@@ -107,7 +107,7 @@ struct MetronomeToolbarView: View {
                 .compatibleCornerRadius(15)
         }
         .sheet(isPresented: $showingCountDownTimerView) {
-            CountDownTimerView()
+            CountDownPracticeView()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15) 
@@ -115,7 +115,7 @@ struct MetronomeToolbarView: View {
         }
 
         .sheet(isPresented: $showingStepTimerView) {
-            StepTimerView()
+            ProgressivePracticeView()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15)

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StepTimerView: View {
+struct ProgressivePracticeView: View {
     @EnvironmentObject var practiceTimerState: PracticeTimerState
     @EnvironmentObject var metronomeState: MetronomeState
     @Environment(\.metronomeTheme) var theme
@@ -79,8 +79,8 @@ struct StepTimerView: View {
             let previousMode = practiceTimerState.practiceMode
             
             // 设置为Step模式，但不改变计时器运行状态
-            if !wasRunning || previousMode == .step {
-                practiceTimerState.practiceMode = .step
+            if !wasRunning || previousMode == .progressive {
+                practiceTimerState.practiceMode = .progressive
                 
                 // 初始化选择类型
                 selectedTimerType = practiceTimerState.stepTimerType.rawValue
@@ -107,7 +107,7 @@ struct StepTimerView: View {
             
             // 开始按钮
             Button(action: {
-                if practiceTimerState.canStartNewPractice(mode: .step) {
+                if practiceTimerState.canStartNewPractice(mode: .progressive) {
                     practiceTimerState.startTimer()
                 } else {
                     // 显示警告
@@ -551,7 +551,7 @@ struct StepTimerView: View {
     let timerState = PracticeTimerState()
     timerState.setMetronomeState(metronomeState)
     
-    return StepTimerView()
+    return ProgressivePracticeView()
         .environmentObject(timerState)
         .environmentObject(metronomeState)
 }

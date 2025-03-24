@@ -16,6 +16,8 @@ struct ContentView: View {
     @EnvironmentObject var practiceManager: CoreDataPracticeManager // 添加这一行
 
     @StateObject var practiceTimerState = PracticeTimerState()
+
+    
     
     @State private var completionDuration: TimeInterval = 0
     @State private var completionTempo: Int = 0
