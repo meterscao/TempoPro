@@ -20,28 +20,43 @@ struct ThemeSelectionView: View {
                         }) {
                             VStack(spacing:5){
                                 ZStack(alignment:.top) {
-                                    Image("icon-app-primary")
-                                        .resizable()
-                                        .renderingMode(.template)
-                                        .foregroundStyle(themeManager.themeSets(for: themeName).primaryColor)
-                                        .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                    themeManager.themeSets(for: themeName).primaryColor
                                     
-                                    Image("icon-app-black")
-                                        .resizable()
+                                    Image("ui-preview-elements")
                                         .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        
                                         .foregroundStyle(themeManager.themeSets(for: themeName).backgroundColor)
                                         .frame(maxWidth: .infinity,maxHeight: .infinity)
                                     
-                                    Image("icon-app-beats")
-                                        .resizable()
+                                    Image("ui-preview-numbers")
                                         .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        
+                                        .foregroundStyle(themeManager.themeSets(for: themeName).primaryColor)
+                                        .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                    
+                                    Image("ui-preview-bars")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        
                                         .foregroundStyle(themeManager.themeSets(for: themeName).beatBarColor)
                                         .frame(maxWidth: .infinity,maxHeight: .infinity)
                                 }
-                                .frame(width: 64, height: 64)
+                                .frame(height: 180)
+                                .cornerRadius(12)
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(themeManager.themeSets(for: themeName).backgroundColor.opacity(0.5), lineWidth: 1)
+                                        
+                                }
+                                
                                 Circle().fill(themeName == themeManager.currentThemeName ? .green : .clear).frame(width:5,height:5)
                             }
-                            .frame(width: 64, height: 64,alignment: .top)
+                            .frame(alignment: .top)
                             
                             
                         }
