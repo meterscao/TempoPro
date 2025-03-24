@@ -1,7 +1,6 @@
 import Foundation
 import Combine
-import UIKit  // 添加UIKit导入
-import SwiftUI // 添加SwiftUI导入以使用AppStorage
+import SwiftUI
 
 // 添加播放状态枚举
 enum PlaybackState {
@@ -18,7 +17,7 @@ protocol MetronomePlaybackDelegate: AnyObject {
 }
 
 class MetronomeState: ObservableObject {
-    // 定义引用的键
+    // MARK: - 定义引用的键
     private enum Keys {
         static let tempo = AppStorageKeys.Metronome.tempo
         static let beatsPerBar = AppStorageKeys.Metronome.beatsPerBar
@@ -26,33 +25,44 @@ class MetronomeState: ObservableObject {
         static let beatStatuses = AppStorageKeys.Metronome.beatStatuses
         static let currentBeat = AppStorageKeys.Metronome.currentBeat
         static let subdivisionType = AppStorageKeys.Metronome.subdivisionType
-        static let soundSet = AppStorageKeys.Metronome.soundSet  // 添加音效集设置的键
+        static let soundSet = AppStorageKeys.Metronome.soundSet  // 音效集设置的键
     }
     
-    // 状态属性
-    @Published private(set) var playbackState: PlaybackState = .standby // 替换 isPlaying 和 isPaused
-    @Published private(set)var currentBeat: Int = 0
-    @Published private(set) var tempo: Int = 0
-    @Published private(set) var beatsPerBar: Int = 0
-    @Published private(set) var beatUnit: Int = 0
+    // MARK: - 公开状态属性
+    @Published private(set) var playbackState: PlaybackState = .standby
+    @Published private(set) var currentBeat: Int = 0
+    @Published private(set) var tempo: Int = 120
+    @Published private(set) var beatsPerBar: Int = 4
+    @Published private(set) var beatUnit: Int = 4
     @Published private(set) var beatStatuses: [BeatStatus] = []
     @Published private(set) var subdivisionPattern: SubdivisionPattern?
     @Published private(set) var soundSet: SoundSet = SoundSetManager.getDefaultSoundSet()
-    @Published var practiceManager: CoreDataPracticeManager?
     @Published private(set) var completedBars: Int = 0
     
+    // CoreData练习管理器 - 用于数据持久化
+    @Published var practiceManager: CoreDataPracticeManager?
+    
+    // 练习协调器 - 用于协调节拍器与练习模式交互
+    @Published var practiceCoordinator: PracticeCoordinator?
+    
+    // MARK: - 便捷计算属性
     // 添加便捷计算属性以保持向后兼容
-    var isPlaying: Bool {
-        return playbackState == .playing
+    var isPlaying: Bool { return playbackState == .playing }
+    var isPaused: Bool { return playbackState == .paused }
+    
+    // 获取当前正在播放的小节编号（从1开始计数）
+    var currentBarNumber: Int { return completedBars + 1 }
+    
+    // 获取当前小节在当前拍子的进度（0.0-1.0）
+    var currentBeatProgress: CGFloat {
+        guard beatsPerBar > 0 else { return 0.0 }
+        return CGFloat(currentBeat) / CGFloat(beatsPerBar)
     }
     
-    var isPaused: Bool {
-        return playbackState == .paused
-    }
+    // 检查是否在小节的最后一拍
+    var isLastBeatOfBar: Bool { return currentBeat == beatsPerBar - 1 }
     
-    // 小节和拍子状态相关属性
-    // @Published private(set) var isPaused: Bool = false
-    
+    // MARK: - 私有属性
     // 直接使用单例引擎
     private let audioEngine = MetronomeAudioEngine.shared
     private var metronomeTimer: MetronomeTimer?
@@ -64,6 +74,7 @@ class MetronomeState: ObservableObject {
     // MARK: - 委托
     private var delegates = [MetronomePlaybackDelegate]()
     
+    // MARK: - 初始化
     init() {
         // 从UserDefaults加载初始数据
         loadFromUserDefaults()
@@ -87,22 +98,6 @@ class MetronomeState: ObservableObject {
     }
     
     // MARK: - 小节和拍子管理方法
-    
-    // 获取当前正在播放的小节编号（从1开始计数）
-    var currentBarNumber: Int {
-        return completedBars + 1
-    }
-    
-    // 获取当前小节在当前拍子的进度（0.0-1.0）
-    var currentBeatProgress: CGFloat {
-        guard beatsPerBar > 0 else { return 0.0 }
-        return CGFloat(currentBeat) / CGFloat(beatsPerBar)
-    }
-    
-    // 检查是否在小节的最后一拍
-    var isLastBeatOfBar: Bool {
-        return currentBeat == beatsPerBar - 1
-    }
     
     // 是否完成了指定数量的小节（针对练习用例）
     func hasCompletedBars(_ targetBars: Int) -> Bool {
@@ -128,130 +123,7 @@ class MetronomeState: ObservableObject {
         return min(CGFloat(completedBarCount) / CGFloat(targetBars), 1.0)
     }
     
-    private func loadFromUserDefaults() {
-        // 读取速度值
-        let savedTempo = defaults.integer(forKey: Keys.tempo)
-        self.tempo = savedTempo != 0 ? savedTempo : 120
-        
-        // 读取拍号设置
-        let savedBeatsPerBar = defaults.integer(forKey: Keys.beatsPerBar)
-        self.beatsPerBar = savedBeatsPerBar != 0 ? savedBeatsPerBar : 4
-        
-        let savedBeatUnit = defaults.integer(forKey: Keys.beatUnit)
-        self.beatUnit = savedBeatUnit != 0 ? savedBeatUnit : 4
-        
-        // 加载节拍状态
-        if let savedStatusInts = defaults.array(forKey: Keys.beatStatuses) as? [Int] {
-            self.beatStatuses = savedStatusInts.map { statusInt -> BeatStatus in
-                switch statusInt {
-                case 0: return .strong
-                case 1: return .medium
-                case 2: return .normal
-                case 3: return .muted
-                default: return .normal
-                }
-            }
-        } else {
-            // 初始化默认节拍状态
-            self.beatStatuses = Array(repeating: .normal, count: self.beatsPerBar)
-            self.beatStatuses[0] = .strong
-            if self.beatsPerBar > 2 {
-                self.beatStatuses[2] = .medium
-            }
-            
-            // 保存默认状态
-            saveBeatStatuses()
-        }
-        
-        // 加载切分音符模式
-        if let savedPatternName = defaults.string(forKey: Keys.subdivisionType) {
-            // 尝试从名称获取切分模式
-            if let pattern = SubdivisionManager.getSubdivisionPattern(byName: savedPatternName) {
-                self.subdivisionPattern = pattern
-            } else {
-                // 如果找不到对应模式，使用当前拍号单位的默认模式
-                setDefaultSubdivisionPattern()
-            }
-        } else {
-            // 默认使用整拍模式
-            setDefaultSubdivisionPattern()
-        }
-        
-        // 加载音效设置
-        if let savedSoundSetKey = defaults.string(forKey: Keys.soundSet) {
-            // 通过键查找对应的音效集
-            if let savedSoundSet = SoundSetManager.availableSoundSets.first(where: { $0.key == savedSoundSetKey }) {
-                self.soundSet = savedSoundSet
-                // 更新音频引擎的当前音效
-                audioEngine.setCurrentSoundSet(savedSoundSet)
-                print("从UserDefaults加载音效设置: \(savedSoundSet.displayName)")
-            } else {
-                print("未找到保存的音效设置: \(savedSoundSetKey)，使用默认音效")
-                // 如果找不到，使用默认音效
-                self.soundSet = SoundSetManager.getDefaultSoundSet()
-            }
-        } else {
-            print("UserDefaults中没有音效设置，使用默认音效")
-            // 如果没有保存设置，使用默认音效
-            self.soundSet = SoundSetManager.getDefaultSoundSet()
-        }
-    }
-    
-    // 设置默认的切分模式
-    private func setDefaultSubdivisionPattern() {
-        // 获取当前拍号单位下的整拍模式
-        if let pattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: .whole) {
-            self.subdivisionPattern = pattern
-            // 保存模式名称到 UserDefaults
-            defaults.set(pattern.name, forKey: Keys.subdivisionType)
-        } else {
-            // 回退到4分音符整拍
-            if let fallbackPattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: 4, type: .whole) {
-                self.subdivisionPattern = fallbackPattern
-                defaults.set(fallbackPattern.name, forKey: Keys.subdivisionType)
-            }
-        }
-    }
-    
-    // 更新当前切分模式
-    private func updateCurrentSubdivisionPattern() {
-        guard let currentPattern = subdivisionPattern else {
-            setDefaultSubdivisionPattern()
-            return
-        }
-        
-        // 检查当前模式是否适用于当前拍号单位
-        if currentPattern.beatUnit != beatUnit {
-            // 直接使用当前模式的type获取适合新拍号单位的模式
-            if let newPattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: currentPattern.type) {
-                // 更新到新的模式
-                subdivisionPattern = newPattern
-                defaults.set(newPattern.name, forKey: Keys.subdivisionType)
-                print("切分模式已适配当前拍号单位: \(currentPattern.type.rawValue) -> \(newPattern.name)")
-            } else {
-                // 如果找不到适配当前拍号单位的相同类型模式，使用默认整拍模式
-                print("未找到适配当前拍号单位的\(currentPattern.type.rawValue)类型模式，使用默认模式")
-                setDefaultSubdivisionPattern()
-            }
-        }
-        
-        print("当前切分模式: \(subdivisionPattern?.detailedDescription ?? "未知")")
-    }
-    
-    // 保存节拍状态到UserDefaults
-    private func saveBeatStatuses() {
-        let statusInts = beatStatuses.map { status -> Int in
-            switch status {
-            case .strong: return 0
-            case .medium: return 1
-            case .normal: return 2
-            case .muted: return 3
-            }
-        }
-        defaults.set(statusInts, forKey: Keys.beatStatuses)
-    }
-    
-    // 播放控制方法
+    // MARK: - 播放控制方法
     func togglePlayback() {
         switch playbackState {
         case .playing:
@@ -270,13 +142,14 @@ class MetronomeState: ObservableObject {
         // 确保当前切分模式已更新
         updateCurrentSubdivisionPattern()
         
-        // 开始练习会话
+        // 开始练习会话 - 数据保存
         practiceManager?.startPracticeSession(bpm: tempo)
         
         // 直接启动定时器
         metronomeTimer?.start()
         
         // 通知状态变化
+        notifyPlaybackStateChanged()
         objectWillChange.send()
     }   
 
@@ -284,13 +157,15 @@ class MetronomeState: ObservableObject {
         print("MetronomeState - stop")
         
         playbackState = .standby
-        // 结束练习会话
+        
+        // 结束练习会话 - 数据保存
         practiceManager?.endPracticeSession()
         
         // 停止定时器
         metronomeTimer?.stop()
         
         // 通知状态变化
+        notifyPlaybackStateChanged()
         objectWillChange.send()
     }   
     
@@ -304,12 +179,12 @@ class MetronomeState: ObservableObject {
         
         playbackState = .paused
         // 注意：不重置 completedBars，保留当前已完成的小节数
-        // 注意：不结束练习会话，只是暂停
         
         // 暂停定时器
         metronomeTimer?.pause()
         
         // 通知观察者状态变化
+        notifyPlaybackStateChanged()
         objectWillChange.send()
     }
     
@@ -329,6 +204,7 @@ class MetronomeState: ObservableObject {
         metronomeTimer?.resume()
         
         // 通知观察者状态变化
+        notifyPlaybackStateChanged()
         objectWillChange.send()
     }
     
@@ -378,8 +254,6 @@ class MetronomeState: ObservableObject {
         // 保存到UserDefaults
         defaults.set(beatsPerBar, forKey: Keys.beatsPerBar)
         saveBeatStatuses()
-        
-        
     }
     
     // 更新当前拍
@@ -398,8 +272,6 @@ class MetronomeState: ObservableObject {
         
         // 更新当前切分模式
         updateCurrentSubdivisionPattern()
-        
-        
     }
     
     // 更新节拍状态
@@ -422,8 +294,6 @@ class MetronomeState: ObservableObject {
         
         // 保存模式名称到 UserDefaults
         defaults.set(pattern.name, forKey: Keys.subdivisionType)
-        
-        
     }
     
     
@@ -514,5 +384,126 @@ class MetronomeState: ObservableObject {
     
     private func notifyBarCompleted(barCount: Int) {
         delegates.forEach { $0.metronomeDidCompleteBar(barCount: barCount) }
+    }
+    
+    // MARK: - 私有辅助方法
+    
+    private func loadFromUserDefaults() {
+        // 读取速度值
+        tempo = defaults.integer(forKey: Keys.tempo).nonZeroOr(120)
+        
+        // 读取拍号设置
+        beatsPerBar = defaults.integer(forKey: Keys.beatsPerBar).nonZeroOr(4)
+        beatUnit = defaults.integer(forKey: Keys.beatUnit).nonZeroOr(4)
+        
+        // 加载节拍状态
+        loadBeatStatuses()
+        
+        // 加载切分音符模式
+        loadSubdivisionPattern()
+        
+        // 加载音效设置
+        loadSoundSet()
+    }
+    
+    private func loadBeatStatuses() {
+        // 精简的节拍状态加载逻辑
+        if let savedStatusInts = defaults.array(forKey: Keys.beatStatuses) as? [Int] {
+            self.beatStatuses = savedStatusInts.map { BeatStatus(rawValue: $0) ?? .normal }
+        } else {
+            initializeDefaultBeatStatuses()
+        }
+    }
+    
+    private func initializeDefaultBeatStatuses() {
+        // 初始化默认节拍状态
+        beatStatuses = Array(repeating: .normal, count: beatsPerBar)
+        beatStatuses[0] = .strong
+        if beatsPerBar > 2 {
+            beatStatuses[2] = .medium
+        }
+        saveBeatStatuses()
+    }
+    
+    private func loadSubdivisionPattern() {
+        if let savedPatternName = defaults.string(forKey: Keys.subdivisionType),
+           let pattern = SubdivisionManager.getSubdivisionPattern(byName: savedPatternName) {
+            subdivisionPattern = pattern
+        } else {
+            setDefaultSubdivisionPattern()
+        }
+    }
+    
+    private func loadSoundSet() {
+        // 加载音效设置
+        if let savedSoundSetKey = defaults.string(forKey: Keys.soundSet),
+           let savedSoundSet = SoundSetManager.availableSoundSets.first(where: { $0.key == savedSoundSetKey }) {
+            soundSet = savedSoundSet
+            audioEngine.setCurrentSoundSet(savedSoundSet)
+        } else {
+            soundSet = SoundSetManager.getDefaultSoundSet()
+        }
+    }
+    
+    private func saveBeatStatuses() {
+        let statusInts = beatStatuses.map { $0.rawValue }
+        defaults.set(statusInts, forKey: Keys.beatStatuses)
+    }
+    
+    // 设置默认的切分模式
+    private func setDefaultSubdivisionPattern() {
+        if let pattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: .whole) {
+            subdivisionPattern = pattern
+            defaults.set(pattern.name, forKey: Keys.subdivisionType)
+        }
+    }
+    
+    private func updateCurrentSubdivisionPattern() {
+        guard let currentPattern = subdivisionPattern else {
+            setDefaultSubdivisionPattern()
+            return
+        }
+        
+        // 检查当前模式是否适用于当前拍号单位
+        if currentPattern.beatUnit != beatUnit {
+            if let newPattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: currentPattern.type) {
+                subdivisionPattern = newPattern
+                defaults.set(newPattern.name, forKey: Keys.subdivisionType)
+                print("切分模式已适配当前拍号单位: \(currentPattern.type.rawValue) -> \(newPattern.name)")
+            } else {
+                // 如果找不到适配当前拍号单位的相同类型模式，使用默认整拍模式
+                print("未找到适配当前拍号单位的\(currentPattern.type.rawValue)类型模式，使用默认模式")
+                setDefaultSubdivisionPattern()
+            }
+        }
+    }
+}
+
+// 辅助扩展
+extension Int {
+    fileprivate func nonZeroOr(_ defaultValue: Int) -> Int {
+        return self != 0 ? self : defaultValue
+    }
+}
+
+// BeatStatus 原始值支持
+extension BeatStatus {
+    var rawValue: Int {
+        switch self {
+        case .strong: return 0
+        case .medium: return 1
+        case .normal: return 2
+        case .muted: return 3
+        }
+    }
+    
+    init?(rawValue: Int) {
+        switch rawValue {
+        case 0: self = .strong
+        case 1: self = .medium
+        case 2: self = .normal
+        case 3: self = .muted
+        default: return nil
+        }
     }
 }

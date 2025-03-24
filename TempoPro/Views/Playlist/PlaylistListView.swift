@@ -37,25 +37,25 @@ struct PlaylistListView: View {
                 }
             }
             
-            // 使用自定义的文本输入弹窗
-            .textFieldAlert(isPresented: $showingAddAlert, alert: TextFieldAlert(
-                title: "添加曲库",
-                message: "请输入新曲库的名称",
-                placeholder: "曲库名称",
-                text: newPlaylistName,
-                confirmText: "添加",
-                cancelText: "取消",
-                onConfirm: { name in
-                    if !name.isEmpty {
-                        // 创建新曲库
-                        _ = playlistManager.createPlaylist(
-                            name: name,
-                            color: "#0000FF" // 使用默认蓝色
-                        )
-                    }
-                },
-                onCancel: {}
-            ))
+            // // 使用自定义的文本输入弹窗
+            // .textFieldAlert(isPresented: $showingAddAlert, alert: TextFieldAlert(
+            //     title: "添加曲库",
+            //     message: "请输入新曲库的名称",
+            //     placeholder: "曲库名称",
+            //     text: newPlaylistName,
+            //     confirmText: "添加",
+            //     cancelText: "取消",
+            //     onConfirm: { name in
+            //         if !name.isEmpty {
+            //             // 创建新曲库
+            //             _ = playlistManager.createPlaylist(
+            //                 name: name,
+            //                 color: "#0000FF" // 使用默认蓝色
+            //             )
+            //         }
+            //     },
+            //     onCancel: {}
+            // ))
             
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

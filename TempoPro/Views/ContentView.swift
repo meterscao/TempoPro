@@ -14,6 +14,7 @@ struct ContentView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 类型改为 CoreDataPlaylistManager
     @EnvironmentObject var practiceManager: CoreDataPracticeManager // 添加这一行
+    @EnvironmentObject var practiceCoordinator: PracticeCoordinator // 添加练习协调器引用
 
     @StateObject var practiceTimerState = PracticeTimerState()
 
@@ -45,8 +46,9 @@ struct ContentView: View {
         )
         .background(theme.primaryColor.ignoresSafeArea())
         .onAppear {
-            // 连接practiceManager到metronomeState
+            // 连接CoreData管理器和练习协调器到metronomeState
             metronomeState.practiceManager = practiceManager
+            metronomeState.practiceCoordinator = practiceCoordinator
             practiceTimerState.setMetronomeState(metronomeState)
         }
         .onDisappear {
