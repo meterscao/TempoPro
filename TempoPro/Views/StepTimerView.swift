@@ -32,6 +32,7 @@ struct StepTimerView: View {
                     timerView
                 }
             }
+            
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -65,7 +66,10 @@ struct StepTimerView: View {
                     }
                 }
             }
-            .background(theme.backgroundColor)
+            
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(20)
+            .background(Color("backgroundPrimaryColor"))
             .toolbarBackground(.visible)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
         }
@@ -135,8 +139,8 @@ struct StepTimerView: View {
                 )
             }
         }
-        .padding(20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        // .padding(20)
         .background(Color("backgroundPrimaryColor"))
     }
     
@@ -315,6 +319,7 @@ struct StepTimerView: View {
                             .font(.custom("MiSansLatin-Regular", size: 14))
                             .foregroundColor(Color("textSecondaryColor"))
                             .frame(width: 40, alignment: .leading)
+                            
                     }
                 }
                 .frame(maxWidth: .infinity)

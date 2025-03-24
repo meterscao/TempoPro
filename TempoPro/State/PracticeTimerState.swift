@@ -71,7 +71,6 @@ class PracticeTimerState: ObservableObject {
     @Published var currentBPM: Int = 60      // 当前实际BPM值
     
     // 跟踪状态
-    private var pausedCompletedBars: Int = 0
     private var lastBPMUpdateTime: Int = 0  // 上次更新BPM的时间点
     private var lastBPMUpdateBar: Int = 0   // 上次更新BPM的小节数
     private var isUpdatingBPM: Bool = false // 防止递归更新的标志
@@ -150,11 +149,10 @@ class PracticeTimerState: ObservableObject {
             if activeTimerType == .time {
                 return totalSeconds > 0 ? CGFloat(elapsedSeconds) / CGFloat(totalSeconds) : 0.01
             } else {
-                // 小节进度 - 需要考虑暂停状态
-                let currentCompletedBars = timerStatus == .paused ? 
-                    pausedCompletedBars : (metronomeState?.completedBars ?? 0)
+                // 小节进度 - 直接使用MetronomeState的completedBars
+                guard let metronomeState = metronomeState else { return 0.01 }
                 
-                let completedSinceStart = max(0, currentCompletedBars - previousCompletedBars)
+                let completedSinceStart = max(0, metronomeState.completedBars - previousCompletedBars)
                 let barProgress = targetBars > 0 ? 
                     CGFloat(completedSinceStart) / CGFloat(targetBars) : 0.01
                 
@@ -173,12 +171,8 @@ class PracticeTimerState: ObservableObject {
         
         guard let metronomeState = metronomeState else { return targetBars }
         
-        // 如果是暂停状态，使用暂停时记录的小节数
-        let currentCompletedBars = timerStatus == .paused ? 
-            pausedCompletedBars : metronomeState.completedBars
-        
-        // 计算自计时开始后完成的小节数
-        let completedSinceStart = max(0, currentCompletedBars - previousCompletedBars)
+        // 直接使用MetronomeState的completedBars
+        let completedSinceStart = max(0, metronomeState.completedBars - previousCompletedBars)
         
         // 计算剩余小节数
         return max(0, targetBars - completedSinceStart)
@@ -519,12 +513,6 @@ class PracticeTimerState: ObservableObject {
             timer?.invalidate()
             timer = nil
             timerStatus = .paused
-
-            // 记录当前状态
-            if activeTimerType == .bar {
-                pausedCompletedBars = metronomeState?.completedBars ?? 0
-                print("DEBUG: 暂停时记录completedBars: \(pausedCompletedBars)")
-            }
             
             // 暂停节拍器 - 使用新的pause方法
             metronomeState?.pause()
@@ -547,9 +535,10 @@ class PracticeTimerState: ObservableObject {
         timerStatus = .standby
         elapsedSeconds = 0
         
+        // 重置previousCompletedBars值
+        previousCompletedBars = 0
         
         metronomeState?.stop()
-        
     }
     
     // 清理资源
@@ -615,5 +604,41 @@ class PracticeTimerState: ObservableObject {
         
         let barsSinceLastUpdate = metronomeState.completedBars - lastBPMUpdateBar
         return max(0, stepEveryBars - barsSinceLastUpdate)
+    }
+    
+    // 添加切换练习模式的方法，确保重置相关状态
+    func setPracticeMode(_ mode: PracticeMode) {
+        // 如果模式没有变化，不做任何操作
+        if practiceMode == mode {
+            return
+        }
+        
+        // 切换模式前先停止当前练习
+        if isAnyTimerRunning() {
+            stopTimer()
+        }
+        
+        practiceMode = mode
+        
+        // 重置与模式相关的状态
+        if mode == .countdown {
+            // 重置Countdown模式相关状态
+            elapsedSeconds = 0
+        } else {
+            // 重置Step模式相关状态
+            currentBPM = stepFromBPM
+            lastBPMUpdateTime = 0
+            lastBPMUpdateBar = 0
+        }
+        
+        // 重置通用状态
+        timerStatus = .standby
+        previousCompletedBars = 0
+        isCompletingCycle = false
+        
+        // 通知UI更新
+        objectWillChange.send()
+        
+        print("DEBUG: 切换练习模式到: \(mode)")
     }
 }
