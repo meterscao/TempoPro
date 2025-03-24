@@ -3,6 +3,12 @@ import Combine
 import UIKit  // 添加UIKit导入
 import SwiftUI // 添加SwiftUI导入以使用AppStorage
 
+// 添加播放状态枚举
+enum PlaybackState {
+    case standby   // 默认状态/停止状态
+    case playing   // 正在播放
+    case paused    // 暂停状态
+}
 
 class MetronomeState: ObservableObject {
     // 定义引用的键
@@ -17,7 +23,7 @@ class MetronomeState: ObservableObject {
     }
     
     // 状态属性
-    @Published private(set) var isPlaying: Bool = false
+    @Published private(set) var playbackState: PlaybackState = .standby // 替换 isPlaying 和 isPaused
     @Published private(set)var currentBeat: Int = 0
     @Published private(set) var tempo: Int = 0
     @Published private(set) var beatsPerBar: Int = 0
@@ -28,8 +34,17 @@ class MetronomeState: ObservableObject {
     @Published var practiceManager: CoreDataPracticeManager?
     @Published private(set) var completedBars: Int = 0
     
+    // 添加便捷计算属性以保持向后兼容
+    var isPlaying: Bool {
+        return playbackState == .playing
+    }
+    
+    var isPaused: Bool {
+        return playbackState == .paused
+    }
+    
     // 小节和拍子状态相关属性
-    @Published private(set) var isPaused: Bool = false
+    // @Published private(set) var isPaused: Bool = false
     
     // 直接使用单例引擎
     private let audioEngine = MetronomeAudioEngine.shared
@@ -217,21 +232,18 @@ class MetronomeState: ObservableObject {
     
     // 播放控制方法
     func togglePlayback() {
-        
-        
-        if isPlaying {
+        switch playbackState {
+        case .playing:
             stop()
-        } else {
-            
+        case .standby, .paused:
             play()
         }
     }
 
     func play() {
         print("MetronomeState - play")
-
-        isPlaying = true
-        isPaused = false
+        
+        playbackState = .playing
         completedBars = 0 // 重置小节计数
         
         // 确保当前切分模式已更新
@@ -249,9 +261,8 @@ class MetronomeState: ObservableObject {
 
     func stop() {
         print("MetronomeState - stop")
-
-        isPlaying = false
-        isPaused = false
+        
+        playbackState = .standby
         // 结束练习会话
         practiceManager?.endPracticeSession()
         
@@ -266,12 +277,11 @@ class MetronomeState: ObservableObject {
     func pause() {
         print("MetronomeState - pause")
         
-        if !isPlaying {
+        if playbackState != .playing {
             return // 如果没有在播放，则不需要暂停
         }
         
-        isPlaying = false
-        isPaused = true // 标记为暂停状态
+        playbackState = .paused
         // 注意：不重置 completedBars，保留当前已完成的小节数
         // 注意：不结束练习会话，只是暂停
         
@@ -286,12 +296,11 @@ class MetronomeState: ObservableObject {
     func resume() {
         print("MetronomeState - resume")
         
-        if isPlaying {
+        if playbackState == .playing {
             return // 如果已经在播放，则不需要恢复
         }
         
-        isPlaying = true
-        isPaused = false
+        playbackState = .playing
         // 重置当前拍回到第一拍（小节的开始）
         currentBeat = 0
         

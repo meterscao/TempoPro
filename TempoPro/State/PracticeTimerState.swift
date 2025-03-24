@@ -111,6 +111,8 @@ class PracticeTimerState: ObservableObject {
         let currentChange = abs(currentBPM - stepFromBPM)
         return min(CGFloat(currentChange) / CGFloat(totalChange), 1.0)
     }
+
+    
     
     // 在Step模式下，计算当前循环的进度（即距离下一次BPM变化的进度）
     var stepCycleProgress: CGFloat {
@@ -136,15 +138,10 @@ class PracticeTimerState: ObservableObject {
         }
     }
     
-    // 倒计时或小节计数的进度
+    // 修改进度计算方法
     var progress: CGFloat {
-        // 如果正在完成循环，返回100%
-        if isCompletingCycle {
-            return 1.0
-        }
-        
-        // 如果计时器已完成，返回100%
-        if timerStatus == .completed {
+        // 处理特殊情况
+        if isCompletingCycle || timerStatus == .completed {
             return 1.0
         }
         
@@ -153,7 +150,7 @@ class PracticeTimerState: ObservableObject {
             if activeTimerType == .time {
                 return totalSeconds > 0 ? CGFloat(elapsedSeconds) / CGFloat(totalSeconds) : 0.01
             } else {
-                // 小节进度 - 直接使用MetronomeState的方法
+                // 小节进度 - 直接使用MetronomeState的helper方法
                 guard let metronomeState = metronomeState else { return 0.01 }
                 return metronomeState.getBarProgress(targetBars: targetBars)
             }
@@ -163,7 +160,7 @@ class PracticeTimerState: ObservableObject {
         }
     }
     
-    // 根据当前的计时模式显示剩余小节数
+    // 修改剩余小节计算方法
     var remainingBars: Int {
         // 只有小节模式才计算剩余小节
         guard activeTimerType == .bar else { return 0 }
@@ -175,11 +172,10 @@ class PracticeTimerState: ObservableObject {
         
         guard let metronomeState = metronomeState else { return targetBars }
         
-        // 使用MetronomeState提供的方法直接获取剩余小节数
+        // 直接使用MetronomeState的helper方法
         let remaining = metronomeState.getRemainingBars(target: targetBars)
         
-        // 添加调试信息
-        print("DEBUG: 计算剩余小节 - 目标:\(targetBars), 当前小节:\(metronomeState.currentBarNumber), 剩余:\(remaining), 状态:\(timerStatus)")
+        print("DEBUG: 计算剩余小节 - 目标:\(targetBars), 当前小节:\(metronomeState.currentBarNumber), 剩余:\(remaining)")
         
         return remaining
     }
@@ -193,32 +189,28 @@ class PracticeTimerState: ObservableObject {
         // 订阅 MetronomeState 的变化
         metronomeState.objectWillChange
             .sink { [weak self] _ in
-                guard let self = self else { return }
+                guard let self = self, let metronomeState = self.metronomeState else { return }
                 
                 if self.timerStatus == .running {
                     if self.practiceMode == .countdown && self.activeTimerType == .bar {
-                        // CountDown模式 - 小节计时
-                        let currentBeat = metronomeState.currentBeat
-                        let beatsPerBar = metronomeState.beatsPerBar
-                        
-                        // 使用MetronomeState的属性获取当前小节信息
-                        let currentBarNumber = metronomeState.currentBarNumber
+                        // 使用直接的小节判断
                         let targetBarNumber = self.targetBars
                         
-                        print("DEBUG: 小节状态 - 当前小节:\(currentBarNumber)/\(targetBarNumber), 拍子:\(currentBeat+1)/\(beatsPerBar)")
+                        print("DEBUG: 小节状态 - 当前小节:\(metronomeState.currentBarNumber)/\(targetBarNumber)")
                         
-                        // 检查是否在目标小节的最后一拍
-                        if currentBarNumber == targetBarNumber && metronomeState.isLastBeatOfBar {
-                            print("DEBUG: 提前检测到真正最后一小节的最后一拍，即将完成计时")
+                        // 简化判断逻辑，直接使用MetronomeState的helper方法
+                        if metronomeState.hasCompletedBars(targetBarNumber) {
+                            print("DEBUG: 已达到目标小节数，完成计时")
                             self.completeTimer()
                         }
-                        // 若已经超过目标小节数，也完成计时（防止意外情况）
-                        else if metronomeState.hasCompletedBars(targetBarNumber) {
-                            print("DEBUG: 已超过目标小节数，完成计时")
-                            self.completeTimer()
+                        // 提前检测：如果是目标小节的最后一拍
+                        else if metronomeState.currentBarNumber == targetBarNumber && metronomeState.isLastBeatOfBar {
+                            print("DEBUG: 提前检测到目标小节最后一拍，即将完成计时")
+                            // 注：这里不立即完成，等待小节真正完成时再处理
                         }
                     } else if self.practiceMode == .step && self.activeTimerType == .bar {
                         // Step模式 - 小节计时
+                        // 获取当前完成的小节数
                         let currentCompletedBars = metronomeState.completedBars
                         
                         // 计算从上次BPM更新以来完成的小节数
@@ -226,7 +218,6 @@ class PracticeTimerState: ObservableObject {
                         
                         // 如果完成了设定的小节数，更新BPM
                         if completedSinceLastUpdate >= self.stepEveryBars && !self.isUpdatingBPM {
-                            // 设置更新标志，并使用主线程异步执行避免递归
                             DispatchQueue.main.async {
                                 self.lastBPMUpdateBar = currentCompletedBars
                                 self.updateStepBPM()
