@@ -104,7 +104,7 @@ struct StepTimerView: View {
                 barSetupView
             }
             
-            Spacer()
+            
             // 开始按钮
             Button(action: {
                 if practiceTimerState.canStartNewPractice(mode: .step) {
@@ -146,192 +146,195 @@ struct StepTimerView: View {
     
     // 时间模式设置视图
     private var timeSetupView: some View {
-        VStack(spacing: 30) {
+        VStack(spacing: 5) {
             HStack(spacing: 5) {
                 // From BPM
-                VStack(spacing: 8) {
+                HStack(spacing: 0) {
                     Text("From")
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(Color("textPrimaryColor"))
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    HStack(spacing: 0) {
-                        Picker("", selection: $practiceTimerState.stepFromBPM) {
-                            ForEach(30...240, id: \.self) { bpm in
-                                Text("\(bpm)")
-                                    .tag(bpm)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
+                    Picker("", selection: $practiceTimerState.stepFromBPM) {
+                        ForEach(30...240, id: \.self) { bpm in
+                            Text("\(bpm)")
+                                .tag(bpm)
+                                .foregroundStyle(Color("textPrimaryColor"))
                         }
-                        .pickerStyle(.wheel)
-                        .frame(width: 60)
-                        .clipped()
-                        
-                        Text("BPM")
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .frame(width: 40, alignment: .leading)
                     }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                    Text("BPM")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .frame(width: 40, alignment: .leading)
                 }
                 .frame(maxWidth: .infinity)
+                .background(Color("backgroundSecondaryColor"))
+                .cornerRadius(6)
+                
+                
                 
                 // To BPM
-                VStack(spacing: 8) {
+                HStack(spacing: 0) {
                     Text("To")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(Color("textPrimaryColor"))
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    HStack(spacing: 0) {
-                        Picker("", selection: $practiceTimerState.stepToBPM) {
-                            ForEach(30...240, id: \.self) { bpm in
-                                Text("\(bpm)")
-                                    .tag(bpm)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
+                    .font(.custom("MiSansLatin-Regular", size: 16))
+                    .foregroundColor(Color("textPrimaryColor"))
+
+                    Picker("", selection: $practiceTimerState.stepToBPM) {
+                        ForEach(30...240, id: \.self) { bpm in
+                            Text("\(bpm)")
+                                .tag(bpm)
+                                .foregroundStyle(Color("textPrimaryColor"))
                         }
-                        .pickerStyle(.wheel)
-                        .frame(width: 60)
-                        .clipped()
-                        
-                        Text("BPM")
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .frame(width: 40, alignment: .leading)
                     }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                    
+                    Text("BPM")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .frame(width: 40, alignment: .leading)
                 }
                 .frame(maxWidth: .infinity)
+                .background(Color("backgroundSecondaryColor"))
+                .cornerRadius(6)
                 
-                // Every X Seconds
-                VStack(spacing: 8) {
-                    Text("Every")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(Color("textPrimaryColor"))
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    HStack(spacing: 0) {
-                        Picker("", selection: $practiceTimerState.stepEverySeconds) {
-                            ForEach(1...120, id: \.self) { sec in
-                                Text("\(sec)")
-                                    .tag(sec)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(width: 60)
-                        .clipped()
-                        
-                        Text("sec")
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .frame(width: 40, alignment: .leading)
-                    }
-                }
-                .frame(maxWidth: .infinity)
                 
-                // Increment BPM
-                VStack(spacing: 8) {
-                    Text("Increase")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(Color("textPrimaryColor"))
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    HStack(spacing: 0) {
-                        Picker("", selection: $practiceTimerState.stepIncrement) {
-                            ForEach(-30..<0, id: \.self) { change in
-                                Text("\(change)")
-                                    .tag(change)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
-                            ForEach(1...30, id: \.self) { change in
-                                Text("+\(change)")
-                                    .tag(change)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(width: 60)
-                        .clipped()
-                        
-                        Text("BPM")
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .frame(width: 40, alignment: .leading)
-                    }
-                }
-                .frame(maxWidth: .infinity)
+                
+                
             }
-            .padding(.horizontal, 5)
+            HStack(spacing:5){
+                // Every X Seconds
+                HStack(spacing: 0) {
+                    Text("Every")
+                    .font(.custom("MiSansLatin-Regular", size: 16))
+                    .foregroundColor(Color("textPrimaryColor"))
+                    Picker("", selection: $practiceTimerState.stepEverySeconds) {
+                        ForEach(1...120, id: \.self) { sec in
+                            Text("\(sec)")
+                                .tag(sec)
+                                .foregroundStyle(Color("textPrimaryColor"))
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                    
+                    Text("sec")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .frame(width: 40, alignment: .leading)
+                }
+                .frame(maxWidth: .infinity)
+                .background(Color("backgroundSecondaryColor"))
+                .cornerRadius(6)
+
+                // Increment BPM
+                HStack(spacing: 0) {
+                    Text("By")
+                    .font(.custom("MiSansLatin-Regular", size: 16))
+                    .foregroundColor(Color("textPrimaryColor"))
+                    Picker("", selection: $practiceTimerState.stepIncrement) {
+                        ForEach(-30..<0, id: \.self) { change in
+                            Text("\(change)")
+                                .tag(change)
+                                .foregroundStyle(Color("textPrimaryColor"))
+                        }
+                        ForEach(1...30, id: \.self) { change in
+                            Text("+\(change)")
+                                .tag(change)
+                                .foregroundStyle(Color("textPrimaryColor"))
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                    
+                    Text("BPM")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .frame(width: 40, alignment: .leading)
+                }
+                .frame(maxWidth: .infinity)
+                .background(Color("backgroundSecondaryColor"))
+                .cornerRadius(6)
+            }
+            
+            
         }
+        .cornerRadius(15)
     }
     
     // 小节模式设置视图
     private var barSetupView: some View {
-        VStack(spacing: 30) {
+        VStack(spacing: 5) {
             HStack(spacing: 5) {
                 // From BPM
-                VStack(spacing: 8) {
+                HStack(spacing: 0) {
                     Text("From")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(Color("textPrimaryColor"))
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    .font(.custom("MiSansLatin-Regular", size: 16))
+                    .foregroundColor(Color("textPrimaryColor"))
                     
-                    HStack(spacing: 0) {
-                        Picker("", selection: $practiceTimerState.stepFromBPM) {
-                            ForEach(30...240, id: \.self) { bpm in
-                                Text("\(bpm)")
-                                    .tag(bpm)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
+                    Picker("", selection: $practiceTimerState.stepFromBPM) {
+                        ForEach(30...240, id: \.self) { bpm in
+                            Text("\(bpm)")
+                                .tag(bpm)
+                                .foregroundStyle(Color("textPrimaryColor"))
                         }
-                        .pickerStyle(.wheel)
-                        .frame(width: 60)
-                        .clipped()
-                        
-                        Text("BPM")
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .frame(width: 40, alignment: .leading)
                     }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                    
+                    Text("BPM")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .frame(width: 40, alignment: .leading)
                 }
                 .frame(maxWidth: .infinity)
+                .background(Color("backgroundSecondaryColor"))
+                .cornerRadius(6)
                 
                 // To BPM
-                VStack(spacing: 8) {
-                    Text("To")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(Color("textPrimaryColor"))
-                        .frame(maxWidth: .infinity, alignment: .center)
+                HStack(spacing: 0) {
+                        Text("To")
+                    .font(.custom("MiSansLatin-Regular", size: 16))
+                    .foregroundColor(Color("textPrimaryColor"))
                     
-                    HStack(spacing: 0) {
-                        Picker("", selection: $practiceTimerState.stepToBPM) {
-                            ForEach(30...240, id: \.self) { bpm in
-                                Text("\(bpm)")
-                                    .tag(bpm)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
+                    Picker("", selection: $practiceTimerState.stepToBPM) {
+                        ForEach(30...240, id: \.self) { bpm in
+                            Text("\(bpm)")
+                                .tag(bpm)
+                                .foregroundStyle(Color("textPrimaryColor"))
                         }
-                        .pickerStyle(.wheel)
-                        .frame(width: 60)
-                        .clipped()
-                        
-                        Text("BPM")
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .frame(width: 40, alignment: .leading)
-                            
                     }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                    
+                    Text("BPM")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .frame(width: 40, alignment: .leading)
+                        
                 }
                 .frame(maxWidth: .infinity)
+                .background(Color("backgroundSecondaryColor"))
+                .cornerRadius(6)
                 
+                
+                
+                
+            }
+            
+            HStack(spacing: 5){
                 // Every X Bars
-                VStack(spacing: 8) {
-                    Text("Every")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(Color("textPrimaryColor"))
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
                     HStack(spacing: 0) {
+                        Text("Every")
+                        .font(.custom("MiSansLatin-Regular", size: 16))
+                        .foregroundColor(Color("textPrimaryColor")) 
+
                         Picker("", selection: $practiceTimerState.stepEveryBars) {
                             ForEach(1...16, id: \.self) { bars in
                                 Text("\(bars)")
@@ -340,7 +343,7 @@ struct StepTimerView: View {
                             }
                         }
                         .pickerStyle(.wheel)
-                        .frame(width: 60)
+                        .frame(width: 80)
                         .clipped()
                         
                         Text("bar")
@@ -348,43 +351,48 @@ struct StepTimerView: View {
                             .foregroundColor(Color("textSecondaryColor"))
                             .frame(width: 40, alignment: .leading)
                     }
-                }
-                .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity)
+                    .background(Color("backgroundSecondaryColor"))
+                    .cornerRadius(6)
+                
                 
                 // Increment BPM
-                VStack(spacing: 8) {
-                    Text("Increase")
-                        .font(.custom("MiSansLatin-Regular", size: 16))
-                        .foregroundColor(Color("textPrimaryColor"))
-                        .frame(maxWidth: .infinity, alignment: .center)
+                
                     
-                    HStack(spacing: 0) {
-                        Picker("", selection: $practiceTimerState.stepIncrement) {
-                            ForEach(-30..<0, id: \.self) { change in
-                                Text("\(change)")
-                                    .tag(change)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
-                            ForEach(1...30, id: \.self) { change in
-                                Text("+\(change)")
-                                    .tag(change)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
+                    
+                HStack(spacing: 0) {
+                    Text("By")
+                    .font(.custom("MiSansLatin-Regular", size: 16))
+                    .foregroundColor(Color("textPrimaryColor"))
+                    Picker("", selection: $practiceTimerState.stepIncrement) {
+                        ForEach(-30..<0, id: \.self) { change in
+                            Text("\(change)")
+                                .tag(change)
+                                .foregroundStyle(Color("textPrimaryColor"))
                         }
-                        .pickerStyle(.wheel)
-                        .frame(width: 60)
-                        .clipped()
-                        
-                        Text("BPM")
-                            .font(.custom("MiSansLatin-Regular", size: 14))
-                            .foregroundColor(Color("textSecondaryColor"))
-                            .frame(width: 40, alignment: .leading)
+                        ForEach(1...30, id: \.self) { change in
+                            Text("+\(change)")
+                                .tag(change)
+                                .foregroundStyle(Color("textPrimaryColor"))
+                        }
                     }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                    
+                    Text("BPM")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                        .frame(width: 40, alignment: .leading)
                 }
                 .frame(maxWidth: .infinity)
+                .background(Color("backgroundSecondaryColor"))
+                .cornerRadius(6)
+                
             }
-            .padding(.horizontal, 5)
+            
         }
+        .cornerRadius(15)
     }
     
     // 计时视图

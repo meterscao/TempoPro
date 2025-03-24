@@ -252,12 +252,7 @@ struct CountDownTimerView: View {
             .frame(width: 100)
             .frame(maxHeight:.infinity)
             .clipped()
-            #if os(iOS)
-            .onChange(of: practiceTimerState.targetBars) { newValue in
-                print("DEBUG: 目标小节变更 - 新值:\(newValue)")
-                print("DEBUG: 目标小节变更后 - completedBars: \(metronomeState.completedBars), previousCompletedBars: \(practiceTimerState.previousCompletedBars), remainingBars: \(practiceTimerState.remainingBars)")
-            }
-            #endif
+            
             
             Text("bars")
                 .font(.custom("MiSansLatin-Regular", size: 16))

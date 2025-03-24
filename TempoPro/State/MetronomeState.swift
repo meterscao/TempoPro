@@ -28,6 +28,9 @@ class MetronomeState: ObservableObject {
     @Published var practiceManager: CoreDataPracticeManager?
     @Published private(set) var completedBars: Int = 0
     
+    // 小节和拍子状态相关属性
+    @Published private(set) var isPaused: Bool = false
+    
     // 直接使用单例引擎
     private let audioEngine = MetronomeAudioEngine.shared
     private var metronomeTimer: MetronomeTimer?
@@ -45,6 +48,48 @@ class MetronomeState: ObservableObject {
         
         // 创建节拍定时器，传入self引用
         metronomeTimer = MetronomeTimer(state: self, audioEngine: audioEngine)
+    }
+    
+    // MARK: - 小节和拍子管理方法
+    
+    // 获取当前正在播放的小节编号（从1开始计数）
+    var currentBarNumber: Int {
+        return completedBars + 1
+    }
+    
+    // 获取当前小节在当前拍子的进度（0.0-1.0）
+    var currentBeatProgress: CGFloat {
+        guard beatsPerBar > 0 else { return 0.0 }
+        return CGFloat(currentBeat) / CGFloat(beatsPerBar)
+    }
+    
+    // 检查是否在小节的最后一拍
+    var isLastBeatOfBar: Bool {
+        return currentBeat == beatsPerBar - 1
+    }
+    
+    // 是否完成了指定数量的小节（针对练习用例）
+    func hasCompletedBars(_ targetBars: Int) -> Bool {
+        return completedBars >= targetBars
+    }
+    
+    // 获取剩余小节数（考虑到当前正在播放的小节）
+    func getRemainingBars(target: Int) -> Int {
+        let current = currentBarNumber
+        if current <= target {
+            return target - current + 1 // 包括当前正在播放的小节
+        } else {
+            return 0
+        }
+    }
+    
+    // 获取小节占比进度（针对练习进度计算）
+    func getBarProgress(targetBars: Int) -> CGFloat {
+        guard targetBars > 0 else { return 0.0 }
+        
+        // 已完成小节数，不包括当前正在播放的小节
+        let completedBarCount = completedBars
+        return min(CGFloat(completedBarCount) / CGFloat(targetBars), 1.0)
     }
     
     private func loadFromUserDefaults() {
@@ -186,6 +231,7 @@ class MetronomeState: ObservableObject {
         print("MetronomeState - play")
 
         isPlaying = true
+        isPaused = false
         completedBars = 0 // 重置小节计数
         
         // 确保当前切分模式已更新
@@ -196,17 +242,24 @@ class MetronomeState: ObservableObject {
         
         // 直接启动定时器
         metronomeTimer?.start()
+        
+        // 通知状态变化
+        objectWillChange.send()
     }   
 
     func stop() {
         print("MetronomeState - stop")
 
         isPlaying = false
+        isPaused = false
         // 结束练习会话
         practiceManager?.endPracticeSession()
         
         // 停止定时器
         metronomeTimer?.stop()
+        
+        // 通知状态变化
+        objectWillChange.send()
     }   
     
     // 暂停节拍器 - 保留当前的小节计数和状态
@@ -218,6 +271,7 @@ class MetronomeState: ObservableObject {
         }
         
         isPlaying = false
+        isPaused = true // 标记为暂停状态
         // 注意：不重置 completedBars，保留当前已完成的小节数
         // 注意：不结束练习会话，只是暂停
         
@@ -237,6 +291,7 @@ class MetronomeState: ObservableObject {
         }
         
         isPlaying = true
+        isPaused = false
         // 重置当前拍回到第一拍（小节的开始）
         currentBeat = 0
         
@@ -386,8 +441,19 @@ class MetronomeState: ObservableObject {
         return subdivisionPattern?.type ?? .whole
     }
     
+    // 增加已完成小节计数
     func incrementCompletedBar() {
         completedBars += 1
+        print("MetronomeState - 完成第\(completedBars)个小节")
         objectWillChange.send()
+    }
+    
+    // 重置已完成小节计数
+    func resetCompletedBars() {
+        if completedBars != 0 {
+            print("MetronomeState - 重置小节计数: \(completedBars) -> 0")
+            completedBars = 0
+            objectWillChange.send()
+        }
     }
 }
