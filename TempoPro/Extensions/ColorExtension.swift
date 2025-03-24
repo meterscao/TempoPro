@@ -1,20 +1,17 @@
-//
-//  ColorExtension.swift
-//  TempoPro
-//
-//  Created by Meters on 5/3/2025.
-//
 import SwiftUI
 
 // 颜色扩展，用于从十六进制字符串创建颜色
 extension Color {
-    init?(hex: String) {
+    init(hex: String) {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
         
         var rgb: UInt64 = 0
         
-        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
+        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else {
+            self = .clear  // 如果十六进制字符串无效，返回透明色
+            return
+        }
         
         let r = Double((rgb & 0xFF0000) >> 16) / 255.0
         let g = Double((rgb & 0x00FF00) >> 8) / 255.0
@@ -34,4 +31,4 @@ extension Color {
         let b = Float(components[2])
         return String(format: "#%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
     }
-} 
+}

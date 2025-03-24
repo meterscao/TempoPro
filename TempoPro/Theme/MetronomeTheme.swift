@@ -10,10 +10,10 @@ struct MetronomeTheme: Equatable {
     
     // 绿色主题 - 原版保留
     static let defaultTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.56, green: 0.64, blue: 0.51),
+        primaryColor: Color(hex: "a8af23"),
         backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
         textColor: .white,
-        beatBarColor: Color(red: 0.9, green: 0.2, blue: 0.7) ,
+        beatBarColor: Color(hex: "#468B6C") ,
         beatBarHighlightColor: .red
     )
     
