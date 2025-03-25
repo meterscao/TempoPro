@@ -299,7 +299,7 @@ struct CountDownPracticeView: View {
                     VStack() {
                         if practiceCoordinator.countdownType == .time {
                             // 时间显示
-                            Text(practiceCoordinator.getCountdownDisplayText())
+                            Text(practiceCoordinator.practiceStatus == .running ? practiceCoordinator.getCountdownDisplayText() : "已完成")
                                 .font(.custom("MiSansLatin-Semibold", size: 40))
                                 .foregroundColor(Color("textPrimaryColor"))
                             
@@ -315,7 +315,7 @@ struct CountDownPracticeView: View {
                             }
                         } else {
                             // 小节显示
-                            Text("\(practiceCoordinator.remainingBars)")
+                            Text(practiceCoordinator.practiceStatus == .running ? "\(practiceCoordinator.remainingBars)" : "已完成")
                                 .font(.custom("MiSansLatin-Semibold", size: 40))
                                 .foregroundColor(Color("textPrimaryColor"))
                             

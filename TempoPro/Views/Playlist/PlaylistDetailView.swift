@@ -83,7 +83,6 @@ struct PlaylistDetailView: View {
                         
                         Button(action: {
                             editPlaylistName = playlist.name ?? ""
-                            editPlaylistColor = Color(hex: playlist.color ?? "#0000FF") ?? .blue
                             showingEditPlaylist = true
                         }) {
                             Label {
@@ -163,20 +162,23 @@ struct PlaylistDetailView: View {
                 }
             )
         }
-        .sheet(isPresented: $showingEditPlaylist) {
-            EditPlaylistView(
-                isPresented: $showingEditPlaylist,
-                playlistName: $editPlaylistName,
-                selectedColor: $editPlaylistColor,
-                onSave: { name, color in
+        .alert("编辑曲库", isPresented: $showingEditPlaylist) {
+            TextField("曲库名称", text: $editPlaylistName)
+            Button("取消", role: .cancel) { 
+                editPlaylistName = playlist.name ?? ""
+            }
+            Button("保存") {
+                if !editPlaylistName.isEmpty {
                     // 更新曲库
                     playlistManager.updatePlaylist(
                         playlist,
-                        name: name,
-                        color: color.toHex() ?? "#0000FF"
+                        name: editPlaylistName,
+                        color: playlist.color ?? "#0000FF" // 保持原来的颜色
                     )
                 }
-            )
+            }.disabled(editPlaylistName.isEmpty)
+        } message: {
+            Text("请输入曲库的新名称")
         }
         .alert("确认删除", isPresented: $showingDeleteAlert, actions: {
             Button("取消", role: .cancel) { }
@@ -263,9 +265,14 @@ struct SongRowCard: View {
                     .font(.custom("MiSansLatin-Semibold", size: 17))
                     .foregroundColor(Color("textPrimaryColor"))
                 
-                Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit))")
-                    .font(.custom("MiSansLatin-Regular", size: 13))
-                    .foregroundColor(Color("textSecondaryColor"))
+                HStack(){
+                    Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit))")
+                        .font(.custom("MiSansLatin-Regular", size: 13))
+                        .foregroundColor(Color("textSecondaryColor"))
+                    
+                    
+                }
+                
             }
             
             Spacer()

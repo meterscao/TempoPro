@@ -98,15 +98,7 @@ struct PlaylistListView: View {
                         .font(.custom("MiSansLatin-Semibold", size: 16))
                         .foregroundColor(Color("textPrimaryColor"))
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action:{
-                        showingAddAlert = true // 显示自定义弹窗
-                    }){
-                        Text("Add Library")
-                            .foregroundStyle(Color("textPrimaryColor"))
-                    }
-                    
-                }
+                
             }
             .navigationBarTitleDisplayMode(.inline)
             .background(Color("backgroundPrimaryColor"))

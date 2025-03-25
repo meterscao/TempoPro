@@ -72,7 +72,6 @@
 		F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */; };
 		F7F058BF2D79443C005DF482 /* EditSongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058BE2D79443C005DF482 /* EditSongView.swift */; };
 		F7F058C12D794453005DF482 /* AddPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058C02D794453005DF482 /* AddPlaylistView.swift */; };
-		F7F058C52D79448A005DF482 /* EditPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058C42D79448A005DF482 /* EditPlaylistView.swift */; };
 		F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */; };
 		F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */; };
 		F7FF3F152D7073EB00390C16 /* MetronomeAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioEngine.swift */; };
@@ -171,7 +170,6 @@
 		F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlaylistManager.swift; sourceTree = "<group>"; };
 		F7F058BE2D79443C005DF482 /* EditSongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongView.swift; sourceTree = "<group>"; };
 		F7F058C02D794453005DF482 /* AddPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPlaylistView.swift; sourceTree = "<group>"; };
-		F7F058C42D79448A005DF482 /* EditPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPlaylistView.swift; sourceTree = "<group>"; };
 		F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileBackgroundImage.swift; sourceTree = "<group>"; };
 		F7F538E32D75D59700A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
@@ -409,7 +407,6 @@
 			isa = PBXGroup;
 			children = (
 				F750D23A2D7816360022C405 /* PlaylistListView.swift */,
-				F7F058C42D79448A005DF482 /* EditPlaylistView.swift */,
 				F7F058C02D794453005DF482 /* AddPlaylistView.swift */,
 				F750D2392D7816360022C405 /* PlaylistDetailView.swift */,
 				F7F058BE2D79443C005DF482 /* EditSongView.swift */,
@@ -686,7 +683,6 @@
 				F750D23C2D7816360022C405 /* PlaylistListView.swift in Sources */,
 				F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */,
 				F7F058A42D787BF3005DF482 /* ColorExtension.swift in Sources */,
-				F7F058C52D79448A005DF482 /* EditPlaylistView.swift in Sources */,
 				F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */,
 				F7F058992D787651005DF482 /* TempoProModel.xcdatamodeld in Sources */,
 				F7F058BF2D79443C005DF482 /* EditSongView.swift in Sources */,
