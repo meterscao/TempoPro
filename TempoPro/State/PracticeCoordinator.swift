@@ -385,9 +385,14 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
     
     // 格式化时间 - 将秒数转换为分:秒格式
     func formatTime(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, remainingSeconds)
+        let hours = seconds / 3600  // 计算小时数
+        let minutes = (seconds % 3600) / 60  // 计算分钟数
+        let remainingSeconds = seconds % 60  // 计算剩余秒数
+        if hours > 0 {
+            return String(format: "%02d:%02d:%02d", hours, minutes, remainingSeconds)
+        } else {
+            return String(format: "%02d:%02d", minutes, remainingSeconds)
+        }
     }
     
     // MARK: - 便捷计算属性
