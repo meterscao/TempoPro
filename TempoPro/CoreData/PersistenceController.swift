@@ -66,10 +66,10 @@ struct PersistenceController {
         samplePlaylist.color = "#4682B4"
         samplePlaylist.createdDate = Date()
         
-        // 创建示例歌曲
+        // 创建示例曲目
         let sampleSong = Song(context: viewContext)
         sampleSong.id = UUID()
-        sampleSong.name = "示例歌曲"
+        sampleSong.name = "示例曲目"
         sampleSong.bpm = 120
         sampleSong.beatsPerBar = 4
         sampleSong.beatUnit = 4

@@ -25,14 +25,14 @@ struct EditSongView: View {
     var body: some View {
         NavigationStack {
             List {
-                // 歌曲名称部分
+                // 曲目名称部分
                 Section {
-                    TextField("输入歌曲名称", text: $songName)
+                    TextField("输入曲目名称", text: $songName)
                         .font(.custom("MiSansLatin-Regular", size: 16))
                         .foregroundColor(Color("textPrimaryColor"))
                         .padding(.vertical, 8)
                 } header: {
-                    Text("歌曲名称")
+                    Text("曲目名称")
                         .font(.custom("MiSansLatin-Semibold", size: 16))
                         .foregroundColor(Color("textSecondaryColor"))
                 }
@@ -217,7 +217,7 @@ struct EditSongView: View {
             }
             .background(Color("backgroundPrimaryColor"))
             .scrollContentBackground(.hidden)
-            .navigationTitle(isEditMode ? "编辑歌曲" : "添加歌曲")
+            .navigationTitle(isEditMode ? "编辑曲目" : "添加曲目")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
@@ -236,7 +236,7 @@ struct EditSongView: View {
                 }
                 
                 ToolbarItem(placement: .principal) {
-                    Text(isEditMode ? "编辑歌曲" : "添加歌曲")
+                    Text(isEditMode ? "编辑曲目" : "添加曲目")
                         .font(.custom("MiSansLatin-Semibold", size: 16))
                         .foregroundColor(Color("textPrimaryColor"))
                 }

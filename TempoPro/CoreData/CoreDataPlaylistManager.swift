@@ -46,7 +46,7 @@ class CoreDataPlaylistManager: ObservableObject {
         return newPlaylist
     }
     
-    // 添加歌曲到曲库
+    // 添加曲目到曲库
     func addSong(to playlist: Playlist, name: String, bpm: Int, beatsPerBar: Int, beatUnit: Int, beatStatuses: [Int]) -> Song {
         let newSong = Song(context: viewContext)
         newSong.id = UUID()
@@ -69,7 +69,7 @@ class CoreDataPlaylistManager: ObservableObject {
         saveContext()
     }
     
-    // 更新歌曲
+    // 更新曲目
     func updateSong(_ song: Song, name: String, bpm: Int, beatsPerBar: Int, beatUnit: Int, beatStatuses: [Int]) {
         song.name = name
         song.bpm = Int16(bpm)
@@ -89,7 +89,7 @@ class CoreDataPlaylistManager: ObservableObject {
         }
     }
     
-    // 删除歌曲
+    // 删除曲目
     func deleteSong(_ song: Song) {
         viewContext.delete(song)
         saveContext()

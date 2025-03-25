@@ -25,7 +25,7 @@ struct PlaylistDetailView: View {
     var body: some View {
         NavigationStack {
             List {
-                // 歌曲列表
+                // 曲目列表
                 let songs = playlist.songs?.allObjects as? [Song] ?? []
                 
                     if songs.isEmpty {
@@ -34,7 +34,7 @@ struct PlaylistDetailView: View {
                                 .font(.custom("MiSansLatin-Regular", size: 50))
                                 .foregroundColor(Color("textSecondaryColor"))
                             
-                            Text("暂无歌曲")
+                            Text("暂无曲目")
                                 .font(.custom("MiSansLatin-Regular", size: 16))
                                 .foregroundColor(Color("textPrimaryColor"))
                         }
@@ -72,7 +72,7 @@ struct PlaylistDetailView: View {
                             showingSongForm = true
                         }) {
                             Label {
-                                Text("添加歌曲")
+                                Text("添加曲目")
                                     .foregroundColor(Color("textPrimaryColor"))
                             } icon: {
                                 Image("icon-plus-s")
@@ -136,7 +136,7 @@ struct PlaylistDetailView: View {
                     }
                     
                     if isEditMode, let song = songToEdit {
-                        // 更新现有歌曲
+                        // 更新现有曲目
                         playlistManager.updateSong(
                             song,
                             name: name,
@@ -146,7 +146,7 @@ struct PlaylistDetailView: View {
                             beatStatuses: statusInts
                         )
                     } else {
-                        // 添加新歌曲
+                        // 添加新曲目
                         _ = playlistManager.addSong(
                             to: playlist,
                             name: name,
@@ -184,12 +184,12 @@ struct PlaylistDetailView: View {
             Button("取消", role: .cancel) { }
             Button("删除", role: .destructive) {
                 if let song = songToDelete {
-                    // 删除歌曲
+                    // 删除曲目
                     playlistManager.deleteSong(song)
                 }
             }
         }, message: {
-            Text("确定要删除这首歌曲吗？此操作不可撤销。")
+            Text("确定要删除这首曲目吗？此操作不可撤销。")
         })
     }
     
@@ -250,7 +250,7 @@ struct PlaylistDetailView: View {
     }
 }
 
-// 修改歌曲卡片组件样式以匹配
+// 修改曲目卡片组件样式以匹配
 struct SongRowCard: View {
     @Environment(\.metronomeTheme) var theme
     let song: Song
@@ -261,7 +261,7 @@ struct SongRowCard: View {
     var body: some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 0) {
-                Text(song.name ?? "未命名歌曲")
+                Text(song.name ?? "未命名曲目")
                     .font(.custom("MiSansLatin-Semibold", size: 17))
                     .foregroundColor(Color("textPrimaryColor"))
                 

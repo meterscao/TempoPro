@@ -38,7 +38,7 @@ extension Playlist {
             return Color(hex: self.color ?? "#0000FF") ?? .blue
         }
         
-        // 获取所有歌曲
+        // 获取所有曲目
         var songsArray: [Song] {
             return self.songs?.allObjects as? [Song] ?? []
         }
