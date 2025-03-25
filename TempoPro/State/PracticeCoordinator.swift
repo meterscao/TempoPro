@@ -181,7 +181,7 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         if countdownType == .time {
             return formatTime(remainingSeconds)
         } else {
-            return "\(remainingBars)"
+            return "\(remainingBars) bars"
         }
     }
     
@@ -194,6 +194,7 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
     
     // 节拍器播放状态变化回调
     func metronomeDidChangePlaybackState(_ state: PlaybackState) {
+        print("metronomeDidChangePlaybackState: \(state), 练习状态: \(practiceStatus)")
         // 如果节拍器停止，且处于练习模式，也停止练习
         if state == .standby && (practiceStatus == .running || practiceStatus == .paused) {
             stopPractice()
@@ -207,6 +208,9 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
     
     // 小节完成回调
     func metronomeDidCompleteBar(barCount: Int) {
+        // 添加日志
+        print("【委托】完成小节: \(barCount), 目标小节: \(targetBars), 练习状态: \(practiceStatus), 练习模式: \(activeMode), 倒计时类型: \(countdownType)")
+        
         // 检查是否需要更新渐进式BPM
         if activeMode == .progressive && practiceStatus == .running && progressiveType == .bar {
             let barsSinceLastUpdate = barCount - lastUpdateBar
@@ -219,7 +223,12 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         
         // 检查是否完成倒计时小节
         if activeMode == .countdown && practiceStatus == .running && countdownType == .bar {
+            print("【委托】检查小节完成条件: barCount(\(barCount)) >= targetBars(\(targetBars)): \(barCount >= targetBars)")
+            
+            // 检查是否达到目标小节
             if barCount >= targetBars {
+                // 直接调用完成练习
+                print("【委托】小节达到目标，调用完成练习")
                 completePractice()
             }
         }
@@ -319,18 +328,22 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
     
     // 完成练习 - 处理练习达到目标的情况
     private func completePractice() {
+        print("进入completePractice，循环模式: \(isLoopEnabled), 同步停止: \(isSyncStopEnabled)")
         timer?.invalidate()
         timer = nil
         
         if activeMode == .countdown && isLoopEnabled {
             // 循环模式处理
+            print("触发循环模式处理")
             handleLoopCompletion()
         } else {
             // 非循环模式，直接完成
             practiceStatus = .completed
             
-            if activeMode == .countdown && isSyncStopEnabled {
-                metronomeState?.stop()
+            if isSyncStopEnabled {
+                print("准备停止节拍器")
+                metronomeState?.stop()  // 直接调用停止方法
+                print("节拍器已停止")
             }
         }
         
@@ -343,6 +356,8 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         practiceStatus = .completed
         resetProgressTask?.cancel()
         
+        print("循环模式：准备重置计时")
+        
         // 设置完成循环标志
         withAnimation(.linear(duration: 0.5)) {
             isCompletingCycle = true
@@ -353,6 +368,7 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
             guard let self = self else { return }
             
             DispatchQueue.main.async {
+                print("循环模式：重置计时器")
                 withAnimation(nil) {
                     self.isCompletingCycle = false
                     self.elapsedSeconds = 0
@@ -389,8 +405,10 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
             return 0
         }
         
-        let currentBar = metronomeState.currentBarNumber
-        return currentBar <= targetBars ? (targetBars - currentBar + 1) : 0
+        // 使用completedBars而不是currentBarNumber进行计算，确保与metronomeDidCompleteBar逻辑一致
+        let completedBars = metronomeState.completedBars
+        print("计算剩余小节: 已完成(\(completedBars)), 目标(\(targetBars)), 剩余(\(max(targetBars - completedBars, 0)))")
+        return max(targetBars - completedBars, 0)
     }
     
     // 进度 - 当前练习的完成进度（0.0-1.0）

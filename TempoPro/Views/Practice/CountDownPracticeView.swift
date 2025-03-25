@@ -52,7 +52,9 @@ struct CountDownPracticeView: View {
                         Text("By Time").tag("time")
                         Text("By Bar").tag("bar")
                     }
+                    
                     .pickerStyle(.segmented)
+                    .preferredColorScheme(.dark)
                     .frame(width: 200)
                     .onChange(of: selectedTimerType) { newValue in
                         if newValue == "time" {
@@ -70,8 +72,11 @@ struct CountDownPracticeView: View {
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
         }
         .onAppear {
-            // 设置为Countdown模式
-            practiceCoordinator.setPracticeMode(.countdown)
+            // 只在非运行状态下设置练习模式
+            if practiceCoordinator.practiceStatus == .standby {
+                // 设置为Countdown模式
+                practiceCoordinator.setPracticeMode(.countdown)
+            }
             
             // 初始化选择类型
             selectedTimerType = practiceCoordinator.countdownType == .time ? "time" : "bar"

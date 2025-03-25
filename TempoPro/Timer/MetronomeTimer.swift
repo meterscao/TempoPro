@@ -182,9 +182,9 @@ class MetronomeTimer {
         
         // 检测小节完成：当节拍回到第一拍(0)，且当前不是第一拍，说明完成了一个小节
         if nextBeatNumber == 0 && state.currentBeat > 0 {
-            // 增加已完成小节计数
+            // 调用onBarCompleted而不是incrementCompletedBar
             DispatchQueue.main.async {
-                state.incrementCompletedBar()
+                state.onBarCompleted()
             }
         }
         

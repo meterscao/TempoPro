@@ -3,6 +3,7 @@ import SwiftUI
 struct MetronomeToolbarView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager
+    @EnvironmentObject var practiceCoordinator: PracticeCoordinator
     @State private var showingStatsView = false
     @State private var showingCountDownTimerView = false
     @State private var showingStepTimerView = false
@@ -36,6 +37,20 @@ struct MetronomeToolbarView: View {
         ]
     }
     
+    // 判断是否显示倒计时信息
+    private var shouldShowCountdownInfo: Bool {
+        return practiceCoordinator.activeMode == .countdown && 
+               (practiceCoordinator.practiceStatus == .running || 
+                practiceCoordinator.practiceStatus == .paused)
+    }
+    
+    // 获取倒计时显示文本
+    private var countdownInfoText: String {
+        if shouldShowCountdownInfo {
+            return practiceCoordinator.getCountdownDisplayText()
+        }
+        return ""
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -80,10 +95,27 @@ struct MetronomeToolbarView: View {
                         }
                         
                         // 按钮
-                        ToolbarButton(
-                            image: button.image,
-                            action: button.action
-                        )
+                        ZStack {
+                            ToolbarButton(
+                                image: button.image,
+                                action: button.action
+                            )
+                            
+                            // 在第一个按钮上方显示倒计时信息
+                            if index == 0 && shouldShowCountdownInfo {
+                                HStack(spacing:3) {
+                                    Circle()
+                                        .fill(.red)
+                                        .frame(width: 8, height: 8)
+                                    
+                                    Text(countdownInfoText)
+                                        .font(.custom("MiSansLatin-SemiBold", size: 13))
+                                        .foregroundColor(theme.backgroundColor)
+                                        .lineLimit(1)
+                                }
+                                .offset(y:-30)
+                            }
+                        }
                         .frame(width: buttonWidth, height: buttonWidth) // 明确设置按钮宽高
                     }
                 }

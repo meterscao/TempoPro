@@ -369,6 +369,7 @@ class MetronomeState: ObservableObject {
     
     func onBarCompleted() {
         completedBars += 1
+        print("MetronomeState - 完成第\(completedBars)个小节，通知所有委托")
         notifyBarCompleted(barCount: completedBars)
         objectWillChange.send()
     }
