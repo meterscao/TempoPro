@@ -74,46 +74,37 @@ struct PlaylistDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Button(action: {
-                            resetSongForm()
-                            isEditMode = false
-                            showingSongForm = true
-                        }) {
-                            Label {
-                                Text("添加曲目")
-                                    .foregroundColor(Color("textPrimaryColor"))
-                            } icon: {
-                                Image("icon-plus-s")
-                                    .renderingMode(.template)
-                                    .foregroundColor(Color("textPrimaryColor"))
+                        Section{
+                            Button(action: {
+                                resetSongForm()
+                                isEditMode = false
+                                showingSongForm = true
+                            }) {
+                                
+                                    Text("添加曲目")
+                                        .foregroundColor(Color("textPrimaryColor"))
+                                
                             }
                         }
                         
-                        Button(action: {
-                            editPlaylistName = playlist.name ?? ""
-                            showingEditPlaylist = true
-                        }) {
-                            Label {
-                                Text("编辑曲库")
-                                    .foregroundColor(Color("textPrimaryColor"))
-                            } icon: {
-                                Image("icon-pencil-s")
-                                    .renderingMode(.template)
-                                    .foregroundColor(Color("textPrimaryColor"))
+                        Section {
+                            Button(action: {
+                                editPlaylistName = playlist.name ?? ""
+                                showingEditPlaylist = true
+                            }) {
+                                    Text("编辑曲库")
+                                        .foregroundColor(Color("textPrimaryColor"))
+                                
                             }
-                        }
-                        
-                        Button(role: .destructive, action: {
-                            playlistManager.deletePlaylist(playlist)
-                            dismiss()
-                        }) {
-                            Label {
-                                Text("删除曲库")
-                                    .foregroundColor(Color("textPrimaryColor"))
-                            } icon: {
-                                Image("icon-trash-2-s")
-                                    .renderingMode(.template)
-                                    .foregroundColor(Color("textPrimaryColor"))
+                            
+                            Button(role: .destructive, action: {
+                                playlistManager.deletePlaylist(playlist)
+                                dismiss()
+                            }) {
+                                
+                                    Text("删除曲库")
+                                        .foregroundColor(Color("textPrimaryColor"))
+                            
                             }
                         }
                     } label: {
