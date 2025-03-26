@@ -11,7 +11,7 @@ class ThemeManager: ObservableObject {
     }
     
     // 当前主题名称
-    @Published var currentThemeName: String = "green" {
+    @Published var currentThemeName: String = "silver" {
         didSet {
             if let theme = themes[currentThemeName] {
                 currentTheme = theme
@@ -21,8 +21,9 @@ class ThemeManager: ObservableObject {
     
     // 定义一个有序的主题名称数组
     private let themeNames: [String] = [
-        // 现有主题
-        "green",
+        
+        "silver",
+        "olive",
         "purple",
         "skyBlue",
         "coral",
@@ -43,7 +44,6 @@ class ThemeManager: ObservableObject {
         "militaryTech",
         "circuitBoard",
         "deepSpace",
-        "silver",
         "deepGray"
     ]
     
@@ -63,7 +63,7 @@ class ThemeManager: ObservableObject {
         setupThemes()
         
         // 读取保存的主题
-        let savedThemeName = UserDefaults.standard.string(forKey: "selectedTheme") ?? "green"
+        let savedThemeName = UserDefaults.standard.string(forKey: "selectedTheme") ?? "silver"
         self.currentThemeName = savedThemeName
         if let theme = themes[savedThemeName] {
             self.currentTheme = theme
@@ -73,7 +73,7 @@ class ThemeManager: ObservableObject {
     // 设置所有主题
     private func setupThemes() {
         // 现有主题
-        themes["green"] = .defaultTheme
+        themes["silver"] = .defaultTheme
         themes["purple"] = .purpleTheme
         themes["skyBlue"] = .skyBlueTheme
         themes["coral"] = .coralTheme
@@ -94,7 +94,7 @@ class ThemeManager: ObservableObject {
         themes["militaryTech"] = .militaryTechTheme
         themes["circuitBoard"] = .circuitBoardTheme
         themes["deepSpace"] = .deepSpaceTheme
-        themes["silver"] = .silverTheme
+        themes["olive"] = .oliveTheme
         themes["deepGray"] = .deepGrayTheme
     }
     
@@ -113,7 +113,7 @@ class ThemeManager: ObservableObject {
     func themeSets(for themeName: String) -> MetronomeTheme {
         switch themeName.lowercased() {
         // 现有主题
-        case "green": return MetronomeTheme.defaultTheme
+        case "silver": return MetronomeTheme.defaultTheme
         case "purple": return MetronomeTheme.purpleTheme
         case "skyblue": return MetronomeTheme.skyBlueTheme
         case "coral": return MetronomeTheme.coralTheme
@@ -134,7 +134,7 @@ class ThemeManager: ObservableObject {
         case "militarytech": return MetronomeTheme.militaryTechTheme
         case "circuitboard": return MetronomeTheme.circuitBoardTheme
         case "deepspace": return MetronomeTheme.deepSpaceTheme
-        case "silver": return MetronomeTheme.silverTheme
+        case "olive": return MetronomeTheme.oliveTheme
         case "deepgray": return MetronomeTheme.deepGrayTheme
         default: return MetronomeTheme.defaultTheme
         }

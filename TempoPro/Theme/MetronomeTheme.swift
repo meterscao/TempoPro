@@ -9,180 +9,182 @@ struct MetronomeTheme: Equatable {
     let beatBarHighlightColor: Color      // 节拍bar 高亮色
     
     // 绿色主题 - 原版保留
-    static let defaultTheme = MetronomeTheme(
+    static let oliveTheme = MetronomeTheme(
         primaryColor: Color(hex: "a8af23"),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,
-        beatBarColor: Color(hex: "#468B6C") ,
+        beatBarColor: Color(hex: "#468B6C"),
         beatBarHighlightColor: .red
     )
+
+     static let defaultTheme = MetronomeTheme(
+        primaryColor: Color(hex: "CCCCCC"),
+        backgroundColor: Color(hex: "0D0D0D"),
+        textColor: Color(hex: "1A1A1A"),
+        beatBarColor: Color(hex: "F2F219"), // 亮黄色，紫色的对比色
+        beatBarHighlightColor: Color(hex: "FF0000")
+    )  
     
     // 紫色主题
     static let purpleTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.58, green: 0.44, blue: 0.86),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        primaryColor: Color(hex: "9470DB"),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,
-        beatBarColor: Color(red: 0.95, green: 0.95, blue: 0.1), // 亮黄色，紫色的对比色
+        beatBarColor: Color(hex: "F2F219"), // 亮黄色，紫色的对比色
         beatBarHighlightColor: .red
     )
     
     // 天蓝色主题
     static let skyBlueTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.40, green: 0.69, blue: 0.90),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        primaryColor: Color(hex: "66B0E6"),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,
-        beatBarColor: Color(red: 0.95, green: 0.6, blue: 0.1), // 橙色，蓝色的对比色
-        beatBarHighlightColor: Color(red: 0.95, green: 0.6, blue: 0.1)
+        beatBarColor: Color(hex: "F2991A"), // 橙色，蓝色的对比色
+        beatBarHighlightColor: Color(hex: "F2991A")
     )
 
     // 珊瑚红主题
     static let coralTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.96, green: 0.45, blue: 0.45),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        primaryColor: Color(hex: "F57373"),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,
-        beatBarColor: Color(red: 0.1, green: 0.8, blue: 0.8), // 青色，红色的对比色
+        beatBarColor: Color(hex: "19CCCC"), // 青色，红色的对比色
         beatBarHighlightColor: .red
     )
     
     // 琥珀色主题
     static let amberTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.95, green: 0.69, blue: 0.28),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        primaryColor: Color(hex: "F2B047"),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,  
-        beatBarColor: Color(red: 0.1, green: 0.3, blue: 0.9), // 深蓝色，琥珀色的对比色
+        beatBarColor: Color(hex: "194DE6"), // 深蓝色，琥珀色的对比色
         beatBarHighlightColor: .red
     )
     
     // 薰衣草色主题
     static let lavenderTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.71, green: 0.52, blue: 0.90),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        primaryColor: Color(hex: "B585E6"),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,
-        beatBarColor: Color(red: 0.6, green: 0.95, blue: 0.1), // 黄绿色，薰衣草色的对比色
+        beatBarColor: Color(hex: "99F219"), // 黄绿色，薰衣草色的对比色
         beatBarHighlightColor: .red
     )
     
     // 青绿色主题
     static let tealTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.18, green: 0.70, blue: 0.67),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        primaryColor: Color(hex: "2EB3AB"),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,
-        beatBarColor: Color(red: 0.95, green: 0.1, blue: 0.3), // 红色，青绿色的对比色
+        beatBarColor: Color(hex: "F2194D"), // 红色，青绿色的对比色
         beatBarHighlightColor: .red
     )
     
     // 玫瑰金主题
     static let roseGoldTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.93, green: 0.56, blue: 0.54),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        primaryColor: Color(hex: "ED8F8A"),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,
-        beatBarColor: Color(red: 0.1, green: 0.6, blue: 0.9), // 青蓝色，玫瑰金的对比色
+        beatBarColor: Color(hex: "1999E6"), // 青蓝色，玫瑰金的对比色
         beatBarHighlightColor: .red
     )
     
     // 沙漠色主题
     static let desertTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.92, green: 0.87, blue: 0.73),
-        backgroundColor: Color(red: 0.1, green: 0.1, blue: 0.1),
+        primaryColor: Color(hex: "EBDEBA"),
+        backgroundColor: Color(hex: "1a1a1a"),
         textColor: .white,
-        beatBarColor: Color(red: 0.3, green: 0.2, blue: 0.9), // 蓝紫色，沙漠色的对比色
+        beatBarColor: Color(hex: "4D33E6"), // 蓝紫色，沙漠色的对比色
         beatBarHighlightColor: .red
     )
 
     // 新的复古科技风格主题
     static let retroTerminalTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.0, green: 0.8, blue: 0.2),
-        backgroundColor: Color(red: 0.05, green: 0.05, blue: 0.05),
-        textColor: Color(red: 0.0, green: 0.9, blue: 0.3),
-        beatBarColor: Color(red: 0.5, green: 0.0, blue: 0.5),       // 紫色对比
-        beatBarHighlightColor: Color(red: 1.0, green: 1.0, blue: 0.0) // 黄色高亮
+        primaryColor: Color(hex: "00CC33"),
+        backgroundColor: Color(hex: "0D0D0D"),
+        textColor: Color(hex: "00E64D"),
+        beatBarColor: Color(hex: "800080"),       // 紫色对比
+        beatBarHighlightColor: Color(hex: "FFFF00") // 黄色高亮
     )
     
     static let cyberpunkTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.9, green: 0.1, blue: 0.6),
-        backgroundColor: Color(red: 0.07, green: 0.0, blue: 0.1),
-        textColor: Color(red: 0.0, green: 0.9, blue: 1.0),
-        beatBarColor: Color(red: 0.0, green: 0.6, blue: 0.8),       // 青色对比
-        beatBarHighlightColor: Color(red: 1.0, green: 0.8, blue: 0.0) // 金黄色高亮
+        primaryColor: Color(hex: "E61A99"),
+        backgroundColor: Color(hex: "12001A"),
+        textColor: Color(hex: "00E6FF"),
+        beatBarColor: Color(hex: "0099CC"),       // 青色对比
+        beatBarHighlightColor: Color(hex: "FFCC00") // 金黄色高亮
     )
     
     static let techBlueTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.1, green: 0.5, blue: 0.9),
-        backgroundColor: Color(red: 0.05, green: 0.07, blue: 0.12),
-        textColor: Color(red: 0.7, green: 0.8, blue: 1.0),
-        beatBarColor: Color(red: 0.9, green: 0.2, blue: 0.1),       // 红色对比
-        beatBarHighlightColor: Color(red: 0.0, green: 1.0, blue: 0.5) // 青绿色高亮
+        primaryColor: Color(hex: "1A80E6"),
+        backgroundColor: Color(hex: "0D121F"),
+        textColor: Color(hex: "B3CCFF"),
+        beatBarColor: Color(hex: "E6331A"),       // 红色对比
+        beatBarHighlightColor: Color(hex: "00FF80") // 青绿色高亮
     )
     
     static let amberRetroTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.9, green: 0.6, blue: 0.0),
-        backgroundColor: Color(red: 0.1, green: 0.07, blue: 0.03),
-        textColor: Color(red: 1.0, green: 0.8, blue: 0.3),
-        beatBarColor: Color(red: 0.1, green: 0.2, blue: 0.7),       // 深蓝色对比
-        beatBarHighlightColor: Color(red: 1.0, green: 0.3, blue: 0.0) // 亮橙色高亮
+        primaryColor: Color(hex: "E69900"),
+        backgroundColor: Color(hex: "1A1208"),
+        textColor: Color(hex: "FFCC4D"),
+        beatBarColor: Color(hex: "1A33B3"),       // 深蓝色对比
+        beatBarHighlightColor: Color(hex: "FF4D00") // 亮橙色高亮
     )
     
     static let vintageVioletTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.6, green: 0.2, blue: 0.8),
-        backgroundColor: Color(red: 0.08, green: 0.03, blue: 0.12),
-        textColor: Color(red: 0.8, green: 0.6, blue: 1.0),
-        beatBarColor: Color(red: 0.0, green: 0.8, blue: 0.3),       // 绿色对比
-        beatBarHighlightColor: Color(red: 1.0, green: 0.7, blue: 0.0) // 金色高亮
+        primaryColor: Color(hex: "9933CC"),
+        backgroundColor: Color(hex: "14081F"),
+        textColor: Color(hex: "CC99FF"),
+        beatBarColor: Color(hex: "00CC4D"),       // 绿色对比
+        beatBarHighlightColor: Color(hex: "FFB300") // 金色高亮
     )
     
     static let neonFutureTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.0, green: 0.9, blue: 0.9),
-        backgroundColor: Color(red: 0.06, green: 0.02, blue: 0.1),
-        textColor: Color(red: 0.0, green: 1.0, blue: 1.0),
-        beatBarColor: Color(red: 0.9, green: 0.1, blue: 0.9),       // 桃红色对比
-        beatBarHighlightColor: Color(red: 1.0, green: 0.9, blue: 0.0) // 明黄色高亮
+        primaryColor: Color(hex: "00E6E6"),
+        backgroundColor: Color(hex: "0F051A"),
+        textColor: Color(hex: "00FFFF"),
+        beatBarColor: Color(hex: "E619E6"),       // 桃红色对比
+        beatBarHighlightColor: Color(hex: "FFE600") // 明黄色高亮
     )
     
     static let rustTechTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.7, green: 0.25, blue: 0.1),
-        backgroundColor: Color(red: 0.1, green: 0.05, blue: 0.03),
-        textColor: Color(red: 0.9, green: 0.5, blue: 0.3),
-        beatBarColor: Color(red: 0.0, green: 0.6, blue: 0.8),       // 青蓝色对比
-        beatBarHighlightColor: Color(red: 1.0, green: 0.9, blue: 0.4) // 亮黄色高亮
+        primaryColor: Color(hex: "B3401A"),
+        backgroundColor: Color(hex: "1A0D08"),
+        textColor: Color(hex: "E6804D"),
+        beatBarColor: Color(hex: "0099CC"),       // 青蓝色对比
+        beatBarHighlightColor: Color(hex: "FFE666") // 亮黄色高亮
     )
     
     static let militaryTechTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.2, green: 0.4, blue: 0.2),
-        backgroundColor: Color(red: 0.05, green: 0.07, blue: 0.05),
-        textColor: Color(red: 0.7, green: 0.9, blue: 0.5),
-        beatBarColor: Color(red: 0.7, green: 0.0, blue: 0.0),       // 红色对比
-        beatBarHighlightColor: Color(red: 1.0, green: 0.8, blue: 0.0) // 金黄色高亮
+        primaryColor: Color(hex: "336633"),
+        backgroundColor: Color(hex: "0D120D"),
+        textColor: Color(hex: "B3E680"),
+        beatBarColor: Color(hex: "B30000"),       // 红色对比
+        beatBarHighlightColor: Color(hex: "FFCC00") // 金黄色高亮
     )
     
     static let circuitBoardTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.1, green: 0.7, blue: 0.3),
-        backgroundColor: Color(red: 0.03, green: 0.08, blue: 0.05),
-        textColor: Color(red: 0.5, green: 0.9, blue: 0.6),
-        beatBarColor: Color(red: 0.8, green: 0.2, blue: 0.8),       // 紫色对比
-        beatBarHighlightColor: Color(red: 1.0, green: 0.9, blue: 0.0) // 亮黄色高亮
+        primaryColor: Color(hex: "1AB34D"),
+        backgroundColor: Color(hex: "08140D"),
+        textColor: Color(hex: "80E699"),
+        beatBarColor: Color(hex: "CC33CC"),       // 紫色对比
+        beatBarHighlightColor: Color(hex: "FFE600") // 亮黄色高亮
     )
     
     static let deepSpaceTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.3, green: 0.3, blue: 0.6),
-        backgroundColor: Color(red: 0.02, green: 0.03, blue: 0.08),
-        textColor: Color(red: 0.6, green: 0.7, blue: 1.0),
-        beatBarColor: Color(red: 0.9, green: 0.5, blue: 0.0),       // 橙色对比
-        beatBarHighlightColor: Color(red: 0.0, green: 1.0, blue: 0.8) // 青绿色高亮
+        primaryColor: Color(hex: "4D4D99"),
+        backgroundColor: Color(hex: "050814"),
+        textColor: Color(hex: "99B3FF"),
+        beatBarColor: Color(hex: "E68000"),       // 橙色对比
+        beatBarHighlightColor: Color(hex: "00FFCC") // 青绿色高亮
     )
 
-    static let silverTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.8, green: 0.8, blue: 0.8),
-        backgroundColor: Color(red: 0.05, green: 0.05, blue: 0.05),
-        textColor: Color(red: 0.1, green: 0.1, blue: 0.1),
-        beatBarColor: Color(red: 0.95, green: 0.95, blue: 0.1), // 亮黄色，紫色的对比色
-        beatBarHighlightColor: Color(red: 1, green: 0, blue: 0)
-    )   
+    
 
     static let deepGrayTheme = MetronomeTheme(
-        primaryColor: Color(red: 0.2, green: 0.2, blue: 0.2),
-        backgroundColor: Color(red: 0.05, green: 0.05, blue: 0.05),
-        textColor: Color(red: 0.8, green: 0.8, blue: 0.8),
-        beatBarColor: Color(red: 0.8, green: 0.8, blue: 0.8),
-        beatBarHighlightColor: Color(red: 0.8, green: 0.8, blue: 0.8)
+        primaryColor: Color(hex: "333333"),
+        backgroundColor: Color(hex: "0D0D0D"),
+        textColor: Color(hex: "CCCCCC"),
+        beatBarColor: Color(hex: "CCCCCC"),
+        beatBarHighlightColor: Color(hex: "CCCCCC")
     )   
 }
