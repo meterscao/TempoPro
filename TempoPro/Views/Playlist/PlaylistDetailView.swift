@@ -29,17 +29,25 @@ struct PlaylistDetailView: View {
                 let songs = playlist.songs?.allObjects as? [Song] ?? []
                 
                     if songs.isEmpty {
-                        VStack(alignment: .center, spacing: 20) {
-                            Image(systemName: "music.note")
-                                .font(.custom("MiSansLatin-Regular", size: 50))
+                        VStack(alignment: .center, spacing: 10) {
+                            Image("icon-disc-3-xl")
+                                .renderingMode(.template)
                                 .foregroundColor(Color("textSecondaryColor"))
                             
-                            Text("暂无曲目")
-                                .font(.custom("MiSansLatin-Regular", size: 16))
-                                .foregroundColor(Color("textPrimaryColor"))
+                            Button(action: {
+                                showingSongForm = true
+                            }) {
+                                HStack(spacing: 5) {    
+                                    Text("添加曲目")
+                                        .font(.custom("MiSansLatin-Regular", size: 16))
+                                        .foregroundColor(Color("textPrimaryColor"))
+                                }
+                            }   
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.top, 40)
+                        .padding(.vertical, 40)
+                        .listRowBackground(Color("backgroundSecondaryColor"))
+
                     } else {
                         ForEach(songs, id: \.id) { song in
                             SongRowCard(song: song, onEdit: {
