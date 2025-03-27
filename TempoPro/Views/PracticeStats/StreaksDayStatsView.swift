@@ -21,64 +21,57 @@ struct StreaksDayStatsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // 标题栏
-            HStack {
-                Text("Practice Calendar")
-                    .font(.custom("MiSansLatin-Semibold", size: 20))
-                    .foregroundColor(Color("textPrimaryColor"))
-                
-                Spacer()
-                
-                HStack(spacing: 10) {
-                    Button(action: {
-                        // 查看所有统计
-                    }) {
-                        Text("see all")
+            
+            // 内容区域 - 圆环日历
+            VStack(spacing: 15) {
+                HStack {
+                    // 提示文字
+                    VStack(alignment: .leading, spacing: 4){
+                        Text("Good Job!")
+                            .font(.custom("MiSansLatin-Semibold", size: 20))
+                            .foregroundColor(Color("textPrimaryColor"))
+                        Text("Track your practice to hit a streak")
                             .font(.custom("MiSansLatin-Regular", size: 14))
                             .foregroundColor(Color("textSecondaryColor"))
                     }
-                    
+                        
+                    Spacer()
                     Button(action: {
                         // 分享功能
                     }) {
-                        Image("icon-share")
+                        Image("icon-ellipsis")
                             .renderingMode(.template)
                             .foregroundColor(Color("textSecondaryColor"))
                     }
                 }
-            }
-            
-            // 提示文字
-            Text("track your practice to hit a streak")
-                .font(.custom("MiSansLatin-Regular", size: 14))
-                .foregroundColor(Color("textSecondaryColor"))
-            
-            // 内容区域 - 圆环日历
-            VStack(spacing: 10) {
-                // 星期几指示器
-                HStack(spacing: 0) {
-                    ForEach(getWeekdaySymbols(), id: \.self) { weekday in
-                        Text(weekday)
-                            .font(.custom("MiSansLatin-Regular", size: 12))
-                            .foregroundColor( Color("textSecondaryColor"))
-                            .frame(maxWidth: .infinity)
+
+
+                VStack(spacing: 8){
+                    // 星期几指示器
+                    HStack(spacing: 12) {
+                        ForEach(getWeekdaySymbols(), id: \.self) { weekday in
+                            Text(weekday)
+                                .font(.custom("MiSansLatin-Regular", size: 12))
+                                .foregroundColor( Color("textSecondaryColor"))
+                                .frame(maxWidth: .infinity)
+                        }
                     }
-                }
-                
-                // 圆环进度视图
-                HStack(spacing: 8) {
-                    ForEach(0..<weeklyData.count, id: \.self) { index in
-                        let dataPoint = weeklyData[index]
-                        let isToday = isDateToday(dataPoint.date)
-                        let isFutureDay = isDateInFuture(dataPoint.date)
-                        
-                        StreakDayCircleView(
-                            progress: min(1.0, dataPoint.duration / dailyTargetMinutes),
-                            isToday: isToday,
-                            isFutureDay: isFutureDay,
-                            isCompleted: dataPoint.duration >= dailyTargetMinutes
-                        )
-                        .frame(maxWidth: .infinity)
+                    
+                    // 圆环进度视图
+                    HStack(spacing: 12) {
+                        ForEach(0..<weeklyData.count, id: \.self) { index in
+                            let dataPoint = weeklyData[index]
+                            let isToday = isDateToday(dataPoint.date)
+                            let isFutureDay = isDateInFuture(dataPoint.date)
+                            
+                            StreakDayCircleView(
+                                progress: min(1.0, dataPoint.duration / dailyTargetMinutes),
+                                isToday: isToday,
+                                isFutureDay: isFutureDay,
+                                isCompleted: dataPoint.duration >= dailyTargetMinutes
+                            )
+                            .frame(maxWidth: .infinity)
+                        }
                     }
                 }
             }
@@ -148,7 +141,7 @@ struct StreakDayCircleView: View {
     let isToday: Bool
     let isFutureDay: Bool
     let isCompleted: Bool
-    let lineWidth: CGFloat = 4
+    let lineWidth: CGFloat = 3
     
     var body: some View {
         
