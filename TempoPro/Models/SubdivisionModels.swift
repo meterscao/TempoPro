@@ -90,8 +90,10 @@ struct SubdivisionManager {
     static func getSubdivisionPatterns(forBeatUnit beatUnit: Int) -> [SubdivisionPattern] {
         // 如果找到配置，返回按order排序的列表
         if let patterns = globalSubdivisionPatterns[beatUnit] {
+            print("patterns: \(patterns)")
             return patterns.sorted { $0.order < $1.order }
         }
+        
         
         // 未找到配置时，返回空列表
         return []

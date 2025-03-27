@@ -142,7 +142,8 @@ struct PlaylistDetailView: View {
                             bpm: tempo,
                             beatsPerBar: beatsPerBar,
                             beatUnit: beatUnit,
-                            beatStatuses: statusInts
+                            beatStatuses: statusInts,
+                            subdivisionPattern: "quarter_whole"
                         )
                     } else {
                         // 添加新曲目
@@ -152,7 +153,8 @@ struct PlaylistDetailView: View {
                             bpm: tempo,
                             beatsPerBar: beatsPerBar,
                             beatUnit: beatUnit,
-                            beatStatuses: statusInts
+                            beatStatuses: statusInts,
+                            subdivisionPattern: "quarter_whole"
                         )
                     }
                     
@@ -261,12 +263,17 @@ struct SongRowCard: View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(song.name ?? "未命名曲目")
-                    .font(.custom("MiSansLatin-Semibold", size: 17))
+                    .font(.custom("MiSansLatin-Semibold", size: 16))
                     .foregroundColor(Color("textPrimaryColor"))
                 
-                HStack(){
-                    Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit))")
-                        .font(.custom("MiSansLatin-Regular", size: 13))
+                HStack(spacing: 0){
+                    Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit)) · ")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                    Image(song.subdivisionPattern ?? "quarter_whole")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 22, height: 22)
                         .foregroundColor(Color("textSecondaryColor"))
                     
                     
