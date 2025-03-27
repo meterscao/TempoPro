@@ -51,11 +51,6 @@ struct WeeklyStatsView: View {
                                 
                                 // 显示日期而非星期几
                                 Text(selectedItem.date)
-                                    
-                                    
-                                
-                                
-                                
                                 // 显示会话数量
                                 if dataPoint.sessionCount > 0 {
                                     Text("\(dataPoint.sessionCount) 次练习")
@@ -136,7 +131,7 @@ struct WeeklyStatsView: View {
                             ForEach(0..<formattedWeekData.count, id: \.self) { index in
                                 let item = formattedWeekData[index]
                                 let dataPoint = item.dataPoint
-                                let barWidth = (geometry.size.width - CGFloat(formattedWeekData.count - 1) * 8) / CGFloat(formattedWeekData.count)
+                                let barWidth = (geometry.size.width - CGFloat(formattedWeekData.count - 1) * 10) / CGFloat(formattedWeekData.count)
                                 
                                 // 计算合理的高度值，使图表更美观
                                 let maxHeight: CGFloat = 120
@@ -224,8 +219,8 @@ struct WeeklyStatsView: View {
         }
         
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "zh_CN")
-        dateFormatter.dateFormat = "M月d日"
+        dateFormatter.locale = Locale(identifier: "en_US")
+        dateFormatter.dateFormat = "MMM dd"
         
         return "\(dateFormatter.string(from: currentWeekStartDate)) - \(dateFormatter.string(from: endDate))"
     }

@@ -23,14 +23,14 @@ struct StreaksDayStatsView: View {
         VStack(alignment: .leading, spacing: 16) {
             
             // 内容区域 - 圆环日历
-            VStack(spacing: 15) {
+            VStack(spacing: 20) {
                 HStack {
                     // 提示文字
-                    VStack(alignment: .leading, spacing: 4){
+                    VStack(alignment: .leading, spacing: 0){
                         Text("Good Job!")
                             .font(.custom("MiSansLatin-Semibold", size: 20))
                             .foregroundColor(Color("textPrimaryColor"))
-                        Text("Track your practice to hit a streak")
+                        Text("Track your practice to hit a streak.")
                             .font(.custom("MiSansLatin-Regular", size: 14))
                             .foregroundColor(Color("textSecondaryColor"))
                     }

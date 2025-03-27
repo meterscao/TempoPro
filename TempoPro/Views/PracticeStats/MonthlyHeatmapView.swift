@@ -26,8 +26,8 @@ private struct DateCellInfo {
 extension Date {
     func formattedDateString() -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
-        formatter.dateFormat = "M月d日 EEEE"
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.dateFormat = "MMM dd"
         return formatter.string(from: self)
     }
 }
@@ -145,11 +145,11 @@ struct MonthlyHeatmapView: View {
             
             
             // 热图主体
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 ForEach(0..<monthlyData.count, id: \.self) { weekIndex in
                     let week = monthlyData[weekIndex]
                     
-                    HStack(spacing: 8) {
+                    HStack(spacing: 10) {
                         ForEach(0..<week.count, id: \.self) { dayIndex in
                             let day = week[dayIndex]
                             
