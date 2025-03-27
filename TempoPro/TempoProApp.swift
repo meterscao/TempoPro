@@ -50,7 +50,7 @@ struct TempoProApp: App {
         // 初始化CoreDataPracticeManager
         let practiceManager = CoreDataPracticeManager(context: PersistenceController.shared.viewContext)
         self._practiceManager = StateObject(wrappedValue: practiceManager)
-        // practiceManager.generateRandomHistoricalData()
+        practiceManager.generateRandomHistoricalData()
         
         // 初始化PracticeCoordinator - 使用刚创建的 metronomeState 实例
         let coordinator = PracticeCoordinator(metronomeState: metronomeStateInstance)

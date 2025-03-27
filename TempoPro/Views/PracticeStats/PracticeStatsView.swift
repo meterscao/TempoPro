@@ -33,6 +33,8 @@ struct PracticeStatsView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
+
+                    StreaksDayStatsView()
                     // Stats Summary - 替换为新的组件
                     StatsSummaryView()
                     

@@ -67,7 +67,7 @@ struct CountDownPracticeView: View {
                     }
                 }
             }
-            .background(theme.backgroundColor)
+            .background(Color("backgroundPrimaryColor"))
             .toolbarBackground(.visible)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
         }
@@ -85,76 +85,89 @@ struct CountDownPracticeView: View {
     
     // 设置视图
     private var setupView: some View {
-        VStack(spacing: 20) {
-            if selectedTimerType == "time" {
-                // 时间选择器
-                timePickerView
-            } else {
-                // 小节选择器
-                barPickerView
-            }
-            
-            // 同步启动选项
-            Toggle(isOn: $practiceCoordinator.isSyncStartEnabled) {
-                Text("同步启动节拍器")
-                    .font(.custom("MiSansLatin-Regular", size: 16))
-                    .foregroundColor(Color("textPrimaryColor"))
-            }
-            
-            // 同步停止选项
-            Toggle(isOn: $practiceCoordinator.isSyncStopEnabled) {
-                Text("同步停止节拍器")
-                    .font(.custom("MiSansLatin-Regular", size: 16))
-                    .foregroundColor(Color("textPrimaryColor"))
-            }
-            
-            // 循环选项
-            Toggle(isOn: $practiceCoordinator.isLoopEnabled) {
-                Text("循环")
-                    .font(.custom("MiSansLatin-Regular", size: 16))
-                    .foregroundColor(Color("textPrimaryColor"))
-            }
-            
-            // 开始按钮
-            Button(action: {
-                if practiceCoordinator.activeMode == .none || practiceCoordinator.activeMode == .countdown {
-                    practiceCoordinator.startPractice()
-                } else {
-                    // 显示警告
-                    showCannotStartAlert = true
+        VStack(spacing: 0){
+            List{
+                Section{
+                    if selectedTimerType == "time" {
+                        // 时间选择器
+                        timePickerView
+                    } else {
+                        // 小节选择器
+                        barPickerView
+                    }
+                
+                    // 同步启动选项
+                    Toggle(isOn: $practiceCoordinator.isSyncStartEnabled) {
+                        Text("同步启动节拍器")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(Color("textPrimaryColor"))
+                    }
+                    
+                    // 同步停止选项
+                    Toggle(isOn: $practiceCoordinator.isSyncStopEnabled) {
+                        Text("同步停止节拍器")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(Color("textPrimaryColor"))
+                    }
+                    
+                    // 循环选项
+                    Toggle(isOn: $practiceCoordinator.isLoopEnabled) {
+                        Text("循环")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(Color("textPrimaryColor"))
+                    }
                 }
-            }) {
-                HStack(spacing: 5) {
-                    Image("icon-play")
-                        .renderingMode(.template)
-                        .resizable()
-                        .frame(width: 20, height: 20)   
-                    Text("Start")
-                        .font(.custom("MiSansLatin-Semibold", size: 17))
+                .listRowBackground(Color("backgroundSecondaryColor"))
+                
+            }
+            .listStyle(.insetGrouped)
+            .background(Color("backgroundPrimaryColor"))
+            .scrollContentBackground(.hidden)
+
+            Spacer()
+
+            VStack{
+                Button(action: {
+                    if practiceCoordinator.activeMode == .none || practiceCoordinator.activeMode == .countdown {
+                        practiceCoordinator.startPractice()
+                    } else {
+                        // 显示警告
+                        showCannotStartAlert = true
+                    }
+                }) {
+                    HStack(spacing: 5) {
+                        Image("icon-play")
+                            .renderingMode(.template)
+                            .resizable()
+                            .frame(width: 20, height: 20)   
+                        Text("Start")
+                            .font(.custom("MiSansLatin-Semibold", size: 17))
+                    }
+                    .foregroundColor(.white)
+                    .frame(height:52)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(theme.primaryColor)
+                    )
                 }
-                .foregroundColor(.white)
-                .frame(height:52)
-                .frame(maxWidth: .infinity)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(theme.primaryColor)
-                )
+                .disabled((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
+                        (selectedTimerType == "bar" && practiceCoordinator.targetBars == 0))
+                .opacity((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
+                        (selectedTimerType == "bar" && practiceCoordinator.targetBars == 0) ? 0.5 : 1)
+                .alert(isPresented: $showCannotStartAlert) {
+                    Alert(
+                        title: Text("无法开始倒计时"),
+                        message: Text("渐进练习正在进行中，请先停止再开始新的倒计时"),
+                        dismissButton: .default(Text("我知道了"))
+                    )
+                }
             }
-            .disabled((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
-                     (selectedTimerType == "bar" && practiceCoordinator.targetBars == 0))
-            .opacity((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
-                    (selectedTimerType == "bar" && practiceCoordinator.targetBars == 0) ? 0.5 : 1)
-            .alert(isPresented: $showCannotStartAlert) {
-                Alert(
-                    title: Text("无法开始倒计时"),
-                    message: Text("渐进练习正在进行中，请先停止再开始新的倒计时"),
-                    dismissButton: .default(Text("我知道了"))
-                )
-            }
+            .padding(.horizontal,20)
+            .padding(.bottom,20)    
         }
-        .padding(20)
-        .frame(maxWidth:.infinity,maxHeight:.infinity, alignment: .top)
         .background(Color("backgroundPrimaryColor"))
+
     }
     
     // 时间选择器视图 - 使用本地状态绑定到协调器
@@ -248,6 +261,9 @@ struct CountDownPracticeView: View {
                     .offset(x: -5)
             }
         }
+        // .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+        
+        .frame(height:120,alignment: .center)
     }
     
     // 便捷计算属性 - 获取时分秒
@@ -283,6 +299,8 @@ struct CountDownPracticeView: View {
                 .foregroundColor(Color("textSecondaryColor"))
                 .padding(.leading, 8)
         }
+        .frame(maxWidth: .infinity,alignment: .center)  
+        .frame(height:120,alignment: .center)
     }
     
     // 计时视图

@@ -49,6 +49,7 @@
 		3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */; };
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
 		3AE469FE2D8C73DC00125F3D /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */; };
+		C7016BB02D956D9F0002DE6F /* StreaksDayStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */; };
 		C75FB77B2D91414600AC8D61 /* PracticeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75FB77A2D91414600AC8D61 /* PracticeCoordinator.swift */; };
 		C75FB77E2D91464900AC8D61 /* CountDownPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75FB77D2D91464900AC8D61 /* CountDownPracticeView.swift */; };
 		C7879CB82D8430DC00B52E59 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = C7879CB72D8430DC00B52E59 /* RevenueCat */; };
@@ -148,6 +149,7 @@
 		3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubdivisionModels.swift; sourceTree = "<group>"; };
 		3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayCornerRadius.swift; sourceTree = "<group>"; };
 		3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
+		C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksDayStatsView.swift; sourceTree = "<group>"; };
 		C75FB77A2D91414600AC8D61 /* PracticeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeCoordinator.swift; sourceTree = "<group>"; };
 		C75FB77D2D91464900AC8D61 /* CountDownPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownPracticeView.swift; sourceTree = "<group>"; };
 		C7879CBC2D84345100B52E59 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -387,6 +389,7 @@
 				F75EC5662D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift */,
 				3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */,
 				F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */,
+				C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */,
 			);
 			path = PracticeStats;
 			sourceTree = "<group>";
@@ -648,6 +651,7 @@
 				F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */,
 				F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */,
 				C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */,
+				C7016BB02D956D9F0002DE6F /* StreaksDayStatsView.swift in Sources */,
 				3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */,
 				3AB6A8662D79F27000760B80 /* PracticeCompletionView.swift in Sources */,
 				3A9C88A22D6F728A004CFD88 /* ContentView.swift in Sources */,
