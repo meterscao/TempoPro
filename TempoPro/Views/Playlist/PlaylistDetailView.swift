@@ -275,8 +275,6 @@ struct SongRowCard: View {
                         .resizable()
                         .frame(width: 22, height: 22)
                         .foregroundColor(Color("textSecondaryColor"))
-                    
-                    
                 }
                 
             }

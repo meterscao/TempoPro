@@ -62,6 +62,13 @@ struct MetronomeControlView: View {
                         .contentShape(Rectangle())
                     
                     ZStack() {
+                        Image("cymbal")
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(
+                                .circle
+                            )
+                            .frame(width: wheelSize, height: wheelSize)
                         Image("bg-noise")
                             .resizable(resizingMode: .tile)
                             .opacity(0.06)
@@ -69,7 +76,7 @@ struct MetronomeControlView: View {
                                 .circle
                             )
                             .frame(width: wheelSize, height: wheelSize)
-                            .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
+//                            .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
                         Image("bg-knob")
                             .renderingMode(.template)
                             .resizable()
@@ -77,7 +84,7 @@ struct MetronomeControlView: View {
                             .foregroundColor(theme.backgroundColor)
                             .frame(width: wheelSize, height: wheelSize)
                         Image(metronomeState.isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
-                        .offset(x: wheelSize * 0.5 * 0.75, y: 0)
+                            .offset(x: wheelSize * 0.5 * 0.75, y: 0)
                     }
                     
                     .rotationEffect(.degrees(rotation))
