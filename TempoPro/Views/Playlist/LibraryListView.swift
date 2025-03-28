@@ -20,7 +20,7 @@ struct LibraryListView: View {
             VStack(spacing: 0){
                 
 
-                List {
+                ListView {
                     // 直接在List中使用ForEach，不要嵌套VStack
                     let playlists = playlistManager.fetchPlaylists()
                     if playlists.isEmpty {
@@ -30,15 +30,15 @@ struct LibraryListView: View {
                             .padding(.top, 40)
                             .listRowBackground(Color.clear)
                     } else {
-                        
-                        ForEach(playlists) { playlist in
-                            NavigationLink {
-                                SongsListView()
-                            } label: {
-                                PlaylistRowCard(playlist: playlist)
-                            }.foregroundStyle(Color("textSecondaryColor"))
+                        SectionView{
+                            ForEach(playlists) { playlist in
+                                NavigationLink {
+                                    SongsListView()
+                                } label: {
+                                    PlaylistRowCard(playlist: playlist)
+                                }.foregroundStyle(Color("textSecondaryColor"))
+                            }
                         }
-                        .listRowBackground(Color("backgroundSecondaryColor"))
                         
                     }
                     
@@ -66,11 +66,6 @@ struct LibraryListView: View {
                     }
                     .listRowBackground(Color("backgroundSecondaryColor"))
                 }
-                
-                
-                
-                
-                
 
                 .alert("添加曲库", isPresented: $showingAddAlert) {
                     TextField("曲库名称", text: $newPlaylistName)
@@ -99,7 +94,35 @@ struct LibraryListView: View {
                     SongsListView()
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image("icon-x")
+                            .renderingMode(.template)
+                            .foregroundColor(Color("textSecondaryColor"))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(5)
+                    .contentShape(Rectangle())
+                }
+                ToolbarItem(placement: .principal) {
+                    Text("Libraries")
+                        .font(.custom("MiSansLatin-Semibold", size: 16))
+                        .foregroundColor(Color("textPrimaryColor"))
+                }
+                
+            }
+            .navigationBarTitleDisplayMode(.inline)
             .background(Color("backgroundPrimaryColor"))
+            .scrollContentBackground(.hidden)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
+            .navigationDestination(for: Playlist.self) { playlist in
+                SongsListView()
+            }
+            
         }
     }
 }
@@ -133,6 +156,9 @@ struct PlaylistRowCard: View {
                     .foregroundColor(Color("textSecondaryColor"))
             }
             Spacer()
+            Image("icon-chevron-right")
+                .renderingMode(.template)
+                .foregroundStyle(Color("textSecondaryColor"))
         }
         
         
