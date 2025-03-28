@@ -6,8 +6,8 @@ struct PlaylistDetailView: View {
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager
     @EnvironmentObject var metronomeState: MetronomeState
     
-    @ObservedObject var playlist: Playlist
     
+    @State private var currentPlaylist: Playlist?
     @State private var showingSongForm = false
     @State private var isEditMode = false
     @State private var showingEditPlaylist = false
@@ -22,11 +22,61 @@ struct PlaylistDetailView: View {
     @State private var songToDelete: Song?
     @State private var songToEdit: Song?
     
+    
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            HStack(){
+                ScrollView(.horizontal, showsIndicators: false) {
+                    let playlists = playlistManager.fetchPlaylists()
+                    HStack(spacing: 10){
+                        ForEach(playlists) { playlist in
+                                Button(action: {
+                                    currentPlaylist = playlist
+                                }) {
+                                    HStack(spacing: 5){
+                                        Image("icon-gallery-vertical-end")
+                                            .renderingMode(.template)
+                                        .resizable()
+                                        .frame(width: 16, height: 16)
+                                    Text(playlist.name ?? "未命名曲库")
+                                        .font(.custom("MiSansLatin-Regular", size: 14))
+                                        
+                                }
+                                .foregroundColor(currentPlaylist == playlist ? Color("backgroundPrimaryColor") : Color("textPrimaryColor"))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(currentPlaylist == playlist ? Color("textPrimaryColor") : Color("backgroundSecondaryColor"))
+                                .cornerRadius(8)   
+                            }
+                        }
+                    }.padding(.vertical, 20)
+                }
+                .frame(maxWidth: .infinity)
+                
+
+                HStack(){
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Text("保存")
+                            .font(.custom("MiSansLatin-Semibold", size: 16))
+                            .foregroundColor(Color("textPrimaryColor"))
+                    }
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Text("编辑")
+                            .font(.custom("MiSansLatin-Semibold", size: 16))
+                            .foregroundColor(Color("textPrimaryColor"))
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+
+            
             List {
                 // 曲目列表
-                let songs = playlist.songs?.allObjects as? [Song] ?? []
+                let songs = currentPlaylist?.songs?.allObjects as? [Song] ?? []
                 
                     if songs.isEmpty {
                         VStack(alignment: .center, spacing: 10) {
@@ -49,6 +99,7 @@ struct PlaylistDetailView: View {
                         .listRowBackground(Color("backgroundSecondaryColor"))
 
                     } else {
+                        
                         ForEach(songs, id: \.id) { song in
                             SongRowCard(song: song, onEdit: {
                                 prepareEditSong(song)
@@ -63,58 +114,55 @@ struct PlaylistDetailView: View {
                     }
                 
             }
-            .navigationTitle(playlist.name ?? "未命名曲库")
-            .navigationBarTitleDisplayMode(.inline)
-            .background(Color("backgroundPrimaryColor"))
+            .frame(maxHeight: .infinity)
             .scrollContentBackground(.hidden)
-            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
             .preferredColorScheme(.dark)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Section{
-                            Button(action: {
-                                resetSongForm()
-                                isEditMode = false
-                                showingSongForm = true
-                            }) {
+            
+        //     .toolbar {
+        //         ToolbarItem(placement: .navigationBarTrailing) {
+        //             Menu {
+        //                 Section{
+        //                     Button(action: {
+        //                         resetSongForm()
+        //                         isEditMode = false
+        //                         showingSongForm = true
+        //                     }) {
                                 
-                                    Text("添加曲目")
-                                        .foregroundColor(Color("textPrimaryColor"))
+        //                             Text("添加曲目")
+        //                                 .foregroundColor(Color("textPrimaryColor"))
                                 
-                            }
-                        }
+        //                     }
+        //                 }
                         
-                        Section {
-                            Button(action: {
-                                editPlaylistName = playlist.name ?? ""
-                                showingEditPlaylist = true
-                            }) {
-                                    Text("编辑曲库")
-                                        .foregroundColor(Color("textPrimaryColor"))
+        //                 Section {
+        //                     Button(action: {
+        //                         editPlaylistName = playlist.name ?? ""
+        //                         showingEditPlaylist = true
+        //                     }) {
+        //                             Text("编辑曲库")
+        //                                 .foregroundColor(Color("textPrimaryColor"))
                                 
-                            }
+        //                     }
                             
-                            Button(role: .destructive, action: {
-                                playlistManager.deletePlaylist(playlist)
-                                dismiss()
-                            }) {
+        //                     Button(role: .destructive, action: {
+        //                         playlistManager.deletePlaylist(playlist)
+        //                         dismiss()
+        //                     }) {
                                 
-                                    Text("删除曲库")
-                                        .foregroundColor(Color("textPrimaryColor"))
+        //                             Text("删除曲库")
+        //                                 .foregroundColor(Color("textPrimaryColor"))
                             
-                            }
-                        }
-                    } label: {
-                        Image("icon-ellipsis")
-                            .renderingMode(.template)
-                            .foregroundColor(Color("textPrimaryColor"))
-                    }
-                }
-            }
+        //                     }
+        //                 }
+        //             } label: {
+        //                 Image("icon-ellipsis")
+        //                     .renderingMode(.template)
+        //                     .foregroundColor(Color("textPrimaryColor"))
+        //             }
+        //         }
+        //     }
         }
+        .background(Color("backgroundPrimaryColor"))
         .sheet(isPresented: $showingSongForm) {
             EditSongView(
                 isPresented: $showingSongForm,
@@ -148,7 +196,7 @@ struct PlaylistDetailView: View {
                     } else {
                         // 添加新曲目
                         _ = playlistManager.addSong(
-                            to: playlist,
+                            to: currentPlaylist!,
                             name: name,
                             bpm: tempo,
                             beatsPerBar: beatsPerBar,
@@ -166,15 +214,15 @@ struct PlaylistDetailView: View {
         .alert("编辑曲库", isPresented: $showingEditPlaylist) {
             TextField("曲库名称", text: $editPlaylistName)
             Button("取消", role: .cancel) { 
-                editPlaylistName = playlist.name ?? ""
+                editPlaylistName = currentPlaylist?.name ?? ""
             }
             Button("保存") {
                 if !editPlaylistName.isEmpty {
                     // 更新曲库
                     playlistManager.updatePlaylist(
-                        playlist,
+                        currentPlaylist!,
                         name: editPlaylistName,
-                        color: playlist.color ?? "#0000FF" // 保持原来的颜色
+                        color: currentPlaylist!.color ?? "#0000FF" // 保持原来的颜色
                     )
                 }
             }.disabled(editPlaylistName.isEmpty)
@@ -192,6 +240,9 @@ struct PlaylistDetailView: View {
         }, message: {
             Text("确定要删除这首曲目吗？此操作不可撤销。")
         })
+        .onAppear {
+            currentPlaylist = playlistManager.fetchPlaylists().first
+        }
     }
     
     private func resetSongForm() {
@@ -232,6 +283,7 @@ struct PlaylistDetailView: View {
         metronomeState.updateTempo(Int(song.bpm))
         metronomeState.updateBeatsPerBar(Int(song.beatsPerBar))
         metronomeState.updateBeatUnit(Int(song.beatUnit))
+        metronomeState.updateSubdivisionPattern(SubdivisionManager.getSubdivisionPattern(byName: song.subdivisionPattern ?? "quarter_whole")!)
         
         // 转换节拍状态
         let statusInts = (song.beatStatuses as? [Int]) ?? Array(repeating: 2, count: Int(song.beatsPerBar))

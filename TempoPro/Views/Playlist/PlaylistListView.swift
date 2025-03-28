@@ -18,49 +18,7 @@ struct PlaylistListView: View {
         NavigationStack {
             
             VStack(spacing: 0){
-                HStack(){
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        let playlists = playlistManager.fetchPlaylists()
-                        HStack(spacing: 10){
-                            ForEach(playlists) { playlist in
-                                HStack(spacing: 5){
-                                    Image("icon-gallery-vertical-end")
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .frame(width: 16, height: 16)
-                                    Text(playlist.name ?? "未命名曲库")
-                                        .font(.custom("MiSansLatin-Regular", size: 14))
-                                        
-                                }
-                                .foregroundColor(Color("textPrimaryColor"))
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(Color("backgroundSecondaryColor"))
-                                .cornerRadius(8)   
-                            }
-                        }.padding(.vertical, 20)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .background(Color("backgroundPrimaryColor"))
-
-                    HStack(){
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Text("保存")
-                                .font(.custom("MiSansLatin-Semibold", size: 16))
-                                .foregroundColor(Color("textPrimaryColor"))
-                        }
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Text("编辑")
-                                .font(.custom("MiSansLatin-Semibold", size: 16))
-                                .foregroundColor(Color("textPrimaryColor"))
-                        }
-                    }
-                }
-                .padding(.horizontal, 20)
+                
 
                 List {
                     // 直接在List中使用ForEach，不要嵌套VStack
@@ -72,14 +30,16 @@ struct PlaylistListView: View {
                             .padding(.top, 40)
                             .listRowBackground(Color.clear)
                     } else {
+                        
                         ForEach(playlists) { playlist in
                             NavigationLink {
-                                PlaylistDetailView(playlist: playlist)
+                                PlaylistDetailView()
                             } label: {
                                 PlaylistRowCard(playlist: playlist)
                             }.foregroundStyle(Color("textSecondaryColor"))
                         }
                         .listRowBackground(Color("backgroundSecondaryColor"))
+                        
                     }
                     
                     // 添加曲库的 cell
@@ -106,6 +66,11 @@ struct PlaylistListView: View {
                     }
                     .listRowBackground(Color("backgroundSecondaryColor"))
                 }
+                
+                
+                
+                
+                
 
                 .alert("添加曲库", isPresented: $showingAddAlert) {
                     TextField("曲库名称", text: $newPlaylistName)
@@ -131,7 +96,7 @@ struct PlaylistListView: View {
                 .scrollContentBackground(.hidden)
 
                 .navigationDestination(for: Playlist.self) { playlist in
-                    PlaylistDetailView(playlist: playlist)
+                    PlaylistDetailView()
                 }
             }
             .background(Color("backgroundPrimaryColor"))

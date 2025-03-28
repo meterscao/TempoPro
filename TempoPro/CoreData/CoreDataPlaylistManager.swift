@@ -142,6 +142,7 @@ class CoreDataPlaylistManager: ObservableObject {
         _ = addSong(to: classicalPlaylist, name: "Mozart Sonata", bpm: 120, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1], subdivisionPattern: "quarter_whole")
         _ = addSong(to: classicalPlaylist, name: "Beethoven Symphony No.5", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1], subdivisionPattern: "quarter_triplet")
         _ = addSong(to: classicalPlaylist, name: "Chopin Nocturne", bpm: 80, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 1, 1], subdivisionPattern: "quarter_duple")
+        _ = addSong(to: classicalPlaylist, name: "Mozart Sonata", bpm: 120, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1], subdivisionPattern: "quarter_whole")
         
         // Jazz Music
         let jazzPlaylist = createPlaylist(name: "Jazz Music", color: "#4682B4")
@@ -166,5 +167,14 @@ class CoreDataPlaylistManager: ObservableObject {
         _ = addSong(to: worldPlaylist, name: "Waltz", bpm: 90, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 1, 1], subdivisionPattern: "quarter_whole")
         _ = addSong(to: worldPlaylist, name: "Flamenco", bpm: 120, beatsPerBar: 12, beatUnit: 8, beatStatuses: [0, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1], subdivisionPattern: "quarter_triplet")
         _ = addSong(to: worldPlaylist, name: "Indian Tabla", bpm: 80, beatsPerBar: 16, beatUnit: 4, beatStatuses: [0, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1], subdivisionPattern: "quarter_triplet_rest_middle")
+        
+        _ = addSong(to: classicalPlaylist, name: "Beethoven Symphony No.5", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1], subdivisionPattern: "quarter_triplet")
+        _ = addSong(to: classicalPlaylist, name: "Chopin Nocturne", bpm: 80, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 1, 1], subdivisionPattern: "quarter_duple")
+        _ = addSong(to: classicalPlaylist, name: "Mozart Sonata", bpm: 120, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1], subdivisionPattern: "quarter_whole")
+        _ = addSong(to: classicalPlaylist, name: "Beethoven Symphony No.5", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1], subdivisionPattern: "quarter_triplet")
+        _ = addSong(to: classicalPlaylist, name: "Chopin Nocturne", bpm: 80, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 1, 1], subdivisionPattern: "quarter_duple")
+        _ = addSong(to: classicalPlaylist, name: "Mozart Sonata", bpm: 120, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1], subdivisionPattern: "quarter_whole")
+        _ = addSong(to: classicalPlaylist, name: "Beethoven Symphony No.5", bpm: 108, beatsPerBar: 4, beatUnit: 4, beatStatuses: [0, 1, 2, 1], subdivisionPattern: "quarter_triplet")
+        _ = addSong(to: classicalPlaylist, name: "Chopin Nocturne", bpm: 80, beatsPerBar: 3, beatUnit: 4, beatStatuses: [0, 1, 1], subdivisionPattern: "quarter_duple")
     }
 }

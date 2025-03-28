@@ -62,13 +62,13 @@ struct MetronomeControlView: View {
                         .contentShape(Rectangle())
                     
                     ZStack() {
-                        Image("cymbal")
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(
-                                .circle
-                            )
-                            .frame(width: wheelSize, height: wheelSize)
+                        // Image("cymbal")
+                        //     .resizable()
+                        //     .scaledToFit()
+                        //     .clipShape(
+                        //         .circle
+                        //     )
+                        //     .frame(width: wheelSize, height: wheelSize)
                         Image("bg-noise")
                             .resizable(resizingMode: .tile)
                             .opacity(0.06)
@@ -76,7 +76,7 @@ struct MetronomeControlView: View {
                                 .circle
                             )
                             .frame(width: wheelSize, height: wheelSize)
-//                            .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
+                           .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
                         Image("bg-knob")
                             .renderingMode(.template)
                             .resizable()

@@ -50,6 +50,7 @@
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
 		3AE469FE2D8C73DC00125F3D /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */; };
 		C7016BB02D956D9F0002DE6F /* StreaksDayStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */; };
+		C7016BB52D96BBF90002DE6F /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7016BB42D96BBF90002DE6F /* ListView.swift */; };
 		C75FB77B2D91414600AC8D61 /* PracticeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75FB77A2D91414600AC8D61 /* PracticeCoordinator.swift */; };
 		C75FB77E2D91464900AC8D61 /* CountDownPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75FB77D2D91464900AC8D61 /* CountDownPracticeView.swift */; };
 		C7879CB82D8430DC00B52E59 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = C7879CB72D8430DC00B52E59 /* RevenueCat */; };
@@ -150,6 +151,7 @@
 		3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayCornerRadius.swift; sourceTree = "<group>"; };
 		3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
 		C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksDayStatsView.swift; sourceTree = "<group>"; };
+		C7016BB42D96BBF90002DE6F /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		C75FB77A2D91414600AC8D61 /* PracticeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeCoordinator.swift; sourceTree = "<group>"; };
 		C75FB77D2D91464900AC8D61 /* CountDownPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownPracticeView.swift; sourceTree = "<group>"; };
 		C7879CBC2D84345100B52E59 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -320,6 +322,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		C7016BB12D96B8580002DE6F /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				C7016BB42D96BBF90002DE6F /* ListView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		C75FB77C2D91463800AC8D61 /* Practice */ = {
 			isa = PBXGroup;
 			children = (
@@ -368,6 +378,7 @@
 		F71AF6B72D71716E00ADBC17 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C7016BB12D96B8580002DE6F /* Components */,
 				3A9C88A12D6F728A004CFD88 /* ContentView.swift */,
 				C75FB77F2D91466600AC8D61 /* InfoView */,
 				C75FB77C2D91463800AC8D61 /* Practice */,
@@ -675,6 +686,7 @@
 				3A25ED0B2D904C7E009261FA /* ProgressivePracticeView.swift in Sources */,
 				F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */,
 				3A011FF42D89CEDC00F2853F /* SubscriptionManager.swift in Sources */,
+				C7016BB52D96BBF90002DE6F /* ListView.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
 				C7DB2F532D85939B0063508C /* SettingsAdvanceView.swift in Sources */,
 				C75FB77E2D91464900AC8D61 /* CountDownPracticeView.swift in Sources */,

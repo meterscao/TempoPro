@@ -7,6 +7,7 @@ struct MetronomeToolbarView: View {
     @State private var showingStatsView = false
     @State private var showingCountDownTimerView = false
     @State private var showingStepTimerView = false
+    @State private var showingSongListView = false
     
     // 定义按钮数据模型
     struct ToolbarButtonItem: Identifiable {
@@ -28,7 +29,7 @@ struct MetronomeToolbarView: View {
             },
 
             ToolbarButtonItem(image: "icon-play-list") {
-                playlistManager.openPlaylistsSheet()
+                showingSongListView = true
             },
             
             ToolbarButtonItem(image: "icon-calendar-days") {
@@ -125,10 +126,10 @@ struct MetronomeToolbarView: View {
             .frame(height: toolbarHeight)
         }
         .frame(height: computeToolbarHeight())
-        .sheet(isPresented: $playlistManager.showPlaylistsSheet) {
-            PlaylistListView()
+        .sheet(isPresented: $showingSongListView) {
+            PlaylistDetailView()
                 .environmentObject(playlistManager)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15)
                 
