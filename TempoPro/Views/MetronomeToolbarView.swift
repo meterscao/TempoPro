@@ -127,7 +127,7 @@ struct MetronomeToolbarView: View {
         }
         .frame(height: computeToolbarHeight())
         .sheet(isPresented: $showingSongListView) {
-            PlaylistDetailView()
+            SongsListView()
                 .environmentObject(playlistManager)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)

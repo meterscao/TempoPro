@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct PlaylistDetailView: View {
+struct SongsListView: View {
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager
@@ -21,6 +21,7 @@ struct PlaylistDetailView: View {
     @State private var showingDeleteAlert = false
     @State private var songToDelete: Song?
     @State private var songToEdit: Song?
+    @State private var isShowLibraryList: Bool = false
     
     
     var body: some View {
@@ -46,7 +47,7 @@ struct PlaylistDetailView: View {
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 6)
                                 .background(currentPlaylist == playlist ? Color("textPrimaryColor") : Color("backgroundSecondaryColor"))
-                                .cornerRadius(8)   
+                                .cornerRadius(6)
                             }
                         }
                     }.padding(.vertical, 20)
@@ -56,14 +57,16 @@ struct PlaylistDetailView: View {
 
                 HStack(){
                     Button(action: {
-                        dismiss()
+                             resetSongForm()
+                             isEditMode = false
+                             showingSongForm = true
                     }) {
                         Text("保存")
                             .font(.custom("MiSansLatin-Semibold", size: 16))
                             .foregroundColor(Color("textPrimaryColor"))
                     }
                     Button(action: {
-                        dismiss()
+                        isShowLibraryList.toggle()
                     }) {
                         Text("编辑")
                             .font(.custom("MiSansLatin-Semibold", size: 16))
@@ -72,12 +75,10 @@ struct PlaylistDetailView: View {
                 }
             }
             .padding(.horizontal, 20)
-
             
-            List {
+            ListView {
                 // 曲目列表
                 let songs = currentPlaylist?.songs?.allObjects as? [Song] ?? []
-                
                     if songs.isEmpty {
                         VStack(alignment: .center, spacing: 10) {
                             Image("icon-disc-3-xl")
@@ -99,24 +100,28 @@ struct PlaylistDetailView: View {
                         .listRowBackground(Color("backgroundSecondaryColor"))
 
                     } else {
-                        
-                        ForEach(songs, id: \.id) { song in
-                            SongRowCard(song: song, onEdit: {
-                                prepareEditSong(song)
-                            }, onDelete: {
-                                songToDelete = song
-                                showingDeleteAlert = true
-                            }, onPlay: {
-                                playSong(song)
-                            })
-                            .listRowBackground(Color("backgroundSecondaryColor"))
+                        SectionView {
+                            
+                                ForEach(songs, id: \.id) { song in
+                                    SongRowCard(song: song, onEdit: {
+                                        prepareEditSong(song)
+                                    }, onDelete: {
+                                        songToDelete = song
+                                        showingDeleteAlert = true
+                                    }, onPlay: {
+                                        playSong(song)
+                                    })
+                                }
+                            
+                                
+                            
                         }
+                        
                     }
                 
             }
-            .frame(maxHeight: .infinity)
-            .scrollContentBackground(.hidden)
-            .preferredColorScheme(.dark)
+            .contentInset(.top, 0)
+            
             
         //     .toolbar {
         //         ToolbarItem(placement: .navigationBarTrailing) {
@@ -162,6 +167,9 @@ struct PlaylistDetailView: View {
         //         }
         //     }
         }
+        .fullScreenCover(isPresented: $isShowLibraryList, content: {
+            LibraryListView()
+        })
         .background(Color("backgroundPrimaryColor"))
         .sheet(isPresented: $showingSongForm) {
             EditSongView(
@@ -229,6 +237,7 @@ struct PlaylistDetailView: View {
         } message: {
             Text("请输入曲库的新名称")
         }
+        
         .alert("确认删除", isPresented: $showingDeleteAlert, actions: {
             Button("取消", role: .cancel) { }
             Button("删除", role: .destructive) {

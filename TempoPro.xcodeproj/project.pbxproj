@@ -62,8 +62,8 @@
 		F71AF6B42D716E6500ADBC17 /* ThemeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */; };
 		F71AF6B62D716E9B00ADBC17 /* ThemeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */; };
 		F71AF6B92D71A60200ADBC17 /* BPMRulerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B82D71A5FB00ADBC17 /* BPMRulerView.swift */; };
-		F750D23B2D7816360022C405 /* PlaylistDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F750D2392D7816360022C405 /* PlaylistDetailView.swift */; };
-		F750D23C2D7816360022C405 /* PlaylistListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F750D23A2D7816360022C405 /* PlaylistListView.swift */; };
+		F750D23B2D7816360022C405 /* SongsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F750D2392D7816360022C405 /* SongsListView.swift */; };
+		F750D23C2D7816360022C405 /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F750D23A2D7816360022C405 /* LibraryListView.swift */; };
 		F75EC5672D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75EC5662D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift */; };
 		F792941C2D7B12B000A2D91C /* WeeklyStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F792941B2D7B12B000A2D91C /* WeeklyStatsView.swift */; };
 		F7A3E73D2D79C378008869AB /* PracticeStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */; };
@@ -162,8 +162,8 @@
 		F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEnvironment.swift; sourceTree = "<group>"; };
 		F71AF6B52D716E9500ADBC17 /* ThemeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectionView.swift; sourceTree = "<group>"; };
 		F71AF6B82D71A5FB00ADBC17 /* BPMRulerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BPMRulerView.swift; sourceTree = "<group>"; };
-		F750D2392D7816360022C405 /* PlaylistDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDetailView.swift; sourceTree = "<group>"; };
-		F750D23A2D7816360022C405 /* PlaylistListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistListView.swift; sourceTree = "<group>"; };
+		F750D2392D7816360022C405 /* SongsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsListView.swift; sourceTree = "<group>"; };
+		F750D23A2D7816360022C405 /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		F75EC5662D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyHeatmapView.swift; sourceTree = "<group>"; };
 		F792941B2D7B12B000A2D91C /* WeeklyStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyStatsView.swift; sourceTree = "<group>"; };
 		F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeStatsView.swift; sourceTree = "<group>"; };
@@ -420,9 +420,9 @@
 		F7F058BD2D794414005DF482 /* Playlist */ = {
 			isa = PBXGroup;
 			children = (
-				F750D23A2D7816360022C405 /* PlaylistListView.swift */,
+				F750D23A2D7816360022C405 /* LibraryListView.swift */,
 				F7F058C02D794453005DF482 /* AddPlaylistView.swift */,
-				F750D2392D7816360022C405 /* PlaylistDetailView.swift */,
+				F750D2392D7816360022C405 /* SongsListView.swift */,
 				F7F058BE2D79443C005DF482 /* EditSongView.swift */,
 			);
 			path = Playlist;
@@ -695,8 +695,8 @@
 				3AB6A8642D79F05C00760B80 /* CoreDataPracticeManager.swift in Sources */,
 				3AD042B92D7C94F0002EAB55 /* SoundSetManager.swift in Sources */,
 				F7A3E73D2D79C378008869AB /* PracticeStatsView.swift in Sources */,
-				F750D23B2D7816360022C405 /* PlaylistDetailView.swift in Sources */,
-				F750D23C2D7816360022C405 /* PlaylistListView.swift in Sources */,
+				F750D23B2D7816360022C405 /* SongsListView.swift in Sources */,
+				F750D23C2D7816360022C405 /* LibraryListView.swift in Sources */,
 				F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */,
 				F7F058A42D787BF3005DF482 /* ColorExtension.swift in Sources */,
 				F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */,

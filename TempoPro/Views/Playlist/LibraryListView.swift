@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-struct PlaylistListView: View {
+struct LibraryListView: View {
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 更改类型
@@ -33,7 +33,7 @@ struct PlaylistListView: View {
                         
                         ForEach(playlists) { playlist in
                             NavigationLink {
-                                PlaylistDetailView()
+                                SongsListView()
                             } label: {
                                 PlaylistRowCard(playlist: playlist)
                             }.foregroundStyle(Color("textSecondaryColor"))
@@ -96,7 +96,7 @@ struct PlaylistListView: View {
                 .scrollContentBackground(.hidden)
 
                 .navigationDestination(for: Playlist.self) { playlist in
-                    PlaylistDetailView()
+                    SongsListView()
                 }
             }
             .background(Color("backgroundPrimaryColor"))

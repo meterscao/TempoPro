@@ -7,9 +7,30 @@
 
 import SwiftUI
 
+// 定义边缘枚举类型
+enum Edge {
+    case top, bottom, leading, trailing
+    case all
+    
+    var swiftUIEdge: SwiftUI.Edge? {
+        switch self {
+        case .top: return .top
+        case .bottom: return .bottom
+        case .leading: return .leading
+        case .trailing: return .trailing
+        case .all: return nil
+        }
+    }
+}
+
 // 创建一个环境键用于控制分隔线显示
 private struct ShowDividersKey: EnvironmentKey {
     static let defaultValue: Bool = true
+}
+
+// 创建环境键存储内边距
+private struct ContentInsetKey: EnvironmentKey {
+    static let defaultValue: [Edge: CGFloat] = [:]
 }
 
 // 扩展EnvironmentValues
@@ -18,70 +39,116 @@ extension EnvironmentValues {
         get { self[ShowDividersKey.self] }
         set { self[ShowDividersKey.self] = newValue }
     }
+    
+    var contentInsets: [Edge: CGFloat] {
+        get { self[ContentInsetKey.self] }
+        set { self[ContentInsetKey.self] = newValue }
+    }
 }
 
 // ListView组件
 struct ListView<Content: View>: View {
     private let content: Content
     private let showDividers: Bool
+    private var insets: [Edge: CGFloat] = [:] // 存储内边距的属性
     
     init(showDividers: Bool = true, @ViewBuilder content: () -> Content) {
         self.content = content()
         self.showDividers = showDividers
+        // 设置默认内边距
+        self.insets = [
+            .top: 20,
+            .bottom: 20,
+            .leading: 20,
+            .trailing: 20
+        ]
     }
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: 25) {
                 content
             }
-            .padding(.horizontal,16)
+            .padding(.leading, insets[.leading] ?? 20)
+            .padding(.trailing, insets[.trailing] ?? 20)
+            .padding(.top, insets[.top] ?? 20)
+            .padding(.bottom, insets[.bottom] ?? 20)
             .environment(\.showDividers, showDividers)
+            .environment(\.contentInsets, insets)
         }
         .background(Color("backgroundPrimaryColor"))
     }
+    
+    // 添加contentInset函数，创建新视图实例
+    func contentInset(_ edge: Edge, _ value: CGFloat) -> ListView {
+        var newListView = self
+        newListView.insets[edge] = value
+        
+        // 如果是.all，设置所有边缘
+        if edge == .all {
+            newListView.insets[.top] = value
+            newListView.insets[.bottom] = value
+            newListView.insets[.leading] = value
+            newListView.insets[.trailing] = value
+        }
+        
+        return newListView
+    }
+    
+    // 重置特定方向的内边距到默认值
+    func resetContentInset(_ edge: Edge) -> ListView {
+        var newListView = self
+        
+        switch edge {
+        case .top:
+            newListView.insets[.top] = 20
+        case .bottom:
+            newListView.insets[.bottom] = 20
+        case .leading:
+            newListView.insets[.leading] = 20
+        case .trailing:
+            newListView.insets[.trailing] = 20
+        case .all:
+            newListView.insets[.top] = 20
+            newListView.insets[.bottom] = 20
+            newListView.insets[.leading] = 20
+            newListView.insets[.trailing] = 20
+        }
+        
+        return newListView
+    }
 }
 
-// SectionView实现
-struct SectionView<Header: View, Footer: View>: View {
-    private let views: [AnyView]
-    private let header: Header?
-    private let footer: Footer?
+// 自定义Section视图
+struct SectionView<Content: View, Header: View, Footer: View>: View {
+    private let content: Content
+    private let header: Header
+    private let footer: Footer
     private let showDividers: Bool?
     @Environment(\.showDividers) private var parentShowDividers
+    @Environment(\.contentInsets) private var contentInsets
     
     private var effectiveShowDividers: Bool {
         showDividers ?? parentShowDividers
     }
     
-    // 原始初始化方法 - 不带header和footer
-    init<V: View>(showDividers: Bool? = nil, _ views: V...) where Header == EmptyView, Footer == EmptyView {
-        self.views = views.map { AnyView($0) }
+    // 主初始化方法 - 完全符合系统Section语法
+    init(
+        showDividers: Bool? = nil,
+        @ViewBuilder content: () -> Content,
+        @ViewBuilder header: () -> Header,
+        @ViewBuilder footer: () -> Footer
+    ) {
+        self.content = content()
+        self.header = header()
+        self.footer = footer()
         self.showDividers = showDividers
-        self.header = nil
-        self.footer = nil
-    }
-    
-    // 带header初始化方法
-    init<V: View>(showDividers: Bool? = nil, header: Header, _ views: V...) where Footer == EmptyView {
-        self.views = views.map { AnyView($0) }
-        self.showDividers = showDividers
-        self.header = header
-        self.footer = nil
-    }
-    
-    // 带header和footer初始化方法
-    init<V: View>(showDividers: Bool? = nil, header: Header, footer: Footer, _ views: V...) {
-        self.views = views.map { AnyView($0) }
-        self.showDividers = showDividers
-        self.header = header
-        self.footer = footer
     }
     
     var body: some View {
         VStack(spacing: 0) {
             // 显示header
-            if let header = header {
+            if !(header is EmptyView) {
                 header
                     .foregroundStyle(Color("textSecondaryColor"))
                     .font(.footnote)
@@ -89,106 +156,180 @@ struct SectionView<Header: View, Footer: View>: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 5)
             }
-            VStack(spacing:0){
-                // 显示内容项
-                ForEach(0..<views.count, id: \.self) { index in
-                    HStack() {
-                        views[index]
-                    }
-                    .padding(.horizontal, 16)
-                    .frame(minHeight: 44)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundStyle(Color("textPrimaryColor"))
-                    
-                    if effectiveShowDividers && index < views.count - 1 {
-                        Divider()
-                            .padding(.leading)
-                            .background(Color("textSecondaryColor"))
-                            .padding(.leading, 15)
-                    }
+            
+            // 内容带分隔线
+            VStack(spacing: 0) {
+                DividedContent(showDividers: effectiveShowDividers) {
+                    content
                 }
             }
             .background(Color("backgroundSecondaryColor"))
             .cornerRadius(12)
             
-            
             // 显示footer
-            if let footer = footer {
+            if !(footer is EmptyView) {
                 footer
                     .foregroundStyle(Color("textSecondaryColor"))
                     .font(.footnote)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 16)
                     .padding(.top, 5)
-                    .padding(.bottom, 10)
             }
         }
+    }
+}
+
+// 使用_VariadicView实现自动分隔线
+struct DividedContent<Content: View>: View {
+    let content: Content
+    let showDividers: Bool
+    
+    init(showDividers: Bool = true, @ViewBuilder content: () -> Content) {
+        self.content = content()
+        self.showDividers = showDividers
+    }
+    
+    var body: some View {
+        _VariadicView.Tree(DividedLayout(showDividers: showDividers)) {
+            content
+        }
+    }
+    
+    // 负责布局和分隔线的内部结构
+    struct DividedLayout: _VariadicView_MultiViewRoot {
+        let showDividers: Bool
         
+        @ViewBuilder
+        func body(children: _VariadicView.Children) -> some View {
+            let last = children.last?.id
+            
+            ForEach(children) { child in
+                child
+                    .padding(.horizontal, 16)
+                    .padding(.vertical,10)
+                    .frame(minHeight: 44)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(Color("textPrimaryColor"))
+                
+                if showDividers && child.id != last {
+                    Divider()
+                        .background(.white.opacity(0.05))
+                        .padding(.leading, 16)
+                }
+            }
+        }
     }
 }
 
-// 便捷方法 - 使用String作为header
-extension SectionView where Header == Text, Footer == EmptyView {
-    init<V: View>(showDividers: Bool? = nil, header: String, _ views: V...) {
-        self.views = views.map { AnyView($0) }
-        self.showDividers = showDividers
-        self.header = Text(header)
-        self.footer = nil
+// 简化初始化方法 - 只有content，无header和footer
+extension SectionView where Header == EmptyView, Footer == EmptyView {
+    init(showDividers: Bool? = nil, @ViewBuilder content: () -> Content) {
+        self.init(
+            showDividers: showDividers,
+            content: content,
+            header: { EmptyView() },
+            footer: { EmptyView() }
+        )
     }
 }
 
-// 便捷方法 - 使用String作为footer
-extension SectionView where Header == EmptyView, Footer == Text {
-    init<V: View>(showDividers: Bool? = nil, footer: String, _ views: V...) {
-        self.views = views.map { AnyView($0) }
-        self.showDividers = showDividers
-        self.header = nil
-        self.footer = Text(footer)
-    }
-}
-
-// 便捷方法 - 使用header构建器
+// 简化初始化方法 - 有content和header，无footer
 extension SectionView where Footer == EmptyView {
-    init<V: View>(showDividers: Bool? = nil, @ViewBuilder header: () -> Header, _ views: V...) {
-        self.views = views.map { AnyView($0) }
-        self.showDividers = showDividers
-        self.header = header()
-        self.footer = nil
+    init(showDividers: Bool? = nil, @ViewBuilder content: () -> Content, @ViewBuilder header: () -> Header) {
+        self.init(
+            showDividers: showDividers,
+            content: content,
+            header: header,
+            footer: { EmptyView() }
+        )
+    }
+}
+
+// 简化初始化方法 - 有content和footer，无header
+extension SectionView where Header == EmptyView {
+    init(showDividers: Bool? = nil, @ViewBuilder content: () -> Content, @ViewBuilder footer: () -> Footer) {
+        self.init(
+            showDividers: showDividers,
+            content: content,
+            header: { EmptyView() },
+            footer: footer
+        )
+    }
+}
+
+// 方便的初始化方法 - 字符串header
+extension SectionView where Header == Text, Footer == EmptyView {
+    init(showDividers: Bool? = nil, header: String, @ViewBuilder content: () -> Content) {
+        self.init(
+            showDividers: showDividers,
+            content: content,
+            header: { Text(header) },
+            footer: { EmptyView() }
+        )
+    }
+}
+
+// 方便的初始化方法 - 字符串footer
+extension SectionView where Header == EmptyView, Footer == Text {
+    init(showDividers: Bool? = nil, @ViewBuilder content: () -> Content, footer: String) {
+        self.init(
+            showDividers: showDividers,
+            content: content,
+            header: { EmptyView() },
+            footer: { Text(footer) }
+        )
+    }
+}
+
+// 同时带有字符串header和footer的便捷初始化方法
+extension SectionView where Header == Text, Footer == Text {
+    init(showDividers: Bool? = nil, header: String, @ViewBuilder content: () -> Content, footer: String) {
+        self.init(
+            showDividers: showDividers,
+            content: content,
+            header: { Text(header) },
+            footer: { Text(footer) }
+        )
     }
 }
 
 #Preview {
-    ListView {
-        // 不带header和footer
-        SectionView(
-            Text("第一项"),
-            Text("第二项"),
-            Text("最后一项")
-        )
+    VStack(spacing: 20) {
+        Text("上方内容")
+            .padding()
+            .background(Color.gray.opacity(0.2))
         
-        // 带String header
-        SectionView(header: "个人信息",
-            Text("姓名"),
-            Text("电话")
-        )
-        
-        // 带ViewBuilder header
-        SectionView(header: {
-            HStack {
-                Image(systemName: "gear")
-                Text("设置")
+        ListView {
+            // 基本用法示例
+            SectionView {
+                Text("第一项")
+                Text("第二项")
+                Text("第三项")
             }
-        },
-            Text("通用设置"),
-            Text("高级设置")
-        )
+            
+            // 带header的示例
+            SectionView(header: "个人信息") {
+                Text("姓名: 张三")
+                Text("电话: 123-4567-8910")
+                Text("邮箱: zhangsan@example.com")
+            }
+        }
+        .border(Color.red)
         
-        // 带footer
-        SectionView(footer: "请谨慎操作",
-            Text("删除账户"),
-            Text("清除数据")
-        )
+        // 自定义内边距
+        ListView {
+            SectionView(header: "自定义内边距") {
+                Text("上内边距: 50")
+                Text("下内边距: 10")
+                Text("左右内边距: 默认16")
+            }
+        }
+        .contentInset(.top, 50)
+        .contentInset(.bottom, 10)
+        .border(Color.blue)
         
-        
+        Text("下方内容")
+            .padding()
+            .background(Color.gray.opacity(0.2))
     }
 }

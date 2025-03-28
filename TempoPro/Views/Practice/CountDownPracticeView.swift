@@ -86,8 +86,8 @@ struct CountDownPracticeView: View {
     // 设置视图
     private var setupView: some View {
         VStack(spacing: 0){
-            List{
-                Section{
+            ListView{
+                SectionView{
                     if selectedTimerType == "time" {
                         // 时间选择器
                         timePickerView
@@ -117,13 +117,9 @@ struct CountDownPracticeView: View {
                             .foregroundColor(Color("textPrimaryColor"))
                     }
                 }
-                .listRowBackground(Color("backgroundSecondaryColor"))
-                
             }
-            .listStyle(.insetGrouped)
-            .background(Color("backgroundPrimaryColor"))
-            .scrollContentBackground(.hidden)
-
+            .contentInset(.top, 20)
+            
             Spacer()
 
             VStack{
@@ -215,11 +211,12 @@ struct CountDownPracticeView: View {
                 .frame(maxHeight:.infinity)
                 .clipped()
                 
-                Text("hours")
+                Text("hour")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textSecondaryColor"))
                     .offset(x: -5)
             }
+            .frame(maxWidth:.infinity)
             
             // 分钟
             HStack(spacing: 0) {
@@ -240,6 +237,7 @@ struct CountDownPracticeView: View {
                     .foregroundColor(Color("textSecondaryColor"))
                     .offset(x: -5)
             }
+            .frame(maxWidth:.infinity)
             
             // 秒
             HStack(spacing: 0) {
@@ -260,6 +258,7 @@ struct CountDownPracticeView: View {
                     .foregroundColor(Color("textSecondaryColor"))
                     .offset(x: -5)
             }
+            .frame(maxWidth:.infinity)
         }
         // .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         
