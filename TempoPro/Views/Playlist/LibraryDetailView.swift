@@ -69,6 +69,7 @@ struct LibraryDetailView: View {
                                 })
                             }
                     }
+                    .listRowBackground(Color("backgroundSecondaryColor"))
                     
                 }
             
@@ -125,10 +126,13 @@ struct LibraryDetailView: View {
         })
         
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitle(currentPlaylist.name ?? "未命名曲库")
         .background(Color("backgroundPrimaryColor"))
         .scrollContentBackground(.hidden)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
+        .preferredColorScheme(.dark)
+        
         
         .sheet(isPresented: $showingSongForm) {
             EditSongView(
@@ -319,10 +323,10 @@ struct SongRowCard: View {
             
             // 播放按钮
             Button(action: onPlay) {
-                Image("icon-play")
+                Image("icon-play-s")
                     .renderingMode(.template)   
                     .resizable()
-                    .frame(width: 20, height: 20)
+                    .frame(width: 18, height: 18)
                     .foregroundColor(Color("textPrimaryColor"))
             }
         }

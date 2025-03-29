@@ -67,61 +67,70 @@ struct SongsListView: View {
             }
             .padding(.horizontal, 20)
             
-            ListView {
-                // 曲目列表
-                let songs = currentPlaylist?.songs?.allObjects as? [Song] ?? []
-                    if songs.isEmpty {
-                        VStack(alignment: .center, spacing: 10) {
-                            Image("icon-disc-3-xl")
-                                .renderingMode(.template)
+            // 曲目列表
+            let songs = currentPlaylist?.songs?.allObjects as? [Song] ?? []
+            if songs.isEmpty {
+                VStack(alignment: .center, spacing: 10) {
+                    Image("icon-disc-3-xl")
+                        .renderingMode(.template)
+                        .foregroundColor(Color("textSecondaryColor"))
+                    
+                    Button(action: {
+                        showingSongForm = true
+                    }) {
+                        HStack(spacing: 5) {
+                            Text("添加曲目")
+                                .font(.custom("MiSansLatin-Regular", size: 16))
                                 .foregroundColor(Color("textSecondaryColor"))
-                            
-                            Button(action: {
-                                showingSongForm = true
-                            }) {
-                                HStack(spacing: 5) {    
-                                    Text("添加曲目")
-                                        .font(.custom("MiSansLatin-Regular", size: 16))
-                                        .foregroundColor(Color("textPrimaryColor"))
-                                }
-                            }   
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.vertical, 40)
-                        .listRowBackground(Color("backgroundSecondaryColor"))
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.vertical, 40)
+            }
+            else {
+                ListView {
+                    SectionView {
+                        ForEach(songs, id: \.id) { song in
+                            SongRowCard(song: song, onEdit: {}, onDelete: {}, onPlay: {
+                                playSong(song)
+                            })
+                        }
+                    }
+                }
+                .contentInset(.top, 0)
+            }
+                
+            
 
-                    } else {
-                        SectionView {
-                            ForEach(songs, id: \.id) { song in
-                                SongRowCard(song: song, onEdit: {}, onDelete: {}, onPlay: {
-                                    playSong(song)
-                                })
-                            }
-                        }
-                        SectionView{
-                            Button(action: {
-                                resetSongForm()
-                                isEditMode = false
-                                showingSongForm = true
-                            }) {
-                                HStack(){
-                                    Image("icon-plus-s")
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                    Text("添加曲目")
-                                        .font(.custom("MiSansLatin-Regular", size: 16))
-                                }
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(Color("textPrimaryColor"))
-                            }
-                        }
+            VStack(spacing: 0){
+                Button(action: {
+                    resetSongForm()
+                    isEditMode = false
+                    showingSongForm = true
+                }) {
+                    HStack(){
+                        Image("icon-plus-s")
+                            .renderingMode(.template)
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                        Text("添加曲目")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                        PremiumLabelView()
                         
                     }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .foregroundColor(Color("textPrimaryColor"))
+                    .background(Color("backgroundSecondaryColor"))
+                    .cornerRadius(12)
+                }
                 
             }
-            .contentInset(.top, 0)
+            .padding(.vertical, 20)
+            .padding(.horizontal, 20)
         }
+        
         .fullScreenCover(isPresented: $isShowLibraryList, content: {
             LibraryListView()
         })

@@ -86,8 +86,7 @@ struct CountDownPracticeView: View {
     // 设置视图
     private var setupView: some View {
         VStack(spacing: 0){
-            ListView{
-                SectionView{
+            VStack(){
                     if selectedTimerType == "time" {
                         // 时间选择器
                         timePickerView
@@ -111,16 +110,37 @@ struct CountDownPracticeView: View {
                     // }
                     
                     // 循环选项
-                    Toggle(isOn: $practiceCoordinator.isLoopEnabled) {
-                        Text("循环")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(Color("textPrimaryColor"))
-                    }
-                }
+                    // Toggle(isOn: $practiceCoordinator.isLoopEnabled) {
+                    //     Text("循环播放")
+                    //         .font(.custom("MiSansLatin-Regular", size: 16))
+                    //         .foregroundColor(Color("textPrimaryColor"))
+                    // }
             }
-            .contentInset(.top, 20)
+            .frame(maxWidth: .infinity,maxHeight: .infinity)
+            .background(Color("backgroundSecondaryColor"))
+            .cornerRadius(12)
+            .padding(.horizontal,20)
+            .padding(.vertical,20)
+            
 
-            HStack{
+            HStack(spacing: 15){
+                Button(action: {
+                    practiceCoordinator.isLoopEnabled.toggle()
+                }){
+                    HStack(spacing: 5){
+                        Image("icon-repeat-s")
+                            .renderingMode(.template)
+                            .resizable()
+                            .frame(width: 20, height: 20)   
+                    }
+                    .foregroundColor(practiceCoordinator.isLoopEnabled ? Color("backgroundSecondaryColor") : Color("textPrimaryColor"))
+                    .frame(height:50)
+                    .padding(.horizontal,15)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(practiceCoordinator.isLoopEnabled ? Color("textPrimaryColor") : Color("backgroundSecondaryColor"))
+                    )
+                }
                 Button(action: {
                     if practiceCoordinator.activeMode == .none || practiceCoordinator.activeMode == .countdown {
                         practiceCoordinator.startPractice()
@@ -142,7 +162,7 @@ struct CountDownPracticeView: View {
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(Color("backgroundSecondaryColor"))
+                            .fill(.green.opacity(0.2))
                     )
                 }
                 .disabled((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
@@ -266,7 +286,7 @@ struct CountDownPracticeView: View {
         }
         // .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         .frame(maxWidth:.infinity)
-        .frame(height:120,alignment: .center)
+        .frame(alignment: .center)
     }
     
     // 便捷计算属性 - 获取时分秒
@@ -302,8 +322,8 @@ struct CountDownPracticeView: View {
                 .foregroundColor(Color("textSecondaryColor"))
                 .padding(.leading, 8)
         }
-        .frame(maxWidth: .infinity,alignment: .center)  
-        .frame(height:120,alignment: .center)
+        .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)  
+        .frame(alignment: .center)
     }
     
     // 计时视图
@@ -365,9 +385,6 @@ struct CountDownPracticeView: View {
             }
             .frame(maxWidth:.infinity,maxHeight: .infinity)
             .padding(lineWidth/2)
-            
-            Spacer()
-            
             // 控制按钮
             HStack(spacing: 15) {
                 // 暂停/继续/重新开始按钮
@@ -387,16 +404,16 @@ struct CountDownPracticeView: View {
                             .resizable()
                             .frame(width: 20, height: 20)   
                             
-                        Text(practiceCoordinator.practiceStatus == .completed ? "重新播放" : 
-                             (practiceCoordinator.practiceStatus == .paused ? "继续" : "暂停"))
-                            .font(.custom("MiSansLatin-Semibold", size: 17))
+                        Text(practiceCoordinator.practiceStatus == .completed ? "Play" : 
+                             (practiceCoordinator.practiceStatus == .paused ? "Play" : "Pause"))
+                            .font(.custom("MiSansLatin-Regular", size: 16))
                     }
                     .foregroundColor(Color("textPrimaryColor"))
                     .frame(height: 50)
                     .frame(maxWidth:.infinity)
                     .background(Color("backgroundSecondaryColor"))
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
                 .contentShape(Rectangle())
                 
                 // 停止按钮
@@ -410,8 +427,8 @@ struct CountDownPracticeView: View {
                             .frame(width: 20, height: 20)   
                             
                         Text(
-                            practiceCoordinator.practiceStatus == .completed ? "返回" : "停止")
-                            .font(.custom("MiSansLatin-Semibold", size: 17))
+                            practiceCoordinator.practiceStatus == .completed ? "Cancel" : "Stop")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
                     }   
                     .foregroundColor(Color("textPrimaryColor"))
                     .frame(maxWidth:.infinity)
@@ -419,7 +436,7 @@ struct CountDownPracticeView: View {
                     .background(Color.red.opacity(0.2))
                 }
                 .contentShape(Rectangle())
-                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
         .padding(20)
