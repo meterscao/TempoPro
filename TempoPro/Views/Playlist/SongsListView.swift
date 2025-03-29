@@ -57,15 +57,6 @@ struct SongsListView: View {
 
                 HStack(){
                     Button(action: {
-                             resetSongForm()
-                             isEditMode = false
-                             showingSongForm = true
-                    }) {
-                        Text("保存")
-                            .font(.custom("MiSansLatin-Semibold", size: 16))
-                            .foregroundColor(Color("textPrimaryColor"))
-                    }
-                    Button(action: {
                         isShowLibraryList.toggle()
                     }) {
                         Text("编辑")
@@ -112,9 +103,24 @@ struct SongsListView: View {
                                         playSong(song)
                                     })
                                 }
-                            
-                                
-                            
+                        }
+                        SectionView{
+                            Button(action: {
+                                resetSongForm()
+                                isEditMode = false
+                                showingSongForm = true
+                            }) {
+                                HStack(){
+                                    Image("icon-plus-s")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                    Text("添加曲目")
+                                        .font(.custom("MiSansLatin-Regular", size: 16))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .foregroundColor(Color("textPrimaryColor"))
+                            }
                         }
                         
                     }

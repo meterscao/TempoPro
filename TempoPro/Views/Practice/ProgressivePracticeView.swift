@@ -122,12 +122,13 @@ struct ProgressivePracticeView: View {
                     Text("Start")
                         .font(.custom("MiSansLatin-Semibold", size: 17))
                 }
-                .foregroundColor(.white)
+                .foregroundColor(Color("textPrimaryColor"))
                 .frame(height: 52)
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(isSettingValid ? theme.primaryColor : theme.primaryColor.opacity(0.5))
+                    
+                        .fill(isSettingValid ? Color("backgroundSecondaryColor") : Color("backgroundSecondaryColor").opacity(0.5))
                 )
             }
             .disabled(!isSettingValid)

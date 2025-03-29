@@ -88,6 +88,21 @@ struct CountDownPracticeView: View {
         VStack(spacing: 0){
             ListView{
                 SectionView{
+
+                    HStack{
+                        Text("倒计时类型")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                            .foregroundColor(Color("textPrimaryColor"))
+                        Spacer()
+                        Picker("", selection: $selectedTimerType) {
+                            Text("By Time").tag("time")
+                            Text("By Bar").tag("bar")
+                        }
+                        .pickerStyle(.segmented)
+                        .preferredColorScheme(.dark)
+                        .frame(width: 100)
+                    }
+
                     if selectedTimerType == "time" {
                         // 时间选择器
                         timePickerView
@@ -96,19 +111,19 @@ struct CountDownPracticeView: View {
                         barPickerView
                     }
                 
-                    // 同步启动选项
-                    Toggle(isOn: $practiceCoordinator.isSyncStartEnabled) {
-                        Text("同步启动节拍器")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(Color("textPrimaryColor"))
-                    }
+                    // // 同步启动选项
+                    // Toggle(isOn: $practiceCoordinator.isSyncStartEnabled) {
+                    //     Text("同步启动节拍器")
+                    //         .font(.custom("MiSansLatin-Regular", size: 16))
+                    //         .foregroundColor(Color("textPrimaryColor"))
+                    // }
                     
-                    // 同步停止选项
-                    Toggle(isOn: $practiceCoordinator.isSyncStopEnabled) {
-                        Text("同步停止节拍器")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(Color("textPrimaryColor"))
-                    }
+                    // // 同步停止选项
+                    // Toggle(isOn: $practiceCoordinator.isSyncStopEnabled) {
+                    //     Text("同步停止节拍器")
+                    //         .font(.custom("MiSansLatin-Regular", size: 16))
+                    //         .foregroundColor(Color("textPrimaryColor"))
+                    // }
                     
                     // 循环选项
                     Toggle(isOn: $practiceCoordinator.isLoopEnabled) {
@@ -119,10 +134,8 @@ struct CountDownPracticeView: View {
                 }
             }
             .contentInset(.top, 20)
-            
-            Spacer()
 
-            VStack{
+            HStack{
                 Button(action: {
                     if practiceCoordinator.activeMode == .none || practiceCoordinator.activeMode == .countdown {
                         practiceCoordinator.startPractice()
@@ -132,19 +145,19 @@ struct CountDownPracticeView: View {
                     }
                 }) {
                     HStack(spacing: 5) {
-                        Image("icon-play")
+                        Image("icon-play-s")
                             .renderingMode(.template)
                             .resizable()
                             .frame(width: 20, height: 20)   
                         Text("Start")
-                            .font(.custom("MiSansLatin-Semibold", size: 17))
+                            .font(.custom("MiSansLatin-Regular", size: 16))
                     }
-                    .foregroundColor(.white)
-                    .frame(height:52)
+                    .foregroundColor(Color("textPrimaryColor"))
+                    .frame(height:50)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(theme.primaryColor)
+                            .fill(Color("backgroundSecondaryColor"))
                     )
                 }
                 .disabled((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
@@ -196,7 +209,7 @@ struct CountDownPracticeView: View {
             }
         )
         
-        return HStack(spacing: 10) {
+        return HStack(spacing: 0) {
             // 小时
             HStack(spacing: 0) {
                 Picker("", selection: hours) {
@@ -214,9 +227,11 @@ struct CountDownPracticeView: View {
                 Text("hour")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textSecondaryColor"))
+                    .lineLimit(1)
                     .offset(x: -5)
             }
             .frame(maxWidth:.infinity)
+            
             
             // 分钟
             HStack(spacing: 0) {
@@ -235,9 +250,11 @@ struct CountDownPracticeView: View {
                 Text("min")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textSecondaryColor"))
+                    .lineLimit(1)
                     .offset(x: -5)
             }
             .frame(maxWidth:.infinity)
+            
             
             // 秒
             HStack(spacing: 0) {
@@ -256,12 +273,14 @@ struct CountDownPracticeView: View {
                 Text("sec")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textSecondaryColor"))
+                    .lineLimit(1)
                     .offset(x: -5)
             }
             .frame(maxWidth:.infinity)
+            
         }
         // .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        
+        .frame(maxWidth:.infinity)
         .frame(height:120,alignment: .center)
     }
     
@@ -377,8 +396,8 @@ struct CountDownPracticeView: View {
                     }
                 }) {
                     HStack(spacing: 5) {
-                        Image(practiceCoordinator.practiceStatus == .completed ? "icon-replay" : 
-                              (practiceCoordinator.practiceStatus == .paused ? "icon-play" : "icon-pause"))
+                        Image(practiceCoordinator.practiceStatus == .completed ? "icon-replay-s" : 
+                              (practiceCoordinator.practiceStatus == .paused ? "icon-play-s" : "icon-pause-s"))
                             .renderingMode(.template)   
                             .resizable()
                             .frame(width: 20, height: 20)   
@@ -387,10 +406,10 @@ struct CountDownPracticeView: View {
                              (practiceCoordinator.practiceStatus == .paused ? "继续" : "暂停"))
                             .font(.custom("MiSansLatin-Semibold", size: 17))
                     }
-                    .foregroundColor(.white)
-                    .frame(height: 52)
+                    .foregroundColor(Color("textPrimaryColor"))
+                    .frame(height: 50)
                     .frame(maxWidth:.infinity)
-                    .background(theme.primaryColor)
+                    .background(Color("backgroundSecondaryColor"))
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                 .contentShape(Rectangle())
@@ -400,7 +419,7 @@ struct CountDownPracticeView: View {
                     practiceCoordinator.stopPractice()
                 }) {
                     HStack(spacing: 5) {
-                        Image(practiceCoordinator.practiceStatus == .completed ? "icon-x" : "icon-stop")
+                        Image(practiceCoordinator.practiceStatus == .completed ? "icon-x-s" : "icon-stop-s")
                             .renderingMode(.template)
                             .resizable()
                             .frame(width: 20, height: 20)   
@@ -409,10 +428,10 @@ struct CountDownPracticeView: View {
                             practiceCoordinator.practiceStatus == .completed ? "返回" : "停止")
                             .font(.custom("MiSansLatin-Semibold", size: 17))
                     }   
-                    .foregroundColor(.white)
+                    .foregroundColor(Color("textPrimaryColor"))
                     .frame(maxWidth:.infinity)
-                    .frame(height: 52)
-                    .background(Color.red.opacity(0.8))
+                    .frame(height: 50)
+                    .background(Color.red.opacity(0.2))
                 }
                 .contentShape(Rectangle())
                 .clipShape(RoundedRectangle(cornerRadius: 15))
