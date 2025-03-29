@@ -57,6 +57,7 @@
 		C7879CBD2D84345100B52E59 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7879CBC2D84345100B52E59 /* StoreKit.framework */; };
 		C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */; };
 		C7DB2F532D85939B0063508C /* SettingsAdvanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */; };
+		C7DD3D192D97D7A9009E2ED8 /* LibraryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DD3D182D97D7A9009E2ED8 /* LibraryDetailView.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
 		F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */; };
 		F71AF6B42D716E6500ADBC17 /* ThemeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */; };
@@ -157,6 +158,7 @@
 		C7879CBC2D84345100B52E59 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 		C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAdvanceView.swift; sourceTree = "<group>"; };
+		C7DD3D182D97D7A9009E2ED8 /* LibraryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryDetailView.swift; sourceTree = "<group>"; };
 		F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTheme.swift; sourceTree = "<group>"; };
 		F71AF6B12D716E4200ADBC17 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		F71AF6B32D716E5D00ADBC17 /* ThemeEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEnvironment.swift; sourceTree = "<group>"; };
@@ -421,6 +423,7 @@
 			isa = PBXGroup;
 			children = (
 				F750D23A2D7816360022C405 /* LibraryListView.swift */,
+				C7DD3D182D97D7A9009E2ED8 /* LibraryDetailView.swift */,
 				F7F058C02D794453005DF482 /* AddPlaylistView.swift */,
 				F750D2392D7816360022C405 /* SongsListView.swift */,
 				F7F058BE2D79443C005DF482 /* EditSongView.swift */,
@@ -659,6 +662,7 @@
 				3AD042BF2D7C9572002EAB55 /* SettingsView.swift in Sources */,
 				3AD042C12D7C95A0002EAB55 /* SoundEffectsView.swift in Sources */,
 				F7F058C12D794453005DF482 /* AddPlaylistView.swift in Sources */,
+				C7DD3D192D97D7A9009E2ED8 /* LibraryDetailView.swift in Sources */,
 				F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */,
 				F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */,
 				C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */,

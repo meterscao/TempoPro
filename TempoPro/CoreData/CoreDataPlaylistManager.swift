@@ -97,6 +97,20 @@ class CoreDataPlaylistManager: ObservableObject {
         saveContext()
     }
     
+    // 根据ID查找曲库
+    func fetchPlaylist(byID id: UUID) -> Playlist? {
+        let request = NSFetchRequest<Playlist>(entityName: "Playlist")
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        request.fetchLimit = 1
+        
+        do {
+            let results = try viewContext.fetch(request)
+            return results.first
+        } catch {
+            print("根据ID查找曲库失败: \(error.localizedDescription)")
+            return nil
+        }
+    }
     
     // 保存上下文
     private func saveContext() {

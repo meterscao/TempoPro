@@ -32,6 +32,7 @@ struct CountDownPracticeView: View {
                     timerView
                 }
             }
+            .background(Color("backgroundPrimaryColor"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -67,7 +68,6 @@ struct CountDownPracticeView: View {
                     }
                 }
             }
-            .background(Color("backgroundPrimaryColor"))
             .toolbarBackground(.visible)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
         }
@@ -88,21 +88,6 @@ struct CountDownPracticeView: View {
         VStack(spacing: 0){
             ListView{
                 SectionView{
-
-                    HStack{
-                        Text("倒计时类型")
-                            .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(Color("textPrimaryColor"))
-                        Spacer()
-                        Picker("", selection: $selectedTimerType) {
-                            Text("By Time").tag("time")
-                            Text("By Bar").tag("bar")
-                        }
-                        .pickerStyle(.segmented)
-                        .preferredColorScheme(.dark)
-                        .frame(width: 100)
-                    }
-
                     if selectedTimerType == "time" {
                         // 时间选择器
                         timePickerView

@@ -92,17 +92,11 @@ struct SongsListView: View {
 
                     } else {
                         SectionView {
-                            
-                                ForEach(songs, id: \.id) { song in
-                                    SongRowCard(song: song, onEdit: {
-                                        prepareEditSong(song)
-                                    }, onDelete: {
-                                        songToDelete = song
-                                        showingDeleteAlert = true
-                                    }, onPlay: {
-                                        playSong(song)
-                                    })
-                                }
+                            ForEach(songs, id: \.id) { song in
+                                SongRowCard(song: song, onEdit: {}, onDelete: {}, onPlay: {
+                                    playSong(song)
+                                })
+                            }
                         }
                         SectionView{
                             Button(action: {
@@ -127,51 +121,6 @@ struct SongsListView: View {
                 
             }
             .contentInset(.top, 0)
-            
-            
-        //     .toolbar {
-        //         ToolbarItem(placement: .navigationBarTrailing) {
-        //             Menu {
-        //                 Section{
-        //                     Button(action: {
-        //                         resetSongForm()
-        //                         isEditMode = false
-        //                         showingSongForm = true
-        //                     }) {
-                                
-        //                             Text("添加曲目")
-        //                                 .foregroundColor(Color("textPrimaryColor"))
-                                
-        //                     }
-        //                 }
-                        
-        //                 Section {
-        //                     Button(action: {
-        //                         editPlaylistName = playlist.name ?? ""
-        //                         showingEditPlaylist = true
-        //                     }) {
-        //                             Text("编辑曲库")
-        //                                 .foregroundColor(Color("textPrimaryColor"))
-                                
-        //                     }
-                            
-        //                     Button(role: .destructive, action: {
-        //                         playlistManager.deletePlaylist(playlist)
-        //                         dismiss()
-        //                     }) {
-                                
-        //                             Text("删除曲库")
-        //                                 .foregroundColor(Color("textPrimaryColor"))
-                            
-        //                     }
-        //                 }
-        //             } label: {
-        //                 Image("icon-ellipsis")
-        //                     .renderingMode(.template)
-        //                     .foregroundColor(Color("textPrimaryColor"))
-        //             }
-        //         }
-        //     }
         }
         .fullScreenCover(isPresented: $isShowLibraryList, content: {
             LibraryListView()
@@ -225,36 +174,6 @@ struct SongsListView: View {
                 }
             )
         }
-        .alert("编辑曲库", isPresented: $showingEditPlaylist) {
-            TextField("曲库名称", text: $editPlaylistName)
-            Button("取消", role: .cancel) { 
-                editPlaylistName = currentPlaylist?.name ?? ""
-            }
-            Button("保存") {
-                if !editPlaylistName.isEmpty {
-                    // 更新曲库
-                    playlistManager.updatePlaylist(
-                        currentPlaylist!,
-                        name: editPlaylistName,
-                        color: currentPlaylist!.color ?? "#0000FF" // 保持原来的颜色
-                    )
-                }
-            }.disabled(editPlaylistName.isEmpty)
-        } message: {
-            Text("请输入曲库的新名称")
-        }
-        
-        .alert("确认删除", isPresented: $showingDeleteAlert, actions: {
-            Button("取消", role: .cancel) { }
-            Button("删除", role: .destructive) {
-                if let song = songToDelete {
-                    // 删除曲目
-                    playlistManager.deleteSong(song)
-                }
-            }
-        }, message: {
-            Text("确定要删除这首曲目吗？此操作不可撤销。")
-        })
         .onAppear {
             currentPlaylist = playlistManager.fetchPlaylists().first
         }
@@ -270,28 +189,7 @@ struct SongsListView: View {
         songToEdit = nil
     }
     
-    private func prepareEditSong(_ song: Song) {
-        // 填充表单数据
-        songName = song.name ?? ""
-        tempo = Int(song.bpm)
-        beatsPerBar = Int(song.beatsPerBar)
-        beatUnit = Int(song.beatUnit)
-        
-        // 转换节拍状态
-        let statusInts = (song.beatStatuses as? [Int]) ?? Array(repeating: 2, count: beatsPerBar)
-        beatStatuses = statusInts.map { intValue -> BeatStatus in
-            switch intValue {
-            case 0: return .strong
-            case 1: return .medium
-            case 3: return .muted
-            default: return .normal
-            }
-        }
-        
-        songToEdit = song
-        isEditMode = true
-        showingSongForm = true
-    }
+    
     
     private func playSong(_ song: Song) {
         // 设置节拍器状态
@@ -315,63 +213,6 @@ struct SongsListView: View {
         // 返回主界面并启动节拍器
         metronomeState.play()
         // dismiss()
-    }
-}
-
-// 修改曲目卡片组件样式以匹配
-struct SongRowCard: View {
-    @Environment(\.metronomeTheme) var theme
-    let song: Song
-    let onEdit: () -> Void
-    let onDelete: () -> Void
-    let onPlay: () -> Void
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 0) {
-                Text(song.name ?? "未命名曲目")
-                    .font(.custom("MiSansLatin-Semibold", size: 16))
-                    .foregroundColor(Color("textPrimaryColor"))
-                
-                HStack(spacing: 0){
-                    Text("\(Int(song.bpm)) BPM · \(Int(song.beatsPerBar))/\(Int(song.beatUnit)) · ")
-                        .font(.custom("MiSansLatin-Regular", size: 14))
-                        .foregroundColor(Color("textSecondaryColor"))
-                    Image(song.subdivisionPattern ?? "quarter_whole")
-                        .renderingMode(.template)
-                        .resizable()
-                        .frame(width: 22, height: 22)
-                        .foregroundColor(Color("textSecondaryColor"))
-                }
-                
-            }
-            
-            Spacer()
-            
-            // 播放按钮
-            Button(action: onPlay) {
-                Image("icon-play")
-                    .renderingMode(.template)   
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(Color("textPrimaryColor"))
-            }
-        }
-        .contentShape(Rectangle()) // 确保整个区域可点击
-        .onTapGesture {
-            onPlay()
-        }
-        
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button(role: .destructive, action: onDelete) {
-                Label("删除", systemImage: "trash")
-            }
-            
-            Button(action: onEdit) {
-                Label("编辑", systemImage: "pencil")
-            }
-            .tint(.blue)
-        }
     }
 }
 

@@ -183,7 +183,7 @@ struct MetronomeInfoView: View {
                     ClockView()
                     Spacer()
                     VStack() {
-                        Image("icon-sliders-horizontal")
+                        Image("icon-menu")
                             .renderingMode(.template)
                             .foregroundColor(theme.primaryColor)
                     }

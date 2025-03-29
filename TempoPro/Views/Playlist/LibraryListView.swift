@@ -33,7 +33,7 @@ struct LibraryListView: View {
                         SectionView{
                             ForEach(playlists) { playlist in
                                 NavigationLink {
-                                    SongsListView()
+                                    LibraryDetailView(playlist: playlist)
                                 } label: {
                                     PlaylistRowCard(playlist: playlist)
                                 }.foregroundStyle(Color("textSecondaryColor"))
@@ -42,29 +42,22 @@ struct LibraryListView: View {
                         
                     }
                     
-                    // 添加曲库的 cell
+                    
+                    SectionView{
+                        // 添加曲库的 cell
                     Button(action: {
                         showingAddAlert = true
                     }) {
                         HStack {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(Color("textPrimaryColor").opacity(0.1))
-                                    .frame(width: 40, height: 40)
-                                
-                                Image("icon-plus-s")
+                            Image("icon-plus-s")
                                     .renderingMode(.template)
-                                    .foregroundStyle(Color("textPrimaryColor"))
-                            }
-                            
                             Text("添加曲库")
-                                .font(.custom("MiSansLatin-Semibold", size: 17))
-                                .foregroundColor(Color("textPrimaryColor"))
-                            
-                            Spacer()
+                                .font(.custom("MiSansLatin-Regular", size: 16))
                         }
+                        .foregroundColor(Color("textPrimaryColor"))
+                        .frame(maxWidth: .infinity)
                     }
-                    .listRowBackground(Color("backgroundSecondaryColor"))
+                    }
                 }
 
                 .alert("添加曲库", isPresented: $showingAddAlert) {
@@ -120,7 +113,7 @@ struct LibraryListView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
             .navigationDestination(for: Playlist.self) { playlist in
-                SongsListView()
+                LibraryDetailView(playlist: playlist)
             }
             
         }
