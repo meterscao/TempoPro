@@ -94,11 +94,12 @@ struct StatsSummaryView: View {
     @State private var totalHours = 0.0
     
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 3) {
             StatsSummaryCard(value: "\(dayStreak)", label: "STREAK DAYS")
             StatsSummaryCard(value: "\(daysThisMonth)", label: "TOTAL DAYS")
             StatsSummaryCard(value: String(format: "%.1f", totalHours), label: "TOTAL HOURS")
         }
+        .cornerRadius(15)
         .onAppear {
             loadSummaryData()
         }
@@ -226,7 +227,7 @@ struct StatsSummaryCard: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical,15)
         .background(Color("backgroundSecondaryColor"))
-        .cornerRadius(12)
+        .cornerRadius(4)
     }
 }
 

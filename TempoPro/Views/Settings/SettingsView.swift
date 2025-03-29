@@ -134,7 +134,7 @@ struct SettingsView: View {
 struct PremiumLabelView: View {
     var body: some View {
         Text("Premium")
-            .font(.custom("MiSansLatin-Semibold", size: 14))
+            .font(.custom("MiSansLatin-Semibold", size: 12))
             .foregroundColor(.orange)
             .padding(.vertical, 3)
             .padding(.horizontal, 6)
