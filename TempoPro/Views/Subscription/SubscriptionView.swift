@@ -19,12 +19,12 @@ struct SubscriptionView: View {
             if subscriptionManager.isLoading {
                 ProgressView()
             } else if subscriptionManager.purchaseSuccess || subscriptionManager.isProUser {
-                // 购买成功视图
+                // Success view
                 PurchaseSuccessView {
                     dismiss()
                 }
             } else {
-                // 自定义订阅UI
+                // Subscription UI
                 SubscriptionOptionsView(offerings: subscriptionManager.offerings)
                     .environmentObject(subscriptionManager)
             }
@@ -36,7 +36,7 @@ struct SubscriptionView: View {
     }
 }
 
-// 新增购买成功视图
+// Purchase Success View
 struct PurchaseSuccessView: View {
     @Environment(\.metronomeTheme) var theme
     var onDismiss: () -> Void
@@ -46,34 +46,34 @@ struct PurchaseSuccessView: View {
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
                 .frame(width: 100, height: 100)
-                .foregroundColor(.green)
+                .foregroundColor(.accent)
                 .padding(.top, 40)
             
-            Text("购买成功！")
-                .font(.largeTitle)
-                .bold()
-                .foregroundColor(theme.primaryColor)
+            Text("Purchase Successful!")
+                .font(.custom("MiSansLatin-Semibold", size: 24))
+                .foregroundColor(Color("textPrimaryColor"))
             
-            Text("感谢您成为高级会员！\n您现在可以使用所有高级功能了。")
-                .font(.title3)
+            Text("Thank you for becoming a Premium member!\nYou now have access to all premium features.")
+                .font(.custom("MiSansLatin-Regular", size: 16))
                 .multilineTextAlignment(.center)
-                .foregroundColor(theme.primaryColor)
+                .foregroundColor(Color("textSecondaryColor"))
                 .padding(.horizontal)
             
             Spacer()
             
             Button(action: onDismiss) {
-                Text("开始使用")
-                    .font(.headline)
+                Text("Get Started")
+                    .font(.custom("MiSansLatin-Semibold", size: 16))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(theme.primaryColor)
-                    .cornerRadius(10)
+                    .background(Color.accent)
+                    .cornerRadius(12)
                     .padding(.horizontal)
             }
             .padding(.bottom, 40)
         }
+        .background(Color("backgroundPrimaryColor"))
     }
 }
 
@@ -81,77 +81,110 @@ struct SubscriptionOptionsView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var subscriptionManager: SubscriptionManager
     let offerings: Offerings?
-    @State private var selectedOption = 2 // 默认选中终身会员
+    @State private var selectedOption = 2 // Default to lifetime
     
     var body: some View {
-        VStack(spacing: 24) {
-            Text("升级到Premium会员")
-                .font(.title)
-                .bold()
-                .foregroundColor(theme.primaryColor)
-            
-            // 会员特权展示
-            VStack(alignment: .leading, spacing: 10) {
-                FeatureRow(text: "无限访问所有高级功能")
-                FeatureRow(text: "无广告体验")
-                FeatureRow(text: "优先客户支持")
+        ListView {
+            // Header
+            VStack(spacing: 8) {
+                Text("Upgrade to Premium")
+                    .font(.custom("MiSansLatin-Semibold", size: 24))
+                    .foregroundColor(Color("textPrimaryColor"))
+                
+                Text("Unlock all premium features to enhance your practice experience")
+                    .font(.custom("MiSansLatin-Regular", size: 14))
+                    .foregroundColor(Color("textSecondaryColor"))
+                    .multilineTextAlignment(.center)
             }
-            .padding(.vertical)
+            .padding(.bottom, 16)
             
-            // 选项选择器
-            VStack(spacing: 12) {
+            // Metronome Features
+            SectionView(header: "METRONOME FEATURES") {
+                FeatureRow(text: "Subdivision Practice", description: "Practice with complex rhythm subdivisions to improve your timing")
+                FeatureRow(text: "Progressive Practice", description: "Gradually increase tempo to build speed and confidence")
+                FeatureRow(text: "Count Down Practice", description: "Set timer-based practice sessions for focused training")
+                FeatureRow(text: "Premium Sound Effects", description: "Access a library of professional-grade metronome sounds")
+            }
+            
+            // Library Features
+            SectionView(header: "LIBRARY FEATURES") {
+                FeatureRow(text: "Unlimited Library", description: "Save unlimited practice routines and custom settings")
+                FeatureRow(text: "Cloud Sync", description: "Seamlessly access your practice library across all your devices")
+            }
+            
+            // Practice Record Features
+            SectionView(header: "PRACTICE ANALYTICS") {
+                FeatureRow(text: "Detailed Practice Charts", description: "Track your progress with comprehensive analytics")
+                FeatureRow(text: "Complete Practice Calendar", description: "View your entire practice history in a calendar format")
+                FeatureRow(text: "Custom Practice Sessions", description: "Create specialized practice missions with goals and reminders")
+            }
+            
+            // Style Features
+            SectionView(header: "PERSONALIZATION") {
+                FeatureRow(text: "Metronome Themes", description: "Customize the look and feel with exclusive premium themes")
+                FeatureRow(text: "Custom App Icons", description: "Choose from a variety of app icons for your home screen")
+            }
+            
+            // Purchase Option
+            VStack(spacing: 16) {
                 if let standardOffering = offerings?.current {
-                    // 终身选项
+                    // Lifetime option
                     SubscriptionOption(
-                        title: "终身会员",
-                        price: standardOffering.lifetime?.localizedPriceString ?? "¥??",
-                        description: "一次性付款，永久有效",
+                        title: "Lifetime Premium",
+                        price: standardOffering.lifetime?.localizedPriceString ?? "$??",
+                        description: "One-time payment, lifetime access",
                         isSelected: selectedOption == 2,
                         action: { selectedOption = 2 }
                     )
                 }
             }
             
-            // 订阅按钮
+            
+            // Subscribe Button
             Button(action: {
                 if let package = getSelectedPackage() {
                     subscriptionManager.purchasePackage(package: package)
                 }
             }) {
-                Text(subscriptionManager.isPurchasing ? "处理中..." : "立即订阅")
-                    .font(.headline)
+                Text(subscriptionManager.isPurchasing ? "Processing..." : "Subscribe Now")
+                    .font(.custom("MiSansLatin-Semibold", size: 16))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(theme.primaryColor)
-                    .cornerRadius(10)
+                    .frame(height: 50)
+                    .background(Color.accent)
+                    .cornerRadius(12)
             }
             .disabled(subscriptionManager.isPurchasing)
-
+            
+            // Footer Links
             HStack {
-                HStack(spacing: 10) {
-
+                HStack(spacing: 16) {
                     Button(action: {}){
-                        Text("使用协议")
+                        Text("Terms of Use")
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(Color("textSecondaryColor"))
                     }
-
+                    
                     Button(action: {}){
-                        Text("隐私政策")
+                        Text("Privacy Policy")
+                            .font(.custom("MiSansLatin-Regular", size: 12))
+                            .foregroundColor(Color("textSecondaryColor"))
                     }
-
                 }
                 Spacer()
                 Button(action: {
                     subscriptionManager.restorePurchase()
                 }) {
-                    Text("恢复购买")
+                    Text("Restore Purchase")
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(Color("textSecondaryColor"))
                 }
-            }   
+            }
+            
         }
-        .padding()
     }
     
-    // 辅助方法获取选中的套餐
+    // Helper method to get selected package
     private func getSelectedPackage() -> Package? {
         guard let offering = offerings?.current else { return nil }
         
@@ -168,19 +201,32 @@ struct SubscriptionOptionsView: View {
     }
 }
 
+// Feature row with description
 struct FeatureRow: View {
     @Environment(\.metronomeTheme) var theme
     let text: String
+    let description: String
     
     var body: some View {
-        HStack {
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(theme.primaryColor)
-            Text(text)
-                .font(.body)
-                .foregroundColor(theme.primaryColor)
-            Spacer()
-        }
+            HStack(spacing: 12) {
+                Image("icon-check-s")
+                    .renderingMode(.template)
+                    .foregroundColor(.accent)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(text)
+                        .font(.custom("MiSansLatin-Regular", size: 16))
+                        .foregroundColor(Color("textPrimaryColor"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    if false && !description.isEmpty {
+                        Text(description)
+                            .font(.custom("MiSansLatin-Regular", size: 13))
+                            .foregroundColor(Color("textSecondaryColor"))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+            }
+            .frame(alignment:.top)
     }
 }
 
@@ -194,32 +240,38 @@ struct SubscriptionOption: View {
     var body: some View {
         Button(action: action) {
             HStack {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text(title)
-                        .font(.headline)
+                        .font(.custom("MiSansLatin-Semibold", size: 16))
+                        .foregroundColor(Color("textPrimaryColor"))
+                    
                     Text(price)
-                        .font(.title3)
-                        .bold()
+                        .font(.custom("MiSansLatin-Semibold", size: 22))
+                        .foregroundColor(.accent)
+                    
                     Text(description)
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                        .font(.custom("MiSansLatin-Regular", size: 12))
+                        .foregroundColor(Color("textSecondaryColor"))
                 }
                 Spacer()
                 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.blue)
+                        .foregroundColor(.accent)
                         .font(.title2)
                 }
             }
-            .padding()
+            .padding(16)
             .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(isSelected ? Color.accent : Color("textSecondaryColor").opacity(0.3), lineWidth: isSelected ? 2 : 1)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("backgroundSecondaryColor"))
+                    )
             )
             .contentShape(Rectangle())
         }
-        
         .buttonStyle(PlainButtonStyle())
     }
 }
