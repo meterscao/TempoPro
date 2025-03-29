@@ -152,7 +152,7 @@ struct StreakDayCircleView: View {
                 // 底层圆环 - 灰色背景
                 Circle()
                     .stroke(
-                        isFutureDay ? theme.primaryColor.opacity(0.1) : theme.primaryColor.opacity(0.1),
+                        isFutureDay ? .accent.opacity(0.1) : .accent.opacity(0.1),
                         lineWidth: lineWidth
                     )
                     .frame(width: size, height: size)
@@ -163,7 +163,7 @@ struct StreakDayCircleView: View {
                     Circle()
                         .trim(from: 0, to: CGFloat(progress))
                         .stroke(
-                            isToday ? theme.primaryColor : theme.primaryColor,
+                            isToday ? .accent : .accent,
                             style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                         )
                         .rotationEffect(.degrees(-90))
@@ -173,7 +173,7 @@ struct StreakDayCircleView: View {
                 // 完成标记
                 if isCompleted {
                     Image(systemName: "checkmark")
-                        .foregroundColor(isToday ? theme.primaryColor : theme.primaryColor)
+                        .foregroundColor(isToday ? .accent : .accent)
                         .font(.system(size: 16, weight: .bold))
                 }
             }   

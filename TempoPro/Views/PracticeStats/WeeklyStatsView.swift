@@ -140,9 +140,7 @@ struct WeeklyStatsView: View {
                                 
                                 // 根据选中状态和禁用状态设置颜色
                                 let isSelected = selectedWeekdayIndex == index
-                                let isDisabled = dataPoint.disabled
-                                let barColor = 
-                                    dataPoint.duration > 0 ?  theme.primaryColor :  theme.primaryColor.opacity(0.1)
+                                let barColor = dataPoint.duration > 0 ?  Color("AccentColor") :  Color("AccentColor").opacity(0.1)
                                 
                                 
                                 VStack(spacing: 8) {
@@ -151,13 +149,16 @@ struct WeeklyStatsView: View {
                                         .frame(width: barWidth, height: height)
                                         // 添加边框标识选中状态
                                         .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .stroke(isSelected ? theme.primaryColor : Color.clear, lineWidth: 2)
+                                            RoundedRectangle(cornerRadius: 7)
+                                                .stroke(isSelected ? .white.opacity(0.5) : Color.clear, lineWidth: 2)
+                                                .padding(1)
                                         )
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        
                                     
                                     Text(item.weekday)
                                         .font(.custom("MiSansLatin-Regular", size: 12))
-                                        .foregroundColor(isSelected ? theme.primaryColor : Color("textSecondaryColor"))
+                                        .foregroundColor(isSelected ? .accent : Color("textSecondaryColor"))
                                 }
                                 .onTapGesture {
                                     // 仅当不是禁用状态时才可点击

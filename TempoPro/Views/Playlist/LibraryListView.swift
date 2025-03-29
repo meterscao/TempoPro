@@ -85,10 +85,6 @@ struct LibraryListView: View {
                 
                 .background(Color("backgroundPrimaryColor"))
                 .scrollContentBackground(.hidden)
-
-                .navigationDestination(for: Playlist.self) { playlist in
-                    SongsListView()
-                }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -115,9 +111,6 @@ struct LibraryListView: View {
             .scrollContentBackground(.hidden)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
-            .navigationDestination(for: Playlist.self) { playlist in
-                LibraryDetailView(playlist: playlist)
-            }
             .preferredColorScheme(.dark)
             
         }

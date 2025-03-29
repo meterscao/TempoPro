@@ -162,7 +162,7 @@ struct CountDownPracticeView: View {
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(.green.opacity(0.2))
+                            .fill(.accent)
                     )
                 }
                 .disabled((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 
@@ -229,7 +229,7 @@ struct CountDownPracticeView: View {
                 .frame(maxHeight:.infinity)
                 .clipped()
                 
-                Text("hour")
+                Text("Hour")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textSecondaryColor"))
                     .lineLimit(1)
@@ -252,7 +252,7 @@ struct CountDownPracticeView: View {
                 .frame(maxHeight:.infinity)
                 .clipped()
                 
-                Text("min")
+                Text("Min")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textSecondaryColor"))
                     .lineLimit(1)
@@ -270,12 +270,13 @@ struct CountDownPracticeView: View {
                             .foregroundStyle(Color("textPrimaryColor"))
                     }
                 }
+                .foregroundColor(Color("textPrimaryColor"))
                 .pickerStyle(.wheel)
                 .frame(width: 76)
                 .frame(maxHeight:.infinity)
                 .clipped()
                 
-                Text("sec")
+                Text("Sec")
                     .font(.custom("MiSansLatin-Regular", size: 16))
                     .foregroundColor(Color("textSecondaryColor"))
                     .lineLimit(1)
@@ -317,7 +318,7 @@ struct CountDownPracticeView: View {
             .frame(maxHeight:.infinity)
             .clipped()
             
-            Text("bars")
+            Text("Bars")
                 .font(.custom("MiSansLatin-Regular", size: 16))
                 .foregroundColor(Color("textSecondaryColor"))
                 .padding(.leading, 8)
@@ -335,7 +336,7 @@ struct CountDownPracticeView: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 40)
                         .stroke(lineWidth: lineWidth)
-                        .foregroundColor(theme.primaryColor.opacity(0.3))
+                        .foregroundColor(Color("AccentColor").opacity(0.3))
                     
                     VStack() {
                         if practiceCoordinator.countdownType == .time {
@@ -377,7 +378,7 @@ struct CountDownPracticeView: View {
                     RoundedRectangle(cornerRadius: 40)
                         .trim(from: 0, to: practiceCoordinator.progress)
                         .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-                        .foregroundColor(theme.primaryColor)
+                        .foregroundColor(Color("AccentColor"))
                         .rotationEffect(Angle(degrees: -90.0))
                         .animation(practiceCoordinator.isCompletingCycle ? .linear(duration: 0.5) : .linear(duration: 1.0), value: practiceCoordinator.progress)
                         .frame(width:geometry.size.height,height: geometry.size.width)
@@ -385,6 +386,7 @@ struct CountDownPracticeView: View {
             }
             .frame(maxWidth:.infinity,maxHeight: .infinity)
             .padding(lineWidth/2)
+//            .padding(20)
             // 控制按钮
             HStack(spacing: 15) {
                 // 暂停/继续/重新开始按钮
@@ -404,8 +406,8 @@ struct CountDownPracticeView: View {
                             .resizable()
                             .frame(width: 20, height: 20)   
                             
-                        Text(practiceCoordinator.practiceStatus == .completed ? "Play" : 
-                             (practiceCoordinator.practiceStatus == .paused ? "Play" : "Pause"))
+                        Text(practiceCoordinator.practiceStatus == .completed ? "Replay" : 
+                             (practiceCoordinator.practiceStatus == .paused ? "Continue" : "Pause"))
                             .font(.custom("MiSansLatin-Regular", size: 16))
                     }
                     .foregroundColor(Color("textPrimaryColor"))

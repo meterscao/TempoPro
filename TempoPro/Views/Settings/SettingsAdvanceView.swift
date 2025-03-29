@@ -100,7 +100,7 @@ struct LanguageSettingsView: View {
                 }) {
                     HStack {
                         Text(languages[index])
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(Color("AccentColor"))
                         Spacer()
                         if selectedLanguage == index {
                             Image(systemName: "checkmark")
@@ -108,8 +108,8 @@ struct LanguageSettingsView: View {
                         }
                     }
                 }
-                .foregroundColor(theme.primaryColor)
-                .listRowBackground(theme.primaryColor.opacity(0.1))
+                .foregroundColor(Color("AccentColor"))
+                .listRowBackground(Color("AccentColor").opacity(0.1))
             }
         }
         .navigationTitle("语言设置")

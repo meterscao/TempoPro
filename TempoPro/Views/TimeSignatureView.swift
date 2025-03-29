@@ -129,7 +129,6 @@ struct TimeSignatureView: View {
                         if patterns.isEmpty {
                             Text("当前拍号单位没有预设的切分音符")
                                 .font(.custom("MiSansLatin-Regular", size: 14))
-                                .foregroundColor(theme.primaryColor.opacity(0.7))
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.vertical, 10)
                         } else {

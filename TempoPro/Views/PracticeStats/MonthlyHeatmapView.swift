@@ -161,17 +161,20 @@ struct MonthlyHeatmapView: View {
                                     .aspectRatio(1, contentMode: .fit)
                                 
                                 // 当天日期
-                                // if !day.disabled {
-                                //     let dayNumber = Calendar.current.component(.day, from: day.date)
-                                //     Text("\(dayNumber)")
-                                //         .font(.custom("MiSansLatin-Regular", size: 10))
-                                //         .foregroundColor(day.duration > 60 ? Color.white : theme.primaryColor.opacity(0.7))
-                                // }
+                                if !day.disabled {
+                                    let dayNumber = Calendar.current.component(.day, from: day.date)
+                                    Text("\(dayNumber)")
+                                        .font(.custom("MiSansLatin-Regular", size: 10))
+                                        .foregroundColor(.white.opacity(0.7))
+                                }
                             }
                             .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(selectedDay?.dateString == day.dateString ? theme.primaryColor : Color.clear, lineWidth: 2)
+                                RoundedRectangle(cornerRadius: 7)
+                                    .stroke(selectedDay?.dateString == day.dateString ? .white.opacity(0.5) : Color.clear, lineWidth: 2)
+                                    .padding(1)
                             )
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            
                             .onTapGesture {
                                 if !day.disabled {
                                     if selectedDay?.dateString == day.dateString {
@@ -266,19 +269,17 @@ struct MonthlyHeatmapView: View {
         
         // 无数据使用非常浅的颜色
         if minutes == 0 {
-            return theme.primaryColor.opacity(0.1)
+            return .white.opacity(0.03)
         }
         
         // 根据练习时长设置不同深度的颜色
-        if minutes < 15 {
-            return theme.primaryColor.opacity(0.3)
-        } else if minutes < 30 {
-            return theme.primaryColor.opacity(0.6)
+        if minutes < 30 {
+            return .accent.opacity(0.2)
         } else if minutes < 60 {
-            return theme.primaryColor.opacity(0.8)
+            return .accent.opacity(0.6)
         
         } else {
-            return theme.primaryColor // 超过2小时使用完全不透明的颜色
+            return .accent 
         }
     }
 }

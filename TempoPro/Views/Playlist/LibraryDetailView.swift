@@ -123,6 +123,8 @@ struct LibraryDetailView: View {
         }
         .fullScreenCover(isPresented: $isShowLibraryList, content: {
             LibraryListView()
+                .environmentObject(playlistManager)
+                .environmentObject(metronomeState)
         })
         
         .navigationBarTitleDisplayMode(.inline)

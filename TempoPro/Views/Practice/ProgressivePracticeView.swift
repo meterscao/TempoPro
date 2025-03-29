@@ -115,20 +115,19 @@ struct ProgressivePracticeView: View {
                 }
             }) {
                 HStack(spacing: 5) {
-                    Image("icon-play")
+                    Image("icon-play-s")
                         .renderingMode(.template)
                         .resizable()
                         .frame(width: 20, height: 20)   
                     Text("Start")
-                        .font(.custom("MiSansLatin-Semibold", size: 17))
+                        .font(.custom("MiSansLatin-Regular", size: 16))
                 }
-                .foregroundColor(Color("textPrimaryColor"))
+                .foregroundColor(isSettingValid ? Color("textPrimaryColor") : Color("textSecondaryColor").opacity(0.5))
                 .frame(height: 52)
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                    
-                        .fill(isSettingValid ? Color("backgroundSecondaryColor") : Color("backgroundSecondaryColor").opacity(0.5))
+                        .fill(isSettingValid ? .green.opacity(0.2) : Color("backgroundSecondaryColor").opacity(0.3))
                 )
             }
             .disabled(!isSettingValid)
@@ -147,8 +146,8 @@ struct ProgressivePracticeView: View {
     
     // 时间模式设置视图
     private var timeSetupView: some View {
-        VStack(spacing: 5) {
-            HStack(spacing: 5) {
+        VStack(spacing: 3) {
+            HStack(spacing: 3) {
                 // From BPM
                 HStack(spacing: 0) {
                     Text("From")
@@ -171,7 +170,7 @@ struct ProgressivePracticeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color("backgroundSecondaryColor"))
-                .cornerRadius(6)
+                .cornerRadius(4)
                 
                 
                 
@@ -199,13 +198,13 @@ struct ProgressivePracticeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color("backgroundSecondaryColor"))
-                .cornerRadius(6)
+                .cornerRadius(4)
                 
                 
                 
                 
             }
-            HStack(spacing:5){
+            HStack(spacing:3){
                 // Every X Seconds
                 HStack(spacing: 0) {
                     Text("Every")
@@ -229,7 +228,7 @@ struct ProgressivePracticeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color("backgroundSecondaryColor"))
-                .cornerRadius(6)
+                .cornerRadius(4)
 
                 // Increment BPM
                 HStack(spacing: 0) {
@@ -259,7 +258,7 @@ struct ProgressivePracticeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color("backgroundSecondaryColor"))
-                .cornerRadius(6)
+                .cornerRadius(4)
             }
             
             
@@ -269,8 +268,8 @@ struct ProgressivePracticeView: View {
     
     // 小节模式设置视图
     private var barSetupView: some View {
-        VStack(spacing: 5) {
-            HStack(spacing: 5) {
+        VStack(spacing: 3) {
+            HStack(spacing: 3) {
                 // From BPM
                 HStack(spacing: 0) {
                     Text("From")
@@ -295,7 +294,7 @@ struct ProgressivePracticeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color("backgroundSecondaryColor"))
-                .cornerRadius(6)
+                .cornerRadius(4)
                 
                 // To BPM
                 HStack(spacing: 0) {
@@ -322,14 +321,14 @@ struct ProgressivePracticeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color("backgroundSecondaryColor"))
-                .cornerRadius(6)
+                .cornerRadius(4)
                 
                 
                 
                 
             }
             
-            HStack(spacing: 5){
+            HStack(spacing: 3){
                 // Every X Bars
                     HStack(spacing: 0) {
                         Text("Every")
@@ -354,7 +353,7 @@ struct ProgressivePracticeView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .background(Color("backgroundSecondaryColor"))
-                    .cornerRadius(6)
+                    .cornerRadius(4)
                 
                 
                 // Increment BPM
@@ -388,7 +387,7 @@ struct ProgressivePracticeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color("backgroundSecondaryColor"))
-                .cornerRadius(6)
+                .cornerRadius(4)
                 
             }
             
@@ -405,7 +404,7 @@ struct ProgressivePracticeView: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 40)
                         .stroke(lineWidth: lineWidth)
-                        .foregroundColor(theme.primaryColor.opacity(0.3))
+                        .foregroundColor(Color("AccentColor").opacity(0.3))
                     
                     VStack {
                         // 当前BPM值显示
@@ -483,7 +482,7 @@ struct ProgressivePracticeView: View {
                     RoundedRectangle(cornerRadius: 40)
                         .trim(from: 0, to: practiceTimerState.stepCycleProgress)
                         .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-                        .foregroundColor(theme.primaryColor)
+                        .foregroundColor(Color("AccentColor"))
                         .rotationEffect(Angle(degrees: -90.0))
                         .animation(practiceTimerState.isCompletingCycle ? .linear(duration: 0.5) : .linear(duration: 1.0), value: practiceTimerState.stepCycleProgress)
                         .frame(width: geometry.size.height, height: geometry.size.width)
@@ -512,7 +511,7 @@ struct ProgressivePracticeView: View {
                     .foregroundColor(.white)
                     .frame(height: 52)
                     .frame(maxWidth: .infinity)
-                    .background(theme.primaryColor)
+                    .background(Color("AccentColor"))
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                 .contentShape(Rectangle())

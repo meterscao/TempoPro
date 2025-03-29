@@ -73,8 +73,7 @@ struct SettingsView: View {
                 // 音效设置
                 Section(header: Text("Sound Effects").foregroundColor(Color("textSecondaryColor"))) {
                     NavigationLink(destination: SoundEffectsView()) {
-                        Text("Rhythm Sound")
-                            
+                        Text("Sound Effects")
                     }
                     
                 }
@@ -136,10 +135,10 @@ struct PremiumLabelView: View {
     var body: some View {
         Text("Premium")
             .font(.custom("MiSansLatin-Semibold", size: 14))
-            .foregroundColor(.purple)
+            .foregroundColor(.orange)
             .padding(.vertical, 3)
             .padding(.horizontal, 6)
-            .background(.purple.opacity(0.2))
+            .background(.orange.opacity(0.2))
             .cornerRadius(5)
             
     }

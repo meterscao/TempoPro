@@ -20,6 +20,8 @@ struct SoundEffectsView: View {
     
     // 初始状态使用 MetronomeState 中当前的音效设置
     @State private var selectedSoundKey: String = ""
+
+
     // 环境变量
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
@@ -31,52 +33,67 @@ struct SoundEffectsView: View {
 
     
     var body: some View {
-        List {
-            
-            Section(){
-                ForEach(soundOptions, id: \.key) { soundSet in
-                    Button(action: {
-                        // 更新选中的音效键
-                        selectedSoundKey = soundSet.key
-                        
-                        // 更新 MetronomeState 中的音效设置
-                        metronomeState.updateSoundSet(soundSet)
-                    }) {
-                        HStack {
-                            ZStack(){
+        
+        VStack(){
+            ListView {
+                
+                SectionView{
+                    ForEach(soundOptions, id: \.key) { soundSet in
+                        Button(action: {
+                            // 更新选中的音效键
+                            selectedSoundKey = soundSet.key
+                            audioEngine.previewSoundSet(soundSet)
+                            
+                        }) {
+                            HStack {
+                                
+                                Text(soundSet.displayName)
+                                    .font(.custom("MiSansLatin-Regular", size: 16))
+                                    .foregroundColor(Color("textPrimaryColor"))
+                                Spacer()
+                                
                                 if selectedSoundKey == soundSet.key {
                                     Image("icon-check-s")
                                     .renderingMode(.template)
                                     .foregroundColor(Color("textPrimaryColor"))
                                     
                                 }
-                            }
-                            .frame(width: 20, height: 20)
-                            
-                            Text(soundSet.displayName)
-                                .font(.custom("MiSansLatin-Regular", size: 16))
-                                .foregroundColor(Color("textPrimaryColor"))
-                            Spacer()
-                            
-                            Button(action: {
-                                // 播放音效预览
-                                audioEngine.previewSoundSet(soundSet)
-                            }) {
-                                Image("icon-circle-play-s")
-                                    .renderingMode(.template)
-                                    .foregroundColor(Color("textPrimaryColor"))
+                                
+                                
                             }
                         }
+                        .foregroundColor(Color("textPrimaryColor"))
                     }
-                    .foregroundColor(Color("textPrimaryColor"))
                 }
+                
             }
-            .listRowBackground(Color("backgroundSecondaryColor"))
+            
+            VStack(spacing: 0){
+                Button(action: {
+                    // 更新 MetronomeState 中的音效设置
+//                    metronomeState.updateSoundSet(soundSet)
+                }) {
+                    HStack(){
+                        Text("确定")
+                            .font(.custom("MiSansLatin-Regular", size: 16))
+                        PremiumLabelView()
+                        
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .foregroundColor(Color("textPrimaryColor"))
+                    .background(Color("backgroundSecondaryColor"))
+                    .cornerRadius(12)
+                }
+                
+            }
+            .padding(.vertical, 20)
+            .padding(.horizontal, 20)
         }
-        
-        .background(theme.backgroundColor)
+        .background(Color("backgroundPrimaryColor"))
         .scrollContentBackground(.hidden)
         .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
+        .navigationTitle("Sound Effect")
         .onAppear {
             // 确保音频引擎已初始化
             audioEngine.initialize()
@@ -92,4 +109,11 @@ struct SoundEffectsView: View {
             audioEngine.cleanupBeforeDestroy()
         }
     }
+}
+
+
+#Preview{
+    SoundEffectsView()
+        .environmentObject(MetronomeState())
+        
 }

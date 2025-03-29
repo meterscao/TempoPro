@@ -141,14 +141,14 @@ struct PerformanceInsightsView: View {
                         
                         Text(mostPracticedTempo)
                             .font(.custom("MiSansLatin-Semibold", size: 18))
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(.accent)
                     }
                     
                     Spacer()
                     
                     ZStack {
                         Circle()
-                            .fill(theme.primaryColor.opacity(0.1))
+                            .fill(Color("AccentColor").opacity(0.1))
                             .frame(width: 32, height: 32)
                         
                         Image("icon-circle-gauge-s")
@@ -167,14 +167,14 @@ struct PerformanceInsightsView: View {
                         
                         Text(longestSession)
                             .font(.custom("MiSansLatin-Semibold", size: 18))
-                            .foregroundColor(theme.primaryColor)
+                            .foregroundColor(.accent)
                     }
                     
                     Spacer()
                     
                     ZStack {
                         Circle()
-                            .fill(theme.primaryColor.opacity(0.1))
+                            .fill(Color("AccentColor").opacity(0.1))
                             
                             .frame(width: 32, height: 32)
                         
@@ -216,7 +216,7 @@ struct StatsSummaryCard: View {
         VStack(spacing: 5) {
             Text(value)
                 .font(.custom("MiSansLatin-Semibold", size: 28))
-                .foregroundColor(theme.primaryColor)
+                .foregroundColor(.accent)
             
             Text(label)
                 .font(.custom("MiSansLatin-Regular", size: 12))
@@ -238,7 +238,7 @@ struct NavigationButton: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
-                .fill(isActive ? theme.primaryColor.opacity(0.8) : theme.primaryColor.opacity(0.2))
+                .fill(isActive ? Color("AccentColor").opacity(0.8) : Color("AccentColor").opacity(0.2))
                 .frame(width: 48, height: 48)
             
             Image(systemName: icon)

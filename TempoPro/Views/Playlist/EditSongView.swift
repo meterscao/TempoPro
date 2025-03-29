@@ -87,7 +87,7 @@ struct EditSongView: View {
                                 get: { Double(tempo) },
                                 set: { tempo = Int($0) }
                             ), in: 30...240, step: 1)
-                            .accentColor(theme.primaryColor)
+                            
                     }
                     
                 } header: {
@@ -276,7 +276,7 @@ struct EditSongView: View {
                     }) {
                         Text(isEditMode ? "保存" : "添加")
                             .font(.custom("MiSansLatin-Semibold", size: 16))
-                            .foregroundColor(songName.isEmpty ? Color("textSecondaryColor").opacity(0.5) : theme.primaryColor)
+                            .foregroundColor(songName.isEmpty ? Color("textSecondaryColor").opacity(0.5) : Color("AccentColor"))
                     }
                     .buttonStyle(PlainButtonStyle())    
                     .disabled(songName.isEmpty)

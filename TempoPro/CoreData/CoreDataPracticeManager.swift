@@ -393,7 +393,7 @@ class CoreDataPracticeManager: ObservableObject {
                     session.tempo = Int16(finalTempo)
                     
                     // 生成合理的练习时长 (10分钟到1小时)
-                    let durationMinutes = Double.random(in: 10...60)
+                    let durationMinutes = Double.random(in: 0...30)
                     session.duration = Int32(durationMinutes * 60)
                     
                     // 设置一天内的开始时间
