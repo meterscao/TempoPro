@@ -65,6 +65,7 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
     private var cancellables = Set<AnyCancellable>()  // 取消令牌集合
     private var resetProgressTask: DispatchWorkItem?  // 用于控制重置进度的任务
     private var stepUpdateTask: DispatchWorkItem?     // 用于 Step 模式 BPM 更新的任务
+    private var cycleStartBarCount: Int = 0           // 当前循环开始时的小节计数
     
     // MARK: - 初始化
     init(metronomeState: MetronomeState) {
@@ -86,6 +87,7 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         // 重置状态
         elapsedSeconds = 0
         practiceStatus = .standby
+        cycleStartBarCount = 0
         
         if mode == .progressive {
             currentBPM = progressiveFromBPM
@@ -102,11 +104,24 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         elapsedSeconds = 0
         practiceStatus = .running
         
+        // 设置正确的循环起始小节数
+        // 如果节拍器不在播放状态，设置为0，因为play()会重置completedBars
+        // 否则使用当前值
+        if !metronomeState.isPlaying {
+            cycleStartBarCount = 0
+            print("初始化cycleStartBarCount为0(未播放状态)")
+        } else {
+            cycleStartBarCount = metronomeState.completedBars
+            print("初始化cycleStartBarCount为\(cycleStartBarCount)(已播放状态)")
+        }
+        
         // 根据练习模式设置初始状态
         if activeMode == .countdown {
             // 倒计时模式 - 根据同步设置启动节拍器
             if isSyncStartEnabled && !metronomeState.isPlaying {
                 metronomeState.play()
+                // play()会重置completedBars为0，需要确保循环起始值一致
+                cycleStartBarCount = 0
             }
         } else if activeMode == .progressive {
             // 渐进模式 - 设置初始BPM并启动节拍器
@@ -115,6 +130,8 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
             
             if !metronomeState.isPlaying {
                 metronomeState.play()
+                // play()会重置completedBars为0，需要确保循环起始值一致
+                cycleStartBarCount = 0
             }
             
             // 重置更新计数
@@ -169,6 +186,7 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         
         practiceStatus = .standby
         elapsedSeconds = 0
+        cycleStartBarCount = 0
         
         // 停止节拍器
         metronomeState?.stop()
@@ -199,6 +217,16 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         if state == .standby && (practiceStatus == .running || practiceStatus == .paused) {
             stopPractice()
         }
+        
+        // 监听播放状态变化，同步cycleStartBarCount
+        if state == .playing && (practiceStatus == .running || practiceStatus == .paused) {
+            // 节拍器刚开始播放时，completedBars会被重置为0
+            // 我们需要确保cycleStartBarCount也同步重置
+            if let metronomeState = metronomeState, metronomeState.completedBars == 0 {
+                print("检测到节拍器重置，同步cycleStartBarCount为0")
+                cycleStartBarCount = 0
+            }
+        }
     }
     
     // 节拍完成回调
@@ -223,10 +251,12 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         
         // 检查是否完成倒计时小节
         if activeMode == .countdown && practiceStatus == .running && countdownType == .bar {
-            print("【委托】检查小节完成条件: barCount(\(barCount)) >= targetBars(\(targetBars)): \(barCount >= targetBars)")
+            // 计算当前循环中已完成的小节数
+            let completedBarsInCurrentCycle = barCount - cycleStartBarCount
+            print("【委托】检查小节完成条件: 循环起始(\(cycleStartBarCount)), 当前总计(\(barCount)), 本循环已完成(\(completedBarsInCurrentCycle)), 目标(\(targetBars)): \(completedBarsInCurrentCycle >= targetBars)")
             
             // 检查是否达到目标小节
-            if barCount >= targetBars {
+            if completedBarsInCurrentCycle >= targetBars {
                 // 直接调用完成练习
                 print("【委托】小节达到目标，调用完成练习")
                 completePractice()
@@ -365,7 +395,7 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         
         // 创建延迟任务
         let task = DispatchWorkItem { [weak self] in
-            guard let self = self else { return }
+            guard let self = self, let metronomeState = self.metronomeState else { return }
             
             DispatchQueue.main.async {
                 print("循环模式：重置计时器")
@@ -373,6 +403,14 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
                     self.isCompletingCycle = false
                     self.elapsedSeconds = 0
                 }
+                
+                // 更新循环起始小节数为当前小节数
+                self.cycleStartBarCount = metronomeState.completedBars
+                print("循环模式：更新循环起始小节数为 \(self.cycleStartBarCount)")
+                
+                // 验证计算是否正确
+                let completedBarsInCurrentCycle = metronomeState.completedBars - self.cycleStartBarCount
+                print("循环模式：验证 - 当前总计(\(metronomeState.completedBars)), 循环起始(\(self.cycleStartBarCount)), 本循环已完成(\(completedBarsInCurrentCycle)), 目标(\(self.targetBars))")
                 
                 self.practiceStatus = .running
                 self.startTimer()
@@ -410,10 +448,10 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
             return 0
         }
         
-        // 使用completedBars而不是currentBarNumber进行计算，确保与metronomeDidCompleteBar逻辑一致
-        let completedBars = metronomeState.completedBars
-        print("计算剩余小节: 已完成(\(completedBars)), 目标(\(targetBars)), 剩余(\(max(targetBars - completedBars, 0)))")
-        return max(targetBars - completedBars, 0)
+        // 计算相对于当前循环的已完成小节数
+        let completedBarsInCurrentCycle = metronomeState.completedBars - cycleStartBarCount
+        print("计算剩余小节: 循环起始(\(cycleStartBarCount)), 当前总计(\(metronomeState.completedBars)), 本循环已完成(\(completedBarsInCurrentCycle)), 目标(\(targetBars)), 剩余(\(max(targetBars - completedBarsInCurrentCycle, 0)))")
+        return max(targetBars - completedBarsInCurrentCycle, 0)
     }
     
     // 进度 - 当前练习的完成进度（0.0-1.0）
@@ -429,8 +467,9 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
                 return targetTime > 0 ? CGFloat(elapsedSeconds) / CGFloat(targetTime) : 0.01
             } else {
                 guard let metronomeState = metronomeState else { return 0.01 }
-                let completedBars = metronomeState.completedBars
-                return min(CGFloat(completedBars) / CGFloat(targetBars), 1.0)
+                // 使用相对于当前循环开始的小节数计算进度
+                let completedBarsInCurrentCycle = metronomeState.completedBars - cycleStartBarCount
+                return min(CGFloat(completedBarsInCurrentCycle) / CGFloat(targetBars), 1.0)
             }
         } else if activeMode == .progressive {
             // 渐进模式 - 计算BPM变化进度

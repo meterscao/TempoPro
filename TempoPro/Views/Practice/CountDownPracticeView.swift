@@ -58,10 +58,26 @@ struct CountDownPracticeView: View {
                     .preferredColorScheme(.dark)
                     .frame(width: 200)
                     .onChange(of: selectedTimerType) { newValue in
+                        // 确保在更改前保存之前的状态
+                        let previousType = practiceCoordinator.countdownType
+                        
                         if newValue == "time" {
                             practiceCoordinator.countdownType = .time
+                            // 确保时间值有效
+                            if practiceCoordinator.targetTime == 0 {
+                                practiceCoordinator.targetTime = 60 // 设置默认值，例如1分钟
+                            }
                         } else {
                             practiceCoordinator.countdownType = .bar
+                            // 确保小节值有效
+                            if practiceCoordinator.targetBars == 0 {
+                                practiceCoordinator.targetBars = 4 // 设置默认值，例如4小节
+                            }
+                        }
+                        
+                        // 如果需要，进行额外的状态重置
+                        if previousType != practiceCoordinator.countdownType {
+                            // 重置相关状态
                         }
                     }
                     
@@ -118,7 +134,7 @@ struct CountDownPracticeView: View {
             }
             .frame(maxWidth: .infinity,maxHeight: .infinity)
             .background(Color("backgroundSecondaryColor"))
-            .cornerRadius(12)
+            .cornerRadius(15)
             .padding(.horizontal,20)
             .padding(.vertical,20)
             
