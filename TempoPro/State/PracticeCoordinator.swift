@@ -5,6 +5,13 @@
 //  Created by Ringo Cao on 2025/3/24.
 //
 
+// MARK: - 架构说明
+// 该文件实现了节拍器的练习模式功能，采用委托模式与节拍器核心交互
+// 架构改进 (2025/04):
+// 1. 引入了高级委托协议(AdvancedMetronomePlaybackDelegate)，提供更精确的小节计时控制
+// 2. 通过"即将完成小节"事件(metronomeWillCompleteBar)解决了倒计时不准确的问题
+// 3. 将完成判断逻辑从小节完成后(didComplete)移动到小节完成前(willComplete)
+// 4. 保留了向后兼容性，确保系统平滑过渡到新架构
 
 import Foundation
 import Combine
@@ -32,7 +39,7 @@ enum PracticeStatus {
 }
 
 // 练习模式协调器 - 负责协调节拍器与练习模式之间的交互
-class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
+class PracticeCoordinator: ObservableObject, AdvancedMetronomePlaybackDelegate {
     // MARK: - 公开状态属性
     @Published private(set) var activeMode: PracticeMode = .none      // 当前激活的练习模式
     @Published private(set) var practiceStatus: PracticeStatus = .standby  // 当前练习状态
@@ -231,7 +238,35 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
     
     // 节拍完成回调
     func metronomeDidCompleteBeat(beatIndex: Int, isLastBeat: Bool) {
-        // 此处可以处理拍子完成事件
+        // 在最后一拍也可以处理拍子完成事件，但现在我们改用高级委托方法
+    }
+    
+    // 小节即将完成回调（AdvancedMetronomePlaybackDelegate）
+    func metronomeWillCompleteBar(barCount: Int) {
+        // 添加日志
+        print("【高级委托】小节即将完成: \(barCount), 目标小节: \(targetBars), 练习状态: \(practiceStatus), 练习模式: \(activeMode), 倒计时类型: \(countdownType)")
+        
+        // 检查倒计时模式是否需要提前结束
+        if activeMode == .countdown && practiceStatus == .running && countdownType == .bar {
+            // 计算当前循环中即将完成的小节数（包括当前即将完成的小节）
+            let willCompleteBarCount = barCount - cycleStartBarCount
+            
+            print("【高级委托】检查小节完成条件: 循环起始(\(cycleStartBarCount)), 即将完成总计(\(barCount)), 本循环即将完成(\(willCompleteBarCount)), 目标(\(targetBars)): \(willCompleteBarCount == targetBars)")
+            
+            // 检查即将完成的小节是否正好达到目标数量
+            if willCompleteBarCount == targetBars {
+                // 在小节的最后一拍完成时就停止，而不是等到下一小节开始
+                print("【高级委托】小节即将达到目标，提前调用完成练习")
+                
+                // 注意：已不再需要异步调用completePractice
+                // 因为在MetronomeTimer中会直接调用
+                // 这里保留代码是为了在其他情况下仍能正常工作
+                // DispatchQueue.main.async { [weak self] in
+                //     guard let self = self else { return }
+                //     self.completePractice()
+                // }
+            }
+        }
     }
     
     // 小节完成回调
@@ -249,18 +284,12 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
             }
         }
         
-        // 检查是否完成倒计时小节
+        // 注意：倒计时模式下的小节检查已移至 metronomeWillCompleteBar 方法
+        // 这里保留代码是为了向后兼容，但不应再触发完成事件
         if activeMode == .countdown && practiceStatus == .running && countdownType == .bar {
             // 计算当前循环中已完成的小节数
             let completedBarsInCurrentCycle = barCount - cycleStartBarCount
-            print("【委托】检查小节完成条件: 循环起始(\(cycleStartBarCount)), 当前总计(\(barCount)), 本循环已完成(\(completedBarsInCurrentCycle)), 目标(\(targetBars)): \(completedBarsInCurrentCycle >= targetBars)")
-            
-            // 检查是否达到目标小节
-            if completedBarsInCurrentCycle >= targetBars {
-                // 直接调用完成练习
-                print("【委托】小节达到目标，调用完成练习")
-                completePractice()
-            }
+            print("【委托】检查小节完成条件（已由高级委托预先处理）: 循环起始(\(cycleStartBarCount)), 当前总计(\(barCount)), 本循环已完成(\(completedBarsInCurrentCycle)), 目标(\(targetBars))")
         }
     }
     
@@ -357,8 +386,15 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
     }
     
     // 完成练习 - 处理练习达到目标的情况
-    private func completePractice() {
-        print("进入completePractice，循环模式: \(isLoopEnabled), 同步停止: \(isSyncStopEnabled)")
+    func completePractice() {
+        print("进入completePractice，循环模式: \(isLoopEnabled), 同步停止: \(isSyncStopEnabled), 当前状态: \(practiceStatus)")
+        
+        // 检查状态，避免重复调用
+        if practiceStatus == .completed {
+            print("练习已经处于完成状态，忽略此次调用")
+            return
+        }
+        
         timer?.invalidate()
         timer = nil
         
@@ -499,5 +535,26 @@ class PracticeCoordinator: ObservableObject, MetronomePlaybackDelegate {
         if let metronomeState = metronomeState {
             metronomeState.removeDelegate(self)
         }
+    }
+    
+    /// 检查给定的小节计数是否达到了目标小节数
+    /// - Parameter barCount: 当前完成的小节数
+    /// - Returns: 如果达到目标小节数则返回true，否则返回false
+    public func isTargetBarReached(barCount: Int) -> Bool {
+        print("PracticeCoordinator - 检查是否达到目标小节: barCount=\(barCount), activeMode=\(activeMode), countdownType=\(countdownType), practiceStatus=\(practiceStatus)")
+        
+        // 只有在倒计时模式、小节计数类型和正在运行状态下才进行检查
+        guard activeMode == .countdown && 
+              countdownType == .bar && 
+              practiceStatus == .running else {
+            return false
+        }
+        
+        // 计算相对于循环开始的小节数
+        let completedBarCount = barCount - cycleStartBarCount
+        print("PracticeCoordinator - 计算完成小节: completedBarCount=\(completedBarCount), targetBars=\(targetBars)")
+        
+        // 检查是否达到目标小节数
+        return completedBarCount == targetBars
     }
 }

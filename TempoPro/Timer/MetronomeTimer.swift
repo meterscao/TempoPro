@@ -182,9 +182,40 @@ class MetronomeTimer {
         
         // 检测小节完成：当节拍回到第一拍(0)，且当前不是第一拍，说明完成了一个小节
         if nextBeatNumber == 0 && state.currentBeat > 0 {
-            // 调用onBarCompleted而不是incrementCompletedBar
-            DispatchQueue.main.async {
+            // 小节即将完成，先通知外部组件
+            var shouldContinuePlaying = true
+            
+            // 设置一个小节完成标志，用于检查是否应该停止
+            DispatchQueue.main.sync {
+                print("MetronomeTimer - 检测到小节即将完成，当前拍: \(state.currentBeat), 下一拍: \(nextBeatNumber)")
+                
+                // 当前节拍是小节的最后一拍，即将完成一个小节
+                // 计算将要完成的小节编号
+                let nextBarCount = state.completedBars + 1
+                
+                // 调用onLastBeatOfBarCompleted触发高级通知
+                state.onLastBeatOfBarCompleted()
+                
+                // 如果练习协调器存在，检查是否需要停止
+                if let coordinator = state.practiceCoordinator,
+                   coordinator.isTargetBarReached(barCount: nextBarCount) {
+                    print("MetronomeTimer - 检测到达到目标小节数，取消播放下一拍")
+                    shouldContinuePlaying = false
+                    
+                    // 直接调用completePractice而不是异步调用
+                    coordinator.completePractice()
+                }
+                
+                // 然后再调用onBarCompleted增加小节计数
                 state.onBarCompleted()
+            }
+            
+            // 如果达到目标小节，不再继续播放
+            if !shouldContinuePlaying {
+                print("MetronomeTimer - 已达到目标，跳过播放下一拍")
+                // 仍然计算下一拍时间，但不播放
+                nextBeatTime += (60.0 / Double(state.tempo))
+                return
             }
         }
         

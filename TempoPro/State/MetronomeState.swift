@@ -2,6 +2,14 @@ import Foundation
 import Combine
 import SwiftUI
 
+// MARK: - 架构说明
+// 该文件实现了节拍器的核心状态管理和事件分发
+// 架构改进 (2025/04):
+// 1. 引入了高级委托协议(AdvancedMetronomePlaybackDelegate)，增强事件系统精确度
+// 2. 添加了小节完成前的预通知机制，使外部组件可以更精确地控制流程
+// 3. 保持了向后兼容性，不破坏现有组件的功能
+// 4. 优化了事件传递流程，使节拍完成和小节计数的时机更加合理
+
 // 添加播放状态枚举
 enum PlaybackState {
     case standby   // 默认状态/停止状态
@@ -14,6 +22,12 @@ protocol MetronomePlaybackDelegate: AnyObject {
     func metronomeDidChangePlaybackState(_ state: PlaybackState)
     func metronomeDidCompleteBeat(beatIndex: Int, isLastBeat: Bool)
     func metronomeDidCompleteBar(barCount: Int)
+}
+
+// 高级节拍器播放委托协议 - 用于更精确的节拍控制和预先通知
+protocol AdvancedMetronomePlaybackDelegate: MetronomePlaybackDelegate {
+    // 小节即将完成事件（当最后一拍完成时触发，在实际增加小节计数之前）
+    func metronomeWillCompleteBar(barCount: Int)
 }
 
 class MetronomeState: ObservableObject {
@@ -365,6 +379,26 @@ class MetronomeState: ObservableObject {
         
         // 通知委托
         notifyBeatCompleted(beatIndex: beatIndex, isLastBeat: isLastBeat)
+        
+        // 如果是最后一拍，调用特殊处理方法
+        if isLastBeat {
+            onLastBeatOfBarCompleted()
+        }
+    }
+    
+    // 最后一拍完成时调用 - 用于在小节真正完成前发出通知
+    func onLastBeatOfBarCompleted() {
+        // 下一个小节将要是第几个小节
+        let nextBarCount = completedBars + 1
+        
+        print("MetronomeState - 即将完成第\(nextBarCount)个小节，预先通知委托")
+        
+        // 通知委托小节即将完成事件
+        delegates.forEach { delegate in
+            if let advancedDelegate = delegate as? AdvancedMetronomePlaybackDelegate {
+                advancedDelegate.metronomeWillCompleteBar(barCount: nextBarCount)
+            }
+        }
     }
     
     func onBarCompleted() {
