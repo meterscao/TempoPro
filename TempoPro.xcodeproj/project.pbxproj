@@ -51,12 +51,6 @@
 		3AE469FE2D8C73DC00125F3D /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */; };
 		C7016BB02D956D9F0002DE6F /* StreaksDayStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */; };
 		C7016BB52D96BBF90002DE6F /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7016BB42D96BBF90002DE6F /* ListView.swift */; };
-		C71F58FD2D9AA77700F5E195 /* TimingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F58FC2D9AA77700F5E195 /* TimingService.swift */; };
-		C71F58FF2D9AA7C000F5E195 /* MetronomeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F58FE2D9AA7C000F5E195 /* MetronomeModel.swift */; };
-		C71F59012D9AA7D200F5E195 /* MetronomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F59002D9AA7D200F5E195 /* MetronomeController.swift */; };
-		C71F59032D9AA84200F5E195 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F59022D9AA84200F5E195 /* StorageService.swift */; };
-		C71F59052D9AA88000F5E195 /* AudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F59042D9AA88000F5E195 /* AudioService.swift */; };
-		C71F59072D9AAC3A00F5E195 /* MetronomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F59062D9AAC3A00F5E195 /* MetronomeViewModel.swift */; };
 		C75FB77B2D91414600AC8D61 /* PracticeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75FB77A2D91414600AC8D61 /* PracticeCoordinator.swift */; };
 		C75FB77E2D91464900AC8D61 /* CountDownPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75FB77D2D91464900AC8D61 /* CountDownPracticeView.swift */; };
 		C7879CB82D8430DC00B52E59 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = C7879CB72D8430DC00B52E59 /* RevenueCat */; };
@@ -159,12 +153,6 @@
 		3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
 		C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksDayStatsView.swift; sourceTree = "<group>"; };
 		C7016BB42D96BBF90002DE6F /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
-		C71F58FC2D9AA77700F5E195 /* TimingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimingService.swift; sourceTree = "<group>"; };
-		C71F58FE2D9AA7C000F5E195 /* MetronomeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeModel.swift; sourceTree = "<group>"; };
-		C71F59002D9AA7D200F5E195 /* MetronomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeController.swift; sourceTree = "<group>"; };
-		C71F59022D9AA84200F5E195 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
-		C71F59042D9AA88000F5E195 /* AudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioService.swift; sourceTree = "<group>"; };
-		C71F59062D9AAC3A00F5E195 /* MetronomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeViewModel.swift; sourceTree = "<group>"; };
 		C75FB77A2D91414600AC8D61 /* PracticeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeCoordinator.swift; sourceTree = "<group>"; };
 		C75FB77D2D91464900AC8D61 /* CountDownPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownPracticeView.swift; sourceTree = "<group>"; };
 		C7879CBC2D84345100B52E59 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -251,7 +239,6 @@
 		3A9C889E2D6F728A004CFD88 /* TempoPro */ = {
 			isa = PBXGroup;
 			children = (
-				C71F58FB2D9AA75000F5E195 /* Refactor */,
 				3AD042E72D7D8704002EAB55 /* Models */,
 				F7F058A22D787BD5005DF482 /* CoreData */,
 				F7F538E42D75D59700A7395C /* Utils */,
@@ -343,35 +330,6 @@
 				C7016BB42D96BBF90002DE6F /* ListView.swift */,
 			);
 			path = Components;
-			sourceTree = "<group>";
-		};
-		C71F58FB2D9AA75000F5E195 /* Refactor */ = {
-			isa = PBXGroup;
-			children = (
-				C71F590C2D9AAD1800F5E195 /* Core */,
-				C71F59082D9AACF300F5E195 /* Services */,
-			);
-			path = Refactor;
-			sourceTree = "<group>";
-		};
-		C71F59082D9AACF300F5E195 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				C71F59042D9AA88000F5E195 /* AudioService.swift */,
-				C71F58FC2D9AA77700F5E195 /* TimingService.swift */,
-				C71F59022D9AA84200F5E195 /* StorageService.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
-		C71F590C2D9AAD1800F5E195 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				C71F59002D9AA7D200F5E195 /* MetronomeController.swift */,
-				C71F59062D9AAC3A00F5E195 /* MetronomeViewModel.swift */,
-				C71F58FE2D9AA7C000F5E195 /* MetronomeModel.swift */,
-			);
-			path = Core;
 			sourceTree = "<group>";
 		};
 		C75FB77C2D91463800AC8D61 /* Practice */ = {
@@ -707,9 +665,7 @@
 				C7DD3D192D97D7A9009E2ED8 /* LibraryDetailView.swift in Sources */,
 				F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */,
 				F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */,
-				C71F59012D9AA7D200F5E195 /* MetronomeController.swift in Sources */,
 				C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */,
-				C71F59052D9AA88000F5E195 /* AudioService.swift in Sources */,
 				C7016BB02D956D9F0002DE6F /* StreaksDayStatsView.swift in Sources */,
 				3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */,
 				3AB6A8662D79F27000760B80 /* PracticeCompletionView.swift in Sources */,
@@ -726,16 +682,13 @@
 				F7FF3F232D7078E900390C16 /* TimeSignatureView.swift in Sources */,
 				F7FF3F162D7073EB00390C16 /* MetronomeTimer.swift in Sources */,
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
-				C71F58FD2D9AA77700F5E195 /* TimingService.swift in Sources */,
 				F75EC5672D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift in Sources */,
 				3A25ED092D8DBCBA009261FA /* PracticeTimerState.swift in Sources */,
 				F792941C2D7B12B000A2D91C /* WeeklyStatsView.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				3AE469FE2D8C73DC00125F3D /* ViewExtension.swift in Sources */,
-				C71F58FF2D9AA7C000F5E195 /* MetronomeModel.swift in Sources */,
 				3A25ED0B2D904C7E009261FA /* ProgressivePracticeView.swift in Sources */,
 				F7F0589C2D787728005DF482 /* PersistenceController.swift in Sources */,
-				C71F59072D9AAC3A00F5E195 /* MetronomeViewModel.swift in Sources */,
 				3A011FF42D89CEDC00F2853F /* SubscriptionManager.swift in Sources */,
 				C7016BB52D96BBF90002DE6F /* ListView.swift in Sources */,
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
@@ -749,7 +702,6 @@
 				F750D23B2D7816360022C405 /* SongsListView.swift in Sources */,
 				F750D23C2D7816360022C405 /* LibraryListView.swift in Sources */,
 				F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */,
-				C71F59032D9AA84200F5E195 /* StorageService.swift in Sources */,
 				F7F058A42D787BF3005DF482 /* ColorExtension.swift in Sources */,
 				F71AF6B22D716E4B00ADBC17 /* ThemeManager.swift in Sources */,
 				F7F058992D787651005DF482 /* TempoProModel.xcdatamodeld in Sources */,
