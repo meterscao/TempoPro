@@ -41,12 +41,22 @@ protocol MetronomeTimerDelegate: AnyObject {
     
     // 完成练习
     func completePractice()
+    
+    // 音频相关委托方法
+    
+    // 确保音频引擎正在运行
+    func ensureAudioEngineRunning()
+    
+    // 播放指定状态的拍子声音
+    func playBeatSound(status: BeatStatus)
+    
+    // 播放切分音符声音
+    func playSubdivisionSound(atTimeOffset timeOffset: TimeInterval, withStatus status: BeatStatus)
 }
 
 class MetronomeTimer {
     // 委托对象
     private weak var delegate: MetronomeTimerDelegate?
-    private let audioEngine: MetronomeAudioEngine
     private var timer: DispatchSourceTimer?
     private let timerQueue = DispatchQueue(label: AppStorageKeys.QueueLabels.metronomeTimer, qos: .userInteractive)
     
@@ -57,8 +67,7 @@ class MetronomeTimer {
     private var subdivisionTimers: [DispatchSourceTimer] = []
     private var isPlayingSubdivisions: Bool = false
     
-    init(audioEngine: MetronomeAudioEngine, delegate: MetronomeTimerDelegate? = nil) {
-        self.audioEngine = audioEngine
+    init(delegate: MetronomeTimerDelegate? = nil) {
         self.delegate = delegate
     }
     
@@ -77,7 +86,7 @@ class MetronomeTimer {
         nextBeatTime = startTime
         
         // 初始化音频引擎一次，避免反复调用
-        audioEngine.ensureEngineRunning()
+        delegate?.ensureAudioEngineRunning()
         
         // 播放首拍
         playCurrentBeat()
@@ -152,7 +161,7 @@ class MetronomeTimer {
         nextBeatTime = startTime
         
         // 确保音频引擎正在运行
-        audioEngine.ensureEngineRunning()
+        delegate?.ensureAudioEngineRunning()
         
         // 播放当前拍
         playCurrentBeat()
@@ -199,7 +208,7 @@ class MetronomeTimer {
             print("播放节拍 - 拍号: \(beatsPerBar)/\(beatUnit), 当前第 \(currentBeat + 1) 拍, 重音类型: \(status)")
             
             // 确保引擎运行
-            audioEngine.ensureEngineRunning()
+            delegate.ensureAudioEngineRunning()
             
             // 只有非muted状态才播放
             if status != .muted {
@@ -209,7 +218,7 @@ class MetronomeTimer {
                     playSubdivisionPattern(pattern, for: status)
                 } else {
                     // 直接播放整拍
-                    audioEngine.playBeat(status: status)
+                    delegate.playBeatSound(status: status)
                 }
             } else {
                 print("静音拍 - 跳过播放")
@@ -290,7 +299,7 @@ class MetronomeTimer {
                 playSubdivisionPattern(pattern, for: nextBeatStatus)
             } else {
                 // 没有切分模式，直接播放整拍
-                audioEngine.playBeat(status: nextBeatStatus)
+                delegate.playBeatSound(status: nextBeatStatus)
             }
         }
         
@@ -313,17 +322,12 @@ class MetronomeTimer {
         let tempo = delegate.getCurrentTempo()
         let beatDuration = 60.0 / Double(tempo)
         
-        // 获取音效集
-        let soundSet = delegate.getSoundSet()
-        
         // 播放第一个音符（使用当前拍的强弱状态）
         if !pattern.notes.isEmpty && !pattern.notes[0].isMuted {
-            audioEngine.playBeat(status: beatStatus)
+            delegate.playBeatSound(status: beatStatus)
         }
         
         // 调度剩余的音符
-        var currentTime: TimeInterval = 0
-        
         for index in 1..<pattern.notes.count {
             let note = pattern.notes[index]
             
@@ -342,10 +346,8 @@ class MetronomeTimer {
             timer.setEventHandler { [weak self] in
                 guard let self = self, self.isPlayingSubdivisions else { return }
                 
-                DispatchQueue.main.async {
-                    // 对于切分音符中的后续音符，总是使用弱拍声音
-                    self.audioEngine.playBeat(status: .normal)
-                }
+                // 通过委托播放切分音符
+                self.delegate?.playSubdivisionSound(atTimeOffset: noteStartTime, withStatus: .normal)
             }
             
             // 保存定时器并启动

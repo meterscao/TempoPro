@@ -236,6 +236,12 @@ class PracticeCoordinator: ObservableObject, AdvancedMetronomePlaybackDelegate {
         }
     }
     
+    // 简化版播放状态变化回调（兼容重构后的接口）
+    func metronomePlaybackDidChangeState(isPlaying: Bool) {
+        // 此方法实现是为了兼容性，实际逻辑已在 metronomeDidChangePlaybackState 中处理
+        print("metronomePlaybackDidChangeState: isPlaying=\(isPlaying), 练习状态: \(practiceStatus)")
+    }
+    
     // 节拍完成回调
     func metronomeDidCompleteBeat(beatIndex: Int, isLastBeat: Bool) {
         // 在最后一拍也可以处理拍子完成事件，但现在我们改用高级委托方法

@@ -148,10 +148,10 @@ struct MetronomeToolbarView: View {
         }
 
         .sheet(isPresented: $showingStepTimerView) {
-            ProgressivePracticeView()
-                .presentationDetents([.medium])
-                .presentationDragIndicator(.hidden)
-                .compatibleCornerRadius(15)
+//            ProgressivePracticeView()
+//                .presentationDetents([.medium])
+//                .presentationDragIndicator(.hidden)
+//                .compatibleCornerRadius(15)
         }   
     }
     
