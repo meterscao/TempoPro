@@ -28,7 +28,7 @@ protocol MetronomeTimerDelegate: AnyObject {
     func completePractice()
 }
 
-class MetronomeTimer {
+class MetronomeTimerService {
     // MARK: - 属性
     
     // 委托对象 - 用于数据获取和逻辑判断

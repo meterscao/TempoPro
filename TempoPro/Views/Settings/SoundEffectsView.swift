@@ -10,7 +10,7 @@ import SwiftUI
 struct SoundEffectsView: View {
     
     // 使用共享实例而不是创建新实例
-    @ObservedObject private var audioEngine = MetronomeAudioEngine.shared
+    @ObservedObject private var audioEngine = MetronomeAudioService.shared
     
     // 添加对 MetronomeState 的引用
     @EnvironmentObject var metronomeState: MetronomeState

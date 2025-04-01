@@ -1,9 +1,9 @@
 import AVFoundation
 import Combine
 
-class MetronomeAudioEngine: ObservableObject {
+class MetronomeAudioService: ObservableObject {
     // 单例实现，确保整个应用只有一个音频引擎实例
-    static let shared = MetronomeAudioEngine()
+    static let shared = MetronomeAudioService()
     
     // 将初始化方法改为私有，防止外部创建多个实例
     private init() {}
