@@ -1,57 +1,34 @@
 import Foundation
 import UIKit
 
+// MARK: - 节拍器配置对象
+/// 包含Timer所需的所有数据，避免多次调用方法获取数据
+struct MetronomeConfiguration {
+    let tempo: Int
+    let beatsPerBar: Int
+    let currentBeat: Int
+    let beatUnit: Int
+    let beatStatuses: [BeatStatus]
+    let subdivisionPattern: SubdivisionPattern?
+    let soundSet: SoundSet
+    let completedBars: Int
+}
+
 // MARK: - MetronomeTimer委托协议
 protocol MetronomeTimerDelegate: AnyObject {
-    // 当节拍完成时调用
+    // 事件通知方法
     func timerDidCompleteBeat(beatIndex: Int)
-    
-    // 当小节的最后一拍完成时调用（在增加小节计数前）
     func timerWillCompleteBar(nextBarCount: Int)
-    
-    // 当小节完成时调用
     func timerDidCompleteBar()
     
-    // 获取当前tempo
-    func getCurrentTempo() -> Int
+    // 数据获取方法
+    func getCurrentConfiguration() -> MetronomeConfiguration
     
-    // 获取拍子数量
-    func getBeatsPerBar() -> Int
-    
-    // 获取当前拍号
-    func getCurrentBeat() -> Int
-    
-    // 获取拍号单位
-    func getBeatUnit() -> Int
-    
-    // 获取节拍状态
-    func getBeatStatuses() -> [BeatStatus]
-    
-    // 获取当前切分模式
-    func getSubdivisionPattern() -> SubdivisionPattern?
-    
-    // 获取当前音效集
-    func getSoundSet() -> SoundSet
-    
-    // 获取已完成小节数
-    func getCompletedBars() -> Int
-    
-    // 检查是否达到目标小节数
+    // 逻辑判断方法
     func isTargetBarReached(barCount: Int) -> Bool
     
     // 完成练习
     func completePractice()
-    
-    // 音频相关委托方法
-    
-    // 确保音频引擎正在运行
-    func ensureAudioEngineRunning()
-    
-    // 播放指定状态的拍子声音
-    func playBeatSound(status: BeatStatus)
-    
-    // 播放切分音符声音
-    func playSubdivisionSound(atTimeOffset timeOffset: TimeInterval, withStatus status: BeatStatus)
 }
 
 class MetronomeTimer {
@@ -66,6 +43,11 @@ class MetronomeTimer {
     // 切分音符播放相关属性
     private var subdivisionTimers: [DispatchSourceTimer] = []
     private var isPlayingSubdivisions: Bool = false
+    
+    // 回调函数属性，用于替代控制流委托方法
+    var onEnsureAudioEngineRunningNeeded: (() -> Void)?
+    var onPlayBeatSoundNeeded: ((BeatStatus) -> Void)?
+    var onPlaySubdivisionSoundNeeded: ((TimeInterval, BeatStatus) -> Void)?
     
     init(delegate: MetronomeTimerDelegate? = nil) {
         self.delegate = delegate
@@ -86,13 +68,14 @@ class MetronomeTimer {
         nextBeatTime = startTime
         
         // 初始化音频引擎一次，避免反复调用
-        delegate?.ensureAudioEngineRunning()
+        onEnsureAudioEngineRunningNeeded?()
         
         // 播放首拍
         playCurrentBeat()
         
         // 计算下一拍时间
-        let tempo = delegate?.getCurrentTempo() ?? 120
+        let config = delegate?.getCurrentConfiguration()
+        let tempo = config?.tempo ?? 120
         nextBeatTime = startTime + (60.0 / Double(tempo))
         
         // 使用单一长期运行的定时器替代一次性定时器
@@ -161,13 +144,14 @@ class MetronomeTimer {
         nextBeatTime = startTime
         
         // 确保音频引擎正在运行
-        delegate?.ensureAudioEngineRunning()
+        onEnsureAudioEngineRunningNeeded?()
         
         // 播放当前拍
         playCurrentBeat()
         
         // 计算下一拍时间
-        let tempo = delegate?.getCurrentTempo() ?? 120
+        let config = delegate?.getCurrentConfiguration()
+        let tempo = config?.tempo ?? 120
         nextBeatTime = startTime + (60.0 / Double(tempo))
         
         // 创建新的定时器
@@ -198,27 +182,29 @@ class MetronomeTimer {
     private func playCurrentBeat() {
         guard let delegate = delegate else { return }
         
-        let currentBeat = delegate.getCurrentBeat()
-        let beatStatuses = delegate.getBeatStatuses()
-        let beatsPerBar = delegate.getBeatsPerBar()
-        let beatUnit = delegate.getBeatUnit()
+        // 获取当前配置
+        let config = delegate.getCurrentConfiguration()
+        let currentBeat = config.currentBeat
+        let beatStatuses = config.beatStatuses
+        let beatsPerBar = config.beatsPerBar
+        let beatUnit = config.beatUnit
         
         if currentBeat < beatStatuses.count {
             let status = beatStatuses[currentBeat]
             print("播放节拍 - 拍号: \(beatsPerBar)/\(beatUnit), 当前第 \(currentBeat + 1) 拍, 重音类型: \(status)")
             
             // 确保引擎运行
-            delegate.ensureAudioEngineRunning()
+            onEnsureAudioEngineRunningNeeded?()
             
             // 只有非muted状态才播放
             if status != .muted {
                 // 检查是否有切分模式
-                if let pattern = delegate.getSubdivisionPattern(), pattern.notes.count > 1 {
+                if let pattern = config.subdivisionPattern, pattern.notes.count > 1 {
                     // 播放切分音符
                     playSubdivisionPattern(pattern, for: status)
                 } else {
                     // 直接播放整拍
-                    delegate.playBeatSound(status: status)
+                    onPlayBeatSoundNeeded?(status)
                 }
             } else {
                 print("静音拍 - 跳过播放")
@@ -230,10 +216,13 @@ class MetronomeTimer {
     private func handleBeat(at currentTime: TimeInterval) {
         guard let delegate = delegate else { return }
         
+        // 获取当前配置
+        let config = delegate.getCurrentConfiguration()
+        
         // 获取当前状态信息
-        let currentBeat = delegate.getCurrentBeat()
-        let beatsPerBar = delegate.getBeatsPerBar()
-        let completedBars = delegate.getCompletedBars()
+        let currentBeat = config.currentBeat
+        let beatsPerBar = config.beatsPerBar
+        let completedBars = config.completedBars
         
         // 计算偏差
         let deviation = currentTime - nextBeatTime
@@ -277,7 +266,7 @@ class MetronomeTimer {
             if !shouldContinuePlaying {
                 print("MetronomeTimer - 已达到目标，跳过播放下一拍")
                 // 仍然计算下一拍时间，但不播放
-                let tempo = delegate.getCurrentTempo()
+                let tempo = config.tempo
                 nextBeatTime += (60.0 / Double(tempo))
                 return
             }
@@ -290,21 +279,21 @@ class MetronomeTimer {
         }
         
         // 音频播放不需要主线程
-        let beatStatuses = delegate.getBeatStatuses()
+        let beatStatuses = config.beatStatuses
         let nextBeatStatus = nextBeatNumber < beatStatuses.count ? beatStatuses[nextBeatNumber] : .normal
         if nextBeatStatus != .muted {
             // 检查是否有切分模式
-            if let pattern = delegate.getSubdivisionPattern(), pattern.notes.count > 1 {
+            if let pattern = config.subdivisionPattern, pattern.notes.count > 1 {
                 // 播放切分音符
                 playSubdivisionPattern(pattern, for: nextBeatStatus)
             } else {
                 // 没有切分模式，直接播放整拍
-                delegate.playBeatSound(status: nextBeatStatus)
+                onPlayBeatSoundNeeded?(nextBeatStatus)
             }
         }
         
         // 计算下一拍的绝对时间
-        let tempo = delegate.getCurrentTempo()
+        let tempo = config.tempo
         nextBeatTime += (60.0 / Double(tempo))
     }
     
@@ -319,12 +308,13 @@ class MetronomeTimer {
         isPlayingSubdivisions = true
         
         // 获取当前拍的总持续时间（秒）
-        let tempo = delegate.getCurrentTempo()
+        let config = delegate.getCurrentConfiguration()
+        let tempo = config.tempo
         let beatDuration = 60.0 / Double(tempo)
         
         // 播放第一个音符（使用当前拍的强弱状态）
         if !pattern.notes.isEmpty && !pattern.notes[0].isMuted {
-            delegate.playBeatSound(status: beatStatus)
+            onPlayBeatSoundNeeded?(beatStatus)
         }
         
         // 调度剩余的音符
@@ -346,8 +336,8 @@ class MetronomeTimer {
             timer.setEventHandler { [weak self] in
                 guard let self = self, self.isPlayingSubdivisions else { return }
                 
-                // 通过委托播放切分音符
-                self.delegate?.playSubdivisionSound(atTimeOffset: noteStartTime, withStatus: .normal)
+                // 通过回调播放切分音符
+                self.onPlaySubdivisionSoundNeeded?(noteStartTime, .normal)
             }
             
             // 保存定时器并启动

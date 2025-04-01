@@ -288,6 +288,21 @@ class MetronomeStateController: MetronomeTimerDelegate {
         
         // 创建节拍定时器
         metronomeTimer = MetronomeTimer(delegate: self)
+        
+        // 设置回调函数
+        metronomeTimer?.onEnsureAudioEngineRunningNeeded = { [weak self] in
+            self?.audioEngine.ensureEngineRunning()
+        }
+        
+        metronomeTimer?.onPlayBeatSoundNeeded = { [weak self] status in
+            self?.audioEngine.playBeat(status: status)
+        }
+        
+        metronomeTimer?.onPlaySubdivisionSoundNeeded = { [weak self] timeOffset, status in
+            DispatchQueue.main.async {
+                self?.audioEngine.playBeat(status: status)
+            }
+        }
     }
     
     // MARK: - 播放控制方法
@@ -366,6 +381,20 @@ class MetronomeStateController: MetronomeTimerDelegate {
     
     // MARK: - MetronomeTimerDelegate 协议实现
     
+    // 获取当前配置
+    func getCurrentConfiguration() -> MetronomeConfiguration {
+        return MetronomeConfiguration(
+            tempo: state.tempo,
+            beatsPerBar: state.beatsPerBar,
+            currentBeat: state.currentBeat,
+            beatUnit: state.beatUnit,
+            beatStatuses: state.beatStatuses,
+            subdivisionPattern: state.subdivisionPattern,
+            soundSet: state.soundSet,
+            completedBars: state.completedBars
+        )
+    }
+    
     func timerDidCompleteBeat(beatIndex: Int) {
         state.updateCurrentBeat(beatIndex)
         let isLastBeat = beatIndex == state.beatsPerBar - 1
@@ -391,38 +420,6 @@ class MetronomeStateController: MetronomeTimerDelegate {
         notifyBarCompleted(barCount: state.completedBars)
     }
     
-    func getCurrentTempo() -> Int {
-        return state.tempo
-    }
-    
-    func getBeatsPerBar() -> Int {
-        return state.beatsPerBar
-    }
-    
-    func getCurrentBeat() -> Int {
-        return state.currentBeat
-    }
-    
-    func getBeatUnit() -> Int {
-        return state.beatUnit
-    }
-    
-    func getBeatStatuses() -> [BeatStatus] {
-        return state.beatStatuses
-    }
-    
-    func getSubdivisionPattern() -> SubdivisionPattern? {
-        return state.subdivisionPattern
-    }
-    
-    func getSoundSet() -> SoundSet {
-        return state.soundSet
-    }
-    
-    func getCompletedBars() -> Int {
-        return state.completedBars
-    }
-    
     func isTargetBarReached(barCount: Int) -> Bool {
         if let coordinator = state.practiceCoordinator {
             return coordinator.isTargetBarReached(barCount: barCount)
@@ -433,22 +430,6 @@ class MetronomeStateController: MetronomeTimerDelegate {
     func completePractice() {
         if let coordinator = state.practiceCoordinator {
             coordinator.completePractice()
-        }
-    }
-    
-    // MARK: - 新增的音频相关委托方法实现
-    func ensureAudioEngineRunning() {
-        audioEngine.ensureEngineRunning()
-    }
-    
-    func playBeatSound(status: BeatStatus) {
-        audioEngine.playBeat(status: status)
-    }
-    
-    func playSubdivisionSound(atTimeOffset timeOffset: TimeInterval, withStatus status: BeatStatus) {
-        DispatchQueue.main.async {
-            // 对于切分音符中的后续音符，总是使用弱拍声音
-            self.audioEngine.playBeat(status: status)
         }
     }
     
