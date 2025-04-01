@@ -9,6 +9,10 @@ import SwiftUI
 // 2. 添加了小节完成前的预通知机制，使外部组件可以更精确地控制流程
 // 3. 保持了向后兼容性，不破坏现有组件的功能
 // 4. 优化了事件传递流程，使节拍完成和小节计数的时机更加合理
+// 架构改进 (2025/06):
+// 1. 拆分数据模型和控制层，将MetronomeState重构为纯数据模型
+// 2. 创建MetronomeStateController作为控制层，处理事件分发和业务逻辑
+// 3. 保持向下兼容性，不破坏现有功能
 
 // 添加播放状态枚举
 enum PlaybackState {
@@ -30,6 +34,7 @@ protocol AdvancedMetronomePlaybackDelegate: MetronomePlaybackDelegate {
     func metronomeWillCompleteBar(barCount: Int)
 }
 
+// MARK: - 纯数据模型
 class MetronomeState: ObservableObject {
     // MARK: - 定义引用的键
     private enum Keys {
@@ -77,175 +82,41 @@ class MetronomeState: ObservableObject {
     var isLastBeatOfBar: Bool { return currentBeat == beatsPerBar - 1 }
     
     // MARK: - 私有属性
-    // 直接使用单例引擎
-    private let audioEngine = MetronomeAudioEngine.shared
-    private var metronomeTimer: MetronomeTimer?
-    
     // 添加订阅管理
     private var cancellables = Set<AnyCancellable>()
     private let defaults = UserDefaults.standard
     
-    // MARK: - 委托
-    private var delegates = [MetronomePlaybackDelegate]()
+    // 获取当前切分模式的类型（兼容现有代码）
+    var subdivisionType: SubdivisionType {
+        return subdivisionPattern?.type ?? .whole
+    }
     
     // MARK: - 初始化
     init() {
         // 从UserDefaults加载初始数据
         loadFromUserDefaults()
-        
-        // 初始化音频引擎
-        audioEngine.initialize(defaultSoundSet: soundSet)
-        
-        // 创建节拍定时器，传入self引用
-        metronomeTimer = MetronomeTimer(state: self, audioEngine: audioEngine)
     }
     
-    // MARK: - 委托管理
-    func addDelegate(_ delegate: MetronomePlaybackDelegate) {
-        if !delegates.contains(where: { $0 === delegate }) {
-            delegates.append(delegate)
-        }
-    }
-    
-    func removeDelegate(_ delegate: MetronomePlaybackDelegate) {
-        delegates.removeAll(where: { $0 === delegate })
-    }
-    
-    // MARK: - 小节和拍子管理方法
-    
-    // 是否完成了指定数量的小节（针对练习用例）
-    func hasCompletedBars(_ targetBars: Int) -> Bool {
-        return completedBars >= targetBars
-    }
-    
-    // 获取剩余小节数（考虑到当前正在播放的小节）
-    func getRemainingBars(target: Int) -> Int {
-        let current = currentBarNumber
-        if current <= target {
-            return target - current + 1 // 包括当前正在播放的小节
-        } else {
-            return 0
-        }
-    }
-    
-    // 获取小节占比进度（针对练习进度计算）
-    func getBarProgress(targetBars: Int) -> CGFloat {
-        guard targetBars > 0 else { return 0.0 }
-        
-        // 已完成小节数，不包括当前正在播放的小节
-        let completedBarCount = completedBars
-        return min(CGFloat(completedBarCount) / CGFloat(targetBars), 1.0)
-    }
-    
-    // MARK: - 播放控制方法
-    func togglePlayback() {
-        switch playbackState {
-        case .playing:
-            stop()
-        case .standby, .paused:
-            play()
-        }
-    }
-
-    func play() {
-        print("MetronomeState - play")
-        
-        playbackState = .playing
-        completedBars = 0 // 重置小节计数
-        
-        // 确保当前切分模式已更新
-        updateCurrentSubdivisionPattern()
-        
-        // 开始练习会话 - 数据保存
-        practiceManager?.startPracticeSession(bpm: tempo)
-        
-        // 直接启动定时器
-        metronomeTimer?.start()
-        
-        // 通知状态变化
-        notifyPlaybackStateChanged()
-        objectWillChange.send()
-    }   
-
-    func stop() {
-        print("MetronomeState - stop")
-        
-        playbackState = .standby
-        
-        // 结束练习会话 - 数据保存
-        practiceManager?.endPracticeSession()
-        
-        // 停止定时器
-        metronomeTimer?.stop()
-        
-        // 通知状态变化
-        notifyPlaybackStateChanged()
-        objectWillChange.send()
-    }   
-    
-    // 暂停节拍器 - 保留当前的小节计数和状态
-    func pause() {
-        print("MetronomeState - pause")
-        
-        if playbackState != .playing {
-            return // 如果没有在播放，则不需要暂停
-        }
-        
-        playbackState = .paused
-        // 注意：不重置 completedBars，保留当前已完成的小节数
-        
-        // 暂停定时器
-        metronomeTimer?.pause()
-        
-        // 通知观察者状态变化
-        notifyPlaybackStateChanged()
+    // MARK: - 状态更新方法（由控制器调用）
+    func updatePlaybackState(_ newState: PlaybackState) {
+        playbackState = newState
         objectWillChange.send()
     }
     
-    // 恢复节拍器 - 从当前小节的第一拍开始
-    func resume() {
-        print("MetronomeState - resume")
-        
-        if playbackState == .playing {
-            return // 如果已经在播放，则不需要恢复
-        }
-        
-        playbackState = .playing
-        // 重置当前拍回到第一拍（小节的开始）
-        currentBeat = 0
-        
-        // 恢复定时器
-        metronomeTimer?.resume()
-        
-        // 通知观察者状态变化
-        notifyPlaybackStateChanged()
-        objectWillChange.send()
+    func updateCurrentBeat(_ newCurrentBeat: Int) {
+        currentBeat = newCurrentBeat
+        defaults.set(currentBeat, forKey: Keys.currentBeat)
     }
     
-    // 使用切分类型更新切分模式
-    func updateSubdivisionType(_ type: SubdivisionType) {
-        print("MetronomeState - updateSubdivisionType: \(type.rawValue)")
-        
-        // 获取当前拍号单位下该类型的切分模式
-        if let pattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: type) {
-            updateSubdivisionPattern(pattern)
-        }
-    }
-    
-    // 更新速度
     func updateTempo(_ newTempo: Int) {
         let clampedTempo = max(30, min(240, newTempo))
         if tempo != clampedTempo {
             tempo = clampedTempo
             defaults.set(tempo, forKey: Keys.tempo)
-            
-            // 不需要通知Timer，它会直接使用新值
         }
     }
     
-    // 更新拍数方法
     func updateBeatsPerBar(_ newBeatsPerBar: Int) {
-        print("MetronomeState - updateBeatsPerBar: \(beatsPerBar) -> \(newBeatsPerBar)")
         if beatsPerBar == newBeatsPerBar { return }
         
         // 创建新的节拍状态数组
@@ -256,11 +127,6 @@ class MetronomeState: ObservableObject {
             newBeatStatuses[i] = beatStatuses[i]
         }
         
-        // 确保第一拍是强拍
-        // if newBeatStatuses.count > 0 {
-        //     newBeatStatuses[0] = .strong
-        // }
-        
         // 更新状态
         beatStatuses = newBeatStatuses
         beatsPerBar = newBeatsPerBar
@@ -270,38 +136,20 @@ class MetronomeState: ObservableObject {
         saveBeatStatuses()
     }
     
-    // 更新当前拍
-    func updateCurrentBeat(_ newCurrentBeat: Int) {
-        currentBeat = newCurrentBeat
-        defaults.set(currentBeat, forKey: Keys.currentBeat)
-    }   
-    
-    // 更新拍号单位
     func updateBeatUnit(_ newBeatUnit: Int) {
-        print("MetronomeState - updateBeatUnit: \(beatUnit) -> \(newBeatUnit)")
         if beatUnit == newBeatUnit { return }
         
         beatUnit = newBeatUnit
         defaults.set(beatUnit, forKey: Keys.beatUnit)
-        
-        // 更新当前切分模式
-        updateCurrentSubdivisionPattern()
     }
     
-    // 更新节拍状态
     func updateBeatStatuses(_ newStatuses: [BeatStatus]) {
         beatStatuses = newStatuses
         saveBeatStatuses()
-        
-        // 如果正在播放，可能需要重新启动节拍器
-        // 但这里不做重启，因为状态变化对当前节拍影响不大
     }
     
-    // 更新切分模式
     func updateSubdivisionPattern(_ pattern: SubdivisionPattern) {
         guard pattern.name != subdivisionPattern?.name else { return }
-        
-        print("MetronomeState - updateSubdivisionPattern: \(subdivisionPattern?.name ?? "nil") -> \(pattern.name)")
         
         // 更新当前模式
         subdivisionPattern = pattern
@@ -310,119 +158,30 @@ class MetronomeState: ObservableObject {
         defaults.set(pattern.name, forKey: Keys.subdivisionType)
     }
     
-    
-    // 更新音效设置
-    func updateSoundSet(_ newSoundSet: SoundSet) {
+    // 重命名为内部方法，只处理数据更新
+    func _updateSoundSetData(_ newSoundSet: SoundSet) {
         guard newSoundSet.key != soundSet.key else { return }
-        
-        print("MetronomeState - updateSoundSet: \(soundSet.key) -> \(newSoundSet.key)")
         
         // 更新当前音效集
         soundSet = newSoundSet
         
         // 保存设置到UserDefaults
         defaults.set(newSoundSet.key, forKey: Keys.soundSet)
-        
-        // 更新音频引擎的当前音效
-        audioEngine.setCurrentSoundSet(newSoundSet)
-        
-        print("音效已更新为: \(newSoundSet.displayName)")
     }
     
-    // 获取节拍状态字符串
-    private func getBeatStatusString() -> String {
-        let statusInts = beatStatuses.map { status -> Int in
-            switch status {
-            case .strong: return 0
-            case .medium: return 1
-            case .normal: return 2
-            case .muted: return 3
-            }
-        }
-        return "\(beatsPerBar)/\(beatUnit): \(statusInts.map {String($0)}.joined(separator: ","))"
-    }
-    
-    // 清理资源
-    func cleanup() {
-        metronomeTimer?.stop()
-        audioEngine.stop()
-        cancellables.forEach { $0.cancel() }
-        cancellables.removeAll()
-        delegates.removeAll()
-    }
-    
-    // 获取当前切分模式的类型（兼容现有代码）
-    var subdivisionType: SubdivisionType {
-        return subdivisionPattern?.type ?? .whole
-    }
-    
-    // 增加已完成小节计数
     func incrementCompletedBar() {
         completedBars += 1
-        print("MetronomeState - 完成第\(completedBars)个小节")
         objectWillChange.send()
     }
     
-    // 重置已完成小节计数
     func resetCompletedBars() {
         if completedBars != 0 {
-            print("MetronomeState - 重置小节计数: \(completedBars) -> 0")
             completedBars = 0
             objectWillChange.send()
         }
     }
     
-    // MARK: - 内部调用方法 (timer可以调用)
-    func onBeatCompleted(beatIndex: Int) {
-        currentBeat = beatIndex
-        let isLastBeat = beatIndex == beatsPerBar - 1
-        
-        // 通知委托
-        notifyBeatCompleted(beatIndex: beatIndex, isLastBeat: isLastBeat)
-        
-        // 如果是最后一拍，调用特殊处理方法
-        if isLastBeat {
-            onLastBeatOfBarCompleted()
-        }
-    }
-    
-    // 最后一拍完成时调用 - 用于在小节真正完成前发出通知
-    func onLastBeatOfBarCompleted() {
-        // 下一个小节将要是第几个小节
-        let nextBarCount = completedBars + 1
-        
-        print("MetronomeState - 即将完成第\(nextBarCount)个小节，预先通知委托")
-        
-        // 通知委托小节即将完成事件
-        delegates.forEach { delegate in
-            if let advancedDelegate = delegate as? AdvancedMetronomePlaybackDelegate {
-                advancedDelegate.metronomeWillCompleteBar(barCount: nextBarCount)
-            }
-        }
-    }
-    
-    func onBarCompleted() {
-        completedBars += 1
-        print("MetronomeState - 完成第\(completedBars)个小节，通知所有委托")
-        notifyBarCompleted(barCount: completedBars)
-        objectWillChange.send()
-    }
-    
-    // MARK: - 通知委托方法
-    private func notifyPlaybackStateChanged() {
-        delegates.forEach { $0.metronomeDidChangePlaybackState(playbackState) }
-    }
-    
-    private func notifyBeatCompleted(beatIndex: Int, isLastBeat: Bool) {
-        delegates.forEach { $0.metronomeDidCompleteBeat(beatIndex: beatIndex, isLastBeat: isLastBeat) }
-    }
-    
-    private func notifyBarCompleted(barCount: Int) {
-        delegates.forEach { $0.metronomeDidCompleteBar(barCount: barCount) }
-    }
-    
     // MARK: - 私有辅助方法
-    
     private func loadFromUserDefaults() {
         // 读取速度值
         tempo = defaults.integer(forKey: Keys.tempo).nonZeroOr(120)
@@ -474,7 +233,6 @@ class MetronomeState: ObservableObject {
         if let savedSoundSetKey = defaults.string(forKey: Keys.soundSet),
            let savedSoundSet = SoundSetManager.availableSoundSets.first(where: { $0.key == savedSoundSetKey }) {
             soundSet = savedSoundSet
-            audioEngine.setCurrentSoundSet(savedSoundSet)
         } else {
             soundSet = SoundSetManager.getDefaultSoundSet()
         }
@@ -492,18 +250,240 @@ class MetronomeState: ObservableObject {
             defaults.set(pattern.name, forKey: Keys.subdivisionType)
         }
     }
+}
+
+// MARK: - 控制器层
+class MetronomeStateController {
+    // 引用状态模型
+    private let state: MetronomeState
     
+    // 音频引擎
+    private let audioEngine: MetronomeAudioEngine
+    
+    // 节拍器定时器
+    private var metronomeTimer: MetronomeTimer?
+    
+    // 委托管理
+    private var delegates = [MetronomePlaybackDelegate]()
+    
+    // 初始化
+    init(state: MetronomeState) {
+        self.state = state
+        self.audioEngine = MetronomeAudioEngine.shared
+        
+        // 初始化音频引擎
+        audioEngine.initialize(defaultSoundSet: state.soundSet)
+        
+        // 创建节拍定时器
+        metronomeTimer = MetronomeTimer(state: state, audioEngine: audioEngine)
+    }
+    
+    // MARK: - 委托管理
+    func addDelegate(_ delegate: MetronomePlaybackDelegate) {
+        if !delegates.contains(where: { $0 === delegate }) {
+            delegates.append(delegate)
+        }
+    }
+    
+    func removeDelegate(_ delegate: MetronomePlaybackDelegate) {
+        delegates.removeAll(where: { $0 === delegate })
+    }
+    
+    // MARK: - 播放控制方法
+    func togglePlayback() {
+        switch state.playbackState {
+        case .playing:
+            stop()
+        case .standby, .paused:
+            play()
+        }
+    }
+
+    func play() {
+        print("MetronomeStateController - play")
+        
+        state.updatePlaybackState(.playing)
+        state.resetCompletedBars() // 重置小节计数
+        
+        // 确保当前切分模式已更新
+        updateCurrentSubdivisionPattern()
+        
+        // 开始练习会话 - 数据保存
+        state.practiceManager?.startPracticeSession(bpm: state.tempo)
+        
+        // 直接启动定时器
+        metronomeTimer?.start()
+        
+        // 通知状态变化
+        notifyPlaybackStateChanged()
+    }   
+
+    func stop() {
+        print("MetronomeStateController - stop")
+        
+        state.updatePlaybackState(.standby)
+        
+        // 结束练习会话 - 数据保存
+        state.practiceManager?.endPracticeSession()
+        
+        // 停止定时器
+        metronomeTimer?.stop()
+        
+        // 通知状态变化
+        notifyPlaybackStateChanged()
+    }   
+    
+    // 暂停节拍器 - 保留当前的小节计数和状态
+    func pause() {
+        print("MetronomeStateController - pause")
+        
+        if state.playbackState != .playing {
+            return // 如果没有在播放，则不需要暂停
+        }
+        
+        state.updatePlaybackState(.paused)
+        
+        // 暂停定时器
+        metronomeTimer?.pause()
+        
+        // 通知观察者状态变化
+        notifyPlaybackStateChanged()
+    }
+    
+    // 恢复节拍器 - 从当前小节的第一拍开始
+    func resume() {
+        print("MetronomeStateController - resume")
+        
+        if state.playbackState == .playing {
+            return // 如果已经在播放，则不需要恢复
+        }
+        
+        state.updatePlaybackState(.playing)
+        // 重置当前拍回到第一拍（小节的开始）
+        state.updateCurrentBeat(0)
+        
+        // 恢复定时器
+        metronomeTimer?.resume()
+        
+        // 通知观察者状态变化
+        notifyPlaybackStateChanged()
+    }
+    
+    // 使用切分类型更新切分模式
+    func updateSubdivisionType(_ type: SubdivisionType) {
+        print("MetronomeStateController - updateSubdivisionType: \(type.rawValue)")
+        
+        // 获取当前拍号单位下该类型的切分模式
+        if let pattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: state.beatUnit, type: type) {
+            state.updateSubdivisionPattern(pattern)
+        }
+    }
+    
+    // 更新音效设置
+    func updateSoundSet(_ newSoundSet: SoundSet) {
+        print("MetronomeStateController - updateSoundSet: \(state.soundSet.key) -> \(newSoundSet.key)")
+        
+        // 更新数据模型
+        state._updateSoundSetData(newSoundSet)
+        
+        // 更新音频引擎的当前音效
+        audioEngine.setCurrentSoundSet(newSoundSet)
+        
+        print("音效已更新为: \(newSoundSet.displayName)")
+    }
+    
+    // MARK: - 内部调用方法 (timer可以调用)
+    func onBeatCompleted(beatIndex: Int) {
+        state.updateCurrentBeat(beatIndex)
+        let isLastBeat = beatIndex == state.beatsPerBar - 1
+        
+        // 通知委托
+        notifyBeatCompleted(beatIndex: beatIndex, isLastBeat: isLastBeat)
+        
+        // 如果是最后一拍，调用特殊处理方法
+        if isLastBeat {
+            onLastBeatOfBarCompleted()
+        }
+    }
+    
+    // 最后一拍完成时调用 - 用于在小节真正完成前发出通知
+    func onLastBeatOfBarCompleted() {
+        // 下一个小节将要是第几个小节
+        let nextBarCount = state.completedBars + 1
+        
+        print("MetronomeStateController - 即将完成第\(nextBarCount)个小节，预先通知委托")
+        
+        // 通知委托小节即将完成事件
+        delegates.forEach { delegate in
+            if let advancedDelegate = delegate as? AdvancedMetronomePlaybackDelegate {
+                advancedDelegate.metronomeWillCompleteBar(barCount: nextBarCount)
+            }
+        }
+    }
+    
+    func onBarCompleted() {
+        state.incrementCompletedBar()
+        print("MetronomeStateController - 完成第\(state.completedBars)个小节，通知所有委托")
+        notifyBarCompleted(barCount: state.completedBars)
+    }
+    
+    // MARK: - 通知委托方法
+    private func notifyPlaybackStateChanged() {
+        delegates.forEach { $0.metronomeDidChangePlaybackState(state.playbackState) }
+    }
+    
+    private func notifyBeatCompleted(beatIndex: Int, isLastBeat: Bool) {
+        delegates.forEach { $0.metronomeDidCompleteBeat(beatIndex: beatIndex, isLastBeat: isLastBeat) }
+    }
+    
+    private func notifyBarCompleted(barCount: Int) {
+        delegates.forEach { $0.metronomeDidCompleteBar(barCount: barCount) }
+    }
+    
+    // 清理资源
+    func cleanup() {
+        metronomeTimer?.stop()
+        audioEngine.stop()
+        delegates.removeAll()
+    }
+    
+    // MARK: - 小节和拍子管理方法
+    
+    // 是否完成了指定数量的小节（针对练习用例）
+    func hasCompletedBars(_ targetBars: Int) -> Bool {
+        return state.completedBars >= targetBars
+    }
+    
+    // 获取剩余小节数（考虑到当前正在播放的小节）
+    func getRemainingBars(target: Int) -> Int {
+        let current = state.currentBarNumber
+        if current <= target {
+            return target - current + 1 // 包括当前正在播放的小节
+        } else {
+            return 0
+        }
+    }
+    
+    // 获取小节占比进度（针对练习进度计算）
+    func getBarProgress(targetBars: Int) -> CGFloat {
+        guard targetBars > 0 else { return 0.0 }
+        
+        // 已完成小节数，不包括当前正在播放的小节
+        let completedBarCount = state.completedBars
+        return min(CGFloat(completedBarCount) / CGFloat(targetBars), 1.0)
+    }
+    
+    // MARK: - 私有辅助方法
     private func updateCurrentSubdivisionPattern() {
-        guard let currentPattern = subdivisionPattern else {
+        guard let currentPattern = state.subdivisionPattern else {
             setDefaultSubdivisionPattern()
             return
         }
         
         // 检查当前模式是否适用于当前拍号单位
-        if currentPattern.beatUnit != beatUnit {
-            if let newPattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: beatUnit, type: currentPattern.type) {
-                subdivisionPattern = newPattern
-                defaults.set(newPattern.name, forKey: Keys.subdivisionType)
+        if currentPattern.beatUnit != state.beatUnit {
+            if let newPattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: state.beatUnit, type: currentPattern.type) {
+                state.updateSubdivisionPattern(newPattern)
                 print("切分模式已适配当前拍号单位: \(currentPattern.type.rawValue) -> \(newPattern.name)")
             } else {
                 // 如果找不到适配当前拍号单位的相同类型模式，使用默认整拍模式
@@ -511,6 +491,102 @@ class MetronomeState: ObservableObject {
                 setDefaultSubdivisionPattern()
             }
         }
+    }
+    
+    // 设置默认的切分模式
+    private func setDefaultSubdivisionPattern() {
+        if let pattern = SubdivisionManager.getSubdivisionPattern(forBeatUnit: state.beatUnit, type: .whole) {
+            state.updateSubdivisionPattern(pattern)
+        }
+    }
+}
+
+// MARK: - 为保持向下兼容的扩展 
+// 这个扩展把控制器的方法直接暴露在状态模型上，使现有代码不需要修改
+extension MetronomeState {
+    // 延迟初始化控制器，确保只在需要时创建
+    private static var controllersMap = [ObjectIdentifier: MetronomeStateController]()
+    
+    private var controller: MetronomeStateController {
+        let id = ObjectIdentifier(self)
+        if let existingController = MetronomeState.controllersMap[id] {
+            return existingController
+        } else {
+            let newController = MetronomeStateController(state: self)
+            MetronomeState.controllersMap[id] = newController
+            return newController
+        }
+    }
+    
+    // 原先直接实现在MetronomeState中的方法，现在委托给控制器
+    func togglePlayback() {
+        controller.togglePlayback()
+    }
+    
+    func play() {
+        controller.play()
+    }
+    
+    func stop() {
+        controller.stop()
+    }
+    
+    func pause() {
+        controller.pause()
+    }
+    
+    func resume() {
+        controller.resume()
+    }
+    
+    func updateSubdivisionType(_ type: SubdivisionType) {
+        controller.updateSubdivisionType(type)
+    }
+    
+    func updateSoundSet(_ newSoundSet: SoundSet) {
+        // 内部数据更新
+        _updateSoundSetData(newSoundSet)
+        // 控制器处理音频引擎更新
+        controller.updateSoundSet(newSoundSet)
+    }
+    
+    func cleanup() {
+        controller.cleanup()
+        let id = ObjectIdentifier(self)
+        MetronomeState.controllersMap.removeValue(forKey: id)
+    }
+    
+    func addDelegate(_ delegate: MetronomePlaybackDelegate) {
+        controller.addDelegate(delegate)
+    }
+    
+    func removeDelegate(_ delegate: MetronomePlaybackDelegate) {
+        controller.removeDelegate(delegate)
+    }
+    
+    // 这些方法以前在MetronomeState中，现在从Controller中获取
+    func onBeatCompleted(beatIndex: Int) {
+        controller.onBeatCompleted(beatIndex: beatIndex)
+    }
+    
+    func onLastBeatOfBarCompleted() {
+        controller.onLastBeatOfBarCompleted()
+    }
+    
+    func onBarCompleted() {
+        controller.onBarCompleted()
+    }
+    
+    func hasCompletedBars(_ targetBars: Int) -> Bool {
+        return controller.hasCompletedBars(targetBars)
+    }
+    
+    func getRemainingBars(target: Int) -> Int {
+        return controller.getRemainingBars(target: target)
+    }
+    
+    func getBarProgress(targetBars: Int) -> CGFloat {
+        return controller.getBarProgress(targetBars: targetBars)
     }
 }
 
