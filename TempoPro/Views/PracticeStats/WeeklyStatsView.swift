@@ -23,8 +23,8 @@ struct WeeklyStatsView: View {
         let mondayFirstSymbols = Array(weekdaySymbols[1..<weekdaySymbols.count] + [weekdaySymbols[0]])
         
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "zh_CN")
-        dateFormatter.dateFormat = "M月d日"
+        dateFormatter.locale = Locale(identifier: "en_US")
+        dateFormatter.dateFormat = "MMM dd"
         
         return weeklyData.enumerated().map { index, dataPoint in
             return (

@@ -87,6 +87,7 @@ struct SubscriptionOptionsView: View {
         ListView {
             // Header
             VStack(spacing: 8) {
+                PremiumLabelView()
                 Text("Upgrade to Premium")
                     .font(.custom("MiSansLatin-Semibold", size: 24))
                     .foregroundColor(Color("textPrimaryColor"))
@@ -96,7 +97,8 @@ struct SubscriptionOptionsView: View {
                     .foregroundColor(Color("textSecondaryColor"))
                     .multilineTextAlignment(.center)
             }
-            .padding(.bottom, 16)
+            .padding(.top,30)
+            .padding(.bottom, 20)
             
             // Metronome Features
             SectionView(header: "METRONOME FEATURES") {
@@ -265,6 +267,7 @@ struct SubscriptionOption: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(isSelected ? Color.accent : Color("textSecondaryColor").opacity(0.3), lineWidth: isSelected ? 2 : 1)
+                    .padding(1)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .fill(Color("backgroundSecondaryColor"))

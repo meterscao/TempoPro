@@ -173,12 +173,12 @@ struct CountDownPracticeView: View {
                         Text("Start")
                             .font(.custom("MiSansLatin-Regular", size: 16))
                     }
-                    .foregroundColor(Color("textPrimaryColor"))
+                    .foregroundColor(.accent)
                     .frame(height:50)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(.accent)
+                            .fill(Color("backgroundSecondaryColor"))
                     )
                 }
                 .disabled((selectedTimerType == "time" && practiceCoordinator.targetTime == 0) || 

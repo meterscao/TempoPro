@@ -43,7 +43,7 @@ struct SongsListView: View {
                                         .font(.custom("MiSansLatin-Regular", size: 14))
                                         
                                 }
-                                .foregroundColor(currentPlaylist == playlist ? Color("backgroundPrimaryColor") : Color("textPrimaryColor"))
+                                .foregroundColor(currentPlaylist == playlist ? Color("backgroundSecondaryColor") : Color("textSecondaryColor"))
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 6)
                                 .background(currentPlaylist == playlist ? Color("textPrimaryColor") : Color("backgroundSecondaryColor"))
@@ -121,7 +121,7 @@ struct SongsListView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .foregroundColor(Color("textPrimaryColor"))
+                    .foregroundColor(.accent)
                     .background(Color("backgroundSecondaryColor"))
                     .cornerRadius(12)
                 }
