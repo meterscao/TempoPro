@@ -15,12 +15,9 @@ struct MetronomeConfiguration {
 }
 
 // MARK: - MetronomeTimer委托协议
+/// 提供Timer所需的数据和业务逻辑判断
+/// 注意：事件通知已迁移到回调函数模式，此协议仅包含数据和逻辑方法
 protocol MetronomeTimerDelegate: AnyObject {
-    // 事件通知方法
-    func timerDidCompleteBeat(beatIndex: Int)
-    func timerWillCompleteBar(nextBarCount: Int)
-    func timerDidCompleteBar()
-    
     // 数据获取方法
     func getCurrentConfiguration() -> MetronomeConfiguration
     
@@ -32,7 +29,9 @@ protocol MetronomeTimerDelegate: AnyObject {
 }
 
 class MetronomeTimer {
-    // 委托对象
+    // MARK: - 属性
+    
+    // 委托对象 - 用于数据获取和逻辑判断
     private weak var delegate: MetronomeTimerDelegate?
     private var timer: DispatchSourceTimer?
     private let timerQueue = DispatchQueue(label: AppStorageKeys.QueueLabels.metronomeTimer, qos: .userInteractive)
@@ -44,19 +43,40 @@ class MetronomeTimer {
     private var subdivisionTimers: [DispatchSourceTimer] = []
     private var isPlayingSubdivisions: Bool = false
     
-    // 回调函数属性，用于替代控制流委托方法
+    // MARK: - 回调函数
+    
+    // 行为控制回调 - 用于请求执行操作
+    /// 请求确保音频引擎正在运行
     var onEnsureAudioEngineRunningNeeded: (() -> Void)?
+    /// 请求播放指定状态的节拍声音
     var onPlayBeatSoundNeeded: ((BeatStatus) -> Void)?
+    /// 请求播放切分音符声音
     var onPlaySubdivisionSoundNeeded: ((TimeInterval, BeatStatus) -> Void)?
     
+    // 事件通知回调 - 用于通知状态变化
+    /// 通知节拍已完成，提供新的节拍索引
+    var onBeatCompleted: ((Int) -> Void)?
+    /// 通知小节即将完成，提供即将完成的小节编号
+    var onBarWillComplete: ((Int) -> Void)?
+    /// 通知小节已完成
+    var onBarCompleted: (() -> Void)?
+    
+    // MARK: - 初始化方法
+    
+    /// 初始化节拍器定时器
+    /// - Parameter delegate: 委托对象，用于提供数据和执行逻辑判断
+    /// - Note: 完整功能需要设置回调函数和委托
     init(delegate: MetronomeTimerDelegate? = nil) {
         self.delegate = delegate
     }
     
-    // 设置委托
+    /// 设置委托对象
+    /// - Parameter delegate: 提供数据和逻辑判断的委托
     func setDelegate(_ delegate: MetronomeTimerDelegate) {
         self.delegate = delegate
     }
+    
+    // MARK: - 公共方法
     
     // 启动节拍器，不再需要传入状态数据
     func start() {
@@ -107,8 +127,10 @@ class MetronomeTimer {
         // 取消所有切分音符的定时器
         cancelSubdivisionTimers()
         
-        // 重置当前拍到第一拍
-        delegate?.timerDidCompleteBeat(beatIndex: 0)
+        // 重置当前拍到第一拍 - 使用回调代替委托调用
+        DispatchQueue.main.async {
+            self.onBeatCompleted?(0)
+        }
         
         // 重置切分播放状态
         isPlayingSubdivisions = false
@@ -136,8 +158,10 @@ class MetronomeTimer {
             timer = nil
         }
         
-        // 重置当前拍到第一拍（小节的开始）
-        delegate?.timerDidCompleteBeat(beatIndex: 0)
+        // 重置当前拍到第一拍（小节的开始）- 使用回调代替委托调用
+        DispatchQueue.main.async {
+            self.onBeatCompleted?(0)
+        }
         
         // 计算开始时间
         let startTime = Date().timeIntervalSince1970
@@ -246,8 +270,8 @@ class MetronomeTimer {
                 // 计算将要完成的小节编号
                 let nextBarCount = completedBars + 1
                 
-                // 通知委托小节即将完成
-                self.delegate?.timerWillCompleteBar(nextBarCount: nextBarCount)
+                // 通知委托小节即将完成 - 使用回调代替委托调用
+                self.onBarWillComplete?(nextBarCount)
                 
                 // 检查是否达到目标小节数
                 if self.delegate?.isTargetBarReached(barCount: nextBarCount) == true {
@@ -258,8 +282,8 @@ class MetronomeTimer {
                     self.delegate?.completePractice()
                 }
                 
-                // 通知小节已完成
-                self.delegate?.timerDidCompleteBar()
+                // 通知小节已完成 - 使用回调代替委托调用
+                self.onBarCompleted?()
             }
             
             // 如果达到目标小节，不再继续播放
@@ -274,8 +298,8 @@ class MetronomeTimer {
         
         // 只有UI更新部分需要回到主线程
         DispatchQueue.main.async {
-            // 通知当前拍更新
-            self.delegate?.timerDidCompleteBeat(beatIndex: nextBeatNumber)
+            // 通知当前拍更新 - 使用回调代替委托调用
+            self.onBeatCompleted?(nextBeatNumber)
         }
         
         // 音频播放不需要主线程
