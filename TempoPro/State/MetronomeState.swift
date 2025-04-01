@@ -253,7 +253,7 @@ class MetronomeState: ObservableObject {
 }
 
 // MARK: - 控制器层
-class MetronomeStateController {
+class MetronomeStateController: MetronomeTimerDelegate {
     // 引用状态模型
     private let state: MetronomeState
     
@@ -275,7 +275,80 @@ class MetronomeStateController {
         audioEngine.initialize(defaultSoundSet: state.soundSet)
         
         // 创建节拍定时器
-        metronomeTimer = MetronomeTimer(state: state, audioEngine: audioEngine)
+        metronomeTimer = MetronomeTimer(audioEngine: audioEngine)
+        // 设置委托
+        metronomeTimer?.setDelegate(self)
+    }
+    
+    // MARK: - MetronomeTimerDelegate 协议实现
+    func timerDidCompleteBeat(beatIndex: Int) {
+        state.updateCurrentBeat(beatIndex)
+        let isLastBeat = beatIndex == state.beatsPerBar - 1
+        
+        // 通知委托
+        notifyBeatCompleted(beatIndex: beatIndex, isLastBeat: isLastBeat)
+    }
+    
+    func timerWillCompleteBar(nextBarCount: Int) {
+        print("MetronomeStateController - 即将完成第\(nextBarCount)个小节，预先通知委托")
+        
+        // 通知委托小节即将完成事件
+        delegates.forEach { delegate in
+            if let advancedDelegate = delegate as? AdvancedMetronomePlaybackDelegate {
+                advancedDelegate.metronomeWillCompleteBar(barCount: nextBarCount)
+            }
+        }
+    }
+    
+    func timerDidCompleteBar() {
+        state.incrementCompletedBar()
+        print("MetronomeStateController - 完成第\(state.completedBars)个小节，通知所有委托")
+        notifyBarCompleted(barCount: state.completedBars)
+    }
+    
+    func getCurrentTempo() -> Int {
+        return state.tempo
+    }
+    
+    func getBeatsPerBar() -> Int {
+        return state.beatsPerBar
+    }
+    
+    func getCurrentBeat() -> Int {
+        return state.currentBeat
+    }
+    
+    func getBeatUnit() -> Int {
+        return state.beatUnit
+    }
+    
+    func getBeatStatuses() -> [BeatStatus] {
+        return state.beatStatuses
+    }
+    
+    func getSubdivisionPattern() -> SubdivisionPattern? {
+        return state.subdivisionPattern
+    }
+    
+    func getSoundSet() -> SoundSet {
+        return state.soundSet
+    }
+    
+    func getCompletedBars() -> Int {
+        return state.completedBars
+    }
+    
+    func isTargetBarReached(barCount: Int) -> Bool {
+        if let coordinator = state.practiceCoordinator {
+            return coordinator.isTargetBarReached(barCount: barCount)
+        }
+        return false
+    }
+    
+    func completePractice() {
+        if let coordinator = state.practiceCoordinator {
+            coordinator.completePractice()
+        }
     }
     
     // MARK: - 委托管理
@@ -359,8 +432,7 @@ class MetronomeStateController {
         }
         
         state.updatePlaybackState(.playing)
-        // 重置当前拍回到第一拍（小节的开始）
-        state.updateCurrentBeat(0)
+        // 重置当前拍回到第一拍（小节的开始）不需要再调用，Timer会处理
         
         // 恢复定时器
         metronomeTimer?.resume()
@@ -392,41 +464,6 @@ class MetronomeStateController {
         print("音效已更新为: \(newSoundSet.displayName)")
     }
     
-    // MARK: - 内部调用方法 (timer可以调用)
-    func onBeatCompleted(beatIndex: Int) {
-        state.updateCurrentBeat(beatIndex)
-        let isLastBeat = beatIndex == state.beatsPerBar - 1
-        
-        // 通知委托
-        notifyBeatCompleted(beatIndex: beatIndex, isLastBeat: isLastBeat)
-        
-        // 如果是最后一拍，调用特殊处理方法
-        if isLastBeat {
-            onLastBeatOfBarCompleted()
-        }
-    }
-    
-    // 最后一拍完成时调用 - 用于在小节真正完成前发出通知
-    func onLastBeatOfBarCompleted() {
-        // 下一个小节将要是第几个小节
-        let nextBarCount = state.completedBars + 1
-        
-        print("MetronomeStateController - 即将完成第\(nextBarCount)个小节，预先通知委托")
-        
-        // 通知委托小节即将完成事件
-        delegates.forEach { delegate in
-            if let advancedDelegate = delegate as? AdvancedMetronomePlaybackDelegate {
-                advancedDelegate.metronomeWillCompleteBar(barCount: nextBarCount)
-            }
-        }
-    }
-    
-    func onBarCompleted() {
-        state.incrementCompletedBar()
-        print("MetronomeStateController - 完成第\(state.completedBars)个小节，通知所有委托")
-        notifyBarCompleted(barCount: state.completedBars)
-    }
-    
     // MARK: - 通知委托方法
     private func notifyPlaybackStateChanged() {
         delegates.forEach { $0.metronomeDidChangePlaybackState(state.playbackState) }
@@ -448,7 +485,6 @@ class MetronomeStateController {
     }
     
     // MARK: - 小节和拍子管理方法
-    
     // 是否完成了指定数量的小节（针对练习用例）
     func hasCompletedBars(_ targetBars: Int) -> Bool {
         return state.completedBars >= targetBars
@@ -564,19 +600,8 @@ extension MetronomeState {
         controller.removeDelegate(delegate)
     }
     
-    // 这些方法以前在MetronomeState中，现在从Controller中获取
-    func onBeatCompleted(beatIndex: Int) {
-        controller.onBeatCompleted(beatIndex: beatIndex)
-    }
-    
-    func onLastBeatOfBarCompleted() {
-        controller.onLastBeatOfBarCompleted()
-    }
-    
-    func onBarCompleted() {
-        controller.onBarCompleted()
-    }
-    
+    // 这些方法在Timer重构后已经不需要通过MetronomeState调用
+    // 保留以下方法以维持兼容性，但实际上这些方法应该通过Timer-Controller的委托关系调用
     func hasCompletedBars(_ targetBars: Int) -> Bool {
         return controller.hasCompletedBars(targetBars)
     }

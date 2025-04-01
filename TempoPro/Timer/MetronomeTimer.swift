@@ -1,9 +1,51 @@
 import Foundation
 import UIKit
 
+// MARK: - MetronomeTimer委托协议
+protocol MetronomeTimerDelegate: AnyObject {
+    // 当节拍完成时调用
+    func timerDidCompleteBeat(beatIndex: Int)
+    
+    // 当小节的最后一拍完成时调用（在增加小节计数前）
+    func timerWillCompleteBar(nextBarCount: Int)
+    
+    // 当小节完成时调用
+    func timerDidCompleteBar()
+    
+    // 获取当前tempo
+    func getCurrentTempo() -> Int
+    
+    // 获取拍子数量
+    func getBeatsPerBar() -> Int
+    
+    // 获取当前拍号
+    func getCurrentBeat() -> Int
+    
+    // 获取拍号单位
+    func getBeatUnit() -> Int
+    
+    // 获取节拍状态
+    func getBeatStatuses() -> [BeatStatus]
+    
+    // 获取当前切分模式
+    func getSubdivisionPattern() -> SubdivisionPattern?
+    
+    // 获取当前音效集
+    func getSoundSet() -> SoundSet
+    
+    // 获取已完成小节数
+    func getCompletedBars() -> Int
+    
+    // 检查是否达到目标小节数
+    func isTargetBarReached(barCount: Int) -> Bool
+    
+    // 完成练习
+    func completePractice()
+}
+
 class MetronomeTimer {
-    // 弱引用 State，避免循环引用
-    private weak var state: MetronomeState?
+    // 委托对象
+    private weak var delegate: MetronomeTimerDelegate?
     private let audioEngine: MetronomeAudioEngine
     private var timer: DispatchSourceTimer?
     private let timerQueue = DispatchQueue(label: AppStorageKeys.QueueLabels.metronomeTimer, qos: .userInteractive)
@@ -15,15 +57,18 @@ class MetronomeTimer {
     private var subdivisionTimers: [DispatchSourceTimer] = []
     private var isPlayingSubdivisions: Bool = false
     
-    init(state: MetronomeState, audioEngine: MetronomeAudioEngine) {
-        self.state = state
+    init(audioEngine: MetronomeAudioEngine, delegate: MetronomeTimerDelegate? = nil) {
         self.audioEngine = audioEngine
+        self.delegate = delegate
+    }
+    
+    // 设置委托
+    func setDelegate(_ delegate: MetronomeTimerDelegate) {
+        self.delegate = delegate
     }
     
     // 启动节拍器，不再需要传入状态数据
     func start() {
-        guard let state = state else { return }
-        
         // 停止已有定时器
         stop()
         
@@ -38,15 +83,16 @@ class MetronomeTimer {
         playCurrentBeat()
         
         // 计算下一拍时间
-        nextBeatTime = startTime + (60.0 / Double(state.tempo))
+        let tempo = delegate?.getCurrentTempo() ?? 120
+        nextBeatTime = startTime + (60.0 / Double(tempo))
         
         // 使用单一长期运行的定时器替代一次性定时器
         timer = DispatchSource.makeTimerSource(queue: timerQueue)
         // 对于高精度需求，考虑使用更短的重复间隔进行校正
         timer?.schedule(deadline: .now(), repeating: 0.01)  // 10ms检查一次
         
-        timer?.setEventHandler { [weak self, weak state] in
-            guard let self = self, let state = state else { return }
+        timer?.setEventHandler { [weak self] in
+            guard let self = self else { return }
             
             let now = Date().timeIntervalSince1970
             // 只有当到达下一拍时间才执行
@@ -70,7 +116,7 @@ class MetronomeTimer {
         cancelSubdivisionTimers()
         
         // 重置当前拍到第一拍
-        state?.updateCurrentBeat(0)
+        delegate?.timerDidCompleteBeat(beatIndex: 0)
         
         // 重置切分播放状态
         isPlayingSubdivisions = false
@@ -99,7 +145,7 @@ class MetronomeTimer {
         }
         
         // 重置当前拍到第一拍（小节的开始）
-        state?.updateCurrentBeat(0)
+        delegate?.timerDidCompleteBeat(beatIndex: 0)
         
         // 计算开始时间
         let startTime = Date().timeIntervalSince1970
@@ -112,15 +158,15 @@ class MetronomeTimer {
         playCurrentBeat()
         
         // 计算下一拍时间
-        guard let state = state else { return }
-        nextBeatTime = startTime + (60.0 / Double(state.tempo))
+        let tempo = delegate?.getCurrentTempo() ?? 120
+        nextBeatTime = startTime + (60.0 / Double(tempo))
         
         // 创建新的定时器
         timer = DispatchSource.makeTimerSource(queue: timerQueue)
         timer?.schedule(deadline: .now(), repeating: 0.01)
         
-        timer?.setEventHandler { [weak self, weak state] in
-            guard let self = self, let state = state else { return }
+        timer?.setEventHandler { [weak self] in
+            guard let self = self else { return }
             
             let now = Date().timeIntervalSince1970
             if now >= self.nextBeatTime {
@@ -141,12 +187,16 @@ class MetronomeTimer {
     
     // 播放当前拍
     private func playCurrentBeat() {
-        guard let state = state else { return }
+        guard let delegate = delegate else { return }
         
-        let currentBeat = state.currentBeat
-        if currentBeat < state.beatStatuses.count {
-            let status = state.beatStatuses[currentBeat]
-            print("播放节拍 - 拍号: \(state.beatsPerBar)/\(state.beatUnit), 当前第 \(currentBeat + 1) 拍, 重音类型: \(status)")
+        let currentBeat = delegate.getCurrentBeat()
+        let beatStatuses = delegate.getBeatStatuses()
+        let beatsPerBar = delegate.getBeatsPerBar()
+        let beatUnit = delegate.getBeatUnit()
+        
+        if currentBeat < beatStatuses.count {
+            let status = beatStatuses[currentBeat]
+            print("播放节拍 - 拍号: \(beatsPerBar)/\(beatUnit), 当前第 \(currentBeat + 1) 拍, 重音类型: \(status)")
             
             // 确保引擎运行
             audioEngine.ensureEngineRunning()
@@ -154,9 +204,9 @@ class MetronomeTimer {
             // 只有非muted状态才播放
             if status != .muted {
                 // 检查是否有切分模式
-                if let subdivisionPattern = state.subdivisionPattern, subdivisionPattern.notes.count > 1 {
+                if let pattern = delegate.getSubdivisionPattern(), pattern.notes.count > 1 {
                     // 播放切分音符
-                    playSubdivisionPattern(subdivisionPattern, for: status)
+                    playSubdivisionPattern(pattern, for: status)
                 } else {
                     // 直接播放整拍
                     audioEngine.playBeat(status: status)
@@ -169,7 +219,12 @@ class MetronomeTimer {
     
     // 新方法：处理节拍，减少主线程负担
     private func handleBeat(at currentTime: TimeInterval) {
-        guard let state = state else { return }
+        guard let delegate = delegate else { return }
+        
+        // 获取当前状态信息
+        let currentBeat = delegate.getCurrentBeat()
+        let beatsPerBar = delegate.getBeatsPerBar()
+        let completedBars = delegate.getCompletedBars()
         
         // 计算偏差
         let deviation = currentTime - nextBeatTime
@@ -178,73 +233,75 @@ class MetronomeTimer {
         cancelSubdivisionTimers()
         isPlayingSubdivisions = false
         
-        let nextBeatNumber = (state.currentBeat + 1) % state.beatsPerBar
+        let nextBeatNumber = (currentBeat + 1) % beatsPerBar
         
         // 检测小节完成：当节拍回到第一拍(0)，且当前不是第一拍，说明完成了一个小节
-        if nextBeatNumber == 0 && state.currentBeat > 0 {
+        if nextBeatNumber == 0 && currentBeat > 0 {
             // 小节即将完成，先通知外部组件
             var shouldContinuePlaying = true
             
             // 设置一个小节完成标志，用于检查是否应该停止
             DispatchQueue.main.sync {
-                print("MetronomeTimer - 检测到小节即将完成，当前拍: \(state.currentBeat), 下一拍: \(nextBeatNumber)")
+                print("MetronomeTimer - 检测到小节即将完成，当前拍: \(currentBeat), 下一拍: \(nextBeatNumber)")
                 
                 // 当前节拍是小节的最后一拍，即将完成一个小节
                 // 计算将要完成的小节编号
-                let nextBarCount = state.completedBars + 1
+                let nextBarCount = completedBars + 1
                 
-                // 调用onLastBeatOfBarCompleted触发高级通知
-                state.onLastBeatOfBarCompleted()
+                // 通知委托小节即将完成
+                self.delegate?.timerWillCompleteBar(nextBarCount: nextBarCount)
                 
-                // 如果练习协调器存在，检查是否需要停止
-                if let coordinator = state.practiceCoordinator,
-                   coordinator.isTargetBarReached(barCount: nextBarCount) {
+                // 检查是否达到目标小节数
+                if self.delegate?.isTargetBarReached(barCount: nextBarCount) == true {
                     print("MetronomeTimer - 检测到达到目标小节数，取消播放下一拍")
                     shouldContinuePlaying = false
                     
-                    // 直接调用completePractice而不是异步调用
-                    coordinator.completePractice()
+                    // 完成练习 - 通过委托调用
+                    self.delegate?.completePractice()
                 }
                 
-                // 然后再调用onBarCompleted增加小节计数
-                state.onBarCompleted()
+                // 通知小节已完成
+                self.delegate?.timerDidCompleteBar()
             }
             
             // 如果达到目标小节，不再继续播放
             if !shouldContinuePlaying {
                 print("MetronomeTimer - 已达到目标，跳过播放下一拍")
                 // 仍然计算下一拍时间，但不播放
-                nextBeatTime += (60.0 / Double(state.tempo))
+                let tempo = delegate.getCurrentTempo()
+                nextBeatTime += (60.0 / Double(tempo))
                 return
             }
         }
         
         // 只有UI更新部分需要回到主线程
         DispatchQueue.main.async {
-            // 更新当前拍号（UI操作）
-            state.updateCurrentBeat(nextBeatNumber)
+            // 通知当前拍更新
+            self.delegate?.timerDidCompleteBeat(beatIndex: nextBeatNumber)
         }
         
         // 音频播放不需要主线程
-        let nextBeatStatus = nextBeatNumber < state.beatStatuses.count ? state.beatStatuses[nextBeatNumber] : .normal
+        let beatStatuses = delegate.getBeatStatuses()
+        let nextBeatStatus = nextBeatNumber < beatStatuses.count ? beatStatuses[nextBeatNumber] : .normal
         if nextBeatStatus != .muted {
             // 检查是否有切分模式
-            if let subdivisionPattern = state.subdivisionPattern, subdivisionPattern.notes.count > 1 {
+            if let pattern = delegate.getSubdivisionPattern(), pattern.notes.count > 1 {
                 // 播放切分音符
-                playSubdivisionPattern(subdivisionPattern, for: nextBeatStatus)
+                playSubdivisionPattern(pattern, for: nextBeatStatus)
             } else {
                 // 没有切分模式，直接播放整拍
                 audioEngine.playBeat(status: nextBeatStatus)
             }
         }
         
-        // 计算下一拍的绝对时间（使用state中的最新tempo）
-        nextBeatTime += (60.0 / Double(state.tempo))
+        // 计算下一拍的绝对时间
+        let tempo = delegate.getCurrentTempo()
+        nextBeatTime += (60.0 / Double(tempo))
     }
     
     // 改进切分音符播放，减少创建的定时器数量
     private func playSubdivisionPattern(_ pattern: SubdivisionPattern, for beatStatus: BeatStatus) {
-        guard let state = state else { return }
+        guard let delegate = delegate else { return }
         
         // 取消任何可能正在进行的切分播放
         cancelSubdivisionTimers()
@@ -253,18 +310,16 @@ class MetronomeTimer {
         isPlayingSubdivisions = true
         
         // 获取当前拍的总持续时间（秒）
-        let beatDuration = 60.0 / Double(state.tempo)
+        let tempo = delegate.getCurrentTempo()
+        let beatDuration = 60.0 / Double(tempo)
         
         // 获取音效集
-        let soundSet = state.soundSet
+        let soundSet = delegate.getSoundSet()
         
         // 播放第一个音符（使用当前拍的强弱状态）
         if !pattern.notes.isEmpty && !pattern.notes[0].isMuted {
             audioEngine.playBeat(status: beatStatus)
         }
-        
-        // 考虑使用单一定时器和预先计算的时间点数组来处理所有切分
-        // 而不是为每个切分创建一个定时器
         
         // 调度剩余的音符
         var currentTime: TimeInterval = 0
@@ -284,8 +339,8 @@ class MetronomeTimer {
             // 创建定时器播放此音符
             let timer = DispatchSource.makeTimerSource(queue: timerQueue)
             timer.schedule(deadline: .now() + noteStartTime)
-            timer.setEventHandler { [weak self, weak state] in
-                guard let self = self, let state = state, self.isPlayingSubdivisions else { return }
+            timer.setEventHandler { [weak self] in
+                guard let self = self, self.isPlayingSubdivisions else { return }
                 
                 DispatchQueue.main.async {
                     // 对于切分音符中的后续音符，总是使用弱拍声音
