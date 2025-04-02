@@ -16,9 +16,6 @@ struct ContentView: View {
     @EnvironmentObject var practiceManager: CoreDataPracticeManager // 添加这一行
     @EnvironmentObject var practiceCoordinator: PracticeCoordinator // 添加练习协调器引用
     
-    // 控制器实例，用于传递给环境
-    @State private var metronomeController: MetronomeController?
-    
     @State private var completionDuration: TimeInterval = 0
     @State private var completionTempo: Int = 0
     
@@ -34,7 +31,6 @@ struct ContentView: View {
                 .environmentObject(playlistManager) // 确保传递 CoreDataPlaylistManager
                 
         }
-        .environment(\.metronomeController, metronomeController) // 将控制器注入到环境中
         .ignoresSafeArea(edges: .all)
         .statusBar(hidden: true)
         .persistentSystemOverlays(.hidden)
@@ -49,15 +45,12 @@ struct ContentView: View {
             // 连接CoreData管理器和练习协调器到metronomeState
             metronomeState.practiceManager = practiceManager
             metronomeState.practiceCoordinator = practiceCoordinator
-            
-            // 获取Controller并提供给环境
-            metronomeController = metronomeState.getController()
         }
         .onDisappear {
             // 清理MetronomeState资源
             metronomeState.cleanup()
         }
-        
+
         .environmentObject(metronomeState)
 
     }

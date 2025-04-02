@@ -278,17 +278,3 @@ class MetronomeController: MetronomeTimerDelegate {
         }
     }
 }
-
-// MARK: - 提供环境变量支持
-// SwiftUI 环境键，用于在视图层级中传递控制器
-struct MetronomeControllerKey: EnvironmentKey {
-    static let defaultValue: MetronomeController? = nil
-}
-
-// 扩展Environment以支持MetronomeController
-extension EnvironmentValues {
-    var metronomeController: MetronomeController? {
-        get { self[MetronomeControllerKey.self] }
-        set { self[MetronomeControllerKey.self] = newValue }
-    }
-}

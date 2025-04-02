@@ -55,21 +55,9 @@ struct TempoProApp: App {
         // 初始化PracticeCoordinator - 使用刚创建的 metronomeState 实例
         let coordinator = PracticeCoordinator(metronomeState: metronomeStateInstance)
         self._practiceCoordinator = StateObject(wrappedValue: coordinator)
-
-        hideNavigationBarBottomBorder()
     }
     
-    func hideNavigationBarBottomBorder() {
-        let appearance = UINavigationBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.shadowColor = .clear // 移除底部线条阴影
-            // 或者完全设置为透明背景
-            // appearance.configureWithTransparentBackground()
-            
-            UINavigationBar.appearance().standardAppearance = appearance
-            UINavigationBar.appearance().compactAppearance = appearance
-            UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
+    
     
     var body: some Scene {
         WindowGroup {
