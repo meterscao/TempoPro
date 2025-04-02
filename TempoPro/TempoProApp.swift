@@ -33,6 +33,9 @@ struct TempoProApp: App {
     // 添加练习协调器
     @StateObject private var practiceCoordinator: PracticeCoordinator
 
+    // 添加MyConnector
+    private var myConnector = MyConnector()
+
     
     init() {
         // 应用启动时就禁用屏幕熄屏
@@ -70,6 +73,7 @@ struct TempoProApp: App {
                 .environmentObject(metronomeState) // 添加 MetronomeState
                 .environment(\.metronomeTheme, themeManager.currentTheme)
                 .environment(\.managedObjectContext, persistenceController.viewContext)
+                .environmentObject(myConnector.metronomeViewModel)
                 .onChange(of: themeManager.currentThemeName) { _ in
                     // 通过主题名称变化来触发环境更新
                 }

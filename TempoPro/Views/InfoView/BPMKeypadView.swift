@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BPMKeypadView: View {
     @EnvironmentObject var metronomeState: MetronomeState
+    @EnvironmentObject var metronomeViewModel: MyViewModel
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
     
@@ -28,7 +29,7 @@ struct BPMKeypadView: View {
         
                 VStack(spacing: gridSpacing) {
                     ZStack(alignment: .trailing) {
-                        Text(inputValue.isEmpty ? "\(metronomeState.tempo)"  : inputValue)
+                        Text(inputValue.isEmpty ? "\(metronomeViewModel.tempo)"  : inputValue)
                         .font(.custom("MiSansLatin-Semibold", size: 36))
                         .frame(maxWidth: .infinity)
                         .frame(height: buttonHeight)
@@ -168,7 +169,7 @@ struct BPMKeypadView: View {
                                             
                                             if let value = Int(inputValue) {
                                                 let tempo = max(30, min(240, value))
-                                                metronomeState.updateTempo(tempo)
+                                                metronomeViewModel.updateTempo(tempo)
                                             }
                                             dismiss()
                                         }

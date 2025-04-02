@@ -134,6 +134,8 @@ struct MetronomeInfoView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var metronomeState: MetronomeState
+
+    @EnvironmentObject var metronomeViewModel: MyViewModel
     
     @State private var showingThemeSettings = false
     
@@ -212,9 +214,9 @@ struct MetronomeInfoView: View {
                         HStack(spacing: 30) {
                             // 拍号显示 - 添加点击手势
                             HStack(spacing: 2) {
-                                Text("\(metronomeState.beatsPerBar)")
+                                Text("\(metronomeViewModel.beatsPerBar)")
                                 Text("/")
-                                Text("\(metronomeState.beatUnit)")
+                                Text("\(metronomeViewModel.beatUnit)")
                                     
                             }
                             .font(.custom("MiSansLatin-Semibold", size: 22))
@@ -223,8 +225,7 @@ struct MetronomeInfoView: View {
                             }
                             Spacer()
                             HStack(spacing: 2) {
-                                // Text(metronomeState.subdivisionPattern!.name)
-                                Image(metronomeState.subdivisionPattern!.name)
+                                Image(metronomeViewModel.subdivisionPattern.name)
                                     .renderingMode(.template)
                                     .foregroundStyle(theme.primaryColor)
                                     .frame(width: 44, height: 44)
@@ -236,14 +237,14 @@ struct MetronomeInfoView: View {
                         }
                         
                         // BPM 显示
-                        Text("\(Int(metronomeState.tempo))")
+                        Text("\(Int(metronomeViewModel.tempo))")
                             .font(.custom("MiSansLatin-Semibold", size: 52))
                             .onTapGesture {
                                 showingKeypad = true
                             }
                             .frame(height:60)
                     }
-                    Text(getTempoTerm(metronomeState.tempo))
+                    Text(getTempoTerm(metronomeViewModel.tempo))
                         .font(.custom("MiSansLatin-Regular", size: 12))
                         .fontWeight(.light)
                         .foregroundColor(theme.primaryColor)
@@ -308,12 +309,12 @@ struct MetronomeInfoView: View {
     // 将节拍视图和手势提取为计算属性，使代码更清晰
     private var beatsViewWithGestures: some View {
         // 确保 beatStatuses 数组长度正确
-        let safeStatuses = ensureBeatStatusesLength(metronomeState.beatStatuses, count: metronomeState.beatsPerBar)
-        print("MetronomeInfoView - beatsViewWithGestures - 当前 beatsPerBar: \(metronomeState.beatsPerBar)")
+        let safeStatuses = ensureBeatStatusesLength(metronomeViewModel.beatStatuses, count: metronomeViewModel.beatsPerBar)
+        print("MetronomeInfoView - beatsViewWithGestures - 当前 beatsPerBar: \(metronomeViewModel.beatsPerBar)")
         
         return GeometryReader { geometry in
             HStack(spacing: 3) {
-                ForEach(0..<metronomeState.beatsPerBar, id: \.self) { beat in
+                ForEach(0..<metronomeViewModel.beatsPerBar, id: \.self) { beat in
                     BeatView(
                         status: safeStatuses[beat],
                         isCurrentBeat: beat == metronomeState.currentBeat,
@@ -327,7 +328,7 @@ struct MetronomeInfoView: View {
                         // 保留点击切换功能
                         var updatedStatuses = safeStatuses
                         updatedStatuses[beat] = updatedStatuses[beat].next(shouldLoop: true)
-                        metronomeState.updateBeatStatuses(updatedStatuses)
+                        metronomeViewModel.updateBeatStatuses(updatedStatuses)
                         print("点击切换BeatView \(beat) 状态为: \(updatedStatuses[beat])")
                     }
                 }
@@ -356,7 +357,7 @@ struct MetronomeInfoView: View {
                             // 如果是第一次移动，记录初始BeatView索引
                             if initialBeatIndex == nil {
                                 let totalWidth = geometry.size.width
-                                let beatIndex = min(metronomeState.beatsPerBar - 1, max(0, Int(location.x / (totalWidth / CGFloat(metronomeState.beatsPerBar)))))
+                                let beatIndex = min(metronomeViewModel.beatsPerBar - 1, max(0, Int(location.x / (totalWidth / CGFloat(metronomeViewModel.beatsPerBar)))))
                                 initialBeatIndex = beatIndex
                                 print("垂直滑动起始BeatView索引: \(beatIndex), x坐标: \(location.x), 总宽度: \(totalWidth)")
                             }
@@ -374,21 +375,21 @@ struct MetronomeInfoView: View {
                             if abs(translation.width) > 30 {
                                 if translation.width > 0 {
                                     // 向左滑 - 减少拍数
-                                    if metronomeState.beatsPerBar > 1 {
-                                        print("横向滑动 - 拍数修改前: \(metronomeState.beatsPerBar)")
+                                    if metronomeViewModel.beatsPerBar > 1 {
+                                        print("横向滑动 - 拍数修改前: \(metronomeViewModel.beatsPerBar)")
                                         // 直接修改AppStorage变量，自动保存到UserDefaults
-                                        let tempBeatsPerBar = metronomeState.beatsPerBar
-                                        metronomeState.updateBeatsPerBar(tempBeatsPerBar - 1)
-                                        print("横向滑动 - 拍数修改后: \(metronomeState.beatsPerBar)")
+                                        let tempBeatsPerBar = metronomeViewModel.beatsPerBar
+                                        metronomeViewModel.updateBeatsPerBar(tempBeatsPerBar - 1)
+                                        print("横向滑动 - 拍数修改后: \(metronomeViewModel.beatsPerBar)")
                                     }
                                 } else {
                                     // 向右滑 - 增加拍数
-                                    if metronomeState.beatsPerBar < 12 {
-                                        print("横向滑动执行 - 拍数加1: \(metronomeState.beatsPerBar) -> \(metronomeState.beatsPerBar + 1)")
+                                    if metronomeViewModel.beatsPerBar < 12 {
+                                        print("横向滑动执行 - 拍数加1: \(metronomeViewModel.beatsPerBar) -> \(metronomeViewModel.beatsPerBar + 1)")
                                         // 直接修改AppStorage变量，自动保存到UserDefaults
-                                        let tempBeatsPerBar = metronomeState.beatsPerBar
-                                        metronomeState.updateBeatsPerBar(tempBeatsPerBar + 1)
-                                        print("横向滑动 - 拍数修改后: \(metronomeState.beatsPerBar)")
+                                        let tempBeatsPerBar = metronomeViewModel.beatsPerBar
+                                        metronomeViewModel.updateBeatsPerBar(tempBeatsPerBar + 1)
+                                        print("横向滑动 - 拍数修改后: \(metronomeViewModel.beatsPerBar)")
                                     }
                                 }
                             }
@@ -399,7 +400,7 @@ struct MetronomeInfoView: View {
                             
                             // 添加延迟验证AppStorage的值
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                print("横向滑动保存后 - AppStorage 中的值: \(metronomeState.beatsPerBar)")
+                                print("横向滑动保存后 - AppStorage 中的值: \(metronomeViewModel.beatsPerBar)")
                             }
                         } else {
                             // 垂直滑动结束 - 调整特定BeatView的状态
@@ -419,7 +420,7 @@ struct MetronomeInfoView: View {
                                     print("垂直滑动 - BeatView \(beatIndex) 向上滑动，强度增强")
                                     updatedStatuses[beatIndex] = updatedStatuses[beatIndex].next()
                                 }
-                                metronomeState.updateBeatStatuses(updatedStatuses)
+                                metronomeViewModel.updateBeatStatuses(updatedStatuses)
                             }
                             
                             // 重置初始索引
@@ -450,7 +451,7 @@ struct MetronomeInfoView: View {
         
         DispatchQueue.main.async {
             // 异步更新绑定的数组，避免在视图更新过程中修改状态
-            metronomeState.updateBeatStatuses(newStatuses)
+            metronomeViewModel.updateBeatStatuses(newStatuses)
 //            beatStatuses = newStatuses
         }
         

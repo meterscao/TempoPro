@@ -13,6 +13,7 @@ struct MetronomeControlView: View {
     private let sensitivity: Double = 12.0 // 旋转灵敏度
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var metronomeState: MetronomeState
+    @EnvironmentObject var metronomeViewModel: MyViewModel
     @Environment(\.scenePhase) private var scenePhase
     
     
@@ -169,8 +170,8 @@ struct MetronomeControlView: View {
                                 // 使用GeometryReader的中心点而不是构建新的frame
                                 let centerPoint = CGPoint(x: geometry.size.width/2, y: geometry.size.height/2)
                                 lastAngle = calculateAngle(location: value.location, in: CGRect(origin: .zero, size: geometry.size))
-                                startTempo = metronomeState.tempo
-                                lastBPMInt = metronomeState.tempo
+                                startTempo = metronomeViewModel.tempo
+                                lastBPMInt = metronomeViewModel.tempo
                                 feedbackGeneratorLight.prepare()
                                 feedbackGeneratorHeavy.prepare()
                                 print("开始拖动 - 初始位置: \(value.location), 初始角度: \(lastAngle)°, 初始速度: \(startTempo), 中心点: \(centerPoint)")
@@ -204,13 +205,13 @@ struct MetronomeControlView: View {
                             }
                             lastBPMInt = currentBPMInt
                             
-                            metronomeState.updateTempo(targetTempo)
+                            metronomeViewModel.updateTempo(targetTempo)
                             print("拖动中 - 当前位置: \(value.location), 当前角度: \(currentAngle)°, 角度差: \(angleDiff)°, 总旋转: \(totalRotation)°, 实际旋转: \(rotation)°, 目标速度: \(targetTempo)")
                             lastAngle = currentAngle
                         }
                         .onEnded { _ in
                             isDragging = false
-                            print("结束拖动 - 最终旋转: \(rotation)°, 最终速度: \(metronomeState.tempo)")
+                            print("结束拖动 - 最终旋转: \(rotation)°, 最终速度: \(metronomeViewModel.tempo)")
                             totalRotation = 0
                         }
                 )
