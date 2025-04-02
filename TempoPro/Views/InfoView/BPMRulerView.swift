@@ -11,7 +11,6 @@ import UIKit
 struct BPMRulerView: View {
     
     @Environment(\.metronomeTheme) var theme
-    @EnvironmentObject var metronomeState: MetronomeState
     @EnvironmentObject var metronomeViewModel: MyViewModel
     
     // 添加中间状态以确保更新正确

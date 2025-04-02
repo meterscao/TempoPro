@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BPMKeypadView: View {
-    @EnvironmentObject var metronomeState: MetronomeState
+    
     @EnvironmentObject var metronomeViewModel: MyViewModel
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
@@ -213,7 +213,3 @@ struct BPMKeypadView: View {
     }
 }
 
-#Preview {
-    BPMKeypadView()
-        .environmentObject(MetronomeState())
-}

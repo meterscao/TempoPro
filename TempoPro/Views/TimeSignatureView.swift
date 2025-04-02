@@ -10,6 +10,7 @@ import SwiftUI
 struct TimeSignatureView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var metronomeState: MetronomeState
+    @EnvironmentObject var metronomeViewModel: MyViewModel
     @Environment(\.metronomeTheme) var theme
     
     // 可选的拍号单位
@@ -38,8 +39,8 @@ struct TimeSignatureView: View {
                                     HStack(spacing: 20) {
                                         // 使用明确的 buttonStyle 和足够大的点击区域
                                         Button {
-                                            if metronomeState.beatsPerBar > 1 {
-                                                metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar - 1)
+                                            if metronomeViewModel.beatsPerBar > 1 {
+                                                metronomeViewModel.updateBeatsPerBar(metronomeViewModel.beatsPerBar - 1)
                                             }
                                         } label: {
                                             Image("icon-minus")
@@ -49,12 +50,12 @@ struct TimeSignatureView: View {
                                         }
                                         .buttonStyle(PlainButtonStyle())
                                         
-                                        Text("\(metronomeState.beatsPerBar)")
+                                        Text("\(metronomeViewModel.beatsPerBar)")
                                             .font(.custom("MiSansLatin-Semibold", size: 32))
                                         
                                         Button {
-                                            if metronomeState.beatsPerBar < 12 {
-                                                metronomeState.updateBeatsPerBar(metronomeState.beatsPerBar + 1)
+                                            if metronomeViewModel.beatsPerBar < 12 {
+                                                metronomeViewModel.updateBeatsPerBar(metronomeViewModel.beatsPerBar + 1)
                                             }
                                         } label: {
                                             Image("icon-plus")
@@ -80,9 +81,9 @@ struct TimeSignatureView: View {
                                     
                                     HStack(spacing: 20) {
                                         Button {
-                                            if let index = availableBeatUnits.firstIndex(of: metronomeState.beatUnit),
+                                            if let index = availableBeatUnits.firstIndex(of: metronomeViewModel.beatUnit),
                                                index > 0 {
-                                                metronomeState.updateBeatUnit(availableBeatUnits[index - 1])
+                                                metronomeViewModel.updateBeatUnit(availableBeatUnits[index - 1])
                                             }
                                         } label: {
                                             Image("icon-minus")
@@ -93,13 +94,13 @@ struct TimeSignatureView: View {
                                         }
                                         .buttonStyle(PlainButtonStyle())
                                         
-                                        Text("\(metronomeState.beatUnit)")
+                                        Text("\(metronomeViewModel.beatUnit)")
                                             .font(.custom("MiSansLatin-Semibold", size: 32))
                                         
                                         Button {
-                                            if let index = availableBeatUnits.firstIndex(of: metronomeState.beatUnit),
+                                            if let index = availableBeatUnits.firstIndex(of: metronomeViewModel.beatUnit),
                                                index < availableBeatUnits.count - 1 {
-                                                metronomeState.updateBeatUnit(availableBeatUnits[index + 1])
+                                                metronomeViewModel.updateBeatUnit(availableBeatUnits[index + 1])
                                             }
                                         } label: {
                                             Image("icon-plus")
@@ -121,7 +122,7 @@ struct TimeSignatureView: View {
                     
                     // 切分音符部分
                     VStack() {
-                        let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeState.beatUnit)
+                        let patterns = SubdivisionManager.getSubdivisionPatterns(forBeatUnit: metronomeViewModel.beatUnit)
                         Text("Subdivision")
                             .font(.custom("MiSansLatin-Semibold", size: 14))
                             .foregroundColor(Color("textSecondaryColor"))
