@@ -60,6 +60,29 @@ struct MetronomeControlView: View {
                 ZStack {
                     Color.clear
                         .contentShape(Rectangle())
+                    ZStack() {
+                        Image("bg-noise")
+                            .resizable(resizingMode: .tile)
+                            .opacity(0.06)
+                            .clipShape(
+                                .circle
+                            )
+                            .frame(width: wheelSize, height: wheelSize)
+                           .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
+                           .rotationEffect(.degrees(rotation))
+
+                        Image("bg-knob")
+                            .renderingMode(.template)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.white)
+                            .frame(width: wheelSize, height: wheelSize)
+                            .rotationEffect(.degrees(rotation))
+                            .offset(x:1,y:1)
+                            .opacity(0.5)
+                    }
+                    .frame(width: wheelSize-1, height: wheelSize-1)
+                    .clipShape(Circle())
                     
                     ZStack() {
                         // Image("cymbal")
@@ -69,14 +92,7 @@ struct MetronomeControlView: View {
                         //         .circle
                         //     )
                         //     .frame(width: wheelSize, height: wheelSize)
-                        Image("bg-noise")
-                            .resizable(resizingMode: .tile)
-                            .opacity(0.06)
-                            .clipShape(
-                                .circle
-                            )
-                            .frame(width: wheelSize, height: wheelSize)
-                           .background(Circle().fill(theme.primaryColor).frame(width: wheelSize,height: wheelSize))
+                        
                         Image("bg-knob")
                             .renderingMode(.template)
                             .resizable()

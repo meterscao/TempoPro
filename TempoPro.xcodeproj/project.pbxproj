@@ -76,7 +76,6 @@
 		F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */; };
 		F7F058BF2D79443C005DF482 /* EditSongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058BE2D79443C005DF482 /* EditSongView.swift */; };
 		F7F058C12D794453005DF482 /* AddPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058C02D794453005DF482 /* AddPlaylistView.swift */; };
-		F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */; };
 		F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */; };
 		F7FF3F152D7073EB00390C16 /* MetronomeAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioService.swift */; };
 		F7FF3F162D7073EB00390C16 /* MetronomeTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F132D7073EB00390C16 /* MetronomeTimerService.swift */; };
@@ -178,7 +177,6 @@
 		F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlaylistManager.swift; sourceTree = "<group>"; };
 		F7F058BE2D79443C005DF482 /* EditSongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongView.swift; sourceTree = "<group>"; };
 		F7F058C02D794453005DF482 /* AddPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPlaylistView.swift; sourceTree = "<group>"; };
-		F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileBackgroundImage.swift; sourceTree = "<group>"; };
 		F7F538E32D75D59700A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		F7FF3F112D7073EB00390C16 /* MetronomeAudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeAudioService.swift; sourceTree = "<group>"; };
@@ -318,7 +316,6 @@
 			isa = PBXGroup;
 			children = (
 				F7F058A32D787BF3005DF482 /* ColorExtension.swift */,
-				F7F538E12D75C7E500A7395C /* TileBackgroundImage.swift */,
 				3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */,
 				3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */,
 			);
@@ -689,7 +686,6 @@
 				3AA1E5542D6F7372002D9615 /* BPMKeypadView.swift in Sources */,
 				C7DB2F532D85939B0063508C /* SettingsAdvanceView.swift in Sources */,
 				C75FB77E2D91464900AC8D61 /* CountDownPracticeView.swift in Sources */,
-				F7F538E22D75C7F600A7395C /* TileBackgroundImage.swift in Sources */,
 				C71F590F2D9C258F00F5E195 /* MetronomeController.swift in Sources */,
 				F71AF6B42D716E6500ADBC17 /* ThemeEnvironment.swift in Sources */,
 				3AB6A8642D79F05C00760B80 /* CoreDataPracticeManager.swift in Sources */,
