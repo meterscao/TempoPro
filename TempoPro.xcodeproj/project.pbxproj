@@ -23,7 +23,6 @@
 		3AB64D5A2D73150700B056FE /* MiSansLatin-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3AB64D592D73150700B056FE /* MiSansLatin-Semibold.otf */; };
 		3AB64D5B2D73150700B056FE /* MiSansLatin-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3AB64D582D73150700B056FE /* MiSansLatin-Regular.otf */; };
 		3AB6A8642D79F05C00760B80 /* CoreDataPracticeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB6A8632D79F05C00760B80 /* CoreDataPracticeManager.swift */; };
-		3AB6A8662D79F27000760B80 /* PracticeCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */; };
 		3AD042B92D7C94F0002EAB55 /* SoundSetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042B82D7C94F0002EAB55 /* SoundSetManager.swift */; };
 		3AD042BF2D7C9572002EAB55 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042BE2D7C9572002EAB55 /* SettingsView.swift */; };
 		3AD042C12D7C95A0002EAB55 /* SoundEffectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042C02D7C95A0002EAB55 /* SoundEffectsView.swift */; };
@@ -83,7 +82,6 @@
 		F7F058A42D787BF3005DF482 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A32D787BF3005DF482 /* ColorExtension.swift */; };
 		F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */; };
 		F7F058BF2D79443C005DF482 /* EditSongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058BE2D79443C005DF482 /* EditSongView.swift */; };
-		F7F058C12D794453005DF482 /* AddPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F058C02D794453005DF482 /* AddPlaylistView.swift */; };
 		F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */; };
 		F7FF3F152D7073EB00390C16 /* MetronomeAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F112D7073EB00390C16 /* MetronomeAudioService.swift */; };
 		F7FF3F162D7073EB00390C16 /* MetronomeTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF3F132D7073EB00390C16 /* MetronomeTimerService.swift */; };
@@ -133,7 +131,6 @@
 		3AB64D592D73150700B056FE /* MiSansLatin-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MiSansLatin-Semibold.otf"; sourceTree = "<group>"; };
 		3AB64D5C2D73158800B056FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3AB6A8632D79F05C00760B80 /* CoreDataPracticeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPracticeManager.swift; sourceTree = "<group>"; };
-		3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeCompletionView.swift; sourceTree = "<group>"; };
 		3AD042B82D7C94F0002EAB55 /* SoundSetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundSetManager.swift; sourceTree = "<group>"; };
 		3AD042BE2D7C9572002EAB55 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		3AD042C02D7C95A0002EAB55 /* SoundEffectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectsView.swift; sourceTree = "<group>"; };
@@ -192,7 +189,6 @@
 		F7F058A32D787BF3005DF482 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		F7F058A52D787C33005DF482 /* CoreDataPlaylistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlaylistManager.swift; sourceTree = "<group>"; };
 		F7F058BE2D79443C005DF482 /* EditSongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongView.swift; sourceTree = "<group>"; };
-		F7F058C02D794453005DF482 /* AddPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPlaylistView.swift; sourceTree = "<group>"; };
 		F7F538E32D75D59700A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		F7F538E62D75D59B00A7395C /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		F7FF3F112D7073EB00390C16 /* MetronomeAudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeAudioService.swift; sourceTree = "<group>"; };
@@ -474,7 +470,6 @@
 			children = (
 				F792941B2D7B12B000A2D91C /* WeeklyStatsView.swift */,
 				F75EC5662D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift */,
-				3AB6A8652D79F27000760B80 /* PracticeCompletionView.swift */,
 				F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */,
 				C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */,
 			);
@@ -498,7 +493,6 @@
 			children = (
 				F750D23A2D7816360022C405 /* LibraryListView.swift */,
 				C7DD3D182D97D7A9009E2ED8 /* LibraryDetailView.swift */,
-				F7F058C02D794453005DF482 /* AddPlaylistView.swift */,
 				F750D2392D7816360022C405 /* SongsListView.swift */,
 				F7F058BE2D79443C005DF482 /* EditSongView.swift */,
 			);
@@ -717,7 +711,6 @@
 			files = (
 				3AD042BF2D7C9572002EAB55 /* SettingsView.swift in Sources */,
 				3AD042C12D7C95A0002EAB55 /* SoundEffectsView.swift in Sources */,
-				F7F058C12D794453005DF482 /* AddPlaylistView.swift in Sources */,
 				C7DD3D192D97D7A9009E2ED8 /* LibraryDetailView.swift in Sources */,
 				F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */,
 				F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */,
@@ -726,7 +719,6 @@
 				C7C0DA452D9E202D00876FFB /* MyTimerService.swift in Sources */,
 				3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */,
 				C787CA062D9D5E7F004B4549 /* MyController.swift in Sources */,
-				3AB6A8662D79F27000760B80 /* PracticeCompletionView.swift in Sources */,
 				3A9C88A22D6F728A004CFD88 /* ContentView.swift in Sources */,
 				C7C0DA4A2D9E2E8600876FFB /* ThemeController.swift in Sources */,
 				F71AF6B62D716E9B00ADBC17 /* ThemeSelectionView.swift in Sources */,

@@ -114,9 +114,9 @@ struct LanguageSettingsView: View {
         }
         .navigationTitle("语言设置")
         .listStyle(InsetGroupedListStyle())
-        .background(theme.backgroundColor)
+        .background(Color("backgroundPrimaryColor"))
         .scrollContentBackground(.hidden)
-        .toolbarBackground(theme.backgroundColor, for: .navigationBar) 
+        .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar) 
         .toolbarBackground(.visible, for: .navigationBar)
         
         

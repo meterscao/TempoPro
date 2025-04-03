@@ -26,7 +26,7 @@ struct LibraryListView: View {
                     if playlists.isEmpty {
                         Text("暂无曲库")
                             .font(.custom("MiSansLatin-Regular", size: 16))
-                            .foregroundColor(theme.backgroundColor)
+                            .foregroundColor(Color("textPrimaryColor"))
                             .padding(.top, 40)
                             .listRowBackground(Color.clear)
                     } else {
