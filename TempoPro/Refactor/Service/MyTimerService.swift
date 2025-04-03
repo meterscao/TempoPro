@@ -20,12 +20,6 @@ struct MyConfiguration {
 protocol MyTimerDelegate: AnyObject {
     // 数据获取方法
     func getCurrentConfiguration() -> MyConfiguration
-
-    // 逻辑判断方法
-    func isTargetBarReached(barCount: Int) -> Bool
-
-    // 完成练习
-    func completePractice()
 }
 
 class MyTimerService {
@@ -45,15 +39,13 @@ class MyTimerService {
     
     // MARK: - 回调函数
     
-    // 行为控制回调 - 用于请求执行操作
-    /// 请求确保音频引擎正在运行
-    var onEnsureAudioEngineRunningNeeded: (() -> Void)?
+    // 节拍相关回调
     /// 请求播放指定状态的节拍声音
-    var onPlayBeatSoundNeeded: ((BeatStatus) -> Void)?
+    var onBeatNeeded: ((BeatStatus) -> Void)?
     /// 请求播放切分音符声音
-    var onPlaySubdivisionSoundNeeded: ((TimeInterval, BeatStatus) -> Void)?
+    var onSubdivisionNeeded: ((TimeInterval, BeatStatus) -> Void)?
     
-    // 事件通知回调 - 用于通知状态变化
+    // 事件通知回调
     /// 通知节拍已完成，提供新的节拍索引
     var onBeatCompleted: ((Int) -> Void)?
     /// 通知小节即将完成，提供即将完成的小节编号
@@ -86,9 +78,6 @@ class MyTimerService {
         // 计算开始时间
         let startTime = Date().timeIntervalSince1970
         nextBeatTime = startTime
-        
-        // 初始化音频引擎一次，避免反复调用
-        onEnsureAudioEngineRunningNeeded?()
         
         // 播放首拍
         playCurrentBeat()
@@ -128,9 +117,8 @@ class MyTimerService {
         cancelSubdivisionTimers()
         
         // 重置当前拍到第一拍 - 使用回调代替委托调用
-        DispatchQueue.main.async {
-            self.onBeatCompleted?(0)
-        }
+        self.onBeatCompleted?(0)
+        
         
         // 重置切分播放状态
         isPlayingSubdivisions = false
@@ -159,16 +147,11 @@ class MyTimerService {
         }
         
         // 重置当前拍到第一拍（小节的开始）- 使用回调代替委托调用
-        DispatchQueue.main.async {
-            self.onBeatCompleted?(0)
-        }
+        self.onBeatCompleted?(0)
         
         // 计算开始时间
         let startTime = Date().timeIntervalSince1970
         nextBeatTime = startTime
-        
-        // 确保音频引擎正在运行
-        onEnsureAudioEngineRunningNeeded?()
         
         // 播放当前拍
         playCurrentBeat()
@@ -217,9 +200,6 @@ class MyTimerService {
             let status = beatStatuses[currentBeat]
             print("播放节拍 - 拍号: \(beatsPerBar)/\(beatUnit), 当前第 \(currentBeat + 1) 拍, 重音类型: \(status)")
             
-            // 确保引擎运行
-            onEnsureAudioEngineRunningNeeded?()
-            
             // 只有非muted状态才播放
             if status != .muted {
                 // 检查是否有切分模式
@@ -228,7 +208,7 @@ class MyTimerService {
                     playSubdivisionPattern(pattern, for: status)
                 } else {
                     // 直接播放整拍
-                    onPlayBeatSoundNeeded?(status)
+                    onBeatNeeded?(status)
                 }
             } else {
                 print("静音拍 - 跳过播放")
@@ -263,28 +243,14 @@ class MyTimerService {
             var shouldContinuePlaying = true
             
             // 设置一个小节完成标志，用于检查是否应该停止
-            DispatchQueue.main.sync {
-                print("MetronomeTimer - 检测到小节即将完成，当前拍: \(currentBeat), 下一拍: \(nextBeatNumber)")
+            print("MetronomeTimer - 检测到小节即将完成，当前拍: \(currentBeat), 下一拍: \(nextBeatNumber)")
+            
+            // 当前节拍是小节的最后一拍，即将完成一个小节
+            // 计算将要完成的小节编号
+            let nextBarCount = completedBars + 1
                 
-                // 当前节拍是小节的最后一拍，即将完成一个小节
-                // 计算将要完成的小节编号
-                let nextBarCount = completedBars + 1
-                
-                // 通知委托小节即将完成 - 使用回调代替委托调用
-                self.onBarWillComplete?(nextBarCount)
-                
-                // 检查是否达到目标小节数
-                if self.delegate?.isTargetBarReached(barCount: nextBarCount) == true {
-                    print("MetronomeTimer - 检测到达到目标小节数，取消播放下一拍")
-                    shouldContinuePlaying = false
-                    
-                    // 完成练习 - 通过委托调用
-                    self.delegate?.completePractice()
-                }
-                
-                // 通知小节已完成 - 使用回调代替委托调用
-                self.onBarCompleted?()
-            }
+            // 通知小节已完成 - 使用回调代替委托调用
+            self.onBarCompleted?()
             
             // 如果达到目标小节，不再继续播放
             if !shouldContinuePlaying {
@@ -296,11 +262,9 @@ class MyTimerService {
             }
         }
         
-        // 只有UI更新部分需要回到主线程
-        DispatchQueue.main.async {
-            // 通知当前拍更新 - 使用回调代替委托调用
-            self.onBeatCompleted?(nextBeatNumber)
-        }
+        
+        // 通知当前拍更新 - 使用回调代替委托调用
+        self.onBeatCompleted?(nextBeatNumber)
         
         // 音频播放不需要主线程
         let beatStatuses = config.beatStatuses
@@ -312,7 +276,7 @@ class MyTimerService {
                 playSubdivisionPattern(pattern, for: nextBeatStatus)
             } else {
                 // 没有切分模式，直接播放整拍
-                onPlayBeatSoundNeeded?(nextBeatStatus)
+                onBeatNeeded?(nextBeatStatus)
             }
         }
         
@@ -338,7 +302,7 @@ class MyTimerService {
         
         // 播放第一个音符（使用当前拍的强弱状态）
         if !pattern.notes.isEmpty && !pattern.notes[0].isMuted {
-            onPlayBeatSoundNeeded?(beatStatus)
+            onBeatNeeded?(beatStatus)
         }
         
         // 调度剩余的音符
@@ -361,7 +325,7 @@ class MyTimerService {
                 guard let self = self, self.isPlayingSubdivisions else { return }
                 
                 // 通过回调播放切分音符
-                self.onPlaySubdivisionSoundNeeded?(noteStartTime, .normal)
+                self.onSubdivisionNeeded?(noteStartTime, .normal)
             }
             
             // 保存定时器并启动

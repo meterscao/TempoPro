@@ -179,6 +179,9 @@ class MyAudioService: ObservableObject {
     
     // 播放主节拍器的拍子
     func playBeat(status: BeatStatus) {
+        // 确保引擎运行
+        ensureEngineRunning()
+        
         guard isInitialized, let player = playerNode, let engine = audioEngine else { return }
         
         // 根据节拍状态确定要播放的音频文件

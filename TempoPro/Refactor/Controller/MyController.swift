@@ -26,7 +26,7 @@ protocol MyControllerDelegate: AnyObject {
     func didCurrentBeatChange(_ currentBeat: Int)
 }
 
-class MyController: ObservableObject {
+class MyController {
 
     weak var delegate: MyControllerDelegate?
 
@@ -42,7 +42,6 @@ class MyController: ObservableObject {
 
     // 添加播放状态
     private var playbackState: PlaybackState = .standby
-    private var isPlaying: Bool = false
     private var currentBeat: Int = 0
     private var completedBars: Int = 0
 
@@ -187,7 +186,6 @@ extension MyController {
         if(playbackState == .standby) {
             timerService.start()
             playbackState = .playing
-
             notifyPlaybackStateChanged()
         }
     }
@@ -196,7 +194,6 @@ extension MyController {
         if(playbackState == .playing) {
             timerService.stop()
             playbackState = .standby
-
             notifyPlaybackStateChanged()
         }
     }
@@ -213,7 +210,6 @@ extension MyController {
         if(playbackState == .paused) {
             timerService.resume()
             playbackState = .playing
-
             notifyPlaybackStateChanged()
         }
     }
@@ -221,6 +217,7 @@ extension MyController {
 
 
 extension MyController: MyTimerDelegate {
+
     func getCurrentConfiguration() -> MyConfiguration {
         // 确保返回正确的配置
         return MyConfiguration(
@@ -235,32 +232,15 @@ extension MyController: MyTimerDelegate {
         )
     }
 
-    func isTargetBarReached(barCount: Int) -> Bool {
-        // 这里可以根据需要实现目标小节检查逻辑
-        return false
-    }
-
-    func completePractice() {
-        completedBars += 1
-        DispatchQueue.main.async {
-            self.objectWillChange.send()
-        }
-    }
-
     func setupTimerCallbacks() {
-        // 确保音频引擎运行
-        timerService.onEnsureAudioEngineRunningNeeded = { [weak self] in
-            self?.audioService.ensureEngineRunning()
-        }
-
         // 播放节拍声音
-        timerService.onPlayBeatSoundNeeded = { [weak self] status in
+        timerService.onBeatNeeded = { [weak self] status in
             guard let self = self else { return }
             self.audioService.playBeat(status: status)
         }
 
         // 播放切分音符声音
-        timerService.onPlaySubdivisionSoundNeeded = { [weak self] timeOffset, status in
+        timerService.onSubdivisionNeeded = { [weak self] timeOffset, status in
             guard let self = self else { return }
             self.audioService.playBeat(status: status)
         }
@@ -269,7 +249,7 @@ extension MyController: MyTimerDelegate {
         timerService.onBeatCompleted = { [weak self] beatIndex in
             guard let self = self else { return }
             self.currentBeat = beatIndex
-            delegate?.didCurrentBeatChange(beatIndex)
+            self.delegate?.didCurrentBeatChange(beatIndex)
         }
 
         // 小节即将完成回调
@@ -282,9 +262,6 @@ extension MyController: MyTimerDelegate {
         timerService.onBarCompleted = { [weak self] in
             guard let self = self else { return }
             self.completedBars += 1
-            DispatchQueue.main.async {
-                self.objectWillChange.send()
-            }
         }
     }
 }
