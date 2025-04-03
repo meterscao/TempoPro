@@ -9,7 +9,6 @@ import SwiftUI
 
 struct TimeSignatureView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var metronomeState: MetronomeState
     @EnvironmentObject var metronomeViewModel: MyViewModel
     @Environment(\.metronomeTheme) var theme
     
@@ -143,7 +142,7 @@ struct TimeSignatureView: View {
                                 ], spacing: 2) {
                                     ForEach(patterns, id: \.name) { pattern in
                                         Button {
-                                            metronomeState.updateSubdivisionPattern(pattern)
+                                            metronomeViewModel.updateSubdivisionPattern(pattern)
                                         } label: {
                                             Image(pattern.name)
                                                 .resizable()
@@ -151,13 +150,13 @@ struct TimeSignatureView: View {
                                                 .scaledToFit()
                                                 .padding(6)
                                                 .frame(height: 64)
-                                                .foregroundStyle(metronomeState.subdivisionPattern?.name == pattern.name ?
+                                                .foregroundStyle(metronomeViewModel.subdivisionPattern.name == pattern.name ?
                                                                  Color("backgroundSecondaryColor") : Color("textSecondaryColor") )
                                         }
                                         .frame(maxWidth:.infinity)
                                         .background(
                                             RoundedRectangle(cornerRadius: 8)
-                                                .fill(metronomeState.subdivisionPattern?.name == pattern.name ?
+                                                .fill(metronomeViewModel.subdivisionPattern.name == pattern.name ?
                                                       Color("textPrimaryColor") : Color("backgroundSecondaryColor")
                                                      )
                                         )
@@ -203,7 +202,4 @@ struct TimeSignatureView: View {
     }
 
 
-#Preview {
-    TimeSignatureView()
-        .environmentObject(MetronomeState())
-}
+

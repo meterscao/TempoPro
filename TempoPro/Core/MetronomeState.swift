@@ -20,12 +20,7 @@ import SwiftUI
 //   - Controller: MetronomeStateController作为业务逻辑控制器，处理核心业务逻辑
 //   - View: SwiftUI视图通过MetronomeState(ViewModel)或直接访问Controller
 
-// 添加播放状态枚举
-enum PlaybackState {
-    case standby   // 默认状态/停止状态
-    case playing   // 正在播放
-    case paused    // 暂停状态
-}
+
 
 // 节拍器播放委托协议 - 用于通知外部组件
 protocol MetronomePlaybackDelegate: AnyObject {

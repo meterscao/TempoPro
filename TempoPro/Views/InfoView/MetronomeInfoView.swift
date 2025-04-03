@@ -133,7 +133,6 @@ struct MetronomeInfoView: View {
     
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var themeManager: ThemeManager
-    @EnvironmentObject var metronomeState: MetronomeState
 
     @EnvironmentObject var metronomeViewModel: MyViewModel
     
@@ -317,8 +316,8 @@ struct MetronomeInfoView: View {
                 ForEach(0..<metronomeViewModel.beatsPerBar, id: \.self) { beat in
                     BeatView(
                         status: safeStatuses[beat],
-                        isCurrentBeat: beat == metronomeState.currentBeat,
-                        isPlaying: metronomeState.isPlaying
+                        isCurrentBeat: beat == metronomeViewModel.currentBeat,
+                        isPlaying: metronomeViewModel.playbackState == .playing
                     )
                     .frame(maxWidth: .infinity)
                     .contentShape(Rectangle()) // 确保形状完整，便于计算位置

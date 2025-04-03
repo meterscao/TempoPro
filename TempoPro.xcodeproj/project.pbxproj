@@ -59,9 +59,11 @@
 		C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */; };
 		C787CA042D9D5E79004B4549 /* MyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C787CA032D9D5E74004B4549 /* MyViewModel.swift */; };
 		C787CA062D9D5E7F004B4549 /* MyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C787CA052D9D5E7C004B4549 /* MyController.swift */; };
-		C787CA082D9D5ED2004B4549 /* MySettingsRepositoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C787CA072D9D5EC8004B4549 /* MySettingsRepositoryService.swift */; };
+		C787CA082D9D5ED2004B4549 /* MySettingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C787CA072D9D5EC8004B4549 /* MySettingsService.swift */; };
 		C787CA0A2D9D6119004B4549 /* MySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C787CA092D9D6119004B4549 /* MySettings.swift */; };
 		C787CA0C2D9D7312004B4549 /* MyConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C787CA0B2D9D7309004B4549 /* MyConnector.swift */; };
+		C7C0DA442D9E202D00876FFB /* MyAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA422D9E202D00876FFB /* MyAudioService.swift */; };
+		C7C0DA452D9E202D00876FFB /* MyTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA432D9E202D00876FFB /* MyTimerService.swift */; };
 		C7DB2F532D85939B0063508C /* SettingsAdvanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */; };
 		C7DD3D192D97D7A9009E2ED8 /* LibraryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DD3D182D97D7A9009E2ED8 /* LibraryDetailView.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
@@ -165,9 +167,11 @@
 		C7879CBF2D843B9900B52E59 /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 		C787CA032D9D5E74004B4549 /* MyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyViewModel.swift; sourceTree = "<group>"; };
 		C787CA052D9D5E7C004B4549 /* MyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyController.swift; sourceTree = "<group>"; };
-		C787CA072D9D5EC8004B4549 /* MySettingsRepositoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySettingsRepositoryService.swift; sourceTree = "<group>"; };
+		C787CA072D9D5EC8004B4549 /* MySettingsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySettingsService.swift; sourceTree = "<group>"; };
 		C787CA092D9D6119004B4549 /* MySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySettings.swift; sourceTree = "<group>"; };
 		C787CA0B2D9D7309004B4549 /* MyConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyConnector.swift; sourceTree = "<group>"; };
+		C7C0DA422D9E202D00876FFB /* MyAudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAudioService.swift; sourceTree = "<group>"; };
+		C7C0DA432D9E202D00876FFB /* MyTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTimerService.swift; sourceTree = "<group>"; };
 		C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAdvanceView.swift; sourceTree = "<group>"; };
 		C7DD3D182D97D7A9009E2ED8 /* LibraryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryDetailView.swift; sourceTree = "<group>"; };
 		F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTheme.swift; sourceTree = "<group>"; };
@@ -392,9 +396,11 @@
 			children = (
 				C787CA0B2D9D7309004B4549 /* MyConnector.swift */,
 				C787CA092D9D6119004B4549 /* MySettings.swift */,
-				C787CA072D9D5EC8004B4549 /* MySettingsRepositoryService.swift */,
+				C787CA072D9D5EC8004B4549 /* MySettingsService.swift */,
 				C787CA052D9D5E7C004B4549 /* MyController.swift */,
 				C787CA032D9D5E74004B4549 /* MyViewModel.swift */,
+				C7C0DA422D9E202D00876FFB /* MyAudioService.swift */,
+				C7C0DA432D9E202D00876FFB /* MyTimerService.swift */,
 			);
 			path = Refactor;
 			sourceTree = "<group>";
@@ -682,6 +688,7 @@
 				F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */,
 				C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */,
 				C7016BB02D956D9F0002DE6F /* StreaksDayStatsView.swift in Sources */,
+				C7C0DA452D9E202D00876FFB /* MyTimerService.swift in Sources */,
 				3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */,
 				C787CA062D9D5E7F004B4549 /* MyController.swift in Sources */,
 				3AB6A8662D79F27000760B80 /* PracticeCompletionView.swift in Sources */,
@@ -692,7 +699,7 @@
 				C75FB77B2D91414600AC8D61 /* PracticeCoordinator.swift in Sources */,
 				3AA1E5562D6F7372002D9615 /* MetronomeControlView.swift in Sources */,
 				F7FF3F152D7073EB00390C16 /* MetronomeAudioService.swift in Sources */,
-				C787CA082D9D5ED2004B4549 /* MySettingsRepositoryService.swift in Sources */,
+				C787CA082D9D5ED2004B4549 /* MySettingsService.swift in Sources */,
 				F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */,
 				F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */,
 				F71AF6B92D71A60200ADBC17 /* BPMRulerView.swift in Sources */,
@@ -720,6 +727,7 @@
 				C787CA042D9D5E79004B4549 /* MyViewModel.swift in Sources */,
 				F7A3E73D2D79C378008869AB /* PracticeStatsView.swift in Sources */,
 				F750D23B2D7816360022C405 /* SongsListView.swift in Sources */,
+				C7C0DA442D9E202D00876FFB /* MyAudioService.swift in Sources */,
 				F750D23C2D7816360022C405 /* LibraryListView.swift in Sources */,
 				F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */,
 				F7F058A42D787BF3005DF482 /* ColorExtension.swift in Sources */,

@@ -26,7 +26,7 @@ struct MySettings {
     var soundSet: SoundSet
 }
 
-protocol MySettingsRepositoryProtocol {
+protocol MySettingsProtocol {
     func loadTempo() -> Int
     func loadBeatsPerBar() -> Int
     func loadBeatUnit() -> Int

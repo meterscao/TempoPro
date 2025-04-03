@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+
+// 添加播放状态枚举
+enum PlaybackState {
+    case standby   // 默认状态/停止状态
+    case playing   // 正在播放
+    case paused    // 暂停状态
+}
+
 protocol MyControllerDelegate: AnyObject {
     func didTempoChange(_ tempo: Int)
     func didBeatsPerBarChange(_ beatsPerBar: Int)
@@ -14,13 +22,15 @@ protocol MyControllerDelegate: AnyObject {
     func didBeatStatusesChange(_ beatStatuses: [BeatStatus])
     func didSubdivisionPatternChange(_ subdivisionPattern: SubdivisionPattern)
     func didSoundSetChange(_ soundSet: SoundSet)
+    func didPlaybackStateChange(_ playbackState: PlaybackState)
+    func didCurrentBeatChange(_ currentBeat: Int)
 }
 
 class MyController: ObservableObject {
 
     weak var delegate: MyControllerDelegate?
 
-    private let settingsService: MySettingsRepositoryService
+    
 
     private var tempo: Int
     private var beatsPerBar: Int
@@ -29,24 +39,41 @@ class MyController: ObservableObject {
     private var subdivisionPattern: SubdivisionPattern
     private var soundSet: SoundSet
 
-    private let audioService: MetronomeAudioService
-    private let timerService: MetronomeTimerService
+
+    // 添加播放状态
+    private var playbackState: PlaybackState = .standby
+    private var isPlaying: Bool = false
+    private var currentBeat: Int = 0
+    private var completedBars: Int = 0
+
+    private var settingsService: MySettingsService
+    private var audioService: MyAudioService
+    private var timerService: MyTimerService
     
 
-    init(settingsService: MySettingsRepositoryService,
-        audioService: MetronomeAudioService,
-        timerService: MetronomeTimerService
-    ) {
-        self.settingsService = settingsService
-        self.audioService = audioService
-        self.timerService = timerService
+    init() {
+        // 初始化设置服务
+        self.settingsService = MySettingsService()
         
+        // 从设置服务加载初始值
         self.tempo = settingsService.loadTempo()
         self.beatsPerBar = settingsService.loadBeatsPerBar()
         self.beatUnit = settingsService.loadBeatUnit()
         self.beatStatuses = settingsService.loadBeatStatuses()
         self.subdivisionPattern = settingsService.loadSubdivisionPattern()
         self.soundSet = settingsService.loadSoundSet()
+
+        // 初始化音频服务
+        self.audioService = MyAudioService.shared
+        // 确保音频引擎已初始化
+        self.audioService.initialize(defaultSoundSet: soundSet)
+
+        // 初始化定时器服务
+        self.timerService = MyTimerService()
+        // 设置委托
+        self.timerService.setDelegate(self)
+        // 设置回调
+        self.setupTimerCallbacks()
     }
 
     func updateTempo(_ tempo: Int) {
@@ -63,8 +90,15 @@ class MyController: ObservableObject {
         let validBeatsPerBar = max(1, min(16, beatsPerBar))
         if self.beatsPerBar != validBeatsPerBar {
             self.beatsPerBar = validBeatsPerBar
+            var newBeatStatuses = Array(repeating: BeatStatus.normal, count: validBeatsPerBar)
+            // 复制现有节拍状态
+            for i in 0..<min(beatStatuses.count, validBeatsPerBar) {
+                newBeatStatuses[i] = beatStatuses[i]
+            }
             settingsService.saveBeatsPerBar(validBeatsPerBar)
+            settingsService.saveBeatStatuses(newBeatStatuses)
             delegate?.didBeatsPerBarChange(validBeatsPerBar)    
+            delegate?.didBeatStatusesChange(newBeatStatuses)
         }
     }
 
@@ -135,7 +169,124 @@ class MyController: ObservableObject {
     func getSoundSet() -> SoundSet {
         return soundSet
     }
-    
-    
+
+    func getPlaybackState() -> PlaybackState {
+        return playbackState
+    }
+
+    func getCurrentBeat() -> Int {
+        return currentBeat
+    }
 }
 
+
+extension MyController {
+    func notifyPlaybackStateChanged() {
+        delegate?.didPlaybackStateChange(playbackState)
+    }
+
+    func play() {
+        if(playbackState == .standby) {
+            timerService.start()
+            playbackState = .playing
+
+            notifyPlaybackStateChanged()
+        }
+    }
+
+    func stop() {
+        if(playbackState == .playing) {
+            timerService.stop()
+            playbackState = .standby
+
+            notifyPlaybackStateChanged()
+        }
+    }
+
+    func pause() {
+        if(playbackState == .playing) {
+            timerService.pause()
+            playbackState = .paused
+
+            notifyPlaybackStateChanged()
+        }
+    }
+    func resume() {
+        if(playbackState == .paused) {
+            timerService.resume()
+            playbackState = .playing
+
+            notifyPlaybackStateChanged()
+        }
+    }
+}
+
+
+extension MyController: MyTimerDelegate {
+    func getCurrentConfiguration() -> MyConfiguration {
+        // 确保返回正确的配置
+        return MyConfiguration(
+            tempo: tempo,
+            beatsPerBar: beatsPerBar,
+            currentBeat: currentBeat,
+            beatUnit: beatUnit,
+            beatStatuses: beatStatuses,
+            subdivisionPattern: subdivisionPattern,
+            soundSet: soundSet,
+            completedBars: completedBars
+        )
+    }
+
+    func isTargetBarReached(barCount: Int) -> Bool {
+        // 这里可以根据需要实现目标小节检查逻辑
+        return false
+    }
+
+    func completePractice() {
+        completedBars += 1
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
+    }
+
+    func setupTimerCallbacks() {
+        // 确保音频引擎运行
+        timerService.onEnsureAudioEngineRunningNeeded = { [weak self] in
+            self?.audioService.ensureEngineRunning()
+        }
+
+        // 播放节拍声音
+        timerService.onPlayBeatSoundNeeded = { [weak self] status in
+            guard let self = self else { return }
+            self.audioService.playBeat(status: status)
+        }
+
+        // 播放切分音符声音
+        timerService.onPlaySubdivisionSoundNeeded = { [weak self] timeOffset, status in
+            guard let self = self else { return }
+            self.audioService.playBeat(status: status)
+        }
+
+        // 节拍完成回调
+        timerService.onBeatCompleted = { [weak self] beatIndex in
+            guard let self = self else { return }
+            self.currentBeat = beatIndex
+            delegate?.didCurrentBeatChange(beatIndex)
+        }
+
+        // 小节即将完成回调
+        timerService.onBarWillComplete = { [weak self] nextBarCount in
+            guard let self = self else { return }
+            print("即将完成第\(nextBarCount)小节")
+        }
+
+        // 小节完成回调
+        timerService.onBarCompleted = { [weak self] in
+            guard let self = self else { return }
+            self.completedBars += 1
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
+        }
+    }
+}

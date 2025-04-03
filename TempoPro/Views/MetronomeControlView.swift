@@ -12,7 +12,6 @@ struct MetronomeControlView: View {
     
     private let sensitivity: Double = 12.0 // 旋转灵敏度
     @Environment(\.metronomeTheme) var theme
-    @EnvironmentObject var metronomeState: MetronomeState
     @EnvironmentObject var metronomeViewModel: MyViewModel
     @Environment(\.scenePhase) private var scenePhase
     
@@ -100,7 +99,7 @@ struct MetronomeControlView: View {
                             .aspectRatio(contentMode: .fit)
                             .foregroundColor(theme.backgroundColor)
                             .frame(width: wheelSize, height: wheelSize)
-                        Image(metronomeState.isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
+                        Image(metronomeViewModel.isPlaying ? "icon-dot-playing" : "icon-dot-disabled")
                             .offset(x: wheelSize * 0.5 * 0.75, y: 0)
                     }
                     
@@ -108,7 +107,7 @@ struct MetronomeControlView: View {
                     
                     // 播放/停止按钮，添加点击效果
                     ZStack{
-                        Image(metronomeState.isPlaying ? "icon-pause" : "icon-play")
+                        Image(metronomeViewModel.isPlaying ? "icon-pause" : "icon-play")
                             .resizable()
                             .renderingMode(.template)
                             .foregroundColor(theme.backgroundColor)
@@ -154,7 +153,7 @@ struct MetronomeControlView: View {
                             }
                             .onEnded { _ in
                                 isPlayButtonPressed = false
-                                metronomeState.togglePlayback()
+                                metronomeViewModel.togglePlayback()
                             }
                     )
                 }

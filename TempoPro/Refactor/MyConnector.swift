@@ -11,23 +11,13 @@ class MyConnector {
     private let viewModel: MyViewModel
     
     // MARK: - 服务实例
-    private let settingsService: MySettingsRepositoryService
-    private let audioService: MetronomeAudioService
-    private let timerService: MetronomeTimerService
     
     // MARK: - 初始化
     init() {
         // 1. 初始化服务
-        self.settingsService = MySettingsRepositoryService()
-        self.audioService = MetronomeAudioService.shared
-        self.timerService = MetronomeTimerService()
         
         // 2. 初始化控制器
-        self.controller = MyController(
-            settingsService: settingsService,
-            audioService: audioService,
-            timerService: timerService
-        )
+        self.controller = MyController()
         
         // 3. 初始化视图模型
         self.viewModel = MyViewModel(controller: controller)

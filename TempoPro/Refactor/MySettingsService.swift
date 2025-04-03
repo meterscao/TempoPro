@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class MySettingsRepositoryService: MySettingsRepositoryProtocol {
+class MySettingsService: MySettingsProtocol {
     private let defaults = UserDefaults.standard
     
     // MARK: - 加载方法

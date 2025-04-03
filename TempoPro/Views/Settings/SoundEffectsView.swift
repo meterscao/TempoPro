@@ -11,9 +11,8 @@ struct SoundEffectsView: View {
     
     // 使用共享实例而不是创建新实例
     @ObservedObject private var audioEngine = MetronomeAudioService.shared
-    
-    // 添加对 MetronomeState 的引用
-    @EnvironmentObject var metronomeState: MetronomeState
+
+    @EnvironmentObject var metronomeViewModel: MyViewModel
     
     // 使用 SoundSetManager.availableSoundSets 获取所有可用的音效
     let soundOptions = SoundSetManager.availableSoundSets
@@ -71,7 +70,7 @@ struct SoundEffectsView: View {
             VStack(spacing: 0){
                 Button(action: {
                     // 更新 MetronomeState 中的音效设置
-//                    metronomeState.updateSoundSet(soundSet)
+                    // metronomeViewModel.updateSoundSet(soundSet)
                 }) {
                     HStack(){
                         Text("确定")
@@ -99,7 +98,7 @@ struct SoundEffectsView: View {
             audioEngine.initialize()
             
             // 确保选中的音效与 MetronomeState 中一致
-            selectedSoundKey = metronomeState.soundSet.key
+            selectedSoundKey = metronomeViewModel.soundSet.key
             
             // 预加载所有音效
             audioEngine.preloadAllSoundSets(soundSets: soundOptions)
