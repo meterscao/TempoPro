@@ -456,8 +456,8 @@
 				C75FB77C2D91463800AC8D61 /* Practice */,
 				C7879CBE2D843B9000B52E59 /* Subscription */,
 				3AD042B32D7C7A64002EAB55 /* Settings */,
-				F75EC5652D7ABE86001CBAA4 /* PracticeStats */,
-				F7F058BD2D794414005DF482 /* Playlist */,
+				F75EC5652D7ABE86001CBAA4 /* Stats */,
+				F7F058BD2D794414005DF482 /* Library */,
 				3AA1E5512D6F7372002D9615 /* MetronomeToolbarView.swift */,
 				3AA1E5522D6F7372002D9615 /* MetronomeControlView.swift */,
 				F7FF3F222D7078E900390C16 /* TimeSignatureView.swift */,
@@ -465,7 +465,7 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		F75EC5652D7ABE86001CBAA4 /* PracticeStats */ = {
+		F75EC5652D7ABE86001CBAA4 /* Stats */ = {
 			isa = PBXGroup;
 			children = (
 				F792941B2D7B12B000A2D91C /* WeeklyStatsView.swift */,
@@ -473,7 +473,7 @@
 				F7A3E73C2D79C364008869AB /* PracticeStatsView.swift */,
 				C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */,
 			);
-			path = PracticeStats;
+			path = Stats;
 			sourceTree = "<group>";
 		};
 		F7F058A22D787BD5005DF482 /* CoreData */ = {
@@ -488,7 +488,7 @@
 			path = CoreData;
 			sourceTree = "<group>";
 		};
-		F7F058BD2D794414005DF482 /* Playlist */ = {
+		F7F058BD2D794414005DF482 /* Library */ = {
 			isa = PBXGroup;
 			children = (
 				F750D23A2D7816360022C405 /* LibraryListView.swift */,
@@ -496,7 +496,7 @@
 				F750D2392D7816360022C405 /* SongsListView.swift */,
 				F7F058BE2D79443C005DF482 /* EditSongView.swift */,
 			);
-			path = Playlist;
+			path = Library;
 			sourceTree = "<group>";
 		};
 		F7F538E42D75D59700A7395C /* Utils */ = {
