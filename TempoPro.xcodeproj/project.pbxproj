@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3A011FF42D89CEDC00F2853F /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A011FF32D89CEDC00F2853F /* SubscriptionManager.swift */; };
-		3A25ED092D8DBCBA009261FA /* PracticeTimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A25ED082D8DBCBA009261FA /* PracticeTimerState.swift */; };
 		3A25ED0B2D904C7E009261FA /* ProgressivePracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A25ED0A2D904C7A009261FA /* ProgressivePracticeView.swift */; };
 		3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C889F2D6F728A004CFD88 /* TempoProApp.swift */; };
 		3A9C88A22D6F728A004CFD88 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C88A12D6F728A004CFD88 /* ContentView.swift */; };
@@ -64,6 +63,8 @@
 		C787CA0C2D9D7312004B4549 /* MyConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C787CA0B2D9D7309004B4549 /* MyConnector.swift */; };
 		C7C0DA442D9E202D00876FFB /* MyAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA422D9E202D00876FFB /* MyAudioService.swift */; };
 		C7C0DA452D9E202D00876FFB /* MyTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA432D9E202D00876FFB /* MyTimerService.swift */; };
+		C7C0DA482D9E2E7B00876FFB /* PracticeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA472D9E2E7600876FFB /* PracticeController.swift */; };
+		C7C0DA4A2D9E2E8600876FFB /* ThemeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA492D9E2E7F00876FFB /* ThemeController.swift */; };
 		C7DB2F532D85939B0063508C /* SettingsAdvanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */; };
 		C7DD3D192D97D7A9009E2ED8 /* LibraryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DD3D182D97D7A9009E2ED8 /* LibraryDetailView.swift */; };
 		F71AF6B02D716E3300ADBC17 /* MetronomeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */; };
@@ -112,7 +113,6 @@
 
 /* Begin PBXFileReference section */
 		3A011FF32D89CEDC00F2853F /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
-		3A25ED082D8DBCBA009261FA /* PracticeTimerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeTimerState.swift; sourceTree = "<group>"; };
 		3A25ED0A2D904C7A009261FA /* ProgressivePracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressivePracticeView.swift; sourceTree = "<group>"; };
 		3A9C889C2D6F728A004CFD88 /* Tempo Pro, Metronome Beats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tempo Pro, Metronome Beats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9C889F2D6F728A004CFD88 /* TempoProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempoProApp.swift; sourceTree = "<group>"; };
@@ -172,6 +172,8 @@
 		C787CA0B2D9D7309004B4549 /* MyConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyConnector.swift; sourceTree = "<group>"; };
 		C7C0DA422D9E202D00876FFB /* MyAudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAudioService.swift; sourceTree = "<group>"; };
 		C7C0DA432D9E202D00876FFB /* MyTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTimerService.swift; sourceTree = "<group>"; };
+		C7C0DA472D9E2E7600876FFB /* PracticeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeController.swift; sourceTree = "<group>"; };
+		C7C0DA492D9E2E7F00876FFB /* ThemeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeController.swift; sourceTree = "<group>"; };
 		C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAdvanceView.swift; sourceTree = "<group>"; };
 		C7DD3D182D97D7A9009E2ED8 /* LibraryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryDetailView.swift; sourceTree = "<group>"; };
 		F71AF6AF2D716E2700ADBC17 /* MetronomeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTheme.swift; sourceTree = "<group>"; };
@@ -394,15 +396,49 @@
 		C787C9FD2D9D5DAF004B4549 /* Refactor */ = {
 			isa = PBXGroup;
 			children = (
-				C787CA0B2D9D7309004B4549 /* MyConnector.swift */,
-				C787CA092D9D6119004B4549 /* MySettings.swift */,
-				C787CA072D9D5EC8004B4549 /* MySettingsService.swift */,
+				C7C0DA4D2D9E2EAC00876FFB /* Model */,
+				C7C0DA4C2D9E2E9700876FFB /* Service */,
+				C7C0DA4B2D9E2E8E00876FFB /* ViewModel */,
+				C7C0DA462D9E2E6D00876FFB /* Controller */,
+			);
+			path = Refactor;
+			sourceTree = "<group>";
+		};
+		C7C0DA462D9E2E6D00876FFB /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				C7C0DA492D9E2E7F00876FFB /* ThemeController.swift */,
+				C7C0DA472D9E2E7600876FFB /* PracticeController.swift */,
 				C787CA052D9D5E7C004B4549 /* MyController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		C7C0DA4B2D9E2E8E00876FFB /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
 				C787CA032D9D5E74004B4549 /* MyViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		C7C0DA4C2D9E2E9700876FFB /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				C787CA072D9D5EC8004B4549 /* MySettingsService.swift */,
 				C7C0DA422D9E202D00876FFB /* MyAudioService.swift */,
 				C7C0DA432D9E202D00876FFB /* MyTimerService.swift */,
 			);
-			path = Refactor;
+			path = Service;
+			sourceTree = "<group>";
+		};
+		C7C0DA4D2D9E2EAC00876FFB /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C787CA0B2D9D7309004B4549 /* MyConnector.swift */,
+				C787CA092D9D6119004B4549 /* MySettings.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		F71AF6AE2D716E1D00ADBC17 /* Theme */ = {
@@ -489,7 +525,6 @@
 			isa = PBXGroup;
 			children = (
 				C75FB77A2D91414600AC8D61 /* PracticeCoordinator.swift */,
-				3A25ED082D8DBCBA009261FA /* PracticeTimerState.swift */,
 				3A011FF32D89CEDC00F2853F /* SubscriptionManager.swift */,
 			);
 			path = State;
@@ -693,6 +728,7 @@
 				C787CA062D9D5E7F004B4549 /* MyController.swift in Sources */,
 				3AB6A8662D79F27000760B80 /* PracticeCompletionView.swift in Sources */,
 				3A9C88A22D6F728A004CFD88 /* ContentView.swift in Sources */,
+				C7C0DA4A2D9E2E8600876FFB /* ThemeController.swift in Sources */,
 				F71AF6B62D716E9B00ADBC17 /* ThemeSelectionView.swift in Sources */,
 				3AA1E5572D6F7372002D9615 /* MetronomeInfoView.swift in Sources */,
 				3AA1E5552D6F7372002D9615 /* MetronomeToolbarView.swift in Sources */,
@@ -706,8 +742,8 @@
 				F7FF3F232D7078E900390C16 /* TimeSignatureView.swift in Sources */,
 				F7FF3F162D7073EB00390C16 /* MetronomeTimerService.swift in Sources */,
 				3A9C88A02D6F728A004CFD88 /* TempoProApp.swift in Sources */,
+				C7C0DA482D9E2E7B00876FFB /* PracticeController.swift in Sources */,
 				F75EC5672D7AC1C9001CBAA4 /* MonthlyHeatmapView.swift in Sources */,
-				3A25ED092D8DBCBA009261FA /* PracticeTimerState.swift in Sources */,
 				F792941C2D7B12B000A2D91C /* WeeklyStatsView.swift in Sources */,
 				3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */,
 				C787CA0C2D9D7312004B4549 /* MyConnector.swift in Sources */,

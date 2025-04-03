@@ -63,10 +63,8 @@ class MyController: ObservableObject {
         self.subdivisionPattern = settingsService.loadSubdivisionPattern()
         self.soundSet = settingsService.loadSoundSet()
 
-        // 初始化音频服务
-        self.audioService = MyAudioService.shared
-        // 确保音频引擎已初始化
-        self.audioService.initialize(defaultSoundSet: soundSet)
+        // 初始化音频服务，传入默认音效集
+        self.audioService = MyAudioService(defaultSoundSet: soundSet)
 
         // 初始化定时器服务
         self.timerService = MyTimerService()

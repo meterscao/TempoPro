@@ -2,12 +2,6 @@ import AVFoundation
 import Combine
 
 class MyAudioService: ObservableObject {
-    // 单例实现，确保整个应用只有一个音频引擎实例
-    static let shared = MyAudioService()
-    
-    // 将初始化方法改为私有，防止外部创建多个实例
-    private init() {}
-    
     // 核心音频引擎组件
     private var audioEngine: AVAudioEngine?      // 音频引擎，管理音频节点和连接
     private var playerNode: AVAudioPlayerNode?   // 主播放节点，用于播放节拍器声音
@@ -17,7 +11,7 @@ class MyAudioService: ObservableObject {
     private var soundBufferCache: [String: AVAudioPCMBuffer] = [:]
     
     // 当前使用的音效集
-    private var currentSoundSet: SoundSet = SoundSetManager.getDefaultSoundSet()
+    private var currentSoundSet: SoundSet
     
     // 专门用于预览音效的播放器节点
     private var previewPlayer: AVAudioPlayerNode?
@@ -33,8 +27,13 @@ class MyAudioService: ObservableObject {
     // 音频会话操作锁，防止并发修改音频会话
     private let audioSessionLock = NSLock()
     
+    init(defaultSoundSet: SoundSet = SoundSetManager.getDefaultSoundSet()) {
+        self.currentSoundSet = defaultSoundSet
+        initialize(defaultSoundSet: defaultSoundSet)
+    }
+    
     // 初始化音频引擎及相关组件
-    func initialize(defaultSoundSet: SoundSet = SoundSetManager.getDefaultSoundSet()) {
+    private func initialize(defaultSoundSet: SoundSet = SoundSetManager.getDefaultSoundSet()) {
         // 避免重复初始化
         guard !isInitialized else { return }
         

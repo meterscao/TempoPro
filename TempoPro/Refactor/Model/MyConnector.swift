@@ -24,12 +24,12 @@ class MyConnector {
     }
     
     // MARK: - 公共接口
-    var metronomeViewModel: MyViewModel {
+    var myViewModel: MyViewModel {
         return viewModel
     }
     
     // MARK: - 服务访问
-    var metronomeController: MyController {
+    var myController: MyController {
         return controller
     }
 }
