@@ -141,6 +141,8 @@ class PracticeController {
         elapsedTime = 0
         elapsedBars = 0
         practiceStatus = .running
+        
+        delegate?.didPracticeStatusChange(newStatus: practiceStatus)
 
         // 根据倒计时类型设置目标
         startTimer()
