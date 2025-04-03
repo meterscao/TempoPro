@@ -15,11 +15,7 @@ struct CountDownPracticeView: View {
 
     @State private var selectedTimerType: String = "time" // time 或 bar
     @State private var showCannotStartAlert: Bool = false
-    
-    init(){
-        UINavigationBar.appearance().shadowImage = UIImage()
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-    }
+
     
     var body: some View {
         NavigationStack {
