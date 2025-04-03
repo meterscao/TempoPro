@@ -111,8 +111,3 @@ struct SoundEffectsView: View {
 }
 
 
-#Preview{
-    SoundEffectsView()
-        .environmentObject(MetronomeState())
-        
-}

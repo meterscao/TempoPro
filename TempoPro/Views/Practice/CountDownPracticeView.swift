@@ -10,12 +10,16 @@ import SwiftUI
 struct CountDownPracticeView: View {
     @EnvironmentObject var practiceCoordinator: PracticeCoordinator
     @EnvironmentObject var metronomeState: MetronomeState
+    @EnvironmentObject var practiceViewModel: PracticeViewModel
+
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
 
-    @State private var selectedTimerType: String = "time" // time 或 bar
+    @State private var selectedTimerType: String = ""
     @State private var showCannotStartAlert: Bool = false
 
+
+    
     
     var body: some View {
         NavigationStack {
@@ -84,6 +88,7 @@ struct CountDownPracticeView: View {
             .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
         }
         .onAppear {
+            
             // 只在非运行状态下设置练习模式
             if practiceCoordinator.practiceStatus == .standby {
                 // 设置为Countdown模式
@@ -91,7 +96,7 @@ struct CountDownPracticeView: View {
             }
             
             // 初始化选择类型
-            selectedTimerType = practiceCoordinator.countdownType == .time ? "time" : "bar"
+            selectedTimerType = practiceViewModel.countdownType == .time ? "time" : "bar"
         }
     }
     
@@ -458,14 +463,3 @@ struct CountDownPracticeView: View {
         .background(Color("backgroundPrimaryColor"))
     }
 }
-
-
-#Preview {
-    let metronomeState = MetronomeState()
-    let practiceCoordinator = PracticeCoordinator(metronomeState: metronomeState)
-    
-    return CountDownPracticeView()
-        .environmentObject(practiceCoordinator)
-        .environmentObject(metronomeState)
-}
-

@@ -26,7 +26,7 @@ struct SubscriptionView: View {
             } else {
                 // Subscription UI
                 SubscriptionOptionsView(offerings: subscriptionManager.offerings)
-                    .environmentObject(subscriptionManager)
+                    
             }
         }
         .onAppear {

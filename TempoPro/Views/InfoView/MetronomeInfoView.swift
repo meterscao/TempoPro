@@ -457,9 +457,3 @@ struct MetronomeInfoView: View {
         return newStatuses
     }
 }
-
-#Preview {
-    MetronomeInfoView()
-    .environmentObject(ThemeManager()) // 添加 ThemeManager 环境对象
-    .environmentObject(MetronomeState())
-}

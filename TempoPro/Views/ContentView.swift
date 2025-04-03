@@ -28,7 +28,6 @@ struct ContentView: View {
                 .aspectRatio(16/16, contentMode: .fit)
             
             MetronomeToolbarView()
-                .environmentObject(playlistManager) // 确保传递 CoreDataPlaylistManager
                 
         }
         .ignoresSafeArea(edges: .all)
@@ -51,12 +50,5 @@ struct ContentView: View {
             metronomeState.cleanup()
         }
 
-        .environmentObject(metronomeState)
-
     }
-}
-
-#Preview {
-    ContentView()
-        .environmentObject(ThemeManager())
 }

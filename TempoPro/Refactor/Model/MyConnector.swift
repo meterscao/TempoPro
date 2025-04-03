@@ -9,6 +9,8 @@ class MyConnector {
     // MARK: - 核心组件
     private let controller: MyController
     private let viewModel: MyViewModel
+    private let thePracticeController: PracticeController
+    private let thePracticeViewModel: PracticeViewModel
     
     // MARK: - 服务实例
     
@@ -18,18 +20,23 @@ class MyConnector {
         
         // 2. 初始化控制器
         self.controller = MyController()
+        self.thePracticeController = PracticeController(myController: controller)
         
         // 3. 初始化视图模型
         self.viewModel = MyViewModel(controller: controller)
+        self.thePracticeViewModel = PracticeViewModel(practiceController: thePracticeController)
     }
     
     // MARK: - 公共接口
     var myViewModel: MyViewModel {
         return viewModel
     }
-    
-    // MARK: - 服务访问
-    var myController: MyController {
-        return controller
+
+    var practiceViewModel: PracticeViewModel {
+        return thePracticeViewModel
     }
+    
+
+
+    
 }

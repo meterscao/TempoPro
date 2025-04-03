@@ -9,6 +9,8 @@ struct MetronomeToolbarView: View {
     @State private var showingStepTimerView = false
     @State private var showingSongListView = false
     
+    private let myConnector = MyConnector()
+    
     // 定义按钮数据模型
     struct ToolbarButtonItem: Identifiable {
         let id = UUID()
@@ -128,7 +130,6 @@ struct MetronomeToolbarView: View {
         .frame(height: computeToolbarHeight())
         .sheet(isPresented: $showingSongListView) {
             SongsListView()
-                .environmentObject(playlistManager)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15)
@@ -144,7 +145,6 @@ struct MetronomeToolbarView: View {
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .compatibleCornerRadius(15) 
-                
         }
 
         .sheet(isPresented: $showingStepTimerView) {

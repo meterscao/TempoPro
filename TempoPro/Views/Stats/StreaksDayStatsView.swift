@@ -185,8 +185,3 @@ struct StreakDayCircleView: View {
     }
 }
 
-
-#Preview {
-    StreaksDayStatsView()
-        .environmentObject(CoreDataPracticeManager(context: PersistenceController.shared.viewContext))
-}

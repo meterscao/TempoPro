@@ -221,7 +221,3 @@ struct MetronomeControlView: View {
     }
 }
 
-#Preview {
-    MetronomeControlView()
-        .environmentObject(MetronomeState())
-} 

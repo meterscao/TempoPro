@@ -67,8 +67,3 @@ struct ThemeSelectionView: View {
             }
     }
 }
-
-#Preview {
-    ThemeSelectionView()
-        .environmentObject(ThemeManager()) // 添加 ThemeManager 环境对象
-}

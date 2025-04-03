@@ -74,6 +74,7 @@ struct TempoProApp: App {
                 .environment(\.metronomeTheme, themeManager.currentTheme)
                 .environment(\.managedObjectContext, persistenceController.viewContext)
                 .environmentObject(myConnector.myViewModel)
+                .environmentObject(myConnector.practiceViewModel)
                 .onChange(of: themeManager.currentThemeName) { _ in
                     // 通过主题名称变化来触发环境更新
                 }

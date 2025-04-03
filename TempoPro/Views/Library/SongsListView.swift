@@ -133,8 +133,6 @@ struct SongsListView: View {
         
         .fullScreenCover(isPresented: $isShowLibraryList, content: {
             LibraryListView()
-                .environmentObject(playlistManager)
-                .environmentObject(metronomeState)
         })
         .background(Color("backgroundPrimaryColor"))
         .sheet(isPresented: $showingSongForm) {
