@@ -24,19 +24,7 @@ enum PracticeMode {
     case progressive // 渐进式模式 - 逐步增加/减少BPM
 }
 
-// 倒计时模式类型 - 定义倒计时的计量方式
-enum CountdownType {
-    case time  // 按时间倒计时 - 以秒为单位
-    case bar   // 按小节倒计时 - 以完成的小节数为单位
-}
 
-// 练习状态枚举 - 定义练习的运行状态
-enum PracticeStatus {
-    case standby   // 准备状态 - 未开始
-    case running   // 正在运行 - 练习中
-    case paused    // 暂停状态 - 暂时中断
-    case completed // 完成状态 - 已达成目标
-}
 
 // 练习模式协调器 - 负责协调节拍器与练习模式之间的交互
 class PracticeCoordinator: ObservableObject, AdvancedMetronomePlaybackDelegate {

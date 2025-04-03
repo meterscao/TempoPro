@@ -85,6 +85,10 @@ class MyController {
     private let audioService: MyAudioService
     private let timerService: MyTimerService
 
+
+    // 回调
+    var onBarCompleted: (() -> Void)?
+
     // MARK: - Initialization
 
     /// 初始化节拍器控制器
@@ -144,6 +148,7 @@ class MyController {
         timerService.onBarCompleted = { [weak self] in
             guard let self = self else { return }
             self.completedBars += 1
+            self.onBarCompleted?()
         }
     }
 
