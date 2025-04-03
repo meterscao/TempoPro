@@ -96,19 +96,19 @@ class PracticeViewModel: ObservableObject {
 
 
     // MARK: - 更新方法 
-    func updateCountdownType(newCountdownType: CountdownType) {
+    func updateCountdownType(_ newCountdownType: CountdownType) {
         practiceController.updateCountdownType(newCountdownType)
     }
 
-    func updateTargetTime(newTargetTime: Int) {
+    func updateTargetTime(_ newTargetTime: Int) {
         practiceController.updateTargetTime(newTargetTime)
     }
 
-    func updateTargetBars(newTargetBars: Int) {
+    func updateTargetBars(_ newTargetBars: Int) {
         practiceController.updateTargetBars(newTargetBars)
     }
 
-    func updateIsLoopEnabled(newIsLoopEnabled: Bool) {
+    func updateIsLoopEnabled(_ newIsLoopEnabled: Bool) {
         practiceController.updateIsLoopEnabled(newIsLoopEnabled)
     }   
 
