@@ -41,8 +41,6 @@ protocol MySettingsProtocol {
     func saveBeatStatuses(_ beatStatuses: [BeatStatus])
     func saveSubdivisionPattern(_ subdivisionPattern: SubdivisionPattern)
     func saveSoundSet(_ soundSet: SoundSet)
-    
 }
-
 
 
