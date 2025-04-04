@@ -22,13 +22,13 @@ enum PracticeStatus {
 }
 
 protocol PracticeControllerDelegate: AnyObject {
-    func didPracticeStatusChange(newStatus: PracticeStatus)
-    func didCountdownTypeChange(newCountdownType: CountdownType)
-    func didTargetTimeChange(newTargetTime: Int)
-    func didTargetBarsChange(newTargetBars: Int)
-    func didRemainingTimeChange(newRemainingTime: Int)
-    func didRemainingBarsChange(newRemainingBars: Int)
-    func didIsLoopEnabledChange(newIsLoopEnabled: Bool)
+    func didPracticeStatusChange(_ newStatus: PracticeStatus)
+    func didCountdownTypeChange(_ newCountdownType: CountdownType)
+    func didTargetTimeChange(_ newTargetTime: Int)
+    func didTargetBarsChange(_ newTargetBars: Int)
+    func didRemainingTimeChange(_ newRemainingTime: Int)
+    func didRemainingBarsChange(_ newRemainingBars: Int)
+    func didIsLoopEnabledChange(_ newIsLoopEnabled: Bool)
 }
 
 class PracticeController {
@@ -98,27 +98,27 @@ class PracticeController {
     // MARK: - Setter
     func updateCountdownType(_ newType: CountdownType) {
         countdownType = newType
-        delegate?.didCountdownTypeChange(newCountdownType: countdownType)
+        delegate?.didCountdownTypeChange(countdownType)
     }   
 
     func updatePracticeStatus(_ newStatus: PracticeStatus) {
         practiceStatus = newStatus
-        delegate?.didPracticeStatusChange(newStatus: practiceStatus)
+        delegate?.didPracticeStatusChange(practiceStatus)
     }
 
     func updateTargetTime(_ newTime: Int) {
         targetTime = newTime
-        delegate?.didTargetTimeChange(newTargetTime: targetTime)
+        delegate?.didTargetTimeChange(targetTime)
     }
 
     func updateTargetBars(_ newBars: Int) {
         targetBars = newBars
-        delegate?.didTargetBarsChange(newTargetBars: targetBars)
+        delegate?.didTargetBarsChange(targetBars)
     }
     
     func updateIsLoopEnabled(_ newIsLoopEnabled: Bool) {
         isLoopEnabled = newIsLoopEnabled
-        delegate?.didIsLoopEnabledChange(newIsLoopEnabled: isLoopEnabled)
+        delegate?.didIsLoopEnabledChange(isLoopEnabled)
     }
 
     // 
@@ -142,7 +142,7 @@ class PracticeController {
         elapsedBars = 0
         practiceStatus = .running
         
-        delegate?.didPracticeStatusChange(newStatus: practiceStatus)
+        delegate?.didPracticeStatusChange(practiceStatus)
 
         // 根据倒计时类型设置目标
         startTimer()
@@ -155,18 +155,21 @@ class PracticeController {
         practiceStatus = .paused
         timer?.invalidate()
         timer = nil
-        delegate?.didPracticeStatusChange(newStatus: practiceStatus)
+        delegate?.didPracticeStatusChange(practiceStatus)
     }
 
     func resumePractice() {
         if practiceStatus != .paused { return }
         practiceStatus = .running
+        delegate?.didPracticeStatusChange(practiceStatus)
         startTimer()
     }
 
     func stopPractice() {
         if practiceStatus != .running { return }
         practiceStatus = .standby
+
+        delegate?.didPracticeStatusChange(practiceStatus)
         timer?.invalidate()
         timer = nil
     }
@@ -175,6 +178,8 @@ class PracticeController {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.elapsedTime += 1
+            self.delegate?.didRemainingTimeChange(self.targetTime - self.elapsedTime)
+            
 
             if self.elapsedTime >= self.targetTime {
                 self.completePractice()

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class PracticeViewModel: ObservableObject {
+class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
     @Published var countdownType: CountdownType
     @Published var practiceStatus: PracticeStatus
     @Published var targetTime: Int
@@ -29,48 +29,50 @@ class PracticeViewModel: ObservableObject {
         self.remainingBars = practiceController.getRemainingBars()
         self.isLoopEnabled = practiceController.getIsLoopEnabled()
 
+        practiceController.delegate = self
+
     }
     
 
     // MARK: - 委托方法
 
-    func didPracticeStatusChange(newStatus: PracticeStatus) {
+    func didPracticeStatusChange(_ newStatus: PracticeStatus) {
         DispatchQueue.main.async {
             self.practiceStatus = newStatus
         }
     }
 
-    func didCountdownTypeChange(newCountdownType: CountdownType) {
+    func didCountdownTypeChange(_ newCountdownType: CountdownType) {
         DispatchQueue.main.async {
             self.countdownType = newCountdownType
         }
     }
 
-    func didTargetTimeChange(newTargetTime: Int) {
+    func didTargetTimeChange(_ newTargetTime: Int) {
         DispatchQueue.main.async {
             self.targetTime = newTargetTime
         }
     }
 
-    func didTargetBarsChange(newTargetBars: Int) {
+    func didTargetBarsChange(_ newTargetBars: Int) {
         DispatchQueue.main.async {
             self.targetBars = newTargetBars
         }
     }   
 
-    func didRemainingTimeChange(newRemainingTime: Int) {
+    func didRemainingTimeChange(_ newRemainingTime: Int) {
         DispatchQueue.main.async {
             self.remainingTime = newRemainingTime
         }
     }
 
-    func didRemainingBarsChange(newRemainingBars: Int) {
+    func didRemainingBarsChange(_ newRemainingBars: Int) {
         DispatchQueue.main.async {
             self.remainingBars = newRemainingBars
         }
     }
 
-    func didIsLoopEnabledChange(newIsLoopEnabled: Bool) {
+    func didIsLoopEnabledChange(_ newIsLoopEnabled: Bool) {
         DispatchQueue.main.async {
             self.isLoopEnabled = newIsLoopEnabled
         }
