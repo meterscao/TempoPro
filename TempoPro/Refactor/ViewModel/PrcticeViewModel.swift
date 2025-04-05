@@ -37,6 +37,7 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
     // MARK: - 委托方法
 
     func didPracticeStatusChange(_ newStatus: PracticeStatus) {
+        
         DispatchQueue.main.async {
             self.practiceStatus = newStatus
         }

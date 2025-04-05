@@ -313,7 +313,7 @@ struct CountDownPracticeView: View {
     // 小节选择器视图
     private var barPickerView: some View {
         HStack(spacing: 0) {
-            Picker("", selection: $practiceCoordinator.targetBars) {
+            Picker("", selection: $practiceViewModel.targetBars) {
                 ForEach(1...100, id: \.self) { bar in
                     Text("\(bar)")
                         .tag(bar)

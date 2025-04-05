@@ -291,30 +291,30 @@ class PracticeCoordinator: ObservableObject, AdvancedMetronomePlaybackDelegate {
     
     // 启动计时器 - 每秒触发一次
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
+        // timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        //     guard let self = self else { return }
             
-            self.elapsedSeconds += 1
+        //     self.elapsedSeconds += 1
             
-            // 处理倒计时模式
-            if self.activeMode == .countdown && self.countdownType == .time {
-                if self.elapsedSeconds >= self.targetTime {
-                    self.completePractice()
-                }
-            }
+        //     // 处理倒计时模式
+        //     if self.activeMode == .countdown && self.countdownType == .time {
+        //         if self.elapsedSeconds >= self.targetTime {
+        //             self.completePractice()
+        //         }
+        //     }
             
-            // 处理渐进模式
-            if self.activeMode == .progressive && self.progressiveType == .time {
-                let timeSinceLastUpdate = self.elapsedSeconds - self.lastUpdateTime
+        //     // 处理渐进模式
+        //     if self.activeMode == .progressive && self.progressiveType == .time {
+        //         let timeSinceLastUpdate = self.elapsedSeconds - self.lastUpdateTime
                 
-                if timeSinceLastUpdate >= self.progressiveInterval {
-                    self.lastUpdateTime = self.elapsedSeconds
-                    self.updateProgressiveBPM()
-                }
-            }
+        //         if timeSinceLastUpdate >= self.progressiveInterval {
+        //             self.lastUpdateTime = self.elapsedSeconds
+        //             self.updateProgressiveBPM()
+        //         }
+        //     }
             
-            self.objectWillChange.send()
-        }
+        //     self.objectWillChange.send()
+        // }
     }
     
     // 更新渐进式BPM - 根据设置增加或减少BPM
@@ -381,74 +381,74 @@ class PracticeCoordinator: ObservableObject, AdvancedMetronomePlaybackDelegate {
     
     // 完成练习 - 处理练习达到目标的情况
     func completePractice() {
-        print("进入completePractice，循环模式: \(isLoopEnabled), 同步停止: \(isSyncStopEnabled), 当前状态: \(practiceStatus)")
+        // print("进入completePractice，循环模式: \(isLoopEnabled), 同步停止: \(isSyncStopEnabled), 当前状态: \(practiceStatus)")
         
-        // 检查状态，避免重复调用
-        if practiceStatus == .completed {
-            print("练习已经处于完成状态，忽略此次调用")
-            return
-        }
+        // // 检查状态，避免重复调用
+        // if practiceStatus == .completed {
+        //     print("练习已经处于完成状态，忽略此次调用")
+        //     return
+        // }
         
-        timer?.invalidate()
-        timer = nil
+        // timer?.invalidate()
+        // timer = nil
         
-        if activeMode == .countdown && isLoopEnabled {
-            // 循环模式处理
-            print("触发循环模式处理")
-            handleLoopCompletion()
-        } else {
-            // 非循环模式，直接完成
-            practiceStatus = .completed
+        // if activeMode == .countdown && isLoopEnabled {
+        //     // 循环模式处理
+        //     print("触发循环模式处理")
+        //     handleLoopCompletion()
+        // } else {
+        //     // 非循环模式，直接完成
+        //     practiceStatus = .completed
             
-            if isSyncStopEnabled {
-                print("准备停止节拍器")
-                metronomeState?.stop()  // 直接调用停止方法
-                print("节拍器已停止")
-            }
-        }
+        //     if isSyncStopEnabled {
+        //         print("准备停止节拍器")
+        //         metronomeState?.stop()  // 直接调用停止方法
+        //         print("节拍器已停止")
+        //     }
+        // }
         
-        objectWillChange.send()
+        // objectWillChange.send()
     }
     
     // 处理循环完成 - 循环模式下的重新开始逻辑
     private func handleLoopCompletion() {
-        // 循环模式 - 显示完成状态，再重置
-        practiceStatus = .completed
-        resetProgressTask?.cancel()
+        // // 循环模式 - 显示完成状态，再重置
+        // practiceStatus = .completed
+        // resetProgressTask?.cancel()
         
-        print("循环模式：准备重置计时")
+        // print("循环模式：准备重置计时")
         
-        // 设置完成循环标志
-        withAnimation(.linear(duration: 0.5)) {
-            isCompletingCycle = true
-        }
+        // // 设置完成循环标志
+        // withAnimation(.linear(duration: 0.5)) {
+        //     isCompletingCycle = true
+        // }
         
-        // 创建延迟任务
-        let task = DispatchWorkItem { [weak self] in
-            guard let self = self, let metronomeState = self.metronomeState else { return }
+        // // 创建延迟任务
+        // let task = DispatchWorkItem { [weak self] in
+        //     guard let self = self, let metronomeState = self.metronomeState else { return }
             
-            DispatchQueue.main.async {
-                print("循环模式：重置计时器")
-                withAnimation(nil) {
-                    self.isCompletingCycle = false
-                    self.elapsedSeconds = 0
-                }
+        //     DispatchQueue.main.async {
+        //         print("循环模式：重置计时器")
+        //         withAnimation(nil) {
+        //             self.isCompletingCycle = false
+        //             self.elapsedSeconds = 0
+        //         }
                 
-                // 更新循环起始小节数为当前小节数
-                self.cycleStartBarCount = metronomeState.completedBars
-                print("循环模式：更新循环起始小节数为 \(self.cycleStartBarCount)")
+        //         // 更新循环起始小节数为当前小节数
+        //         self.cycleStartBarCount = metronomeState.completedBars
+        //         print("循环模式：更新循环起始小节数为 \(self.cycleStartBarCount)")
                 
-                // 验证计算是否正确
-                let completedBarsInCurrentCycle = metronomeState.completedBars - self.cycleStartBarCount
-                print("循环模式：验证 - 当前总计(\(metronomeState.completedBars)), 循环起始(\(self.cycleStartBarCount)), 本循环已完成(\(completedBarsInCurrentCycle)), 目标(\(self.targetBars))")
+        //         // 验证计算是否正确
+        //         let completedBarsInCurrentCycle = metronomeState.completedBars - self.cycleStartBarCount
+        //         print("循环模式：验证 - 当前总计(\(metronomeState.completedBars)), 循环起始(\(self.cycleStartBarCount)), 本循环已完成(\(completedBarsInCurrentCycle)), 目标(\(self.targetBars))")
                 
-                self.practiceStatus = .running
-                self.startTimer()
-            }
-        }
+        //         self.practiceStatus = .running
+        //         self.startTimer()
+        //     }
+        // }
         
-        resetProgressTask = task
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: task)
+        // resetProgressTask = task
+        // DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: task)
     }
     
     // 格式化时间 - 将秒数转换为分:秒格式

@@ -44,13 +44,13 @@ class PracticeController {
     // 练习状态
     private var practiceStatus: PracticeStatus = .standby
     // 目标时间
-    private var targetTime: Int = 60
+    private var targetTime: Int = 300
     // 已用时间
     private var elapsedTime: Int = 0
     
 
     // 目标小节数
-    private var targetBars: Int = 4
+    private var targetBars: Int = 20
     // 已用小节数
     private var elapsedBars: Int = 0
     
@@ -120,6 +120,7 @@ class PracticeController {
         isLoopEnabled = newIsLoopEnabled
         delegate?.didIsLoopEnabledChange(isLoopEnabled)
     }
+    
 
     // 
     func setupControllerCallbacks() {
@@ -127,8 +128,9 @@ class PracticeController {
             guard let self = self else { return }
             self.elapsedBars += 1
 
+            if self.countdownType != .bar { return }
             if self.elapsedBars >= self.targetBars {
-                self.completePractice()
+                self.stopPractice(.completed)
             }
         }
     }
@@ -140,10 +142,13 @@ class PracticeController {
         // 重置计时状态
         elapsedTime = 0
         elapsedBars = 0
-        practiceStatus = .running
-        
-        delegate?.didPracticeStatusChange(practiceStatus)
 
+        updatePracticeStatus(.running)
+        
+        delegate?.didRemainingBarsChange(targetBars - elapsedBars)
+        delegate?.didRemainingTimeChange(targetTime - elapsedTime)
+
+        myController.play()
         // 根据倒计时类型设置目标
         startTimer()
         
@@ -151,25 +156,22 @@ class PracticeController {
 
     func pausePractice() {
         if practiceStatus != .running { return }
-        
-        practiceStatus = .paused
+        updatePracticeStatus(.paused)
         timer?.invalidate()
         timer = nil
-        delegate?.didPracticeStatusChange(practiceStatus)
+        
     }
 
     func resumePractice() {
         if practiceStatus != .paused { return }
-        practiceStatus = .running
-        delegate?.didPracticeStatusChange(practiceStatus)
+        updatePracticeStatus(.running)
         startTimer()
     }
 
-    func stopPractice() {
-        if practiceStatus != .running { return }
-        practiceStatus = .standby
-
-        delegate?.didPracticeStatusChange(practiceStatus)
+    func stopPractice(_ status: PracticeStatus = .standby) {
+        updatePracticeStatus(status)
+        elapsedTime = 0
+        elapsedBars = 0
         timer?.invalidate()
         timer = nil
     }
@@ -177,19 +179,27 @@ class PracticeController {
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
+            
             self.elapsedTime += 1
             self.delegate?.didRemainingTimeChange(self.targetTime - self.elapsedTime)
-            
 
             if self.elapsedTime >= self.targetTime {
-                self.completePractice()
+                if self.isLoopEnabled {
+                    self.resetStatusAndContinuePractice()
+                }
+                else {
+                    self.stopPractice(.completed)
+                }
             }
         }
     }
 
-    private func completePractice() {
-        practiceStatus = .completed
-        timer?.invalidate()
+    private func resetStatusAndContinuePractice(){
+        updatePracticeStatus(.running)
+        elapsedTime = 0
+        elapsedBars = 0
     }
+
+  
     
 }
