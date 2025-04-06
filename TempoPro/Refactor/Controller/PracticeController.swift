@@ -139,12 +139,13 @@ class PracticeController {
 
         myController.play()
         // 根据倒计时类型设置目标
-        startTimer()
+        beginToTick()
         
     }
 
     func pausePractice() {
         if practiceStatus != .running { return }
+        myController.pause()
         updatePracticeStatus(.paused)
         timer?.invalidate()
         timer = nil
@@ -153,11 +154,13 @@ class PracticeController {
 
     func resumePractice() {
         if practiceStatus != .paused { return }
+        myController.resume()
         updatePracticeStatus(.running)
-        startTimer()
+        beginToTick()
     }
 
     func stopPractice(_ status: PracticeStatus = .standby) {
+        myController.stop()
         updatePracticeStatus(status)
         elapsedTime = 0
         elapsedBars = 0
@@ -179,10 +182,14 @@ class PracticeController {
         myController.onBarCompleted = { [weak self] in
             guard let self = self else { return }
             self.elapsedBars += 1
-
-            if self.countdownType != .bar { return }
+            self.delegate?.didRemainingBarsChange(self.targetBars - self.elapsedBars)
             if self.elapsedBars >= self.targetBars {
-                self.stopPractice(.completed)
+                if self.isLoopEnabled {
+                    self.resetStatusAndContinuePractice()
+                }
+                else {
+                    self.stopPractice(.completed)
+                }
             }
         }
     }
@@ -210,6 +217,8 @@ class PracticeController {
         updatePracticeStatus(.running)
         elapsedTime = 0
         elapsedBars = 0
+        delegate?.didRemainingTimeChange(targetTime - elapsedTime)
+        delegate?.didRemainingBarsChange(targetBars - elapsedBars)
     }
 
   

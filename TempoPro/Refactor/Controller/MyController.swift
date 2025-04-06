@@ -167,11 +167,9 @@ class MyController {
     /// 停止播放
     /// 停止节拍器并重置状态
     func stop() {
-        if(playbackState == .playing) {
-            timerService.stop()
-            playbackState = .standby
-            delegate?.didPlaybackStateChange(playbackState)
-        }
+        timerService.stop()
+        playbackState = .standby
+        delegate?.didPlaybackStateChange(playbackState)
     }
 
     /// 暂停播放

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CountDownPracticeView: View {
     @EnvironmentObject var practiceCoordinator: PracticeCoordinator
-    @EnvironmentObject var metronomeState: MetronomeState
     @EnvironmentObject var practiceViewModel: PracticeViewModel
 
     @Environment(\.metronomeTheme) var theme
@@ -319,6 +318,9 @@ struct CountDownPracticeView: View {
                         .tag(bar)
                         .foregroundStyle(Color("textPrimaryColor"))
                 }
+            }
+            .onChange(of: practiceViewModel.targetBars) { newValue in
+                practiceViewModel.updateTargetBars(newValue)
             }
             .pickerStyle(.wheel)
             .frame(width: 100)

@@ -4,7 +4,7 @@ struct SongsListView: View {
     @Environment(\.metronomeTheme) var theme
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager
-    @EnvironmentObject var metronomeState: MetronomeState
+    @EnvironmentObject var metronomeViewModel : MyViewModel
     
     
     @State private var currentPlaylist: Playlist?
@@ -202,10 +202,10 @@ struct SongsListView: View {
     
     private func playSong(_ song: Song) {
         // 设置节拍器状态
-        metronomeState.updateTempo(Int(song.bpm))
-        metronomeState.updateBeatsPerBar(Int(song.beatsPerBar))
-        metronomeState.updateBeatUnit(Int(song.beatUnit))
-        metronomeState.updateSubdivisionPattern(SubdivisionManager.getSubdivisionPattern(byName: song.subdivisionPattern ?? "quarter_whole")!)
+        metronomeViewModel.updateTempo(Int(song.bpm))
+        metronomeViewModel.updateBeatsPerBar(Int(song.beatsPerBar))
+        metronomeViewModel.updateBeatUnit(Int(song.beatUnit))
+        metronomeViewModel.updateSubdivisionPattern(SubdivisionManager.getSubdivisionPattern(byName: song.subdivisionPattern ?? "quarter_whole")!)
         
         // 转换节拍状态
         let statusInts = (song.beatStatuses as? [Int]) ?? Array(repeating: 2, count: Int(song.beatsPerBar))
@@ -217,10 +217,10 @@ struct SongsListView: View {
             default: return .normal
             }
         }
-        metronomeState.updateBeatStatuses(statuses)
+        metronomeViewModel.updateBeatStatuses(statuses)
         
         // 返回主界面并启动节拍器
-        metronomeState.play()
+        metronomeViewModel.play()
         // dismiss()
     }
 }

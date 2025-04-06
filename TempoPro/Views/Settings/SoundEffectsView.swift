@@ -17,7 +17,6 @@ struct SoundEffectsView: View {
     // 使用 SoundSetManager.availableSoundSets 获取所有可用的音效
     let soundOptions = SoundSetManager.availableSoundSets
     
-    // 初始状态使用 MetronomeState 中当前的音效设置
     @State private var selectedSoundKey: String = ""
 
 
@@ -97,7 +96,7 @@ struct SoundEffectsView: View {
             // 确保音频引擎已初始化
             audioEngine.initialize()
             
-            // 确保选中的音效与 MetronomeState 中一致
+            // 确保选中的音效与 viewmodel 中一致
             selectedSoundKey = metronomeViewModel.soundSet.key
             
             // 预加载所有音效
