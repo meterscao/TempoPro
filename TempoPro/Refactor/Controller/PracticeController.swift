@@ -62,7 +62,6 @@ class PracticeController {
 
     init(myController: MyController) {
         self.myController = myController
-        setupControllerCallbacks()
     }
 
     // MARK: - Getter
@@ -122,18 +121,8 @@ class PracticeController {
     }
     
 
-    // 
-    func setupControllerCallbacks() {
-        myController.onBarCompleted = { [weak self] in
-            guard let self = self else { return }
-            self.elapsedBars += 1
-
-            if self.countdownType != .bar { return }
-            if self.elapsedBars >= self.targetBars {
-                self.stopPractice(.completed)
-            }
-        }
-    }
+    
+    
     
     
     // MARK: - Action
@@ -176,7 +165,30 @@ class PracticeController {
         timer = nil
     }
 
-    private func startTimer() {
+    private func beginToTick(){
+        if countdownType == .time {
+            setupTimer()
+        }
+        else {
+            setupControllerCallbacks()
+        }
+    }
+
+    private func setupControllerCallbacks() {
+        if countdownType != .bar { return }
+        myController.onBarCompleted = { [weak self] in
+            guard let self = self else { return }
+            self.elapsedBars += 1
+
+            if self.countdownType != .bar { return }
+            if self.elapsedBars >= self.targetBars {
+                self.stopPractice(.completed)
+            }
+        }
+    }
+
+    private func setupTimer() {
+        if countdownType != .time { return }
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             
