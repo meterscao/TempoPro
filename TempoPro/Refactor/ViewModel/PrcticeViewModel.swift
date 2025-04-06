@@ -16,6 +16,8 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
     @Published var remainingBars: Int
     @Published var isLoopEnabled: Bool
 
+    @Published var progress: Double = 0.0
+
     private let practiceController: PracticeController
 
     init(practiceController: PracticeController) {
@@ -45,31 +47,38 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
 
     func didCountdownTypeChange(_ newCountdownType: CountdownType) {
         DispatchQueue.main.async {
+            print("🔄 类型切换: \(self.countdownType) -> \(newCountdownType), 目标时间: \(self.targetTime), 剩余时间: \(self.remainingTime), 目标小节: \(self.targetBars), 剩余小节: \(self.remainingBars)")
             self.countdownType = newCountdownType
         }
     }
 
     func didTargetTimeChange(_ newTargetTime: Int) {
         DispatchQueue.main.async {
+            print("⏱️ 目标时间更新: \(self.targetTime) -> \(newTargetTime)")
             self.targetTime = newTargetTime
         }
     }
 
     func didTargetBarsChange(_ newTargetBars: Int) {
         DispatchQueue.main.async {
+            print("🎵 目标小节更新: \(self.targetBars) -> \(newTargetBars)")
             self.targetBars = newTargetBars
         }
     }   
 
     func didRemainingTimeChange(_ newRemainingTime: Int) {
         DispatchQueue.main.async {
+            print("⏱️ 剩余时间更新: \(self.remainingTime) -> \(newRemainingTime)")
             self.remainingTime = newRemainingTime
+            self.progress = 1 - Double(newRemainingTime) / Double(self.targetTime)
         }
     }
 
     func didRemainingBarsChange(_ newRemainingBars: Int) {
         DispatchQueue.main.async {
+            print("🎵 剩余小节更新: \(self.remainingBars) -> \(newRemainingBars)")
             self.remainingBars = newRemainingBars
+            self.progress = 1 - Double(newRemainingBars) / Double(self.targetBars)
         }
     }
 
@@ -101,6 +110,19 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
     // MARK: - 更新方法 
     func updateCountdownType(_ newCountdownType: CountdownType) {
         practiceController.updateCountdownType(newCountdownType)
+        
+        // 确保剩余值在切换类型后立即更新
+        if newCountdownType == .time {
+            // 确保时间值在UI上立即更新
+            DispatchQueue.main.async {
+                self.remainingTime = self.targetTime
+            }
+        } else {
+            // 确保小节值在UI上立即更新
+            DispatchQueue.main.async {
+                self.remainingBars = self.targetBars
+            }
+        }
     }
 
     func updateTargetTime(_ newTargetTime: Int) {

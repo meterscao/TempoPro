@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CountDownPracticeView: View {
-    @EnvironmentObject var practiceCoordinator: PracticeCoordinator
     @EnvironmentObject var practiceViewModel: PracticeViewModel
 
     @Environment(\.metronomeTheme) var theme
@@ -54,26 +53,10 @@ struct CountDownPracticeView: View {
                     .preferredColorScheme(.dark)
                     .frame(width: 200)
                     .onChange(of: selectedTimerType) { newValue in
-                        // 确保在更改前保存之前的状态
-                        let previousType = practiceViewModel.countdownType
-                        
                         if newValue == "time" {
-                            practiceViewModel.countdownType = .time
-                            // 确保时间值有效
-                            if practiceViewModel.targetTime == 0 {
-                                practiceViewModel.updateTargetTime(60) // 设置默认值，例如1分钟
-                            }
+                            practiceViewModel.updateCountdownType(.time)
                         } else {
                             practiceViewModel.updateCountdownType(.bar)
-                            // 确保小节值有效
-                            if practiceViewModel.targetBars == 0 {
-                                practiceViewModel.updateTargetBars(4) // 设置默认值，例如4小节
-                            }
-                        }
-                        
-                        // 如果需要，进行额外的状态重置
-                        if previousType != practiceViewModel.countdownType {
-                            // 重置相关状态
                         }
                     }
                     
@@ -100,27 +83,6 @@ struct CountDownPracticeView: View {
                         // 小节选择器
                         barPickerView
                     }
-                
-                    // // 同步启动选项
-                    // Toggle(isOn: $practiceCoordinator.isSyncStartEnabled) {
-                    //     Text("同步启动节拍器")
-                    //         .font(.custom("MiSansLatin-Regular", size: 16))
-                    //         .foregroundColor(Color("textPrimaryColor"))
-                    // }
-                    
-                    // // 同步停止选项
-                    // Toggle(isOn: $practiceCoordinator.isSyncStopEnabled) {
-                    //     Text("同步停止节拍器")
-                    //         .font(.custom("MiSansLatin-Regular", size: 16))
-                    //         .foregroundColor(Color("textPrimaryColor"))
-                    // }
-                    
-                    // 循环选项
-                    // Toggle(isOn: $practiceCoordinator.isLoopEnabled) {
-                    //     Text("循环播放")
-                    //         .font(.custom("MiSansLatin-Regular", size: 16))
-                    //         .foregroundColor(Color("textPrimaryColor"))
-                    // }
             }
             .frame(maxWidth: .infinity,maxHeight: .infinity)
             .background(Color("backgroundSecondaryColor"))
@@ -350,12 +312,12 @@ struct CountDownPracticeView: View {
                     VStack() {
                         if practiceViewModel.countdownType == .time {
                             // 时间显示
-                            Text(practiceViewModel.practiceStatus == .completed ? "已完成" : practiceCoordinator.formatTime(practiceViewModel.remainingTime))
+                            Text(practiceViewModel.practiceStatus == .completed ? "已完成" : practiceViewModel.formatTime(practiceViewModel.remainingTime))
                                 .font(.custom("MiSansLatin-Semibold", size: 40))
                                 .foregroundColor(Color("textPrimaryColor"))
                             
                             HStack(){
-                                Text(practiceCoordinator.formatTime(practiceViewModel.targetTime))
+                                Text(practiceViewModel.formatTime(practiceViewModel.targetTime))
                                     .font(.custom("MiSansLatin-Regular", size: 14))
                                     .foregroundColor(Color("textSecondaryColor"))
                                 if practiceViewModel.isLoopEnabled {
@@ -385,11 +347,11 @@ struct CountDownPracticeView: View {
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 40)
-                        .trim(from: 0, to: practiceCoordinator.progress)
+                        .trim(from: 0, to: practiceViewModel.progress)
                         .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
                         .foregroundColor(Color("AccentColor"))
                         .rotationEffect(Angle(degrees: -90.0))
-                        .animation(practiceCoordinator.isCompletingCycle ? .linear(duration: 0.5) : .linear(duration: 1.0), value: practiceCoordinator.progress)
+                        .animation(.linear(duration: 0.5), value: practiceViewModel.progress)
                         .frame(width:geometry.size.height,height: geometry.size.width)
                 )   
             }

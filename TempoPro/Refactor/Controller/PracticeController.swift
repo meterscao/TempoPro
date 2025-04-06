@@ -96,26 +96,31 @@ class PracticeController {
 
     // MARK: - Setter
     func updateCountdownType(_ newType: CountdownType) {
+        print("🔧 控制器 - 更新倒计时类型: \(countdownType) -> \(newType)")
         countdownType = newType
         delegate?.didCountdownTypeChange(countdownType)
     }   
 
     func updatePracticeStatus(_ newStatus: PracticeStatus) {
+        print("🔧 控制器 - 更新练习状态: \(practiceStatus) -> \(newStatus)")
         practiceStatus = newStatus
         delegate?.didPracticeStatusChange(practiceStatus)
     }
 
     func updateTargetTime(_ newTime: Int) {
+        print("🔧 控制器 - 更新目标时间: \(targetTime) -> \(newTime)")
         targetTime = newTime
         delegate?.didTargetTimeChange(targetTime)
     }
 
     func updateTargetBars(_ newBars: Int) {
+        print("🔧 控制器 - 更新目标小节: \(targetBars) -> \(newBars)")
         targetBars = newBars
         delegate?.didTargetBarsChange(targetBars)
     }
     
     func updateIsLoopEnabled(_ newIsLoopEnabled: Bool) {
+        print("🔧 控制器 - 更新循环模式: \(isLoopEnabled) -> \(newIsLoopEnabled)")
         isLoopEnabled = newIsLoopEnabled
         delegate?.didIsLoopEnabledChange(isLoopEnabled)
     }
@@ -128,6 +133,7 @@ class PracticeController {
     // MARK: - Action
     
     func startPractice() {
+        print("🔧 控制器 - 开始练习, 当前类型: \(countdownType), 目标时间: \(targetTime), 目标小节: \(targetBars)")
         // 重置计时状态
         elapsedTime = 0
         elapsedBars = 0
@@ -140,7 +146,6 @@ class PracticeController {
         myController.play()
         // 根据倒计时类型设置目标
         beginToTick()
-        
     }
 
     func pausePractice() {
@@ -160,12 +165,18 @@ class PracticeController {
     }
 
     func stopPractice(_ status: PracticeStatus = .standby) {
+        print("🔧 控制器 - 停止练习, 设置状态: \(status)")
         myController.stop()
         updatePracticeStatus(status)
         elapsedTime = 0
         elapsedBars = 0
         timer?.invalidate()
         timer = nil
+        print("🔧 控制器 - 停止后状态: 剩余时间应为\(targetTime), 剩余小节应为\(targetBars)")
+        
+        // 确保UI更新剩余值
+        delegate?.didRemainingTimeChange(targetTime)
+        delegate?.didRemainingBarsChange(targetBars)
     }
 
     private func beginToTick(){
