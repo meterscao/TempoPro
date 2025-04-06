@@ -124,12 +124,12 @@ class PracticeController {
         isLoopEnabled = newIsLoopEnabled
         delegate?.didIsLoopEnabledChange(isLoopEnabled)
     }
-    
 
-    
-    
-    
-    
+}
+
+
+
+extension PracticeController {
     // MARK: - Action
     
     func startPractice() {
@@ -190,6 +190,7 @@ class PracticeController {
         print("🔧 控制器 - 停止后状态: 剩余时间应为\(targetTime), 剩余小节应为\(targetBars)")
     }
 
+    // 开始倒计时
     private func beginToTick(){
         if countdownType == .time {
             setupTimer()
@@ -198,7 +199,14 @@ class PracticeController {
             setupControllerCallbacks()
         }
     }
+}
 
+
+extension PracticeController {
+    
+
+
+    // 设置控制器回调
     private func setupControllerCallbacks() {
         if countdownType != .bar { return }
         myController.onBarCompleted = { [weak self] in
@@ -206,16 +214,12 @@ class PracticeController {
             self.elapsedBars += 1
             self.delegate?.didRemainingBarsChange(self.targetBars - self.elapsedBars)
             if self.elapsedBars >= self.targetBars {
-                if self.isLoopEnabled {
-                    self.resetStatusAndContinuePractice()
-                }
-                else {
-                    self.stopPractice(.completed)
-                }
+                self.onLoopEnd()
             }
         }
     }
 
+    // 设置时间倒计时
     private func setupTimer() {
         if countdownType != .time { return }
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
@@ -225,12 +229,7 @@ class PracticeController {
             self.delegate?.didRemainingTimeChange(self.targetTime - self.elapsedTime)
 
             if self.elapsedTime >= self.targetTime {
-                if self.isLoopEnabled {
-                    self.resetStatusAndContinuePractice()
-                }
-                else {
-                    self.stopPractice(.completed)
-                }
+                self.onLoopEnd()
             }
         }
     }
@@ -243,6 +242,14 @@ class PracticeController {
         delegate?.didRemainingBarsChange(targetBars - elapsedBars)
     }
 
-  
-    
+
+    // 每个周期结束时触发的回调
+    private func onLoopEnd(){
+        if isLoopEnabled {
+            resetStatusAndContinuePractice()
+        }
+        else {
+            stopPractice(.completed)
+        }
+    }   
 }

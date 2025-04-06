@@ -64,7 +64,7 @@
 		C7C0DA452D9E202D00876FFB /* MyTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA432D9E202D00876FFB /* MyTimerService.swift */; };
 		C7C0DA482D9E2E7B00876FFB /* PracticeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA472D9E2E7600876FFB /* PracticeController.swift */; };
 		C7C0DA4A2D9E2E8600876FFB /* ThemeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA492D9E2E7F00876FFB /* ThemeController.swift */; };
-		C7C0DA4F2D9E5D8100876FFB /* PrcticeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA4E2D9E5D7C00876FFB /* PrcticeViewModel.swift */; };
+		C7C0DA4F2D9E5D8100876FFB /* PracticeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA4E2D9E5D7C00876FFB /* PracticeViewModel.swift */; };
 		C7C0DA522D9E5E1E00876FFB /* MyPractice.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA512D9E5E1900876FFB /* MyPractice.swift */; };
 		C7C0DA542D9E5E2A00876FFB /* MyPracticeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C0DA532D9E5E2600876FFB /* MyPracticeService.swift */; };
 		C7DB2F532D85939B0063508C /* SettingsAdvanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */; };
@@ -174,7 +174,7 @@
 		C7C0DA432D9E202D00876FFB /* MyTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTimerService.swift; sourceTree = "<group>"; };
 		C7C0DA472D9E2E7600876FFB /* PracticeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeController.swift; sourceTree = "<group>"; };
 		C7C0DA492D9E2E7F00876FFB /* ThemeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeController.swift; sourceTree = "<group>"; };
-		C7C0DA4E2D9E5D7C00876FFB /* PrcticeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrcticeViewModel.swift; sourceTree = "<group>"; };
+		C7C0DA4E2D9E5D7C00876FFB /* PracticeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeViewModel.swift; sourceTree = "<group>"; };
 		C7C0DA512D9E5E1900876FFB /* MyPractice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPractice.swift; sourceTree = "<group>"; };
 		C7C0DA532D9E5E2600876FFB /* MyPracticeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPracticeService.swift; sourceTree = "<group>"; };
 		C7DB2F522D85939B0063508C /* SettingsAdvanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAdvanceView.swift; sourceTree = "<group>"; };
@@ -419,7 +419,7 @@
 		C7C0DA4B2D9E2E8E00876FFB /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				C7C0DA4E2D9E5D7C00876FFB /* PrcticeViewModel.swift */,
+				C7C0DA4E2D9E5D7C00876FFB /* PracticeViewModel.swift */,
 				C787CA032D9D5E74004B4549 /* MyViewModel.swift */,
 			);
 			path = ViewModel;
@@ -721,7 +721,7 @@
 				3AD042BF2D7C9572002EAB55 /* SettingsView.swift in Sources */,
 				3AD042C12D7C95A0002EAB55 /* SoundEffectsView.swift in Sources */,
 				C7DD3D192D97D7A9009E2ED8 /* LibraryDetailView.swift in Sources */,
-				C7C0DA4F2D9E5D8100876FFB /* PrcticeViewModel.swift in Sources */,
+				C7C0DA4F2D9E5D8100876FFB /* PracticeViewModel.swift in Sources */,
 				F7FF3F192D7074CA00390C16 /* MetronomeState.swift in Sources */,
 				F7F0589E2D787826005DF482 /* CreDataExtensions.swift in Sources */,
 				C7879CC02D843B9900B52E59 /* SubscriptionView.swift in Sources */,
