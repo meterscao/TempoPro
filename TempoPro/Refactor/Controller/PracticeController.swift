@@ -168,15 +168,26 @@ class PracticeController {
         print("🔧 控制器 - 停止练习, 设置状态: \(status)")
         myController.stop()
         updatePracticeStatus(status)
-        elapsedTime = 0
-        elapsedBars = 0
-        timer?.invalidate()
-        timer = nil
+
+        if countdownType == .time {
+            if status == .completed {
+                elapsedTime = targetTime
+            }
+            else {
+                elapsedTime = 0
+            }
+            timer?.invalidate()
+            timer = nil
+        }
+        else {
+            if status == .completed {
+                elapsedBars = targetBars
+            }
+            else {
+                elapsedBars = 0
+            }
+        }
         print("🔧 控制器 - 停止后状态: 剩余时间应为\(targetTime), 剩余小节应为\(targetBars)")
-        
-        // 确保UI更新剩余值
-        delegate?.didRemainingTimeChange(targetTime)
-        delegate?.didRemainingBarsChange(targetBars)
     }
 
     private func beginToTick(){
