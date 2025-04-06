@@ -3,7 +3,9 @@ import SwiftUI
 struct MetronomeToolbarView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager
-    @EnvironmentObject var practiceCoordinator: PracticeCoordinator
+
+    @EnvironmentObject var practiceViewModel: PracticeViewModel
+
     @State private var showingStatsView = false
     @State private var showingCountDownTimerView = false
     @State private var showingStepTimerView = false
@@ -42,15 +44,15 @@ struct MetronomeToolbarView: View {
     
     // 判断是否显示倒计时信息
     private var shouldShowCountdownInfo: Bool {
-        return practiceCoordinator.activeMode == .countdown && 
-               (practiceCoordinator.practiceStatus == .running || 
-                practiceCoordinator.practiceStatus == .paused)
+        return 
+               practiceViewModel.practiceStatus == .running || 
+                practiceViewModel.practiceStatus == .paused
     }
     
     // 获取倒计时显示文本
     private var countdownInfoText: String {
         if shouldShowCountdownInfo {
-            return practiceCoordinator.getCountdownDisplayText()
+            return practiceViewModel.getCountdownDisplayText()
         }
         return ""
     }
