@@ -16,7 +16,8 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
     @Published var remainingBars: Int
     @Published var isLoopEnabled: Bool
 
-    @Published var progress: Double = 0.0
+    @Published var timeProgress: Double = 0.0
+    @Published var barProgress: Double = 0.0
 
     private let practiceController: PracticeController
 
@@ -70,7 +71,7 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
         DispatchQueue.main.async {
             print("⏱️ 剩余时间更新: \(self.remainingTime) -> \(newRemainingTime)")
             self.remainingTime = newRemainingTime
-            self.progress = 1 - Double(newRemainingTime) / Double(self.targetTime)
+            self.timeProgress = 1 - Double(newRemainingTime) / Double(self.targetTime)
         }
     }
 
@@ -78,7 +79,7 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
         DispatchQueue.main.async {
             print("🎵 剩余小节更新: \(self.remainingBars) -> \(newRemainingBars)")
             self.remainingBars = newRemainingBars
-            self.progress = 1 - Double(newRemainingBars) / Double(self.targetBars)
+            self.barProgress = 1 - Double(newRemainingBars) / Double(self.targetBars)
         }
     }
 

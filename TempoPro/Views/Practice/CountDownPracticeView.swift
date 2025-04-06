@@ -301,6 +301,7 @@ struct CountDownPracticeView: View {
     // 计时视图
     private var timerView: some View {
         let lineWidth: CGFloat = 14
+        var progress = practiceViewModel.countdownType == .time ? practiceViewModel.timeProgress : practiceViewModel.barProgress
 
         return VStack(spacing: 20) {
             GeometryReader { geometry in
@@ -347,11 +348,11 @@ struct CountDownPracticeView: View {
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 40)
-                        .trim(from: 0, to: practiceViewModel.progress)
+                        .trim(from: 0, to: progress)
                         .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
                         .foregroundColor(Color("AccentColor"))
                         .rotationEffect(Angle(degrees: -90.0))
-                        .animation(.linear(duration: 0.5), value: practiceViewModel.progress)
+                        .animation(.linear(duration: 0.5), value: progress)
                         .frame(width:geometry.size.height,height: geometry.size.width)
                 )   
             }
