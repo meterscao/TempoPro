@@ -111,19 +111,6 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
     // MARK: - 更新方法 
     func updateCountdownType(_ newCountdownType: CountdownType) {
         practiceController.updateCountdownType(newCountdownType)
-        
-        // 确保剩余值在切换类型后立即更新
-        if newCountdownType == .time {
-            // 确保时间值在UI上立即更新
-            DispatchQueue.main.async {
-                self.remainingTime = self.targetTime
-            }
-        } else {
-            // 确保小节值在UI上立即更新
-            DispatchQueue.main.async {
-                self.remainingBars = self.targetBars
-            }
-        }
     }
 
     func updateTargetTime(_ newTargetTime: Int) {

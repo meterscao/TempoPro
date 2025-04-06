@@ -46,30 +46,26 @@ extension BeatStatus {
     }
 }
 struct ClockView: View {
-    @State private var currentTime = Date()
+    // 不使用状态，而是直接在每次渲染时获取当前时间
+    @State private var dummy = UUID() // 用于触发重新渲染
     @Environment(\.metronomeTheme) var theme
     
-    // 每秒更新一次的定时器
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    // 使用独立后台操作
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    // 将 formatter 移到 body 外部或者使用计算属性
     private var timeString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
-        return formatter.string(from: currentTime)
+        return formatter.string(from: Date())
     }
     
     var body: some View {
         Text(timeString)
             .font(.custom("MiSansLatin-Semibold", size: 17))
             .foregroundColor(theme.primaryColor)
-            // 每秒接收定时器事件,更新时间
             .onReceive(timer) { _ in
-                self.currentTime = Date() // 更新为当前时间
-            }
-            // 视图出现时初始化当前时间
-            .onAppear {
-                self.currentTime = Date()
+                // 仅使用定时器触发视图更新，时间计算在渲染期间进行
+                dummy = UUID()
             }
     }
 }
