@@ -1,30 +1,26 @@
-////
-////  StepTimerView.swift
-////  TempoPro
-////
-////  Created by XiaoFeng on 2025/3/23.
-////
-//
-//import SwiftUI
-//
-//struct ProgressivePracticeView: View {
-//    @EnvironmentObject var practiceTimerState: PracticeTimerState
-//    @EnvironmentObject var metronomeState: MetronomeState
+// //
+// //  StepTimerView.swift
+// //  TempoPro
+// //
+// //  Created by XiaoFeng on 2025/3/23.
+// //
+
+// import SwiftUI
+
+// struct ProgressivePracticeView: View {
+   
+//    @EnvironmentObject var practiceViewModel: PracticeViewModel
 //    @Environment(\.metronomeTheme) var theme
 //    @Environment(\.dismiss) var dismiss
-//
+
 //    @State private var selectedTimerType: String = "time" // time or bar
 //    @State private var showCannotStartAlert: Bool = false
-//    
-//    init() {
-//        UINavigationBar.appearance().shadowImage = UIImage()
-//        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-//    }
-//    
+   
+   
 //    var body: some View {
 //        NavigationStack {
 //            VStack {
-//                if practiceTimerState.timerStatus == .standby {
+//                if true {
 //                    // 默认状态 - 设置视图
 //                    setupView
 //                } else {
@@ -32,7 +28,7 @@
 //                    timerView
 //                }
 //            }
-//            
+           
 //            .navigationBarTitleDisplayMode(.inline)
 //            .toolbar {
 //                ToolbarItem(placement: .navigationBarLeading) {
@@ -47,8 +43,8 @@
 //                    .padding(5)
 //                    .contentShape(Rectangle())
 //                }
-//                
-//                if(practiceTimerState.timerStatus == .standby) {
+               
+//                if(true) {
 //                    ToolbarItem(placement: .principal) {
 //                        Picker("", selection: $selectedTimerType) {
 //                            Text("By Time").tag("time")
@@ -57,16 +53,12 @@
 //                        .pickerStyle(.segmented)
 //                        .frame(width: 200)
 //                        .onChange(of: selectedTimerType) { newValue in
-//                            if newValue == "time" {
-//                                practiceTimerState.setTimerType(.time)
-//                            } else {
-//                                practiceTimerState.setTimerType(.bar)
-//                            }
+                           
 //                        }
 //                    }
 //                }
 //            }
-//            
+           
 //            .frame(maxWidth: .infinity, maxHeight: .infinity)
 //            .padding(20)
 //            .background(Color("backgroundPrimaryColor"))
@@ -74,25 +66,15 @@
 //            .toolbarBackground(Color("backgroundPrimaryColor"), for: .navigationBar)
 //        }
 //        .onAppear {
-//            // 记录当前状态，以便在切换时保留
-//            let wasRunning = practiceTimerState.isAnyTimerRunning()
-//            let previousMode = practiceTimerState.practiceMode
-//            
-//            // 设置为Step模式，但不改变计时器运行状态
-//            if !wasRunning || previousMode == .progressive {
-//                practiceTimerState.practiceMode = .progressive
-//                
-//                // 初始化选择类型
-//                selectedTimerType = practiceTimerState.stepTimerType.rawValue
-//            }
+          
 //        }
 //    }
-//    
+   
 //    // 验证设置是否有效
 //    private var isSettingValid: Bool {
 //        return practiceTimerState.stepFromBPM <= practiceTimerState.stepToBPM
 //    }
-//    
+   
 //    // 设置视图
 //    private var setupView: some View {
 //        VStack(spacing: 20) {
@@ -103,8 +85,8 @@
 //                // 小节模式设置
 //                barSetupView
 //            }
-//            
-//            
+           
+           
 //            // 开始按钮
 //            Button(action: {
 //                if practiceTimerState.canStartNewPractice(mode: .progressive) {
@@ -143,7 +125,7 @@
 //        // .padding(20)
 //        .background(Color("backgroundPrimaryColor"))
 //    }
-//    
+   
 //    // 时间模式设置视图
 //    private var timeSetupView: some View {
 //        VStack(spacing: 3) {
@@ -171,15 +153,15 @@
 //                .frame(maxWidth: .infinity)
 //                .background(Color("backgroundSecondaryColor"))
 //                .cornerRadius(4)
-//                
-//                
-//                
+               
+               
+               
 //                // To BPM
 //                HStack(spacing: 0) {
 //                    Text("To")
 //                    .font(.custom("MiSansLatin-Regular", size: 16))
 //                    .foregroundColor(Color("textPrimaryColor"))
-//
+
 //                    Picker("", selection: $practiceTimerState.stepToBPM) {
 //                        ForEach(30...240, id: \.self) { bpm in
 //                            Text("\(bpm)")
@@ -190,7 +172,7 @@
 //                    .pickerStyle(.wheel)
 //                    .frame(width: 80)
 //                    .clipped()
-//                    
+                   
 //                    Text("BPM")
 //                        .font(.custom("MiSansLatin-Regular", size: 14))
 //                        .foregroundColor(Color("textSecondaryColor"))
@@ -199,10 +181,10 @@
 //                .frame(maxWidth: .infinity)
 //                .background(Color("backgroundSecondaryColor"))
 //                .cornerRadius(4)
-//                
-//                
-//                
-//                
+               
+               
+               
+               
 //            }
 //            HStack(spacing:3){
 //                // Every X Seconds
@@ -220,7 +202,7 @@
 //                    .pickerStyle(.wheel)
 //                    .frame(width: 80)
 //                    .clipped()
-//                    
+                   
 //                    Text("sec")
 //                        .font(.custom("MiSansLatin-Regular", size: 14))
 //                        .foregroundColor(Color("textSecondaryColor"))
@@ -229,7 +211,7 @@
 //                .frame(maxWidth: .infinity)
 //                .background(Color("backgroundSecondaryColor"))
 //                .cornerRadius(4)
-//
+
 //                // Increment BPM
 //                HStack(spacing: 0) {
 //                    Text("By")
@@ -250,7 +232,7 @@
 //                    .pickerStyle(.wheel)
 //                    .frame(width: 80)
 //                    .clipped()
-//                    
+                   
 //                    Text("BPM")
 //                        .font(.custom("MiSansLatin-Regular", size: 14))
 //                        .foregroundColor(Color("textSecondaryColor"))
@@ -260,12 +242,12 @@
 //                .background(Color("backgroundSecondaryColor"))
 //                .cornerRadius(4)
 //            }
-//            
-//            
+           
+           
 //        }
 //        .cornerRadius(15)
 //    }
-//    
+   
 //    // 小节模式设置视图
 //    private var barSetupView: some View {
 //        VStack(spacing: 3) {
@@ -275,7 +257,7 @@
 //                    Text("From")
 //                    .font(.custom("MiSansLatin-Regular", size: 16))
 //                    .foregroundColor(Color("textPrimaryColor"))
-//                    
+                   
 //                    Picker("", selection: $practiceTimerState.stepFromBPM) {
 //                        ForEach(30...240, id: \.self) { bpm in
 //                            Text("\(bpm)")
@@ -286,7 +268,7 @@
 //                    .pickerStyle(.wheel)
 //                    .frame(width: 80)
 //                    .clipped()
-//                    
+                   
 //                    Text("BPM")
 //                        .font(.custom("MiSansLatin-Regular", size: 14))
 //                        .foregroundColor(Color("textSecondaryColor"))
@@ -295,13 +277,13 @@
 //                .frame(maxWidth: .infinity)
 //                .background(Color("backgroundSecondaryColor"))
 //                .cornerRadius(4)
-//                
+               
 //                // To BPM
 //                HStack(spacing: 0) {
 //                        Text("To")
 //                    .font(.custom("MiSansLatin-Regular", size: 16))
 //                    .foregroundColor(Color("textPrimaryColor"))
-//                    
+                   
 //                    Picker("", selection: $practiceTimerState.stepToBPM) {
 //                        ForEach(30...240, id: \.self) { bpm in
 //                            Text("\(bpm)")
@@ -312,29 +294,29 @@
 //                    .pickerStyle(.wheel)
 //                    .frame(width: 80)
 //                    .clipped()
-//                    
+                   
 //                    Text("BPM")
 //                        .font(.custom("MiSansLatin-Regular", size: 14))
 //                        .foregroundColor(Color("textSecondaryColor"))
 //                        .frame(width: 40, alignment: .leading)
-//                        
+                       
 //                }
 //                .frame(maxWidth: .infinity)
 //                .background(Color("backgroundSecondaryColor"))
 //                .cornerRadius(4)
-//                
-//                
-//                
-//                
+               
+               
+               
+               
 //            }
-//            
+           
 //            HStack(spacing: 3){
 //                // Every X Bars
 //                    HStack(spacing: 0) {
 //                        Text("Every")
 //                        .font(.custom("MiSansLatin-Regular", size: 16))
 //                        .foregroundColor(Color("textPrimaryColor")) 
-//
+
 //                        Picker("", selection: $practiceTimerState.stepEveryBars) {
 //                            ForEach(1...16, id: \.self) { bars in
 //                                Text("\(bars)")
@@ -345,7 +327,7 @@
 //                        .pickerStyle(.wheel)
 //                        .frame(width: 80)
 //                        .clipped()
-//                        
+                       
 //                        Text("bar")
 //                            .font(.custom("MiSansLatin-Regular", size: 14))
 //                            .foregroundColor(Color("textSecondaryColor"))
@@ -354,12 +336,12 @@
 //                    .frame(maxWidth: .infinity)
 //                    .background(Color("backgroundSecondaryColor"))
 //                    .cornerRadius(4)
-//                
-//                
+               
+               
 //                // Increment BPM
-//                
-//                    
-//                    
+               
+                   
+                   
 //                HStack(spacing: 0) {
 //                    Text("By")
 //                    .font(.custom("MiSansLatin-Regular", size: 16))
@@ -379,7 +361,7 @@
 //                    .pickerStyle(.wheel)
 //                    .frame(width: 80)
 //                    .clipped()
-//                    
+                   
 //                    Text("BPM")
 //                        .font(.custom("MiSansLatin-Regular", size: 14))
 //                        .foregroundColor(Color("textSecondaryColor"))
@@ -388,56 +370,56 @@
 //                .frame(maxWidth: .infinity)
 //                .background(Color("backgroundSecondaryColor"))
 //                .cornerRadius(4)
-//                
+               
 //            }
-//            
+           
 //        }
 //        .cornerRadius(15)
 //    }
-//    
+   
 //    // 计时视图
 //    private var timerView: some View {
 //        let lineWidth: CGFloat = 14
-//
+
 //        return VStack(spacing: 20) {
 //            GeometryReader { geometry in
 //                ZStack {
 //                    RoundedRectangle(cornerRadius: 40)
 //                        .stroke(lineWidth: lineWidth)
 //                        .foregroundColor(Color("AccentColor").opacity(0.3))
-//                    
+                   
 //                    VStack {
 //                        // 当前BPM值显示
 //                        Text("\(practiceTimerState.currentBPM)")
 //                            .font(.custom("MiSansLatin-Semibold", size: 40))
 //                            .foregroundColor(Color("textPrimaryColor"))
-//                        
+                       
 //                        // 显示剩余多少小节/秒后变化BPM
 //                        if practiceTimerState.timerStatus != .completed {
 //                            if practiceTimerState.activeTimerType == .time {
 //                                let remainingSeconds = practiceTimerState.getRemainingSecondsToNextUpdate()
 //                                let nextBPM = practiceTimerState.getNextBPM()
-//                                
+                               
 //                                Text("\(remainingSeconds) sec → \(nextBPM) BPM")
 //                                    .font(.custom("MiSansLatin-Semibold", size: 18))
 //                                    .foregroundColor(Color("textPrimaryColor"))
 //                            } else {
 //                                let remainingBars = practiceTimerState.getRemainingBarsToNextUpdate()
 //                                let nextBPM = practiceTimerState.getNextBPM()
-//                                
+                               
 //                                Text("\(remainingBars) bars → \(nextBPM) BPM")
 //                                    .font(.custom("MiSansLatin-Semibold", size: 18))
 //                                    .foregroundColor(Color("textPrimaryColor"))
 //                            }
 //                        }
-//                        
+                       
 //                        VStack{
 //                          // From到To信息
 //                            Text("\(practiceTimerState.stepFromBPM) → \(practiceTimerState.stepToBPM) BPM")
 //                                .font(.custom("MiSansLatin-Regular", size: 14))
 //                                .foregroundColor(Color("textSecondaryColor"))
 //                        }
-//
+
 //                        // 模式和进度信息
 //                        HStack {
 //                            // 更新间隔信息
@@ -457,23 +439,23 @@
 //                                    .foregroundColor(Color("textSecondaryColor"))
 //                            }
 //                        }
-//                        
+                       
 //                        // 显示剩余小节或时间
 //                        if practiceTimerState.timerStatus != .completed {
 //                            if practiceTimerState.activeTimerType == .time {
 //                                let remainingSeconds = practiceTimerState.getRemainingSecondsToNextUpdate()
-//                                
+                               
 //                                Text("Remaining: \(remainingSeconds) sec")
 //                                    .font(.custom("MiSansLatin-Regular", size: 14))
 //                                    .foregroundColor(Color("textSecondaryColor"))
-//                                    
+                                   
 //                            } else {
 //                                let remainingBars = practiceTimerState.getRemainingBarsToNextUpdate()
-//                                
+                               
 //                                Text("Remaining: \(remainingBars) bars")
 //                                    .font(.custom("MiSansLatin-Regular", size: 14))
 //                                    .foregroundColor(Color("textSecondaryColor"))
-//                                    
+                                   
 //                            }
 //                        }
 //                    }
@@ -490,9 +472,9 @@
 //            }
 //            .frame(maxWidth: .infinity, maxHeight: .infinity)
 //            .padding(lineWidth/2)
-//            
+           
 //            Spacer()
-//            
+           
 //            // 控制按钮
 //            HStack(spacing: 15) {
 //                // 暂停/继续按钮
@@ -504,7 +486,7 @@
 //                            .renderingMode(.template)   
 //                            .resizable()
 //                            .frame(width: 20, height: 20)   
-//                            
+                           
 //                        Text(practiceTimerState.timerStatus == .paused ? "继续" : "暂停")
 //                            .font(.custom("MiSansLatin-Semibold", size: 17))
 //                    }
@@ -517,7 +499,7 @@
 //                .contentShape(Rectangle())
 //                .disabled(practiceTimerState.timerStatus == .completed)
 //                .opacity(practiceTimerState.timerStatus == .completed ? 0.5 : 1)
-//                
+               
 //                // 停止按钮
 //                Button(action: {
 //                    practiceTimerState.stopTimer()
@@ -527,7 +509,7 @@
 //                            .renderingMode(.template)
 //                            .resizable()
 //                            .frame(width: 20, height: 20)   
-//                            
+                           
 //                        Text("停止")
 //                            .font(.custom("MiSansLatin-Semibold", size: 17))
 //                    }   
@@ -544,6 +526,6 @@
 //        .frame(maxWidth: .infinity, maxHeight: .infinity)
 //        .background(Color("backgroundPrimaryColor"))
 //    }
-//}
-//
-//
+// }
+
+

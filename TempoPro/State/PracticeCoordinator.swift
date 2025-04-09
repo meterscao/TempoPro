@@ -17,12 +17,7 @@ import Foundation
 import Combine
 import SwiftUI
 
-// 练习模式枚举 - 定义不同的练习类型
-enum PracticeMode {
-    case none        // 无练习模式 - 普通节拍器模式
-    case countdown   // 倒计时模式 - 按时间或小节进行倒计时
-    case progressive // 渐进式模式 - 逐步增加/减少BPM
-}
+
 
 
 

@@ -47,6 +47,9 @@
 		3AD042E82D7D8704002EAB55 /* SubdivisionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */; };
 		3ADE94842D734B5B00731F83 /* DisplayCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */; };
 		3AE469FE2D8C73DC00125F3D /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */; };
+		3AF9E1912DA6D23C007A7C97 /* ProgressiveCycleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF9E1902DA6D23C007A7C97 /* ProgressiveCycleHandler.swift */; };
+		3AF9E1922DA6D23C007A7C97 /* PracticeCycleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF9E18F2DA6D23C007A7C97 /* PracticeCycleHandler.swift */; };
+		3AF9E1932DA6D23C007A7C97 /* CountdownCycleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF9E18E2DA6D23C007A7C97 /* CountdownCycleHandler.swift */; };
 		C7016BB02D956D9F0002DE6F /* StreaksDayStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */; };
 		C7016BB52D96BBF90002DE6F /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7016BB42D96BBF90002DE6F /* ListView.swift */; };
 		C71F590F2D9C258F00F5E195 /* MetronomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F590E2D9C258F00F5E195 /* MetronomeController.swift */; };
@@ -158,6 +161,9 @@
 		3AD042E62D7D8704002EAB55 /* SubdivisionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubdivisionModels.swift; sourceTree = "<group>"; };
 		3ADE94822D734B5B00731F83 /* DisplayCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayCornerRadius.swift; sourceTree = "<group>"; };
 		3AE469FD2D8C73DC00125F3D /* ViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
+		3AF9E18E2DA6D23C007A7C97 /* CountdownCycleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownCycleHandler.swift; sourceTree = "<group>"; };
+		3AF9E18F2DA6D23C007A7C97 /* PracticeCycleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeCycleHandler.swift; sourceTree = "<group>"; };
+		3AF9E1902DA6D23C007A7C97 /* ProgressiveCycleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressiveCycleHandler.swift; sourceTree = "<group>"; };
 		C7016BAF2D956D9F0002DE6F /* StreaksDayStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksDayStatsView.swift; sourceTree = "<group>"; };
 		C7016BB42D96BBF90002DE6F /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		C71F590E2D9C258F00F5E195 /* MetronomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeController.swift; sourceTree = "<group>"; };
@@ -409,6 +415,9 @@
 		C7C0DA462D9E2E6D00876FFB /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				3AF9E18E2DA6D23C007A7C97 /* CountdownCycleHandler.swift */,
+				3AF9E18F2DA6D23C007A7C97 /* PracticeCycleHandler.swift */,
+				3AF9E1902DA6D23C007A7C97 /* ProgressiveCycleHandler.swift */,
 				C7C0DA492D9E2E7F00876FFB /* ThemeController.swift */,
 				C7C0DA472D9E2E7600876FFB /* PracticeController.swift */,
 				C787CA052D9D5E7C004B4549 /* MyController.swift */,
@@ -741,6 +750,9 @@
 				F7F058A62D787C33005DF482 /* CoreDataPlaylistManager.swift in Sources */,
 				F7F538E82D75D59B00A7395C /* AppStorageKeys.swift in Sources */,
 				F71AF6B92D71A60200ADBC17 /* BPMRulerView.swift in Sources */,
+				3AF9E1912DA6D23C007A7C97 /* ProgressiveCycleHandler.swift in Sources */,
+				3AF9E1922DA6D23C007A7C97 /* PracticeCycleHandler.swift in Sources */,
+				3AF9E1932DA6D23C007A7C97 /* CountdownCycleHandler.swift in Sources */,
 				C7C0DA522D9E5E1E00876FFB /* MyPractice.swift in Sources */,
 				F7FF3F232D7078E900390C16 /* TimeSignatureView.swift in Sources */,
 				F7FF3F162D7073EB00390C16 /* MetronomeTimerService.swift in Sources */,

@@ -69,6 +69,9 @@ struct CountDownPracticeView: View {
         .onAppear {
             // 初始化选择类型
             selectedTimerType = practiceViewModel.countdownType == .time ? "time" : "bar"
+            
+            // 确保设置为倒计时模式(只需调用一次)
+            practiceViewModel.setupCountdownMode()
         }
     }
     

@@ -7,6 +7,13 @@
 
 import Foundation
 
+// 练习模式枚举 - 定义不同的练习类型
+enum PracticeMode {
+    case none        // 无练习模式 - 普通节拍器模式
+    case countdown   // 倒计时模式 - 按时间或小节进行倒计时
+    case progressive // 渐进式模式 - 逐步增加/减少BPM
+}
+
 // 倒计时模式类型 - 定义倒计时的计量方式
 enum CountdownType {
     case time  // 按时间倒计时 - 以秒为单位
@@ -29,6 +36,10 @@ protocol PracticeControllerDelegate: AnyObject {
     func didRemainingTimeChange(_ newRemainingTime: Int)
     func didRemainingBarsChange(_ newRemainingBars: Int)
     func didIsLoopEnabledChange(_ newIsLoopEnabled: Bool)
+    func didPracticeModeChange(_ newPracticeMode: PracticeMode)
+    func didCurrentCycleInfoChange(_ currentCycle: Int, _ totalCycles: Int)
+    func didStageInfoChange(_ currentBPM: Int, _ nextBPM: Int)
+    func didBPMChange(_ newBPM: Int)
 }
 
 class PracticeController {
@@ -39,6 +50,11 @@ class PracticeController {
     
 
     // MARK: - Property
+    // 练习模式
+    private var practiceMode: PracticeMode = .none
+    // 循环处理器
+    private var cycleHandler: PracticeCycleHandler?
+    
     // 倒计时类型
     private var countdownType: CountdownType = .time
     // 练习状态
@@ -59,12 +75,21 @@ class PracticeController {
     private var isLoopEnabled: Bool = false
     // 计时器
     private var timer: Timer?
+    
+    // 渐进模式专用属性
+    private var startBPM: Int = 60
+    private var targetBPM: Int = 120
+    private var stepBPM: Int = 5
 
     init(myController: MyController) {
         self.myController = myController
     }
 
     // MARK: - Getter
+    func getPracticeMode() -> PracticeMode {
+        return practiceMode
+    }
+    
     func getCountdownType() -> CountdownType {
         return countdownType
     }
@@ -92,9 +117,63 @@ class PracticeController {
     func getIsLoopEnabled() -> Bool {
         return isLoopEnabled
     }
+    
+    func getStartBPM() -> Int {
+        return startBPM
+    }
+    
+    func getTargetBPM() -> Int {
+        return targetBPM
+    }
+    
+    func getStepBPM() -> Int {
+        return stepBPM
+    }
+    
+    func getCurrentCycleInfo() -> (currentCycle: Int, totalCycles: Int)? {
+        return cycleHandler?.getCurrentCycleInfo()
+    }
+    
+    func getStageInfo() -> (currentBPM: Int, nextBPM: Int)? {
+        return cycleHandler?.getCurrentStageInfo()
+    }
 
 
     // MARK: - Setter
+    func updatePracticeMode(_ newMode: PracticeMode) {
+        print("🔧 控制器 - 更新练习模式: \(practiceMode) -> \(newMode)")
+        
+        // 如果正在练习中，先停止
+        if practiceStatus == .running || practiceStatus == .paused {
+            stopPractice()
+        }
+        
+        practiceMode = newMode
+        
+        // 根据模式创建对应处理器
+        switch newMode {
+        case .none:
+            cycleHandler = nil
+            
+        case .countdown:
+            cycleHandler = CountdownCycleHandler(isLoopEnabled: isLoopEnabled)
+            
+        case .progressive:
+            cycleHandler = ProgressiveCycleHandler(
+                startBPM: startBPM,
+                targetBPM: targetBPM,
+                stepBPM: stepBPM,
+                metronomeBPMUpdater: { [weak self] newBPM in
+                    self?.updateBPM(newBPM)
+                }
+            )
+        }
+        
+        delegate?.didPracticeModeChange(practiceMode)
+        updateCycleInfo()
+        updateStageInfo()
+    }
+    
     func updateCountdownType(_ newType: CountdownType) {
         print("🔧 控制器 - 更新倒计时类型: \(countdownType) -> \(newType)")
         countdownType = newType
@@ -122,7 +201,48 @@ class PracticeController {
     func updateIsLoopEnabled(_ newIsLoopEnabled: Bool) {
         print("🔧 控制器 - 更新循环模式: \(isLoopEnabled) -> \(newIsLoopEnabled)")
         isLoopEnabled = newIsLoopEnabled
+        
+        // 如果当前是倒计时模式，更新对应的处理器
+        if practiceMode == .countdown {
+            cycleHandler = CountdownCycleHandler(isLoopEnabled: isLoopEnabled)
+        }
+        
         delegate?.didIsLoopEnabledChange(isLoopEnabled)
+    }
+    
+    func updateStartBPM(_ newBPM: Int) {
+        print("🔧 控制器 - 更新起始BPM: \(startBPM) -> \(newBPM)")
+        startBPM = newBPM
+    }
+    
+    func updateTargetBPM(_ newBPM: Int) {
+        print("🔧 控制器 - 更新目标BPM: \(targetBPM) -> \(newBPM)")
+        targetBPM = newBPM
+    }
+    
+    func updateStepBPM(_ newStep: Int) {
+        print("🔧 控制器 - 更新BPM步长: \(stepBPM) -> \(newStep)")
+        stepBPM = newStep
+    }
+    
+    func updateBPM(_ newBPM: Int) {
+        print("🔧 控制器 - 更新当前BPM: \(newBPM)")
+        myController.updateTempo(newBPM)
+        delegate?.didBPMChange(newBPM)
+    }
+    
+    // 更新循环信息
+    private func updateCycleInfo() {
+        if let info = cycleHandler?.getCurrentCycleInfo() {
+            delegate?.didCurrentCycleInfoChange(info.currentCycle, info.totalCycles)
+        }
+    }
+    
+    // 更新阶段信息(针对渐进模式)
+    private func updateStageInfo() {
+        if let info = cycleHandler?.getCurrentStageInfo() {
+            delegate?.didStageInfoChange(info.currentBPM, info.nextBPM)
+        }
     }
 
 }
@@ -133,7 +253,7 @@ extension PracticeController {
     // MARK: - Action
     
     func startPractice() {
-        print("🔧 控制器 - 开始练习, 当前类型: \(countdownType), 目标时间: \(targetTime), 目标小节: \(targetBars)")
+        print("🔧 控制器 - 开始练习, 当前模式: \(practiceMode), 类型: \(countdownType), 目标时间: \(targetTime), 目标小节: \(targetBars)")
         // 重置计时状态
         elapsedTime = 0
         elapsedBars = 0
@@ -143,6 +263,9 @@ extension PracticeController {
         delegate?.didRemainingBarsChange(targetBars - elapsedBars)
         delegate?.didRemainingTimeChange(targetTime - elapsedTime)
 
+        // 通知处理器循环开始
+        cycleHandler?.onCycleStart()
+        
         myController.play()
         // 根据倒计时类型设置目标
         beginToTick()
@@ -154,7 +277,6 @@ extension PracticeController {
         updatePracticeStatus(.paused)
         timer?.invalidate()
         timer = nil
-        
     }
 
     func resumePractice() {
@@ -169,6 +291,10 @@ extension PracticeController {
         myController.stop()
         updatePracticeStatus(status)
 
+        if status == .completed {
+            cycleHandler?.onPracticeComplete()
+        }
+        
         if countdownType == .time {
             if status == .completed {
                 elapsedTime = targetTime
@@ -187,6 +313,11 @@ extension PracticeController {
                 elapsedBars = 0
             }
         }
+        
+        // 更新剩余时间/小节
+        delegate?.didRemainingTimeChange(targetTime - elapsedTime)
+        delegate?.didRemainingBarsChange(targetBars - elapsedBars)
+        
         print("🔧 控制器 - 停止后状态: 剩余时间应为\(targetTime), 剩余小节应为\(targetBars)")
     }
 
@@ -203,9 +334,6 @@ extension PracticeController {
 
 
 extension PracticeController {
-    
-
-
     // 设置控制器回调
     private func setupControllerCallbacks() {
         if countdownType != .bar { return }
@@ -214,6 +342,10 @@ extension PracticeController {
             if self.practiceStatus == .running {        
                 self.elapsedBars += 1
                 self.delegate?.didRemainingBarsChange(self.targetBars - self.elapsedBars)
+                
+                // 通知处理器进度更新
+                self.cycleHandler?.onCycleProgress(elapsedTime: self.elapsedTime, elapsedBars: self.elapsedBars)
+                
                 if self.elapsedBars >= self.targetBars {
                     self.onLoopEnd()
                 }
@@ -230,6 +362,9 @@ extension PracticeController {
             if self.practiceStatus == .running {
                 self.elapsedTime += 1
                 self.delegate?.didRemainingTimeChange(self.targetTime - self.elapsedTime)
+                
+                // 通知处理器进度更新
+                self.cycleHandler?.onCycleProgress(elapsedTime: self.elapsedTime, elapsedBars: self.elapsedBars)
 
                 if self.elapsedTime >= self.targetTime {
                     self.onLoopEnd()
@@ -244,16 +379,40 @@ extension PracticeController {
         elapsedBars = 0
         delegate?.didRemainingTimeChange(targetTime - elapsedTime)
         delegate?.didRemainingBarsChange(targetBars - elapsedBars)
+        
+        // 更新循环信息
+        updateCycleInfo()
+        updateStageInfo()
     }
-
 
     // 每个周期结束时触发的回调
     private func onLoopEnd(){
-        if isLoopEnabled {
+        // 使用处理器处理循环完成逻辑
+        if let handler = cycleHandler, handler.onCycleComplete() {
+            // 处理器返回true表示继续下一个循环
             resetStatusAndContinuePractice()
-        }
-        else {
+        } else {
+            // 处理器返回false或无处理器，表示完成练习
             stopPractice(.completed)
         }
     }   
+}
+// MARK: - 快捷设置方法
+
+extension PracticeController {
+    // 设置倒计时练习模式
+    func setupCountdownPractice(countdownType: CountdownType, isLoopEnabled: Bool) {
+        self.updateCountdownType(countdownType)
+        self.updateIsLoopEnabled(isLoopEnabled)
+        self.updatePracticeMode(.countdown)
+    }
+    
+    // 设置渐进式练习模式
+    func setupProgressivePractice(startBPM: Int, targetBPM: Int, stepBPM: Int, countdownType: CountdownType) {
+        self.updateStartBPM(startBPM)
+        self.updateTargetBPM(targetBPM)
+        self.updateStepBPM(stepBPM)
+        self.updateCountdownType(countdownType)
+        self.updatePracticeMode(.progressive)
+    }
 }

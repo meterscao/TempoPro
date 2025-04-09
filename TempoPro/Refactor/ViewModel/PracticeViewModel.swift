@@ -8,6 +8,7 @@
 import SwiftUI
 
 class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
+    @Published var practiceMode: PracticeMode = .none
     @Published var countdownType: CountdownType
     @Published var practiceStatus: PracticeStatus
     @Published var targetTime: Int
@@ -18,12 +19,24 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
 
     @Published var timeProgress: Double = 0.0
     @Published var barProgress: Double = 0.0
+    
+    // 循环相关属性
+    @Published var currentCycle: Int = 1
+    @Published var totalCycles: Int = 1
+    
+    // 渐进模式属性
+    @Published var startBPM: Int = 60
+    @Published var currentBPM: Int = 60
+    @Published var targetBPM: Int = 120
+    @Published var stepBPM: Int = 5
+    @Published var nextStageBPM: Int = 65
 
     private let practiceController: PracticeController
 
     init(practiceController: PracticeController) {
         self.practiceController = practiceController
 
+        self.practiceMode = practiceController.getPracticeMode()
         self.countdownType = practiceController.getCountdownType()
         self.practiceStatus = practiceController.getPracticeStatus()
         self.targetTime = practiceController.getTargetTime()
@@ -31,16 +44,36 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
         self.remainingTime = practiceController.getRemainingTime()
         self.remainingBars = practiceController.getRemainingBars()
         self.isLoopEnabled = practiceController.getIsLoopEnabled()
+        self.startBPM = practiceController.getStartBPM()
+        self.targetBPM = practiceController.getTargetBPM()
+        self.stepBPM = practiceController.getStepBPM()
+        
+        // 初始化循环信息
+        if let cycleInfo = practiceController.getCurrentCycleInfo() {
+            self.currentCycle = cycleInfo.currentCycle
+            self.totalCycles = cycleInfo.totalCycles
+        }
+        
+        // 初始化阶段信息
+        if let stageInfo = practiceController.getStageInfo() {
+            self.currentBPM = stageInfo.currentBPM
+            self.nextStageBPM = stageInfo.nextBPM
+        }
 
         practiceController.delegate = self
-
     }
     
 
     // MARK: - 委托方法
+    
+    func didPracticeModeChange(_ newPracticeMode: PracticeMode) {
+        DispatchQueue.main.async {
+            print("🔄 练习模式切换: \(self.practiceMode) -> \(newPracticeMode)")
+            self.practiceMode = newPracticeMode
+        }
+    }
 
     func didPracticeStatusChange(_ newStatus: PracticeStatus) {
-        
         DispatchQueue.main.async {
             self.practiceStatus = newStatus
         }
@@ -88,6 +121,29 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
             self.isLoopEnabled = newIsLoopEnabled
         }
     }
+    
+    func didCurrentCycleInfoChange(_ currentCycle: Int, _ totalCycles: Int) {
+        DispatchQueue.main.async {
+            print("🔄 循环信息更新: \(self.currentCycle)/\(self.totalCycles) -> \(currentCycle)/\(totalCycles)")
+            self.currentCycle = currentCycle
+            self.totalCycles = totalCycles
+        }
+    }
+    
+    func didStageInfoChange(_ currentBPM: Int, _ nextBPM: Int) {
+        DispatchQueue.main.async {
+            print("🎵 阶段信息更新: 当前BPM = \(currentBPM), 下一BPM = \(nextBPM)")
+            self.currentBPM = currentBPM
+            self.nextStageBPM = nextBPM
+        }
+    }
+    
+    func didBPMChange(_ newBPM: Int) {
+        DispatchQueue.main.async {
+            print("🎵 BPM更新: \(self.currentBPM) -> \(newBPM)")
+            self.currentBPM = newBPM
+        }
+    }
 
     // MARK: - Action Methods
 
@@ -124,10 +180,43 @@ class PracticeViewModel: ObservableObject, PracticeControllerDelegate {
     func updateIsLoopEnabled(_ newIsLoopEnabled: Bool) {
         practiceController.updateIsLoopEnabled(newIsLoopEnabled)
     }   
-
     
+    func updateStartBPM(_ newBPM: Int) {
+        practiceController.updateStartBPM(newBPM)
+    }
     
+    func updateTargetBPM(_ newBPM: Int) {
+        practiceController.updateTargetBPM(newBPM)
+    }
     
+    func updateStepBPM(_ newStep: Int) {
+        practiceController.updateStepBPM(newStep)
+    }
+    
+    // MARK: - 模式切换方法
+    
+    /// 切换到倒计时练习模式
+    /// - Parameters:
+    ///   - countdownType: 倒计时类型（时间/小节）
+    ///   - isLoopEnabled: 是否启用循环
+    func setupCountdownMode(countdownType: CountdownType = .time, isLoopEnabled: Bool = false) {
+        practiceController.setupCountdownPractice(countdownType: countdownType, isLoopEnabled: isLoopEnabled)
+    }
+    
+    /// 切换到渐进式练习模式
+    /// - Parameters:
+    ///   - startBPM: 起始BPM
+    ///   - targetBPM: 目标BPM
+    ///   - stepBPM: BPM步长
+    ///   - countdownType: 倒计时类型（时间/小节）
+    func setupProgressiveMode(startBPM: Int, targetBPM: Int, stepBPM: Int, countdownType: CountdownType = .time) {
+        practiceController.setupProgressivePractice(
+            startBPM: startBPM,
+            targetBPM: targetBPM,
+            stepBPM: stepBPM,
+            countdownType: countdownType
+        )
+    }
 }
 
 
@@ -152,5 +241,31 @@ extension PracticeViewModel {
         } else {
             return "\(remainingBars) bars"
         }
+    }
+    
+    // 获取BPM阶段文本 - 仅用于渐进模式
+    func getBPMStageText() -> String {
+        if practiceMode == .progressive {
+            return "当前: \(currentBPM) BPM → 下一: \(nextStageBPM) BPM"
+        }
+        return ""
+    }
+    
+    // 获取循环信息文本 - 用于UI显示
+    func getCycleInfoText() -> String {
+        if totalCycles > 1 {
+            return "第 \(currentCycle) / \(totalCycles) 个循环"
+        }
+        return ""
+    }
+    
+    // 检查是否为渐进式模式
+    var isProgressiveMode: Bool {
+        return practiceMode == .progressive
+    }
+    
+    // 检查是否为倒计时模式
+    var isCountdownMode: Bool {
+        return practiceMode == .countdown
     }
 }   
