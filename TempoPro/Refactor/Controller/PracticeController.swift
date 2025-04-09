@@ -211,10 +211,12 @@ extension PracticeController {
         if countdownType != .bar { return }
         myController.onBarCompleted = { [weak self] in
             guard let self = self else { return }
-            self.elapsedBars += 1
-            self.delegate?.didRemainingBarsChange(self.targetBars - self.elapsedBars)
-            if self.elapsedBars >= self.targetBars {
-                self.onLoopEnd()
+            if self.practiceStatus == .running {        
+                self.elapsedBars += 1
+                self.delegate?.didRemainingBarsChange(self.targetBars - self.elapsedBars)
+                if self.elapsedBars >= self.targetBars {
+                    self.onLoopEnd()
+                }
             }
         }
     }
@@ -225,11 +227,13 @@ extension PracticeController {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             
-            self.elapsedTime += 1
-            self.delegate?.didRemainingTimeChange(self.targetTime - self.elapsedTime)
+            if self.practiceStatus == .running {
+                self.elapsedTime += 1
+                self.delegate?.didRemainingTimeChange(self.targetTime - self.elapsedTime)
 
-            if self.elapsedTime >= self.targetTime {
-                self.onLoopEnd()
+                if self.elapsedTime >= self.targetTime {
+                    self.onLoopEnd()
+                }
             }
         }
     }

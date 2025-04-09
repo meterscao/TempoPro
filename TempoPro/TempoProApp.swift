@@ -12,7 +12,6 @@ import RevenueCat
 @main
 struct TempoProApp: App {
     @StateObject private var themeManager = ThemeManager()
-    @StateObject private var metronomeState: MetronomeState
     
     
     // 注入PersistenceController
@@ -30,9 +29,6 @@ struct TempoProApp: App {
     // 应用生命周期事件观察
     @Environment(\.scenePhase) private var scenePhase
 
-    // 添加练习协调器
-    @StateObject private var practiceCoordinator: PracticeCoordinator
-
     // 添加MyConnector
     private var myConnector = MyConnector()
 
@@ -40,10 +36,7 @@ struct TempoProApp: App {
     init() {
         // 应用启动时就禁用屏幕熄屏
         UIApplication.shared.isIdleTimerDisabled = true
-        
-        // 创建 metronomeState 实例
-        let metronomeStateInstance = MetronomeState()
-        self._metronomeState = StateObject(wrappedValue: metronomeStateInstance)
+
         
         // 初始化 Playlist 的 manager
         let manager = CoreDataPlaylistManager(context: PersistenceController.shared.viewContext)
@@ -54,10 +47,7 @@ struct TempoProApp: App {
         let practiceManager = CoreDataPracticeManager(context: PersistenceController.shared.viewContext)
         self._practiceManager = StateObject(wrappedValue: practiceManager)
         practiceManager.generateRandomHistoricalData()
-        
-        // 初始化PracticeCoordinator - 使用刚创建的 metronomeState 实例
-        let coordinator = PracticeCoordinator(metronomeState: metronomeStateInstance)
-        self._practiceCoordinator = StateObject(wrappedValue: coordinator)
+
     }
     
     
@@ -68,9 +58,7 @@ struct TempoProApp: App {
                 .environmentObject(themeManager)
                 .environmentObject(coreDataPlaylistManager) // 使用CoreDataPlaylistManager
                 .environmentObject(practiceManager) // 添加PracticeManager
-                .environmentObject(practiceCoordinator) // 添加PracticeCoordinator
                 .environmentObject(subscriptionManager) // 将订阅管理器作为环境对象提供给所有视图
-                .environmentObject(metronomeState) // 添加 MetronomeState
                 .environment(\.metronomeTheme, themeManager.currentTheme)
                 .environment(\.managedObjectContext, persistenceController.viewContext)
                 .environmentObject(myConnector.myViewModel)
