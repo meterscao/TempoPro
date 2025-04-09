@@ -20,9 +20,6 @@ struct TempoProApp: App {
     // 添加 CoreDataPlaylistManager 替代原来的 PlaylistManager
     @StateObject private var coreDataPlaylistManager: CoreDataPlaylistManager
     
-    // 在TempoProApp结构体中添加
-    @StateObject private var practiceManager: CoreDataPracticeManager
-    
     // 引用订阅管理器
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     
@@ -43,11 +40,6 @@ struct TempoProApp: App {
         self._coreDataPlaylistManager = StateObject(wrappedValue: manager)
         manager.createSampleDataIfNeeded()
         
-        // 初始化CoreDataPracticeManager
-        let practiceManager = CoreDataPracticeManager(context: PersistenceController.shared.viewContext)
-        self._practiceManager = StateObject(wrappedValue: practiceManager)
-        practiceManager.generateRandomHistoricalData()
-
     }
     
     
@@ -57,12 +49,12 @@ struct TempoProApp: App {
             ContentView()
                 .environmentObject(themeManager)
                 .environmentObject(coreDataPlaylistManager) // 使用CoreDataPlaylistManager
-                .environmentObject(practiceManager) // 添加PracticeManager
                 .environmentObject(subscriptionManager) // 将订阅管理器作为环境对象提供给所有视图
                 .environment(\.metronomeTheme, themeManager.currentTheme)
                 .environment(\.managedObjectContext, persistenceController.viewContext)
                 .environmentObject(myConnector.myViewModel)
                 .environmentObject(myConnector.practiceViewModel)
+                .environmentObject(myConnector.practiceManager)
                 .onChange(of: themeManager.currentThemeName) { _ in
                     // 通过主题名称变化来触发环境更新
                 }

@@ -11,15 +11,18 @@ class MyConnector {
     private let viewModel: MyViewModel
     private let thePracticeController: PracticeController
     private let thePracticeViewModel: PracticeViewModel
+    private let thePracticeManager: CoreDataPracticeManager
     
     // MARK: - 服务实例
     
     // MARK: - 初始化
     init() {
         // 1. 初始化服务
+        let persistenceController = PersistenceController.shared
+        self.thePracticeManager = CoreDataPracticeManager(context: persistenceController.viewContext)
         
         // 2. 初始化控制器
-        self.controller = MyController()
+        self.controller = MyController(practiceManager: thePracticeManager)
         self.thePracticeController = PracticeController(myController: controller)
         
         // 3. 初始化视图模型
@@ -34,6 +37,10 @@ class MyConnector {
 
     var practiceViewModel: PracticeViewModel {
         return thePracticeViewModel
+    }
+
+    var practiceManager: CoreDataPracticeManager {
+        return thePracticeManager
     }
     
 

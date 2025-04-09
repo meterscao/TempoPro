@@ -67,6 +67,7 @@ class MyController {
     /// 代理对象，用于向外部通知状态变化
     weak var delegate: MyControllerDelegate?
 
+
     // 节拍器基本参数
     private var tempo: Int
     private var beatsPerBar: Int
@@ -84,6 +85,7 @@ class MyController {
     private let settingsService: MySettingsService
     private let audioService: MyAudioService
     private let timerService: MyTimerService
+    private let practiceManager: CoreDataPracticeManager
 
 
     // 回调
@@ -93,9 +95,13 @@ class MyController {
 
     /// 初始化节拍器控制器
     /// 加载保存的设置并初始化各个服务
-    init() {
+    init(practiceManager: CoreDataPracticeManager) {
         // 初始化设置服务
         self.settingsService = MySettingsService()
+        
+        // 初始化练习管理器
+        self.practiceManager = practiceManager
+        self.practiceManager.generateRandomHistoricalData()
         
         // 从设置服务加载初始值
         self.tempo = settingsService.loadTempo()
@@ -112,6 +118,7 @@ class MyController {
         self.timerService = MyTimerService()
         self.timerService.setDelegate(self)
         self.setupTimerCallbacks()
+        
     }
 
     // MARK: - Private Methods
@@ -160,6 +167,7 @@ class MyController {
         if(playbackState == .standby) {
             timerService.start()
             playbackState = .playing
+            practiceManager.startPracticeSession(bpm: tempo)
             delegate?.didPlaybackStateChange(playbackState)
         }
     }
@@ -169,6 +177,7 @@ class MyController {
     func stop() {
         timerService.stop()
         playbackState = .standby
+        practiceManager.endPracticeSession()
         delegate?.didPlaybackStateChange(playbackState)
     }
 
@@ -178,6 +187,7 @@ class MyController {
         if(playbackState == .playing) {
             timerService.pause()
             playbackState = .paused
+            practiceManager.endPracticeSession()
             delegate?.didPlaybackStateChange(playbackState)
         }
     }
@@ -188,6 +198,7 @@ class MyController {
         if(playbackState == .paused) {
             timerService.resume()
             playbackState = .playing
+            practiceManager.startPracticeSession(bpm: tempo)
             delegate?.didPlaybackStateChange(playbackState)
         }
     }

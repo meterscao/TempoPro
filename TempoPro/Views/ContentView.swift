@@ -12,7 +12,6 @@ struct ContentView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var playlistManager: CoreDataPlaylistManager // 类型改为 CoreDataPlaylistManager
-    @EnvironmentObject var practiceManager: CoreDataPracticeManager // 添加这一行
     
     @State private var completionDuration: TimeInterval = 0
     @State private var completionTempo: Int = 0

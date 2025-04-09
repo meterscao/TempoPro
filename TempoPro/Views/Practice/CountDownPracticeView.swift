@@ -101,7 +101,7 @@ struct CountDownPracticeView: View {
                             .resizable()
                             .frame(width: 20, height: 20)   
                     }
-                    .foregroundColor(practiceViewModel.isLoopEnabled ? Color("backgroundSecondaryColor") : Color("textPrimaryColor"))
+                    .foregroundColor(practiceViewModel.isLoopEnabled ? Color("backgroundSecondaryColor") : Color("textSecondaryColor"))
                     .frame(height:50)
                     .padding(.horizontal,15)
                     .background(
@@ -382,7 +382,7 @@ struct CountDownPracticeView: View {
                              (practiceViewModel.practiceStatus == .paused ? "Continue" : "Pause"))
                             .font(.custom("MiSansLatin-Regular", size: 16))
                     }
-                    .foregroundColor(Color("textPrimaryColor"))
+                    .foregroundColor(Color("textSecondaryColor"))
                     .frame(height: 50)
                     .frame(maxWidth:.infinity)
                     .background(Color("backgroundSecondaryColor"))
@@ -404,10 +404,10 @@ struct CountDownPracticeView: View {
                             practiceViewModel.practiceStatus == .completed ? "Cancel" : "Stop")
                             .font(.custom("MiSansLatin-Regular", size: 16))
                     }   
-                    .foregroundColor(Color("textPrimaryColor"))
+                    .foregroundColor(Color("textSecondaryColor"))
                     .frame(maxWidth:.infinity)
                     .frame(height: 50)
-                    .background(Color.red.opacity(0.2))
+                    .background(Color("backgroundSecondaryColor"))
                 }
                 .contentShape(Rectangle())
                 .clipShape(RoundedRectangle(cornerRadius: 12))
