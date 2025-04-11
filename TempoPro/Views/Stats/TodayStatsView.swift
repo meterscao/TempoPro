@@ -24,10 +24,10 @@ struct TodayStatsView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 15) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 0){
-                    Text("Daily Goal")
+                    Text("Today's Goal")
                         .font(.custom("MiSansLatin-Semibold", size: 20))
                         .foregroundColor(Color("textPrimaryColor"))
                     Text("\(Int(todayPracticeMinutes))/\(dailyGoalMinutes) min")

@@ -28,7 +28,7 @@ struct StreaksDayStatsView: View {
                 HStack {
                     // 提示文字
                     VStack(alignment: .leading, spacing: 0){
-                        Text("\(practiceManager.getCurrentStreak()) Day Streak")
+                        Text("This Week")
                             .font(.custom("MiSansLatin-Semibold", size: 20))
                             .foregroundColor(Color("textPrimaryColor"))
                         Text("Track your practice to hit a streak.")

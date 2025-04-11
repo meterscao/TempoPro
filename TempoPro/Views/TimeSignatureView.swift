@@ -25,99 +25,101 @@ struct TimeSignatureView: View {
             ScrollView() {
                 VStack(spacing:20){
                     // 拍号设置
-                    VStack() {
+                    
                         // 使用非交互的 Section 内容包装器，让按钮可以正常工作
-                        ZStack {
-                            HStack(spacing: 0) {
-                                // 每小节拍数
-                                VStack(alignment: .center, spacing: 5) {
-                                    Text("Beats")
-                                        .font(.custom("MiSansLatin-Semibold", size: 14))
-                                        .foregroundColor(Color("textSecondaryColor"))
-                                    
-                                    HStack(spacing: 20) {
-                                        // 使用明确的 buttonStyle 和足够大的点击区域
-                                        Button {
-                                            if metronomeViewModel.beatsPerBar > 1 {
-                                                metronomeViewModel.updateBeatsPerBar(metronomeViewModel.beatsPerBar - 1)
-                                            }
-                                        } label: {
-                                            Image("icon-minus")
-                                                .renderingMode(.template)
-                                                .foregroundStyle(Color("textSecondaryColor"))
-                                                .frame(width: 44, height: 44) // 增大点击区域
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                        
-                                        Text("\(metronomeViewModel.beatsPerBar)")
-                                            .font(.custom("MiSansLatin-Semibold", size: 32))
-                                        
-                                        Button {
-                                            if metronomeViewModel.beatsPerBar < 12 {
-                                                metronomeViewModel.updateBeatsPerBar(metronomeViewModel.beatsPerBar + 1)
-                                            }
-                                        } label: {
-                                            Image("icon-plus")
-                                                .renderingMode(.template)
-                                                .foregroundStyle(Color("textSecondaryColor"))
-                                                .frame(width: 44, height: 44) // 增大点击区域
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
+                        
+                    HStack(spacing: 3) {
+                        // 每小节拍数
+                        VStack(alignment: .center, spacing: 5) {
+                            Text("Beats")
+                                .font(.custom("MiSansLatin-Semibold", size: 14))
+                                .foregroundColor(Color("textSecondaryColor"))
+                            
+                            HStack(spacing: 20) {
+                                // 使用明确的 buttonStyle 和足够大的点击区域
+                                Button {
+                                    if metronomeViewModel.beatsPerBar > 1 {
+                                        metronomeViewModel.updateBeatsPerBar(metronomeViewModel.beatsPerBar - 1)
                                     }
+                                } label: {
+                                    Image("icon-minus")
+                                        .renderingMode(.template)
+                                        .foregroundStyle(Color("textSecondaryColor"))
+                                        .frame(width: 44, height: 44) // 增大点击区域
                                 }
-                                .frame(maxWidth: .infinity)
+                                .buttonStyle(PlainButtonStyle())
                                 
-                                Divider()
-                                    .background(theme.primaryColor.opacity(0.3))
-                                    .frame(maxHeight:.infinity)
-                                    .padding(.horizontal, 8)
+                                Text("\(metronomeViewModel.beatsPerBar)")
+                                    .font(.custom("MiSansLatin-Semibold", size: 32))
                                 
-                                // 拍号单位
-                                VStack(alignment: .center, spacing: 5) {
-                                    Text("Time Signature")
-                                        .font(.custom("MiSansLatin-Semibold", size: 14))
-                                        .foregroundColor(Color("textSecondaryColor"))
-                                    
-                                    HStack(spacing: 20) {
-                                        Button {
-                                            if let index = availableBeatUnits.firstIndex(of: metronomeViewModel.beatUnit),
-                                               index > 0 {
-                                                metronomeViewModel.updateBeatUnit(availableBeatUnits[index - 1])
-                                            }
-                                        } label: {
-                                            Image("icon-minus")
-                                                .renderingMode(.template)
-                                                .foregroundStyle(Color("textSecondaryColor"))
-                                                
-                                                .frame(width: 44, height: 44) // 增大点击区域
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                        
-                                        Text("\(metronomeViewModel.beatUnit)")
-                                            .font(.custom("MiSansLatin-Semibold", size: 32))
-                                        
-                                        Button {
-                                            if let index = availableBeatUnits.firstIndex(of: metronomeViewModel.beatUnit),
-                                               index < availableBeatUnits.count - 1 {
-                                                metronomeViewModel.updateBeatUnit(availableBeatUnits[index + 1])
-                                            }
-                                        } label: {
-                                            Image("icon-plus")
-                                                .renderingMode(.template)
-                                                .foregroundStyle(Color("textSecondaryColor"))
-                                                .frame(width: 44, height: 44)
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
+                                Button {
+                                    if metronomeViewModel.beatsPerBar < 12 {
+                                        metronomeViewModel.updateBeatsPerBar(metronomeViewModel.beatsPerBar + 1)
                                     }
+                                } label: {
+                                    Image("icon-plus")
+                                        .renderingMode(.template)
+                                        .foregroundStyle(Color("textSecondaryColor"))
+                                        .frame(width: 44, height: 44) // 增大点击区域
                                 }
-                                .frame(maxWidth: .infinity)
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
-                        .frame(maxWidth: .infinity)
                         .padding(15)
+                        .frame(maxWidth: .infinity)
                         .background(Color("backgroundSecondaryColor"))
-                        .cornerRadius(15)
+                        .cornerRadius(4)
+                        
+                        
+                        
+                        
+                        
+                        // 拍号单位
+                        VStack(alignment: .center, spacing: 5) {
+                            Text("Time Signature")
+                                .font(.custom("MiSansLatin-Semibold", size: 14))
+                                .foregroundColor(Color("textSecondaryColor"))
+                            
+                            HStack(spacing: 20) {
+                                Button {
+                                    if let index = availableBeatUnits.firstIndex(of: metronomeViewModel.beatUnit),
+                                        index > 0 {
+                                        metronomeViewModel.updateBeatUnit(availableBeatUnits[index - 1])
+                                    }
+                                } label: {
+                                    Image("icon-minus")
+                                        .renderingMode(.template)
+                                        .foregroundStyle(Color("textSecondaryColor"))
+                                        
+                                        .frame(width: 44, height: 44) // 增大点击区域
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Text("\(metronomeViewModel.beatUnit)")
+                                    .font(.custom("MiSansLatin-Semibold", size: 32))
+                                
+                                Button {
+                                    if let index = availableBeatUnits.firstIndex(of: metronomeViewModel.beatUnit),
+                                        index < availableBeatUnits.count - 1 {
+                                        metronomeViewModel.updateBeatUnit(availableBeatUnits[index + 1])
+                                    }
+                                } label: {
+                                    Image("icon-plus")
+                                        .renderingMode(.template)
+                                        .foregroundStyle(Color("textSecondaryColor"))
+                                        .frame(width: 44, height: 44)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        .padding(15)
+                        .frame(maxWidth: .infinity)
+                        .background(Color("backgroundSecondaryColor"))
+                        .cornerRadius(4)
                     }
+                    .frame(maxWidth: .infinity)
+                    .cornerRadius(15)
+                    
                     
                     // 切分音符部分
                     VStack() {
