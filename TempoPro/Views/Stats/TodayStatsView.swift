@@ -25,10 +25,15 @@ struct TodayStatsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            HStack {
-                Text("Daily Goal")
-                    .font(.custom("MiSansLatin-Semibold", size: 20))
-                    .foregroundColor(Color("textPrimaryColor"))
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 0){
+                    Text("Daily Goal")
+                        .font(.custom("MiSansLatin-Semibold", size: 20))
+                        .foregroundColor(Color("textPrimaryColor"))
+                    Text("\(Int(todayPracticeMinutes))/\(dailyGoalMinutes) min")
+                        .font(.custom("MiSansLatin-Regular", size: 14))
+                        .foregroundColor(Color("textSecondaryColor"))
+                }
                 
                 Spacer()
                 
@@ -55,19 +60,8 @@ struct TodayStatsView: View {
                 }
             }
             
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("\(Int(todayPracticeMinutes))/\(dailyGoalMinutes) min")
-                        .font(.custom("MiSansLatin-Regular", size: 14))
-                        .foregroundColor(Color("textSecondaryColor"))
-                    
-                    Spacer()
-                    
-                    // // 添加完成百分比
-                    // Text("\(Int(progress * 100))%")
-                    //     .font(.custom("MiSansLatin-Regular", size: 14))
-                    //     .foregroundColor(Color("textSecondaryColor"))
-                }
+            VStack(alignment: .leading) {
+               
                 
                 HStack(spacing: 8) {
                     // 进度条

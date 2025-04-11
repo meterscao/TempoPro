@@ -48,15 +48,7 @@ struct StreaksDayStatsView: View {
 
 
                 VStack(spacing: 8){
-                    // 星期几指示器
-                    HStack(spacing: 12) {
-                        ForEach(getWeekdaySymbols(), id: \.self) { weekday in
-                            Text(weekday)
-                                .font(.custom("MiSansLatin-Regular", size: 12))
-                                .foregroundColor( Color("textSecondaryColor"))
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
+                    
                     
                     // 圆环进度视图
                     HStack(spacing: 12) {
@@ -72,6 +64,15 @@ struct StreaksDayStatsView: View {
                                 isCompleted: dataPoint.duration >= Double(dailyGoalMinutes)
                             )
                             .frame(maxWidth: .infinity)
+                        }
+                    }
+                    // 星期几指示器
+                    HStack(spacing: 12) {
+                        ForEach(getWeekdaySymbols(), id: \.self) { weekday in
+                            Text(weekday)
+                                .font(.custom("MiSansLatin-Regular", size: 12))
+                                .foregroundColor( Color("textSecondaryColor"))
+                                .frame(maxWidth: .infinity)
                         }
                     }
                 }
