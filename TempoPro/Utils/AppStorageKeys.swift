@@ -73,6 +73,12 @@ struct AppStorageKeys {
     // DispatchQueue标签
     struct QueueLabels {
         /// 节拍器定时器队列标签
-        static let metronomeTimer = "\(prefix).metronome.timer"
+        static let metronomeTimer = key("metronomeTimer")
+    }
+
+    // Stats 相关设置
+    struct Stats {
+        /// 每日目标键
+        static let dailyGoalMinutes = key("dailyGoalMinutes")
     }
 } 

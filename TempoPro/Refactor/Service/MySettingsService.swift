@@ -70,6 +70,10 @@ class MySettingsService: MySettingsProtocol {
             return SoundSetManager.getDefaultSoundSet()
         }
     }
+
+    func loadDailyGoalMinutes() -> Int {
+        return defaults.integer(forKey: Keys.dailyGoalMinutes).nonZeroOr(45)
+    }
     
     // MARK: - 保存方法
     func saveTempo(_ tempo: Int) {
@@ -95,6 +99,10 @@ class MySettingsService: MySettingsProtocol {
     
     func saveSoundSet(_ soundSet: SoundSet) {
         defaults.set(soundSet.key, forKey: Keys.soundSet)
+    }
+
+    func saveDailyGoalMinutes(_ dailyGoalMinutes: Int) {
+        defaults.set(dailyGoalMinutes, forKey: Keys.dailyGoalMinutes)
     }
 }
 

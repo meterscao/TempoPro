@@ -15,6 +15,7 @@ enum Keys {
     static let currentBeat = AppStorageKeys.Metronome.currentBeat
     static let subdivisionType = AppStorageKeys.Metronome.subdivisionType
     static let soundSet = AppStorageKeys.Metronome.soundSet
+    static let dailyGoalMinutes = AppStorageKeys.Stats.dailyGoalMinutes
 }
 
 struct MySettings {
@@ -24,6 +25,7 @@ struct MySettings {
     var beatStatuses: [BeatStatus]
     var subdivisionPattern: SubdivisionPattern
     var soundSet: SoundSet
+    var dailyGoalMinutes: Int
 }
 
 protocol MySettingsProtocol {
@@ -33,6 +35,7 @@ protocol MySettingsProtocol {
     func loadBeatStatuses() -> [BeatStatus]
     func loadSubdivisionPattern() -> SubdivisionPattern
     func loadSoundSet() -> SoundSet
+    func loadDailyGoalMinutes() -> Int
     
 
     func saveTempo(_ tempo: Int)
@@ -41,6 +44,7 @@ protocol MySettingsProtocol {
     func saveBeatStatuses(_ beatStatuses: [BeatStatus])
     func saveSubdivisionPattern(_ subdivisionPattern: SubdivisionPattern)
     func saveSoundSet(_ soundSet: SoundSet)
+    func saveDailyGoalMinutes(_ dailyGoalMinutes: Int)
 }
 
 

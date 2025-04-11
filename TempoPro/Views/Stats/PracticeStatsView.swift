@@ -34,6 +34,8 @@ struct PracticeStatsView: View {
             ScrollView {
                 VStack(spacing: 20) {
 
+                    TodayStatsView()
+                    
                     StreaksDayStatsView()
                     // Stats Summary - 替换为新的组件
                     StatsSummaryView()
@@ -149,14 +151,14 @@ struct PerformanceInsightsView: View {
                     
                     ZStack {
                         Circle()
-                            .fill(Color("AccentColor").opacity(0.1))
+                            .fill(Color("AccentColor").opacity(0.05))
                             .frame(width: 32, height: 32)
                         
-                        Image("icon-circle-gauge-s")
+                        Image("icon-circle-gauge")
                             .renderingMode(.template)
                             .resizable()
-                            .frame(width: 16,height: 16)
-                            .foregroundColor(Color("backgroundSecondaryColor")) 
+                            .frame(width: 20,height: 20)
+                            .foregroundColor(Color("AccentColor").opacity(0.5))
                     }
                 }
                 
@@ -175,15 +177,15 @@ struct PerformanceInsightsView: View {
                     
                     ZStack {
                         Circle()
-                            .fill(Color("AccentColor").opacity(0.1))
+                            .fill(Color("AccentColor").opacity(0.05))
                             
                             .frame(width: 32, height: 32)
                         
-                        Image("icon-clock-s")
+                        Image("icon-clock")
                             .renderingMode(.template)
                             .resizable()
-                            .frame(width: 16,height: 16)
-                            .foregroundColor(Color("backgroundSecondaryColor")) 
+                            .frame(width: 20,height: 20)
+                            .foregroundColor(Color("AccentColor").opacity(0.5))
                     }
                 }
             }

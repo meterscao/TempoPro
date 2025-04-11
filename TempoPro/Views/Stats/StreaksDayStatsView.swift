@@ -12,12 +12,13 @@ struct StreaksDayStatsView: View {
     @Environment(\.metronomeTheme) var theme
     @EnvironmentObject var practiceManager: CoreDataPracticeManager
     
+    
     // 状态变量
     @State private var weeklyData: [PracticeDataPoint] = []
     @State private var currentWeekStartDate: Date = Date()
     
     // 每日目标练习时间（分钟）
-    private let dailyTargetMinutes: Double = 60.0
+    @AppStorage(AppStorageKeys.Stats.dailyGoalMinutes) private var dailyGoalMinutes: Int = 45
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -27,7 +28,7 @@ struct StreaksDayStatsView: View {
                 HStack {
                     // 提示文字
                     VStack(alignment: .leading, spacing: 0){
-                        Text("Good Job!")
+                        Text("\(practiceManager.getCurrentStreak()) Day Streak")
                             .font(.custom("MiSansLatin-Semibold", size: 20))
                             .foregroundColor(Color("textPrimaryColor"))
                         Text("Track your practice to hit a streak.")
@@ -36,13 +37,13 @@ struct StreaksDayStatsView: View {
                     }
                         
                     Spacer()
-                    Button(action: {
-                        // 分享功能
-                    }) {
-                        Image("icon-ellipsis")
-                            .renderingMode(.template)
-                            .foregroundColor(Color("textSecondaryColor"))
-                    }
+//                    Button(action: {
+//                        // 分享功能
+//                    }) {
+//                        Image("icon-ellipsis")
+//                            .renderingMode(.template)
+//                            .foregroundColor(Color("textSecondaryColor"))
+//                    }
                 }
 
 
@@ -65,10 +66,10 @@ struct StreaksDayStatsView: View {
                             let isFutureDay = isDateInFuture(dataPoint.date)
                             
                             StreakDayCircleView(
-                                progress: min(1.0, dataPoint.duration / dailyTargetMinutes),
+                                progress: min(1.0, dataPoint.duration / Double(dailyGoalMinutes)),
                                 isToday: isToday,
                                 isFutureDay: isFutureDay,
-                                isCompleted: dataPoint.duration >= dailyTargetMinutes
+                                isCompleted: dataPoint.duration >= Double(dailyGoalMinutes)
                             )
                             .frame(maxWidth: .infinity)
                         }

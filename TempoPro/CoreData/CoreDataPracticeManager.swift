@@ -254,6 +254,29 @@ class CoreDataPracticeManager: ObservableObject {
         return formatter.string(from: date)
     }
 
+    // 获取今天练习的分钟数
+    func getTodayPracticeMinutes() -> Double {
+        let today = Date()
+        let todayString = formatDate(today)
+        
+        // 查询今天的练习数据
+        let request = NSFetchRequest<DailyPractice>(entityName: "DailyPractice")
+        request.predicate = NSPredicate(format: "dateString == %@", todayString)
+        
+        do {
+            let practices = try viewContext.fetch(request)
+            if let todayPractice = practices.first {
+                // 将秒转换为分钟
+                return Double(todayPractice.totalDuration) / 60.0
+            } else {
+                return 0.0 // 今天没有练习记录
+            }
+        } catch {
+            print("获取今天练习数据失败: \(error.localizedDescription)")
+            return 0.0
+        }
+    }
+
     // 获取最常练习的BPM范围
     func getMostPracticedTempo() -> String {
         let request = NSFetchRequest<PracticeSession>(entityName: "PracticeSession")
